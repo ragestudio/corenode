@@ -1,4 +1,4 @@
-name: Umi Benchmark
+name: Benchmark
 
 on:
   push:
