@@ -3,7 +3,6 @@ const { join } = require('path');
 const getPackages = require('./utils/getPackages');
 
 process.setMaxListeners(Infinity);
-
 module.exports = function (publishPkgs) {
   const pkgs = (publishPkgs || getPackages()).map(
     (name) =>

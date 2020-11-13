@@ -1,8 +1,13 @@
+const packagejson = require('../../package.json') 
 const { htmlEscape } = require('escape-goat');
 const git = require('./git');
 
 exports.getChangelog = async () => {
-  const repoUrl = 'https://github.com/umijs/umi';
+  if (!packagejson) {
+    return false
+  }
+
+  const repoUrl = packagejson.git;
   const latest = await git.latestTagOrFirstCommit();
   const log = await git.commitLogFromRevision(latest);
 

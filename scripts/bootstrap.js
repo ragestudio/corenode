@@ -30,13 +30,10 @@ const getPackages = require('./utils/getPackages');
         files: ['lib', 'src'],
         repository: {
           type: 'git',
-          url: 'https://github.com/umijs/umi',
+          url: 'https://github.com/srgooglo/nodecore',
         },
         keywords: ['umi'],
-        authors: ['chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)'],
         license: 'MIT',
-        bugs: 'http://github.com/umijs/umi/issues',
-        homepage: `https://github.com/umijs/umi/tree/master/packages/${shortName}#readme`,
         publishConfig: {
           access: 'public',
         },
