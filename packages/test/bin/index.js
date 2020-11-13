@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const { yParser, chalk, createDebug } = require('@umijs/utils');
-const debug = createDebug('umi:test');
 
 const args = yParser(process.argv.slice(2), {
   alias: {

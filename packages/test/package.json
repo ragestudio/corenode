@@ -1,7 +1,6 @@
 {
-  "name": "@umijs/test",
+  "name": "@nodecore/test",
   "version": "3.2.27",
-  "description": "@umijs/test",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -11,17 +10,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/umi"
+    "url": "https://github.com/srgooglo/nodecore"
   },
   "keywords": [
     "umi"
   ],
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
   "license": "MIT",
-  "bugs": "http://github.com/umijs/umi/issues",
-  "homepage": "https://github.com/umijs/umi/tree/master/packages/test#readme",
   "publishConfig": {
     "access": "public"
   },
@@ -40,6 +34,6 @@
     "whatwg-fetch": "^3.4.1"
   },
   "bin": {
-    "umi-test": "bin/umi-test.js"
+    "nodecore-test": "bin/index.js"
   }
 }

@@ -10,7 +10,7 @@ const getPackages = require('./utils/getPackages');
   const pkgs = getPackages();
 
   pkgs.forEach((shortName) => {
-    const name = shortName === 'umi' ? shortName : `@umijs/${shortName}`;
+    const name = shortName === 'nodecore' ? shortName : `@nodecore/${shortName}`;
 
     const pkgJSONPath = join(
       __dirname,
@@ -24,7 +24,6 @@ const getPackages = require('./utils/getPackages');
       const json = {
         name,
         version,
-        description: name,
         main: 'lib/index.js',
         types: 'lib/index.d.ts',
         files: ['lib', 'src'],
