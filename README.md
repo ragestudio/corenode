@@ -1,1 +1,4 @@
-# Nodecore - an vitaminized framework umijs-based ecosystem
+# [Early] Nodecorejs Framework
+### An vitaminized framework umijs-based ecosystem 
+
+
