@@ -43,8 +43,6 @@ const CONFIG_FILES = [
   'config/config.js',
 ];
 
-// TODO:
-// 1. custom config file
 export default class Config {
   cwd: string;
   service: Service;

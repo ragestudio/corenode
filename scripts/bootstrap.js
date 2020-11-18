@@ -31,7 +31,6 @@ const getPackages = require('./utils/getPackages');
           type: 'git',
           url: 'https://github.com/ragestudio/nodecorejs',
         },
-        keywords: ['umi'],
         license: 'MIT',
         publishConfig: {
           access: 'public',

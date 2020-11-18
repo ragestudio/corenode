@@ -11,9 +11,7 @@
     "type": "git",
     "url": "https://github.com/nodecorejs/umi"
   },
-  "keywords": [
-    "umi"
-  ],
+ 
   "sideEffects": false,
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
