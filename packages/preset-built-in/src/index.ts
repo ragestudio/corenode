@@ -79,7 +79,6 @@ export default function () {
       require.resolve('./plugins/commands/config/config'),
       require.resolve('./plugins/commands/dev/dev'),
       require.resolve('./plugins/commands/dev/devCompileDone/devCompileDone'),
-      require.resolve('./plugins/commands/dev/mock/mock'),
       require.resolve('./plugins/commands/generate/generate'),
       require.resolve('./plugins/commands/help/help'),
       require.resolve('./plugins/commands/plugin/plugin'),
