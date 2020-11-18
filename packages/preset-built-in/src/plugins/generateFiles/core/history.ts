@@ -58,7 +58,7 @@ export default function (api: IApi) {
     });
   });
 
-  api.addUmiExports(() => {
+  api.addcoreExports(() => {
     // @ts-ignore
     if (api.config.history === false) return [];
 

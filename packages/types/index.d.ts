@@ -223,7 +223,7 @@ export interface IApi extends PluginAPI {
   addHTMLMetas: IAdd<{ route?: IRoute }, IHTMLTag>;
   addHTMLLinks: IAdd<{ route?: IRoute }, IHTMLTag>;
   addHTMLStyles: IAdd<{ route?: IRoute }, IHTMLTag>;
-  addUmiExports: IAdd<
+  addcoreExports: IAdd<
     null,
     {
       source: string;

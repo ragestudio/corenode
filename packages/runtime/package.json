@@ -1,26 +1,13 @@
 {
-  "name": "@umijs/runtime",
-  "version": "3.2.27",
-  "description": "@umijs/runtime",
+  "name": "@nodecore/runtime",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/umijs/umi"
-  },
-  "keywords": [
-    "umi"
-  ],
   "sideEffects": false,
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
   "license": "MIT",
-  "bugs": "http://github.com/umijs/umi/issues",
-  "homepage": "https://github.com/umijs/umi/tree/master/packages/runtime#readme",
   "publishConfig": {
     "access": "public"
   },

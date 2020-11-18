@@ -21,7 +21,7 @@ export default function (api: IApi) {
     'addMiddewares',
     'addRuntimePlugin',
     'addRuntimePluginKey',
-    'addUmiExports',
+    'addcoreExports',
     'addProjectFirstLibraries',
     'addPolyfillImports',
     'addEntryImportsAhead',

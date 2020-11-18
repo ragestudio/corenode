@@ -15,6 +15,7 @@
     "test:coverage": "umi-test --coverage",
     "sync:tnpm": "node -e 'require(\"./scripts/syncTNPM\")()'",
     "benchmark": "node scripts/benchmarks.js",
+    "startExample": "cd ./examples/normal && umi dev",
     "update:deps": "yarn upgrade-interactive --latest"
   },
   "gitHooks": {

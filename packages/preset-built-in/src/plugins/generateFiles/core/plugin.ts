@@ -59,7 +59,7 @@ export default function (api: IApi) {
     });
   });
 
-  api.addUmiExports(() => {
+  api.addcoreExports(() => {
     return {
       specifiers: ['plugin'],
       source: `./plugin`,

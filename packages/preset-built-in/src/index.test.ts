@@ -137,7 +137,7 @@ test('html', async () => {
 test('ssr', async () => {
   const cwd = join(fixtures, 'ssr');
   const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
-  const tmpExportFile = join(cwd, '.umi-test', 'core', 'umiExports.ts');
+  const tmpExportFile = join(cwd, '.umi-test', 'core', 'coreExports.ts');
 
   delete require.cache[tmpServerFile];
 
@@ -171,7 +171,7 @@ test('ssr', async () => {
 test('ssr modifyServerHTML', async () => {
   const cwd = join(fixtures, 'ssr-modifyServerHTML');
   const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
-  const tmpExportFile = join(cwd, '.umi-test', 'core', 'umiExports.ts');
+  const tmpExportFile = join(cwd, '.umi-test', 'core', 'coreExports.ts');
 
   delete require.cache[tmpServerFile];
 

@@ -1,7 +1,6 @@
 {
-  "name": "umi",
-  "version": "3.2.27",
-  "description": "umi",
+  "name": "nodecore",
+  "version": "0.1.0",
   "main": "index.js",
   "types": "types.d.ts",
   "files": [
@@ -11,19 +10,7 @@
     "bin"
   ],
   "sideEffects": false,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/umijs/umi"
-  },
-  "keywords": [
-    "umi"
-  ],
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
   "license": "MIT",
-  "bugs": "http://github.com/umijs/umi/issues",
-  "homepage": "https://github.com/umijs/umi/tree/master/packages/umi#readme",
   "publishConfig": {
     "access": "public"
   },

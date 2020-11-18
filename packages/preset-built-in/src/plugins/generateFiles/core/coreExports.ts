@@ -21,10 +21,10 @@ interface IUmiExport {
 
 export function generateExports({
   item,
-  umiExportsHook,
+  coreExportsHook,
 }: {
   item: IUmiExport;
-  umiExportsHook: object;
+  coreExportsHook: object;
 }) {
   assert(item.source, 'source should be supplied.');
   assert(
@@ -49,10 +49,10 @@ export function generateExports({
         `${specifier} is reserve name, you can use 'exported' to set alias.`,
       );
       assert(
-        !umiExportsHook[specifier],
+        !coreExportsHook[specifier],
         `${specifier} is Defined, you can use 'exported' to set alias.`,
       );
-      umiExportsHook[specifier] = true;
+      coreExportsHook[specifier] = true;
       return specifier;
     } else {
       assert(
@@ -73,21 +73,21 @@ export function generateExports({
 
 export default function (api: IApi) {
   api.onGenerateFiles(async () => {
-    const umiExports = await api.applyPlugins({
-      key: 'addUmiExports',
+    const coreExports = await api.applyPlugins({
+      key: 'addcoreExports',
       type: api.ApplyPluginsType.add,
       initialValue: [],
     });
 
-    let umiExportsHook = {}; // repeated definition
+    let coreExportsHook = {}; // repeated definition
     api.writeTmpFile({
-      path: 'core/umiExports.ts',
+      path: 'core/coreExports.ts',
       content:
-        umiExports
+        coreExports
           .map((item: IUmiExport) => {
             return generateExports({
               item,
-              umiExportsHook,
+              coreExportsHook,
             });
           })
           .join('\n') + `\n`,

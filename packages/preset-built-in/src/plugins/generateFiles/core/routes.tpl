@@ -1,6 +1,6 @@
 import React from 'react';
 import { ApplyPluginsType{{ #config.dynamicImport }}, dynamic{{ /config.dynamicImport }} } from '{{{ runtimePath }}}';
-import * as umiExports from './umiExports';
+import * as coreExports from './coreExports';
 import { plugin } from './plugin';
 {{ #loadingComponent }}
 import LoadingComponent from '{{{ loadingComponent }}}';

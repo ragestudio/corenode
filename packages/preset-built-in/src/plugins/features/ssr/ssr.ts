@@ -318,7 +318,7 @@ export default (api: IApi) => {
   // runtime ssr plugin
   api.addRuntimePluginKey(() => 'ssr');
 
-  api.addUmiExports(() => [
+  api.addcoreExports(() => [
     {
       exportAll: true,
       source: `../${TMP_PLUGIN_DIR}/${CLIENT_EXPORTS}`,

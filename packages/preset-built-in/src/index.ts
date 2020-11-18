@@ -12,7 +12,7 @@ export default function () {
       require.resolve('./plugins/generateFiles/core/plugin'),
       require.resolve('./plugins/generateFiles/core/polyfill'),
       require.resolve('./plugins/generateFiles/core/routes'),
-      require.resolve('./plugins/generateFiles/core/umiExports'),
+      require.resolve('./plugins/generateFiles/core/coreExports'),
       require.resolve('./plugins/generateFiles/core/configTypes'),
       require.resolve('./plugins/generateFiles/umi'),
 

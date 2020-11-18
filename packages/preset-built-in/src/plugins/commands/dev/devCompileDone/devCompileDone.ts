@@ -20,8 +20,7 @@ export default (api: IApi) => {
             if (isFirstCompile) {
               api.service.emit('firstDevCompileDone');
             }
-            api
-              .applyPlugins({
+            api.applyPlugins({
                 key: 'onDevCompileDone',
                 type: api.ApplyPluginsType.event,
                 args: {

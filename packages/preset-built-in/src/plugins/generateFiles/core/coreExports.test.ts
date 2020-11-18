@@ -1,4 +1,4 @@
-import { generateExports } from './umiExports';
+import { generateExports } from './coreExports';
 
 test('export all', () => {
   const exportAll = generateExports({
@@ -6,7 +6,7 @@ test('export all', () => {
       exportAll: true,
       source: 'dva',
     },
-    umiExportsHook: {},
+    coreExportsHook: {},
   });
   expect(exportAll).toBe("export * from 'dva';");
 });
@@ -17,7 +17,7 @@ test('export specifiers', () => {
       specifiers: ['connect'],
       source: 'dva',
     },
-    umiExportsHook: {},
+    coreExportsHook: {},
   });
   expect(exportSpecifiers).toBe("export { connect } from 'dva';");
 });
@@ -28,7 +28,7 @@ test('export alias', () => {
       specifiers: [{ local: 'default', exported: 'dva' }],
       source: 'dva',
     },
-    umiExportsHook: {},
+    coreExportsHook: {},
   });
   expect(exportAlias).toBe("export { default as dva } from 'dva';");
 });
@@ -39,7 +39,7 @@ test('multiple', () => {
       specifiers: ['a', { local: 'default', exported: 'b' }],
       source: 'dva',
     },
-    umiExportsHook: {},
+    coreExportsHook: {},
   });
   expect(exportAlias).toEqual("export { a, default as b } from 'dva';");
 });
@@ -56,7 +56,7 @@ test('reserve library', () => {
         ],
         source: 'umi',
       },
-      umiExportsHook: {},
+      coreExportsHook: {},
     });
   }).toThrow("umi is reserve library, Please don't use it.");
 });
@@ -68,27 +68,27 @@ test('reserve name', () => {
         specifiers: ['Link'],
         source: 'dva',
       },
-      umiExportsHook: {},
+      coreExportsHook: {},
     });
   }).toThrow("Link is reserve name, you can use 'exported' to set alias.");
 });
 
 test('repeated definition', () => {
   expect(() => {
-    const umiExportsHook = {};
+    const coreExportsHook = {};
     generateExports({
       item: {
         specifiers: ['connect'],
         source: 'abc',
       },
-      umiExportsHook,
+      coreExportsHook,
     });
     generateExports({
       item: {
         specifiers: ['connect'],
         source: 'abc',
       },
-      umiExportsHook,
+      coreExportsHook,
     });
   }).toThrow("connect is Defined, you can use 'exported' to set alias.");
 });

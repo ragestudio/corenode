@@ -145,6 +145,8 @@ export default (api: IApi) => {
       await delay(500);
 
       // dev
+      let localOpts: IServerOpts = {}
+
       const {
         bundler,
         bundleConfigs,
@@ -168,13 +170,15 @@ export default (api: IApi) => {
         args: {},
       });
 
+      if (typeof(api.config.serverHeaders) !== ("undefined" && "object")) {
+        return localOpts.headers = api.config.serverHeaders
+      }
+
       server = new Server({
+        ...localOpts,
         ...opts,
         compress: true,
         https: !!isHTTPS,
-        headers: {
-          'access-control-allow-origin': '*',
-        },
         proxy: api.config.proxy,
         beforeMiddlewares,
         afterMiddlewares: [

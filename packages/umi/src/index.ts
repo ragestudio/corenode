@@ -25,4 +25,4 @@ export {
 export type { MemoryHistory } from '@umijs/runtime';
 
 // @ts-ignore
-export * from '@@/core/umiExports';
+export * from '@@/core/coreExports';
