@@ -11,8 +11,6 @@
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:umi": "cd packages/umi && yarn link && cd -",
     "release": "node ./scripts/release.js",
-    "test": "nodecorejs-test",
-    "test:coverage": "nodecorejs-test --coverage",
     "sync:tnpm": "node -e 'require(\"./scripts/syncTNPM\")()'",
     "benchmark": "node scripts/benchmarks.js",
     "startExample": "cd ./examples/normal && umi dev",
@@ -29,8 +27,6 @@
   "devDependencies": {
     "@babel/core": "7.10.4",
     "@nodecorejs/core": "0.1.1",
-    "@nodecorejs/test": "^0.1.1",
-    "@nodecorejs/test-utils": "^0.1.10",
     "@nodecorejs/utils": "^0.1.1",
     "@testing-library/react": "^10.4.6",
     "@types/babel__core": "7.1.9",

@@ -1,4 +1,3 @@
-/*eslint-disable */
 const { yParser, execa, chalk } = require('@nodecorejs/utils');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
