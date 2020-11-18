@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/bundler-webpack",
-  "version": "0.1.1",
+  "version": "0.2.0-alpha.0",
   "description": "@nodecorejs/bundler-webpack",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -31,12 +31,12 @@
   },
   "dependencies": {
     "@babel/core": "7.12.3",
+    "@nodecorejs/bundler-utils": "0.2.0-alpha.0",
+    "@nodecorejs/types": "0.2.0-alpha.0",
+    "@nodecorejs/utils": "0.2.0-alpha.0",
     "@types/sockjs-client": "1.1.1",
     "@types/webpack": "4.41.22",
     "@types/webpack-dev-middleware": "3.7.2",
-    "@nodecorejs/bundler-utils": "0.1.1",
-    "@nodecorejs/types": "0.1.1",
-    "@nodecorejs/utils": "^0.1.1",
     "babel-loader": "8.1.0",
     "copy-webpack-plugin": "6.1.0",
     "css-loader": "3.6.0",
