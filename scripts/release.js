@@ -37,7 +37,7 @@ async function release() {
 
   // Check npm registry
   logStep('check npm registry');
-  const userRegistry = execa.sync('npm', ['config', 'get', 'registry']).stdout;
+  const userRegistry = execa.sync(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['config', 'get', 'registry']).stdout;
   if (userRegistry.includes('https://registry.yarnpkg.com/')) {
     printErrorAndExit(
       `Release failed, please use ${chalk.blue('npm run release')}.`,
