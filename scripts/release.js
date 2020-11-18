@@ -1,3 +1,4 @@
+/*eslint-disable */
 const { yParser, execa, chalk } = require('@nodecorejs/utils');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
@@ -7,7 +8,6 @@ const exec = require('./utils/exec');
 const syncTNPM = require('./syncTNPM');
 const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
-const { getChangelog } = require('./utils/changelog');
 
 const cwd = process.cwd();
 const args = yParser(process.argv.slice(2));
@@ -34,11 +34,6 @@ async function release() {
       'git status check is skipped, since --skip-git-status-check is supplied',
     );
   }
-
-  // get release notes
-  logStep('get release notes');
-  const releaseNotes = await getChangelog();
-  console.log(releaseNotes(''));
 
   // Check npm registry
   logStep('check npm registry');
@@ -100,7 +95,10 @@ async function release() {
     logStep('sync version to root package.json');
     const rootPkg = require('../package');
     Object.keys(rootPkg.devDependencies).forEach((name) => {
-      if (name.startsWith('@nodecorejs/') && !name.startsWith('@nodecorejs/p')) {
+      if (
+        name.startsWith('@nodecorejs/') &&
+        !name.startsWith('@nodecorejs/p')
+      ) {
         rootPkg.devDependencies[name] = currVersion;
       }
     });
