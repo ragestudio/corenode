@@ -1,4 +1,15 @@
 {
+  "ts-node": {
+    "transpileOnly": true,
+    "exclude": [
+      "node_modules",
+      "dist",
+      "**/*.spec.ts",
+      "lib",
+      "fixtures",
+      "examples"
+    ]
+  },
   "compilerOptions": {
     "target": "esnext",
     "moduleResolution": "node",

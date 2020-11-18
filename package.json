@@ -1,5 +1,5 @@
 {
-  "git": "https://github.com/srgooglo/nodecorejs",
+  "git": "https://github.com/ragestudio/nodecorejs",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -42,10 +42,15 @@
     "npm-run-all": "^4.1.5",
     "open": "^7.0.4",
     "prettier": "^2.0.5",
+    "ts-node": "^9.0.0",
     "yorkie": "^2.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/srgooglo/nodecorejs.git"
+    "url": "git+https://github.com/ragestudio/nodecorejs.git"
+  },
+  "dependencies": {
+    "@types/find-up": "^4.0.0",
+    "find-up": "^3.0.0"
   }
 }

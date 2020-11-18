@@ -29,7 +29,7 @@ const getPackages = require('./utils/getPackages');
         files: ['lib', 'src'],
         repository: {
           type: 'git',
-          url: 'https://github.com/srgooglo/nodecorejs',
+          url: 'https://github.com/ragestudio/nodecorejs',
         },
         keywords: ['umi'],
         license: 'MIT',

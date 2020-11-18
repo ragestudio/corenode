@@ -1,5 +1,6 @@
-
+"use strict";
+// .ts is prior to .js
 module.exports = {
-  bar: 6,
-  foo: 7,
+    bar: 2,
+    foo: 3,
 };

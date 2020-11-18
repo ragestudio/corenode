@@ -1,3 +1,4 @@
+//* TODO: add devRuntime to .nodecore runtime
 const { yParser, execa, chalk } = require('@nodecorejs/utils');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
@@ -7,6 +8,7 @@ const exec = require('./utils/exec');
 const syncTNPM = require('./syncTNPM');
 const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
+const { getChangelog } = require('./utils/changelog');
 
 const cwd = process.cwd();
 const args = yParser(process.argv.slice(2));
@@ -33,6 +35,11 @@ async function release() {
       'git status check is skipped, since --skip-git-status-check is supplied',
     );
   }
+
+  // get release notes
+  logStep('get release notes');
+  const releaseNotes = await getChangelog();
+  console.log(releaseNotes(''));
 
   // Check npm registry
   logStep('check npm registry');
@@ -71,8 +78,6 @@ async function release() {
     if (!args.skipBuild) {
       logStep('build');
       await exec('npm', ['run', 'build']);
-
-      // 为 defineConfig.d.ts 添加 ts-ignore
       require('./tsIngoreDefineConfig');
     } else {
       logStep('build is skipped, since args.skipBuild is supplied');
@@ -127,17 +132,15 @@ async function release() {
   logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`);
   const currVersion = require('../lerna').version;
   const isNext = isNextVersion(currVersion);
-  pkgs
-    .sort((a) => {
-      return a === 'umi' ? 1 : -1;
+  pkgs.sort((a) => {
+      return a === 'nodecore' ? 1 : -1; // TODO: Get headPackage name form devRuntime (runtime)
     })
     .forEach((pkg, index) => {
       const pkgPath = join(cwd, 'packages', pkg);
       const { name, version } = require(join(pkgPath, 'package.json'));
       if (version === currVersion) {
         console.log(
-          `[${index + 1}/${pkgs.length}] Publish package ${name} ${
-            isNext ? 'with next tag' : ''
+          `[${index + 1}/${pkgs.length}] Publish package ${name} ${isNext ? 'with next tag' : ''
           }`,
         );
         const cliArgs = isNext ? ['publish', '--tag', 'next'] : ['publish'];
@@ -153,7 +156,7 @@ async function release() {
   const changelog = releaseNotes(tag);
   console.log(changelog);
   const url = newGithubReleaseUrl({
-    repoUrl: 'https://github.com/srgooglo/nodecorejs',
+    repoUrl: 'https://github.com/ragestudio/nodecorejs',
     tag,
     body: changelog,
     isPrerelease: isNext,
@@ -162,7 +165,6 @@ async function release() {
 
   logStep('sync packages to tnpm');
   syncTNPM(pkgs);
-
   logStep('done');
 }
 
