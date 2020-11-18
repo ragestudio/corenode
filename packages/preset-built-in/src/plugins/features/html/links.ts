@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 
 export default function (api: IApi) {
   api.describe({

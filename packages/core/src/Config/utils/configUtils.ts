@@ -1,4 +1,4 @@
-import { lodash } from '@umijs/utils';
+import { lodash } from '@nodecorejs/utils';
 // @ts-ignore
 import set from 'set-value';
 

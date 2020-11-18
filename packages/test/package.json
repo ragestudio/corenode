@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/test",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@babel/core": "7.12.3",
-    "@nodecorejs/utils": "^0.1.0",
-    "@umijs/babel-preset-umi": "3.2.27",
+    "@nodecorejs/utils": "^0.1.1",
+    "@nodecorejs/babel-preset-umi": "0.1.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^25.4.0",
     "core-js": "3.6.5",

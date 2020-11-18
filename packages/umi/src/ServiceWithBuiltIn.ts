@@ -1,5 +1,5 @@
 import { dirname, join } from 'path';
-import { IServiceOpts, Service as CoreService } from '@umijs/core';
+import { IServiceOpts, Service as CoreService } from '@nodecorejs/core';
 
 class Service extends CoreService {
   constructor(opts: IServiceOpts) {
@@ -9,7 +9,7 @@ class Service extends CoreService {
     super({
       ...opts,
       presets: [
-        require.resolve('@umijs/preset-built-in'),
+        require.resolve('@nodecorejs/preset-built-in'),
         ...(opts.presets || []),
       ],
       plugins: [require.resolve('./plugins/umiAlias'), ...(opts.plugins || [])],

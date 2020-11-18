@@ -1,9 +1,9 @@
 import { join, dirname } from 'path';
-import { IApi } from '@umijs/types';
-import { Generator, chalk } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { Generator, chalk } from '@nodecorejs/utils';
 import { writeFileSync } from 'fs';
 import { getHtmlGenerator } from '../../htmlUtils';
-import { mkdirp } from '@umijs/utils';
+import { mkdirp } from '@nodecorejs/utils';
 
 export default function ({ api }: { api: IApi }) {
   return class PageGenerator extends Generator {

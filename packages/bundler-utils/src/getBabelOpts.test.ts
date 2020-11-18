@@ -1,4 +1,4 @@
-import { winPath } from '@umijs/utils';
+import { winPath } from '@nodecorejs/utils';
 import { join } from 'path';
 import {
   getBabelDepsOpts,

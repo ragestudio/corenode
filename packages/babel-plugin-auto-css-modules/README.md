@@ -1,1 +1,1 @@
-# @umijs/babel-plugin-auto-css-modules
+# @nodecorejs/babel-plugin-auto-css-modules

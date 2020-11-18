@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import { join } from 'path';
-import { Logger } from '@umijs/core';
+import { Logger } from '@nodecorejs/core';
 import immer from 'immer';
 import { IServerOpts, IHttps } from './Server';
 
-const logger = new Logger('@umijs/server:utils');
+const logger = new Logger('@nodecorejs/server:utils');
 
 export const getCredentials = (opts: IServerOpts): IHttps => {
   const { https } = opts;

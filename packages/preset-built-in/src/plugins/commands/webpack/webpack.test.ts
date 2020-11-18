@@ -1,5 +1,5 @@
-import { Service } from '@umijs/core';
-import { mockConsole } from '@umijs/test';
+import { Service } from '@nodecorejs/core';
+import { mockConsole } from '@nodecorejs/test';
 import { join } from 'path';
 
 const fixtures = join(__dirname, '../../../fixtures');

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
-import { IApi } from '@umijs/types';
-import { winPath } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { winPath } from '@nodecorejs/utils';
 import { runtimePath, renderReactPath } from './constants';
 
 export function importsToStr(
@@ -25,12 +25,12 @@ export default function (api: IApi) {
   api.addDepInfo(() => {
     return [
       {
-        name: '@umijs/runtime',
+        name: '@nodecorejs/runtime',
         range: '3',
         alias: [runtimePath],
       },
       {
-        name: '@umijs/renderer-react',
+        name: '@nodecorejs/renderer-react',
         range: '3',
         alias: [renderReactPath],
       },

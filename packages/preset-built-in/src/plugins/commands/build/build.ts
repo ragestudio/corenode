@@ -1,7 +1,7 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import { relative } from 'path';
 import { existsSync } from 'fs';
-import { Logger } from '@umijs/core';
+import { Logger } from '@nodecorejs/core';
 import {
   cleanTmpPathExceptCache,
   getBundleAndConfigs,

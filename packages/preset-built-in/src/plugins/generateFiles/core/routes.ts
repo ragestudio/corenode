@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { IApi } from '@umijs/types';
-import { Route } from '@umijs/core';
+import { IApi } from '@nodecorejs/types';
+import { Route } from '@nodecorejs/core';
 import { runtimePath } from '../constants';
 
 export default function (api: IApi) {

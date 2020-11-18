@@ -1,7 +1,7 @@
 import { IExpectOpts } from '../types';
 import * as ts from 'typescript';
 import {resolve} from 'path';
-import { createDebug } from '@umijs/utils';
+import { createDebug } from '@nodecorejs/utils';
 
 const debug = createDebug('umi:dtstest');
 

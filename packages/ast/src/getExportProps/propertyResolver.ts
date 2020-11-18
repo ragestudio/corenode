@@ -1,4 +1,4 @@
-import { t } from '@umijs/utils';
+import { t } from '@nodecorejs/utils';
 
 interface IResolver<U> {
   is(src: any): boolean;

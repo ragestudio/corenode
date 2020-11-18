@@ -1,7 +1,7 @@
 const path = require('path');
 
 const Benchmark = require('benchmark');
-const { glob } = require('@umijs/utils');
+const { glob } = require('@nodecorejs/utils');
 const buildExamples = require('./buildExamples');
 
 // benchmarks entry

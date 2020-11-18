@@ -1,5 +1,5 @@
 import { join, dirname } from "path";
-import { pkgUp } from '@umijs/utils';
+import { pkgUp } from '@nodecorejs/utils';
 
 export default {
   presets: [

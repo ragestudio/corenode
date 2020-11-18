@@ -1,5 +1,5 @@
 {
-  "git": "https://github.com/srgooglo/nodecore",
+  "git": "https://github.com/srgooglo/nodecorejs",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -11,8 +11,8 @@
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:umi": "cd packages/umi && yarn link && cd -",
     "release": "node ./scripts/release.js",
-    "test": "umi-test",
-    "test:coverage": "umi-test --coverage",
+    "test": "nodecorejs-test",
+    "test:coverage": "nodecorejs-test --coverage",
     "sync:tnpm": "node -e 'require(\"./scripts/syncTNPM\")()'",
     "benchmark": "node scripts/benchmarks.js",
     "startExample": "cd ./examples/normal && umi dev",
@@ -37,12 +37,10 @@
     "@types/babel__traverse": "7.0.13",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.0.23",
-    "@umijs/core": "3.2.27",
-    "@umijs/plugin-analytics": "^0.2.2",
-    "@umijs/preset-dumi": "^1.0.33",
-    "@umijs/test": "3.2.27",
-    "@umijs/test-utils": "3.2.27",
-    "@umijs/utils": "3.2.27",
+    "@nodecorejs/core": "0.1.1",
+    "@nodecorejs/test": "^0.1.1",
+    "@nodecorejs/test-utils": "^0.1.10",
+    "@nodecorejs/utils": "^0.1.1",
     "benchmark": "^2.1.4",
     "escape-goat": "^3.0.0",
     "father-build": "^1.18.1",
@@ -56,6 +54,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/srgooglo/nodecore.git"
+    "url": "git+https://github.com/srgooglo/nodecorejs.git"
   }
 }

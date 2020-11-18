@@ -1,7 +1,6 @@
 // @ts-ignore
 import errorCodeMap from '@umijs/error-code-map';
 
-// 支持内部框架扩展 error code map
 export const ERROR_CODE_MAP = process.env.ERROR_CODE_MAP_PATH
   ? require(process.env.ERROR_CODE_MAP_PATH)
   : errorCodeMap;

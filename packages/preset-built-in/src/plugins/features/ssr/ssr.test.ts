@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { Service } from '@umijs/core';
+import { Service } from '@nodecorejs/core';
 import { onBuildComplete } from './ssr';
 
 const fixtures = join(__dirname, 'fixtures');

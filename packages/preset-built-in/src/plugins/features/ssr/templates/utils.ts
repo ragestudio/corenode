@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import { IRoute } from '@umijs/types';
+import { IRoute } from '@nodecorejs/types';
 import { parse, UrlWithStringQuery } from 'url';
 import mergeStream from 'merge-stream';
 import serialize from 'serialize-javascript';
@@ -43,7 +43,7 @@ export class ReadableString extends Readable {
   }
 }
 
-export { default as cheerio } from '@umijs/utils/lib/cheerio/cheerio'
+export { default as cheerio } from '@nodecorejs/utils/lib/cheerio/cheerio'
 
 export interface IHandleHTMLOpts {
   pageInitialProps: object;

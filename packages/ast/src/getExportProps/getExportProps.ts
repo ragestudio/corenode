@@ -1,4 +1,4 @@
-import { t, traverse } from '@umijs/utils';
+import { t, traverse } from '@nodecorejs/utils';
 import { parse } from '../utils/parse';
 import {
   NODE_RESOLVERS,

@@ -1,7 +1,7 @@
 {
-  "name": "@umijs/renderer-mpa",
-  "version": "3.2.27",
-  "description": "@umijs/renderer-mpa",
+  "name": "@nodecorejs/renderer-mpa",
+  "version": "0.1.1",
+  "description": "@nodecorejs/renderer-mpa",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/umi"
+    "url": "https://github.com/nodecorejs/umi"
   },
   "keywords": [
     "umi"
@@ -19,15 +19,15 @@
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
   ],
   "license": "MIT",
-  "bugs": "http://github.com/umijs/umi/issues",
-  "homepage": "https://github.com/umijs/umi/tree/master/packages/renderer-mpa#readme",
+  "bugs": "http://github.com/nodecorejs/umi/issues",
+  "homepage": "https://github.com/nodecorejs/umi/tree/master/packages/renderer-mpa#readme",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
     "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
-    "@umijs/runtime": "3.2.27",
+    "@nodecorejs/runtime": "0.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

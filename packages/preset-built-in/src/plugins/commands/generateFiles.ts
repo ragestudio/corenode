@@ -1,5 +1,5 @@
-import { IApi } from '@umijs/types';
-import { chokidar, lodash, winPath } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { chokidar, lodash, winPath } from '@nodecorejs/utils';
 import { join } from 'path';
 
 export default async ({ api, watch }: { api: IApi; watch?: boolean }) => {

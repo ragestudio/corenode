@@ -1,8 +1,8 @@
-import { IApi, IBundlerConfigType, BundlerConfigType } from '@umijs/types';
-import { Bundler as DefaultBundler, webpack } from '@umijs/bundler-webpack';
+import { IApi, IBundlerConfigType, BundlerConfigType } from '@nodecorejs/types';
+import { Bundler as DefaultBundler, webpack } from '@nodecorejs/bundler-webpack';
 import { join, resolve } from 'path';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { rimraf, chalk } from '@umijs/utils';
+import { rimraf, chalk } from '@nodecorejs/utils';
 import zlib from 'zlib';
 
 type Env = 'development' | 'production';
@@ -235,7 +235,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
     );
     console.log(
       chalk.yellow(
-        'Consider reducing it with code splitting: https://umijs.org/docs/load-on-demand',
+        'Consider reducing it with code splitting: https://nodecorejs.org/docs/load-on-demand',
       ),
     );
     console.log(

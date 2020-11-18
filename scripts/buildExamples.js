@@ -1,7 +1,7 @@
 const path = require('path');
 const { fork } = require('child_process');
 
-const { glob, signale } = require('@umijs/utils');
+const { glob, signale } = require('@nodecorejs/utils');
 
 const UMI_SCRIPT = path.join(__dirname, '../packages/umi/bin/umi.js');
 

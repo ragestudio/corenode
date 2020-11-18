@@ -1,5 +1,5 @@
 // @ts-ignore
-import { isLernaPackage } from '@umijs/utils';
+import { isLernaPackage } from '@nodecorejs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import assert from 'assert';

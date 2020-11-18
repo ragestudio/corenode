@@ -1,4 +1,4 @@
-import { IApi, NextFunction, Request, Response } from '@umijs/types';
+import { IApi, NextFunction, Request, Response } from '@nodecorejs/types';
 import { Stream } from 'stream';
 import { extname, join } from 'path';
 import { matchRoutes, RouteConfig } from 'react-router-config';

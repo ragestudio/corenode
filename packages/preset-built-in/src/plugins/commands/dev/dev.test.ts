@@ -1,4 +1,4 @@
-import { Service } from '@umijs/core';
+import { Service } from '@nodecorejs/core';
 import { join } from 'path';
 
 const fixtures = join(__dirname, '../../../fixtures');

@@ -1,4 +1,4 @@
-const { yParser, execa, chalk } = require('@umijs/utils');
+const { yParser, execa, chalk } = require('@nodecorejs/utils');
 
 exports.latestTag = async () => {
   const { stdout } = await execa('git', ['describe', '--abbrev=0', '--tags']);

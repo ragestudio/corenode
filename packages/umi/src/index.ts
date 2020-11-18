@@ -21,8 +21,8 @@ export {
   Plugin,
   ApplyPluginsType,
   dynamic,
-} from '@umijs/runtime';
-export type { MemoryHistory } from '@umijs/runtime';
+} from '@nodecorejs/runtime';
+export type { MemoryHistory } from '@nodecorejs/runtime';
 
 // @ts-ignore
 export * from '@@/core/coreExports';

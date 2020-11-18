@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import { dirname } from 'path';
 
 export default (api: IApi) => {
@@ -13,7 +13,7 @@ export default (api: IApi) => {
   });
 
   api.modifyRendererPath(() => {
-    return dirname(require.resolve('@umijs/renderer-mpa/package.json'));
+    return dirname(require.resolve('@nodecorejs/renderer-mpa/package.json'));
   });
 
   api.modifyDefaultConfig((memo) => {

@@ -1,5 +1,5 @@
-import { IApi } from '@umijs/types';
-import { yParser } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { yParser } from '@nodecorejs/utils';
 import DevCompileDonePlugin from './DevCompileDonePlugin';
 
 const args = yParser(process.argv.slice(2));

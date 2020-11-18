@@ -1,4 +1,4 @@
-import { t, parser } from '@umijs/utils';
+import { t, parser } from '@nodecorejs/utils';
 
 export function parse(code: string): t.File {
   return parser.parse(code, {

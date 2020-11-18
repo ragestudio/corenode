@@ -1,1 +1,1 @@
-# @umijs/bundler-utils
+# @nodecorejs/bundler-utils

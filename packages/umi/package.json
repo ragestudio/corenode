@@ -1,6 +1,6 @@
 {
-  "name": "nodecore",
-  "version": "0.1.0",
+  "name": "nodecorejs",
+  "version": "0.1.1",
   "main": "index.js",
   "types": "types.d.ts",
   "files": [
@@ -16,11 +16,11 @@
   },
   "dependencies": {
     "@babel/core": "7.12.3",
-    "@umijs/core": "3.2.27",
-    "@umijs/preset-built-in": "3.2.27",
-    "@umijs/runtime": "3.2.27",
-    "@umijs/types": "3.2.27",
-    "@umijs/utils": "3.2.27",
+    "@nodecorejs/core": "0.1.1",
+    "@nodecorejs/preset-built-in": "0.1.1",
+    "@nodecorejs/runtime": "0.1.1",
+    "@nodecorejs/types": "0.1.1",
+    "@nodecorejs/utils": "^0.1.1",
     "react": "^16.13.1",
     "resolve-cwd": "3.0.0"
   },

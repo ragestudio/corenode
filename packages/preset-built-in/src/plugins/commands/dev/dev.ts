@@ -1,6 +1,6 @@
-import { IApi, BundlerConfigType } from '@umijs/types';
-import { IServerOpts, Server } from '@umijs/server';
-import { delay } from '@umijs/utils';
+import { IApi, BundlerConfigType } from '@nodecorejs/types';
+import { IServerOpts, Server } from '@nodecorejs/server';
+import { delay } from '@nodecorejs/utils';
 import assert from 'assert';
 import { cleanTmpPathExceptCache, getBundleAndConfigs } from '../buildDevUtils';
 import createRouteMiddleware from './createRouteMiddleware';

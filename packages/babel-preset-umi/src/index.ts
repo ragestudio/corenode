@@ -1,5 +1,5 @@
 // @ts-ignore
-import { mergeConfig } from '@umijs/utils';
+import { mergeConfig } from '@nodecorejs/utils';
 import { dirname } from 'path';
 
 interface IImportPluginOpts {
@@ -130,7 +130,7 @@ export default (context: any, opts: IOpts = {}) => {
         require.resolve('babel-plugin-dynamic-import-node'),
       ],
       opts.autoCSSModules && [
-        require.resolve('@umijs/babel-plugin-auto-css-modules'),
+        require.resolve('@nodecorejs/babel-plugin-auto-css-modules'),
       ],
       opts.svgr && [
         require.resolve('babel-plugin-named-asset-import'),
@@ -154,11 +154,11 @@ export default (context: any, opts: IOpts = {}) => {
           })
         : []),
       opts.importToAwaitRequire && [
-        require.resolve('@umijs/babel-plugin-import-to-await-require'),
+        require.resolve('@nodecorejs/babel-plugin-import-to-await-require'),
         opts.importToAwaitRequire,
       ],
       opts.lockCoreJS3 && [
-        require.resolve('@umijs/babel-plugin-lock-core-js-3'),
+        require.resolve('@nodecorejs/babel-plugin-lock-core-js-3'),
         opts.lockCoreJS3,
       ],
     ].filter(Boolean),

@@ -3,19 +3,19 @@ import {
   IBundlerConfigType,
   BundlerConfigType,
   ICopy,
-} from '@umijs/types';
+} from '@nodecorejs/types';
 import defaultWebpack from 'webpack';
 import Config from 'webpack-chain';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { deepmerge } from '@umijs/utils';
+import { deepmerge } from '@nodecorejs/utils';
 import {
   getBabelDepsOpts,
   getBabelOpts,
   getBabelPresetOpts,
   getTargetsAndBrowsersList,
-} from '@umijs/bundler-utils';
-import { lodash } from '@umijs/utils';
+} from '@nodecorejs/bundler-utils';
+import { lodash } from '@nodecorejs/utils';
 import css, { createCSSRule } from './css';
 import terserOptions from './terserOptions';
 import {
@@ -180,7 +180,7 @@ export default async function getConfig(
       .include.add([
         cwd,
         // import module out of cwd using APP_ROOT
-        // issue: https://github.com/umijs/umi/issues/5594
+        // issue: https://github.com/nodecorejs/umi/issues/5594
         ...(process.env.APP_ROOT ? [process.cwd()] : [])
       ]).end()
       .exclude.add(/node_modules/).end()
@@ -189,7 +189,7 @@ export default async function getConfig(
         .options(babelOpts);
 
   // umi/dist/index.esm.js 走 babel 编译
-  // why? 极速模式下不打包 @umijs/runtime
+  // why? 极速模式下不打包 @nodecorejs/runtime
   if (process.env.UMI_DIR) {
     // prettier-ignore
     webpackConfig.module

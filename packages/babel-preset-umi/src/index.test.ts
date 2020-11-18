@@ -1,4 +1,4 @@
-import { deepmerge, winPath } from '@umijs/utils';
+import { deepmerge, winPath } from '@nodecorejs/utils';
 import { join } from 'path';
 import { transform } from '@babel/core';
 import { IOpts } from './index';

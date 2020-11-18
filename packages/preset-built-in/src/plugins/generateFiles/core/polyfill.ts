@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 
 export default (api: IApi) => {
   api.describe({

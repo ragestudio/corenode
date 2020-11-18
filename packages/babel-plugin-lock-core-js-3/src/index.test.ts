@@ -1,4 +1,4 @@
-import { winPath } from '@umijs/utils';
+import { winPath } from '@nodecorejs/utils';
 import { transform } from '@babel/core';
 
 function transformWithPlugin(code: string) {

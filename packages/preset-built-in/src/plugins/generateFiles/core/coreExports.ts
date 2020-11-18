@@ -1,5 +1,5 @@
-import { IApi } from '@umijs/types';
-import { lodash, winPath } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { lodash, winPath } from '@nodecorejs/utils';
 import assert from 'assert';
 
 const reserveLibrarys = ['umi']; // reserve library

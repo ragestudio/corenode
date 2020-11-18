@@ -1,5 +1,5 @@
 import assert from 'assert';
-import * as utils from '@umijs/utils';
+import * as utils from '@nodecorejs/utils';
 import Logger from '../Logger/Logger';
 import Service from './Service';
 import { isValidPlugin, pathToObj } from './utils/pluginUtils';

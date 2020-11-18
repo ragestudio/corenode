@@ -1,5 +1,5 @@
-import { generateTmp } from '@umijs/test-utils';
-import { Service } from '@umijs/core';
+import { generateTmp } from '@nodecorejs/test-utils';
+import { Service } from '@nodecorejs/core';
 import { join } from 'path';
 import { readFileSync } from 'fs';
 

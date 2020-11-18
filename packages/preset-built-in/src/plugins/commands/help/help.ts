@@ -1,5 +1,5 @@
-import { IApi } from '@umijs/types';
-import { chalk, lodash } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { chalk, lodash } from '@nodecorejs/utils';
 import assert from 'assert';
 
 function getDescriptions(commands: any) {
@@ -52,7 +52,7 @@ ${getDescriptions(api.service.commands).join('\n')}
   Run \`${chalk.bold(
     'umi help <command>',
   )}\` for more information of specific commands.
-  Visit ${chalk.bold('https://umijs.org/')} to learn more about Umi.
+  Visit ${chalk.bold('https://nodecorejs.org/')} to learn more about Umi.
       `);
       }
     },

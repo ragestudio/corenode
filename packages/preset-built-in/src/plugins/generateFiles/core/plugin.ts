@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { IApi } from '@umijs/types';
-import { getFile, winPath } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { getFile, winPath } from '@nodecorejs/utils';
 import { runtimePath } from '../constants';
 
 export default function (api: IApi) {

@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import assert from 'assert';
 import { EOL } from 'os';
 import { dirname, join } from 'path';

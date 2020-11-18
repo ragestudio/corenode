@@ -1,4 +1,4 @@
-import { createDebug, Debugger } from '@umijs/utils';
+import { createDebug, Debugger } from '@nodecorejs/utils';
 
 interface ILogErrorOpts {
   detailsOnly?: boolean;

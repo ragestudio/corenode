@@ -23,7 +23,7 @@ export default class BabelRegister {
         .map(winPath),
     );
     require('@babel/register')({
-      presets: [require.resolve('@umijs/babel-preset-umi/node')],
+      presets: [require.resolve('@nodecorejs/babel-preset-umi/node')],
       ignore: [/node_modules/],
       only,
       extensions: ['.jsx', '.js', '.ts', '.tsx'],

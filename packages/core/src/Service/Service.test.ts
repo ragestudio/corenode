@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { winPath } from '@umijs/utils';
+import { winPath } from '@nodecorejs/utils';
 import Service from './Service';
 import { ApplyPluginsType } from './enums';
 
@@ -52,10 +52,10 @@ test('normal', async () => {
     '[preset] ./preset_1/index',
     '[preset] ./preset_1/preset_1/index',
     '[preset] ./preset_2/index',
-    '[preset] @umijs/preset-2',
+    '[preset] @nodecorejs/preset-2',
     '[preset] umi-preset-2',
     '[preset] @alipay/umi-preset-bigfish',
-    '[preset] @umijs/preset-1',
+    '[preset] @nodecorejs/preset-1',
     '[preset] umi-preset-1',
     '[plugin] ./preset_1/preset_1/plugin_1',
     '[plugin] ./preset_1/plugin_1',
@@ -63,9 +63,9 @@ test('normal', async () => {
     '[plugin] ./preset_2/plugin_1',
     '[plugin] ./plugin_1',
     '[plugin] ./plugin_2',
-    '[plugin] @umijs/plugin-2',
+    '[plugin] @nodecorejs/plugin-2',
     '[plugin] umi-plugin-2',
-    '[plugin] @umijs/plugin-1',
+    '[plugin] @nodecorejs/plugin-1',
     '[plugin] umi-plugin-1',
   ]);
 

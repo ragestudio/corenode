@@ -1,4 +1,4 @@
-import { deepmerge, lodash } from '@umijs/utils';
+import { deepmerge, lodash } from '@nodecorejs/utils';
 
 interface IOpts {
   defaultConfig: any;

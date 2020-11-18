@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { existsSync, statSync } from 'fs';
-import { lodash, winPath } from '@umijs/utils';
+import { lodash, winPath } from '@nodecorejs/utils';
 import { IServicePaths } from './types';
 
 function isDirectoryAndExist(path: string) {

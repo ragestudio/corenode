@@ -1,4 +1,4 @@
-import { ArgsType } from '@umijs/utils';
+import { ArgsType } from '@nodecorejs/utils';
 import { runCLI } from 'jest';
 import { options as CliOptions } from 'jest-cli/build/cli/args';
 

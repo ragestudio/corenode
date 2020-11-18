@@ -1,5 +1,5 @@
 import React from 'react';
-import { __RouterContext as RouterContext, matchPath } from '@umijs/runtime';
+import { __RouterContext as RouterContext, matchPath } from '@nodecorejs/runtime';
 
 export default function Switch(props: any) {
   return (

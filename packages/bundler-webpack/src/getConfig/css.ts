@@ -1,8 +1,8 @@
 import Config from 'webpack-chain';
-import { IConfig, IBundlerConfigType, BundlerConfigType } from '@umijs/types';
+import { IConfig, IBundlerConfigType, BundlerConfigType } from '@nodecorejs/types';
 // @ts-ignore
 import safePostCssParser from 'postcss-safe-parser';
-import { deepmerge } from '@umijs/utils';
+import { deepmerge } from '@nodecorejs/utils';
 
 interface IOpts {
   type: IBundlerConfigType;

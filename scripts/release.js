@@ -1,4 +1,4 @@
-const { yParser, execa, chalk } = require('@umijs/utils');
+const { yParser, execa, chalk } = require('@nodecorejs/utils');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
 const newGithubReleaseUrl = require('new-github-release-url');
@@ -100,7 +100,7 @@ async function release() {
     logStep('sync version to root package.json');
     const rootPkg = require('../package');
     Object.keys(rootPkg.devDependencies).forEach((name) => {
-      if (name.startsWith('@umijs/') && !name.startsWith('@umijs/p')) {
+      if (name.startsWith('@nodecorejs/') && !name.startsWith('@nodecorejs/p')) {
         rootPkg.devDependencies[name] = currVersion;
       }
     });
@@ -156,7 +156,7 @@ async function release() {
   const changelog = releaseNotes(tag);
   console.log(changelog);
   const url = newGithubReleaseUrl({
-    repoUrl: 'https://github.com/umijs/umi',
+    repoUrl: 'https://github.com/srgooglo/nodecorejs',
     tag,
     body: changelog,
     isPrerelease: isNext,

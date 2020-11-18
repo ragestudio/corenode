@@ -1,6 +1,6 @@
 const { existsSync, writeFileSync, readdirSync } = require('fs');
 const { join } = require('path');
-const { yParser } = require('@umijs/utils');
+const { yParser } = require('@nodecorejs/utils');
 const getPackages = require('./utils/getPackages');
 
 (async () => {
@@ -10,7 +10,7 @@ const getPackages = require('./utils/getPackages');
   const pkgs = getPackages();
 
   pkgs.forEach((shortName) => {
-    const name = shortName === 'nodecore' ? shortName : `@nodecore/${shortName}`;
+    const name = shortName === 'nodecorejs' ? shortName : `@nodecorejs/${shortName}`;
 
     const pkgJSONPath = join(
       __dirname,
@@ -29,7 +29,7 @@ const getPackages = require('./utils/getPackages');
         files: ['lib', 'src'],
         repository: {
           type: 'git',
-          url: 'https://github.com/srgooglo/nodecore',
+          url: 'https://github.com/srgooglo/nodecorejs',
         },
         keywords: ['umi'],
         license: 'MIT',

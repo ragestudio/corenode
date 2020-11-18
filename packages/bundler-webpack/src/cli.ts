@@ -1,4 +1,4 @@
-import { BundlerConfigType } from '@umijs/types';
+import { BundlerConfigType } from '@nodecorejs/types';
 import {
   BabelRegister,
   chalk,
@@ -7,9 +7,9 @@ import {
   portfinder,
   rimraf,
   yParser,
-} from '@umijs/utils';
+} from '@nodecorejs/utils';
 import { basename, extname, join } from 'path';
-import { Server } from '@umijs/server';
+import { Server } from '@nodecorejs/server';
 import assert from 'assert';
 import { existsSync } from 'fs';
 import { Bundler } from './index';

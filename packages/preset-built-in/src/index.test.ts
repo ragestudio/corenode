@@ -1,10 +1,10 @@
-import { Service } from '@umijs/core';
+import { Service } from '@nodecorejs/core';
 import { Stream } from 'stream';
 import { join } from 'path';
 import { EOL } from 'os';
 import cheerio from 'cheerio';
 import { render, cleanup } from '@testing-library/react';
-import { rimraf } from '@umijs/utils';
+import { rimraf } from '@nodecorejs/utils';
 import { readFileSync, existsSync } from 'fs';
 
 const fixtures = join(__dirname, 'fixtures');

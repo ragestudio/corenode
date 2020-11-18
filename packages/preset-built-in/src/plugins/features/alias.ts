@@ -1,6 +1,6 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import { dirname } from 'path';
-import { winPath, resolve } from '@umijs/utils';
+import { winPath, resolve } from '@nodecorejs/utils';
 
 export default (api: IApi) => {
   const { paths, pkg, cwd } = api;

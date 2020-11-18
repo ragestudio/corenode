@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { yParser, chalk, createDebug } = require('@umijs/utils');
+const { yParser, chalk, createDebug } = require('@nodecorejs/utils');
 
 const args = yParser(process.argv.slice(2), {
   alias: {

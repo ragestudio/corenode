@@ -1,4 +1,4 @@
-import { IConfig } from '@umijs/types';
+import { IConfig } from '@nodecorejs/types';
 // @ts-ignore
 import { IConfigFromPlugins } from '@@/core/pluginConfig';
 

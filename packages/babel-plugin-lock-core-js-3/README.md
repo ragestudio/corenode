@@ -1,1 +1,1 @@
-# @umijs/babel-plugin-lock-core-js-3
+# @nodecorejs/babel-plugin-lock-core-js-3

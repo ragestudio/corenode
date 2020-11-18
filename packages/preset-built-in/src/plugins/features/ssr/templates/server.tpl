@@ -3,7 +3,7 @@ import '{{{ RuntimePolyfill }}}';
 import { format } from 'url';
 import renderServer from '{{{ Renderer }}}';
 import { stripBasename, cheerio, handleHTML } from '{{{ Utils }}}';
-import { IServerRender } from '@umijs/types';
+import { IServerRender } from '@nodecorejs/types';
 
 import { ApplyPluginsType, createMemoryHistory{{ #DynamicImport }}, dynamic{{ /DynamicImport }} } from '{{{ RuntimePath }}}';
 {{ #loadingComponent }}

@@ -1,5 +1,5 @@
-import { IApi } from '@umijs/types';
-import { Generator } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { Generator } from '@nodecorejs/utils';
 import generateFiles from '../../generateFiles';
 
 export default ({ api }: { api: IApi }) => {

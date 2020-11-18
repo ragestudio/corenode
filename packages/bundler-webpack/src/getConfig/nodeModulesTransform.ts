@@ -1,4 +1,4 @@
-import { pkgUp, semver } from '@umijs/utils';
+import { pkgUp, semver } from '@nodecorejs/utils';
 import { dirname } from 'path';
 
 const pkgPathCache = {};
@@ -22,7 +22,7 @@ interface IPkgs {
 }
 
 // 参考：
-// https://github.com/umijs/umi/blob/2.x/packages/af-webpack/src/getWebpackConfig/es5ImcompatibleVersions.js
+// https://github.com/nodecorejs/umi/blob/2.x/packages/af-webpack/src/getWebpackConfig/es5ImcompatibleVersions.js
 export function isMatch(opts: { path: string; pkgs: IPkgs }) {
   const pkgPath = getPkgPath(opts);
 

@@ -19,7 +19,7 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
-    "@umijs/preset-react": "^1.5.17",
+    "@nodecorejs/preset-react": "^1.5.17",
     "cross-env": "^5.2.0",
     "egg": "^2.12.0",
     "egg-scripts": "^2.10.0",

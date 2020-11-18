@@ -8,7 +8,7 @@ import {
   winPath,
   pkgUp,
   lodash,
-} from '@umijs/utils';
+} from '@nodecorejs/utils';
 import { PluginType } from '../enums';
 import { IPackage, IPlugin } from '../types';
 
@@ -30,8 +30,8 @@ interface IResolvePluginsOpts extends IOpts {
 }
 
 const RE = {
-  [PluginType.plugin]: /^(@umijs\/|umi-)plugin-/,
-  [PluginType.preset]: /^(@umijs\/|umi-)preset-/,
+  [PluginType.plugin]: /^(@nodecorejs\/|umi-)plugin-/,
+  [PluginType.preset]: /^(@nodecorejs\/|umi-)preset-/,
 };
 
 export function isPluginOrPreset(type: PluginType, name: string) {
@@ -79,8 +79,8 @@ function nameToKey(name: string) {
 }
 
 function pkgNameToKey(pkgName: string, type: PluginType) {
-  // strip none @umijs scope
-  if (pkgName.charAt(0) === '@' && !pkgName.startsWith('@umijs/')) {
+  // strip none @nodecorejs scope
+  if (pkgName.charAt(0) === '@' && !pkgName.startsWith('@nodecorejs/')) {
     pkgName = pkgName.split('/')[1];
   }
   return nameToKey(pkgName.replace(RE[type], ''));
@@ -118,7 +118,7 @@ export function pathToObj({
   } else {
     id = winPath(path);
   }
-  id = id.replace('@umijs/preset-built-in/lib/plugins', '@@');
+  id = id.replace('@nodecorejs/preset-built-in/lib/plugins', '@@');
   id = id.replace(/\.js$/, '');
 
   const key = isPkgPlugin

@@ -1,18 +1,7 @@
 {
-  "version": "3.2.27",
+  "version": "0.1.1",
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "changelog": {
-    "repo": "umijs/umi-next",
-    "labels": {
-      "pr(enhancement)": ":rocket: Enhancement",
-      "pr(bug)": ":bug: Bug Fix",
-      "pr(documentation)": ":book: Documentation",
-      "pr(dependency)": ":deciduous_tree: Dependency",
-      "pr(chore)": ":turtle: Chore"
-    },
-    "cacheDir": ".changelog"
-  },
   "ignoreChanges": [
     "**/*.md",
     "**/*.test.ts",

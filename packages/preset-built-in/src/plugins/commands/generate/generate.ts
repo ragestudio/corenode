@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import createPageGenerator from './PageGenerator/createPageGenerator';
 import createTmpGenerator from './TmpGenerator/createTmpGenerator';
 import createHTMLGenerator from './HTMLGenerator/createHTMLGenerator';

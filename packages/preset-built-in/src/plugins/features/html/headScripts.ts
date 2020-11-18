@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import { getScripts } from './utils';
 
 export default function (api: IApi) {

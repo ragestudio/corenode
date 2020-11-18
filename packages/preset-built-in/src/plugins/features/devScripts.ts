@@ -1,4 +1,4 @@
-import { IApi } from '@umijs/types';
+import { IApi } from '@nodecorejs/types';
 import { readFileSync } from 'fs';
 
 export default (api: IApi) => {
@@ -26,7 +26,7 @@ export default (api: IApi) => {
                 ? [
                     readFileSync(
                       require.resolve(
-                        '@umijs/bundler-webpack/bundled/webpackHotDevClient',
+                        '@nodecorejs/bundler-webpack/bundled/webpackHotDevClient',
                       ),
                       'utf-8',
                     ),

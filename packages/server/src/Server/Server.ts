@@ -1,6 +1,6 @@
 // @ts-ignore
-import { Logger } from '@umijs/core';
-import { lodash, portfinder, PartialProps, createDebug } from '@umijs/utils';
+import { Logger } from '@nodecorejs/core';
+import { lodash, portfinder, PartialProps, createDebug } from '@nodecorejs/utils';
 import express, { Express, RequestHandler } from 'express';
 import {
   createProxyMiddleware,
@@ -16,7 +16,7 @@ import compress, { CompressionOptions } from 'compression';
 import sockjs, { Connection, Server as SocketServer } from 'sockjs';
 import { getCredentials } from './utils';
 
-const logger = new Logger('@umijs/server');
+const logger = new Logger('@nodecorejs/server');
 const debug = createDebug('umi:server:Server');
 
 interface IServerProxyConfigItem extends ProxyOptions {

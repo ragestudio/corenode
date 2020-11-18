@@ -7,16 +7,16 @@ import {
   IScriptConfig,
   IHTMLTag,
   Service,
-} from '@umijs/core';
+} from '@nodecorejs/core';
 import { Stream } from 'stream';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import { Server, IServerOpts } from '@umijs/server';
-import { Generator } from '@umijs/utils';
-import { IOpts as IBabelPresetUmiOpts } from '@umijs/babel-preset-umi';
+import { Server, IServerOpts } from '@nodecorejs/server';
+import { Generator } from '@nodecorejs/utils';
+import { IOpts as IBabelPresetUmiOpts } from '@nodecorejs/babel-preset-umi';
 import {
   IRouteComponentProps,
   IRoute as IRouteProps,
-} from '@umijs/renderer-react';
+} from '@nodecorejs/renderer-react';
 import webpack from 'webpack';
 import WebpackChain from 'webpack-chain';
 import { Express, NextFunction, RequestHandler } from 'express';

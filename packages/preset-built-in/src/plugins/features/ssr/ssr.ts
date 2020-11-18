@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import assert from 'assert';
 import * as path from 'path';
 import { performance } from 'perf_hooks';
-import { Route } from '@umijs/core';
-import { IApi, BundlerConfigType } from '@umijs/types';
-import { winPath, Mustache, lodash as _, routeToChunkName } from '@umijs/utils';
+import { Route } from '@nodecorejs/core';
+import { IApi, BundlerConfigType } from '@nodecorejs/types';
+import { winPath, Mustache, lodash as _, routeToChunkName } from '@nodecorejs/utils';
 import { matchRoutes, RouteConfig } from 'react-router-config';
-import { webpack } from '@umijs/bundler-webpack';
+import { webpack } from '@nodecorejs/bundler-webpack';
 import { getHtmlGenerator } from '../../commands/htmlUtils';
 import {
   CHUNK_NAME,
@@ -97,7 +97,7 @@ export default (api: IApi) => {
         'The manifest file will be generated if enabling `dynamicImport` in ssr.',
       );
     }
-    // ref: https://github.com/umijs/umi/issues/5501
+    // ref: https://github.com/nodecorejs/umi/issues/5501
     if (!process.env.WATCH_IGNORED) {
       const { outputPath } = api.config;
       const absOutputPath = winPath(
@@ -133,7 +133,7 @@ export default (api: IApi) => {
           cwd: api.cwd,
         }),
         RuntimePath: winPath(
-          path.dirname(require.resolve('@umijs/runtime/package.json')),
+          path.dirname(require.resolve('@nodecorejs/runtime/package.json')),
         ),
         Renderer: winPath(
           require.resolve('./templates/renderServer/renderServer'),
@@ -166,7 +166,7 @@ export default (api: IApi) => {
     api.writeTmpFile({
       path: `${TMP_PLUGIN_DIR}/${CLIENT_EXPORTS}.ts`,
       content: Mustache.render(clientExportsContent, {
-        SSRUtils: winPath(require.resolve('@umijs/utils/lib/ssr')),
+        SSRUtils: winPath(require.resolve('@nodecorejs/utils/lib/ssr')),
       }),
     });
   });

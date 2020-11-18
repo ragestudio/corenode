@@ -1,4 +1,4 @@
-import { IConfig } from '@umijs/types';
+import { IConfig } from '@nodecorejs/types';
 
 export default {
   history: { type: 'memory' },

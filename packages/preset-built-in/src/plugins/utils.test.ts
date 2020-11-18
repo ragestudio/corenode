@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { join } from 'path';
-import { winPath } from '@umijs/utils';
+import { winPath } from '@nodecorejs/utils';
 import { getGlobalFile, isDynamicRoute, isTSFile } from './utils';
 
 test('getGlobalFile', () => {

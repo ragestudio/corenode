@@ -1,5 +1,5 @@
-import { IConfig } from '@umijs/types';
-import { winPath } from '@umijs/utils';
+import { IConfig } from '@nodecorejs/types';
+import { winPath } from '@nodecorejs/utils';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
@@ -51,7 +51,7 @@ export function getBabelOpts({
   return {
     ...getBasicBabelLoaderOpts({ cwd }),
     presets: [
-      [require.resolve('@umijs/babel-preset-umi/app'), presetOpts],
+      [require.resolve('@nodecorejs/babel-preset-umi/app'), presetOpts],
       ...(config.extraBabelPresets || []),
     ],
     plugins: [...(config.extraBabelPlugins || [])].filter(Boolean),
@@ -71,7 +71,7 @@ export function getBabelDepsOpts({
     ...getBasicBabelLoaderOpts({ cwd }),
     presets: [
       [
-        require.resolve('@umijs/babel-preset-umi/dependency'),
+        require.resolve('@nodecorejs/babel-preset-umi/dependency'),
         {
           nodeEnv: env,
           dynamicImportNode: !config.dynamicImport,

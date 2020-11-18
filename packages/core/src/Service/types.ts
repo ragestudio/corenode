@@ -1,5 +1,5 @@
 import joi from '@hapi/joi';
-import { yargs } from '@umijs/utils';
+import { yargs } from '@nodecorejs/utils';
 import { EnableBy } from './enums';
 
 export type IServicePathKeys =

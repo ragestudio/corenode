@@ -1,7 +1,7 @@
 {
-  "name": "@umijs/renderer-react",
-  "version": "3.2.27",
-  "description": "@umijs/renderer-react",
+  "name": "@nodecorejs/renderer-react",
+  "version": "0.1.1",
+  "description": "@nodecorejs/renderer-react",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/umijs/umi"
+    "url": "https://github.com/nodecorejs/umi"
   },
   "keywords": [
     "umi"
@@ -19,8 +19,8 @@
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
   ],
   "license": "MIT",
-  "bugs": "http://github.com/umijs/umi/issues",
-  "homepage": "https://github.com/umijs/umi/tree/master/packages/renderer-react#readme",
+  "bugs": "http://github.com/nodecorejs/umi/issues",
+  "homepage": "https://github.com/nodecorejs/umi/tree/master/packages/renderer-react#readme",
   "publishConfig": {
     "access": "public"
   },
@@ -28,7 +28,7 @@
     "@types/react": "^16.9.43",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-config": "^5.0.1",
-    "@umijs/runtime": "3.2.27",
+    "@nodecorejs/runtime": "0.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-config": "5.1.1"

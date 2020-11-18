@@ -1,4 +1,4 @@
-import { delay } from '@umijs/utils';
+import { delay } from '@nodecorejs/utils';
 
 export default {
   async chainWebpack(webpackConfig: any) {

@@ -117,7 +117,7 @@
   /******/ {
     /***/ '/4mQ':
       /*!********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/websocket.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/websocket.js ***!
   \********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -227,7 +227,7 @@
 
     /***/ '/ZST':
       /*!**************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/requires-port/index.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/requires-port/index.js ***!
   \**************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -277,7 +277,7 @@
 
     /***/ '/bpo':
       /*!************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/event/close.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/event/close.js ***!
   \************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -319,7 +319,7 @@
 
     /***/ '01Zg':
       /*!**********************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/url-parse/index.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/url-parse/index.js ***!
   \**********************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -802,7 +802,7 @@
 
     /***/ '0HJ4':
       /*!*************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/lib/ajax-based.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/lib/ajax-based.js ***!
   \*************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -867,7 +867,7 @@
 
     /***/ '4WVH':
       /*!******************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/event/eventtarget.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/event/eventtarget.js ***!
   \******************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -950,7 +950,7 @@
 
     /***/ '4zOr':
       /*!*********************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/location.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/location.js ***!
   \*********************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -978,7 +978,7 @@
 
     /***/ '56u7':
       /*!****************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/receiver/htmlfile.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/receiver/htmlfile.js ***!
   \****************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -1088,7 +1088,7 @@
 
     /***/ '5Fgh':
       /*!*********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/info-iframe-receiver.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/info-iframe-receiver.js ***!
   \*********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -1133,7 +1133,7 @@
 
     /***/ '6/Oc':
       /*!*************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/random.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/random.js ***!
   \*************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -1174,7 +1174,7 @@
 
     /***/ '7ZNq':
       /*!**************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/event/emitter.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/event/emitter.js ***!
   \**************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -1243,7 +1243,7 @@
 
     /***/ B9mN:
       /*!*************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/node-libs-browser/mock/process.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/node-libs-browser/mock/process.js ***!
   \*************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -1288,7 +1288,7 @@
 
     /***/ BRW5:
       /*!******************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/entry.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/entry.js ***!
   \******************************************************************************************/
       /*! no static exports found */
       /*! exports used: default */
@@ -1320,7 +1320,7 @@
 
     /***/ DdFD:
       /*!**********************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/log.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/log.js ***!
   \**********************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -1365,7 +1365,7 @@
 
     /***/ EfWO:
       /*!**************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/url/url.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/url/url.js ***!
   \**************************************************************************/
       /*! no static exports found */
       /*! exports used: default */
@@ -2137,7 +2137,7 @@
 
     /***/ F4Ei:
       /*!*************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/receiver/jsonp.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/receiver/jsonp.js ***!
   \*************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -2358,7 +2358,7 @@
 
     /***/ 'G/uq':
       /*!************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/xdr-streaming.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/xdr-streaming.js ***!
   \************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -2408,7 +2408,7 @@
 
     /***/ HWmT:
       /*!**************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/sender/xhr-cors.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/sender/xhr-cors.js ***!
   \**************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -2433,7 +2433,7 @@
 
     /***/ 'K/id':
       /*!**********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/eventsource.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/eventsource.js ***!
   \**********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -2480,7 +2480,7 @@
 
     /***/ KyBg:
       /*!**********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/lib/polling.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/lib/polling.js ***!
   \**********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -2549,7 +2549,7 @@
 
     /***/ MR5Q:
       /*!************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/event.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/event.js ***!
   \************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -2645,24 +2645,24 @@
   \********************************************************************/
       /*! no exports provided */
       /*! all exports used */
-      /*! ModuleConcatenation bailout: Cannot concat with /Users/chencheng/Code/github.com/umijs/umi/node_modules/react-error-overlay/lib/index.js (<- Module is not an ECMAScript module) */
-      /*! ModuleConcatenation bailout: Cannot concat with /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/entry.js (<- Module is not an ECMAScript module) */
-      /*! ModuleConcatenation bailout: Cannot concat with /Users/chencheng/Code/github.com/umijs/umi/node_modules/url/url.js (<- Module is not an ECMAScript module) */
+      /*! ModuleConcatenation bailout: Cannot concat with /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/react-error-overlay/lib/index.js (<- Module is not an ECMAScript module) */
+      /*! ModuleConcatenation bailout: Cannot concat with /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/entry.js (<- Module is not an ECMAScript module) */
+      /*! ModuleConcatenation bailout: Cannot concat with /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/url/url.js (<- Module is not an ECMAScript module) */
       /*! ModuleConcatenation bailout: Cannot concat with ./node_modules/strip-ansi/index.js (<- Module is not an ECMAScript module) */
       /***/ function (module, __webpack_exports__, __webpack_require__) {
         'use strict';
         // ESM COMPAT FLAG
         __webpack_require__.r(__webpack_exports__);
 
-        // EXTERNAL MODULE: /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/entry.js
+        // EXTERNAL MODULE: /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/entry.js
         var entry = __webpack_require__('BRW5');
         var entry_default = /*#__PURE__*/ __webpack_require__.n(entry);
 
-        // EXTERNAL MODULE: /Users/chencheng/Code/github.com/umijs/umi/node_modules/url/url.js
+        // EXTERNAL MODULE: /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/url/url.js
         var url = __webpack_require__('EfWO');
         var url_default = /*#__PURE__*/ __webpack_require__.n(url);
 
-        // EXTERNAL MODULE: /Users/chencheng/Code/github.com/umijs/umi/node_modules/react-error-overlay/lib/index.js
+        // EXTERNAL MODULE: /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/react-error-overlay/lib/index.js
         var lib = __webpack_require__('PJ1o');
 
         // EXTERNAL MODULE: ./node_modules/strip-ansi/index.js
@@ -3066,7 +3066,7 @@
 
     /***/ 'Ng+W':
       /*!***********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/receiver/xhr.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/receiver/xhr.js ***!
   \***********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -3145,7 +3145,7 @@
 
     /***/ Nhts:
       /*!******************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/shims.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/shims.js ***!
   \******************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -3657,7 +3657,7 @@
 
     /***/ PJ1o:
       /*!************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/react-error-overlay/lib/index.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/react-error-overlay/lib/index.js ***!
   \************************************************************************************************/
       /*! no static exports found */
       /*! exports used: dismissBuildError, reportBuildError, startReportingRuntimeErrors */
@@ -6747,7 +6747,7 @@
 
     /***/ Q8t3:
       /*!******************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/lib/buffered-sender.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/lib/buffered-sender.js ***!
   \******************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -6843,7 +6843,7 @@
 
     /***/ QDjb:
       /*!***************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport-list.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport-list.js ***!
   \***************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -6879,7 +6879,7 @@
 
     /***/ QnYj:
       /*!*****************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/main.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/main.js ***!
   \*****************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7355,7 +7355,7 @@
 
     /***/ RODr:
       /*!********************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/version.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/version.js ***!
   \********************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7368,7 +7368,7 @@
 
     /***/ RV4G:
       /*!************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/xhr-streaming.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/xhr-streaming.js ***!
   \************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7439,7 +7439,7 @@
 
     /***/ ReUS:
       /*!*************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/escape.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/escape.js ***!
   \*************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7502,7 +7502,7 @@
 
     /***/ TvDy:
       /*!****************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/transport.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/transport.js ***!
   \****************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7568,7 +7568,7 @@
 
     /***/ WhmW:
       /*!****************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/browser/websocket.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/browser/websocket.js ***!
   \****************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7598,7 +7598,7 @@
 
     /***/ XMJ0:
       /*!*******************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/receiver/eventsource.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/receiver/eventsource.js ***!
   \*******************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7670,7 +7670,7 @@
 
     /***/ YAuw:
       /*!************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/info-iframe.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/info-iframe.js ***!
   \************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7764,7 +7764,7 @@
 
     /***/ YCV4:
       /*!***************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/querystringify/index.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/querystringify/index.js ***!
   \***************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7897,7 +7897,7 @@
 
     /***/ ZQWX:
       /*!**************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/sender/xhr-fake.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/sender/xhr-fake.js ***!
   \**************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -7966,7 +7966,7 @@
 
     /***/ burc:
       /*!********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/event/trans-message.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/event/trans-message.js ***!
   \********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -8009,7 +8009,7 @@
 
     /***/ eCk1:
       /*!*******************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/facade.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/facade.js ***!
   \*******************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -8046,7 +8046,7 @@
 
     /***/ enUK:
       /*!**********************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/json3/lib/json3.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/json3/lib/json3.js ***!
   \**********************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9327,7 +9327,7 @@
 
     /***/ fwyQ:
       /*!*************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/iframe.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/iframe.js ***!
   \*************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9542,7 +9542,7 @@
 
     /***/ hTJ1:
       /*!*******************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/htmlfile.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/htmlfile.js ***!
   \*******************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9589,7 +9589,7 @@
 
     /***/ hnW3:
       /*!**********************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/info-ajax.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/info-ajax.js ***!
   \**********************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9666,7 +9666,7 @@
 
     /***/ k5s6:
       /*!*****************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/iframe-bootstrap.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/iframe-bootstrap.js ***!
   \*****************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9798,7 +9798,7 @@
 
     /***/ kABF:
       /*!***********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/sender/jsonp.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/sender/jsonp.js ***!
   \***********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9919,7 +9919,7 @@
 
     /***/ mM4f:
       /*!*********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/browser-crypto.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/browser-crypto.js ***!
   \*********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -9956,7 +9956,7 @@
 
     /***/ mp2Y:
       /*!************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/jsonp-polling.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/jsonp-polling.js ***!
   \************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -10038,7 +10038,7 @@
 
     /***/ nw7E:
       /*!**************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/browser.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/browser.js ***!
   \**************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -10088,7 +10088,7 @@
 
     /***/ nxOW:
       /*!*********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/sender/xdr.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/sender/xdr.js ***!
   \*********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -10209,7 +10209,7 @@
 
     /***/ oNVP:
       /*!****************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/path-browserify/index.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/path-browserify/index.js ***!
   \****************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -10550,7 +10550,7 @@
 
     /***/ pn9d:
       /*!**************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/info-receiver.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/info-receiver.js ***!
   \**************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -10654,7 +10654,7 @@
 
     /***/ prCu:
       /*!****************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/querystring-es3/index.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/querystring-es3/index.js ***!
   \****************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -10674,7 +10674,7 @@
 
     /***/ 'q3/s':
       /*!*******************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/node-libs-browser/node_modules/punycode/punycode.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/node-libs-browser/node_modules/punycode/punycode.js ***!
   \*******************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11224,7 +11224,7 @@
 
     /***/ qW1w:
       /*!********************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/inherits/inherits_browser.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/inherits/inherits_browser.js ***!
   \********************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11263,7 +11263,7 @@
 
     /***/ 'r/K9':
       /*!*****************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/querystring-es3/decode.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/querystring-es3/decode.js ***!
   \*****************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11363,7 +11363,7 @@
 
     /***/ r4pD:
       /*!***************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/sender/xhr-local.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/sender/xhr-local.js ***!
   \***************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11390,7 +11390,7 @@
 
     /***/ rCFf:
       /*!**********************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/url.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/url.js ***!
   \**********************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11448,7 +11448,7 @@
 
     /***/ rt9q:
       /*!******************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/lib/sender-receiver.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/lib/sender-receiver.js ***!
   \******************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11508,7 +11508,7 @@
 
     /***/ 's+nu':
       /*!***************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/url/util.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/url/util.js ***!
   \***************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11536,7 +11536,7 @@
 
     /***/ sVH8:
       /*!**********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/xdr-polling.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/xdr-polling.js ***!
   \**********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11579,7 +11579,7 @@
 
     /***/ uFOv:
       /*!************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/event/event.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/event/event.js ***!
   \************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11617,7 +11617,7 @@
 
     /***/ uIkj:
       /*!*************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/utils/object.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/utils/object.js ***!
   \*************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11653,7 +11653,7 @@
 
     /***/ vmN6:
       /*!******************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/browser/eventsource.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/browser/eventsource.js ***!
   \******************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11675,7 +11675,7 @@
 
     /***/ 'vtV/':
       /*!**********************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/xhr-polling.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/xhr-polling.js ***!
   \**********************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11728,7 +11728,7 @@
 
     /***/ x5MC:
       /*!*******************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/browser/abstract-xhr.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/browser/abstract-xhr.js ***!
   \*******************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -11947,7 +11947,7 @@
 
     /***/ ytOc:
       /*!*****************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/iframe.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/iframe.js ***!
   \*****************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -12108,7 +12108,7 @@
 
     /***/ zC0X:
       /*!**************************************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/sockjs-client/lib/transport/lib/iframe-wrap.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/sockjs-client/lib/transport/lib/iframe-wrap.js ***!
   \**************************************************************************************************************/
       /*! no static exports found */
       /*! all exports used */
@@ -12165,7 +12165,7 @@
 
     /***/ zHZo:
       /*!*****************************************************************************************!*\
-  !*** /Users/chencheng/Code/github.com/umijs/umi/node_modules/querystring-es3/encode.js ***!
+  !*** /Users/chencheng/Code/github.com/nodecorejs/umi/node_modules/querystring-es3/encode.js ***!
   \*****************************************************************************************/
       /*! no static exports found */
       /*! all exports used */

@@ -1,4 +1,4 @@
-import { BundlerConfigType } from '@umijs/types';
+import { BundlerConfigType } from '@nodecorejs/types';
 import getTargetsAndBrowsersList from './getTargetsAndBrowsersList';
 
 const configTargets = {

@@ -1,5 +1,5 @@
-import { IApi } from '@umijs/types';
-import { chalk, lodash } from '@umijs/utils';
+import { IApi } from '@nodecorejs/types';
+import { chalk, lodash } from '@nodecorejs/utils';
 
 export default (api: IApi) => {
   api.registerCommand({

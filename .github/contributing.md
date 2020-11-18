@@ -1,1 +1,1 @@
-# UmiJS Contributing Guide
+# nodecorejs Contributing Guide
