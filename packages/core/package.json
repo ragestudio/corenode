@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/core",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.1-alpha.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -14,9 +14,9 @@
     "@babel/core": "7.12.3",
     "@babel/register": "7.12.1",
     "@hapi/joi": "16.1.8",
-    "@nodecorejs/ast": "0.2.0-alpha.0",
-    "@nodecorejs/babel-preset-umi": "0.2.0-alpha.0",
-    "@nodecorejs/utils": "0.2.0-alpha.0",
+    "@nodecorejs/ast": "0.2.1-alpha.0",
+    "@nodecorejs/babel-preset-umi": "0.2.1-alpha.0",
+    "@nodecorejs/utils": "0.2.1-alpha.0",
     "@types/ejs": "3.0.4",
     "@types/hapi__joi": "16.0.12",
     "@types/marked": "^1.1.0",
