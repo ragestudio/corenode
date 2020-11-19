@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/types",
-  "version": "0.2.1-alpha.0",
+  "version": "0.3.0",
   "description": "@nodecorejs/types",
   "main": "lib/index.js",
   "types": "index",
@@ -12,7 +12,6 @@
     "type": "git",
     "url": "https://github.com/nodecorejs/umi"
   },
- 
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
   ],
@@ -23,10 +22,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/babel-preset-umi": "0.2.1-alpha.0",
-    "@nodecorejs/core": "0.2.1-alpha.0",
-    "@nodecorejs/server": "0.2.1-alpha.0",
-    "@nodecorejs/utils": "0.2.1-alpha.0",
+    "@nodecorejs/babel-preset-umi": "0.3.0",
+    "@nodecorejs/core": "0.3.0",
+    "@nodecorejs/server": "0.3.0",
+    "@nodecorejs/utils": "0.3.0",
     "@types/cheerio": "0.22.21",
     "@types/express": "4.17.7",
     "@types/webpack": "4.41.21",

@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/babel-plugin-auto-css-modules",
-  "version": "0.2.1-alpha.0",
+  "version": "0.3.0",
   "description": "@nodecorejs/babel-plugin-auto-css-modules",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,7 +11,6 @@
     "type": "git",
     "url": "https://github.com/nodecorejs/umi"
   },
- 
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
   ],
@@ -23,6 +22,6 @@
   },
   "dependencies": {
     "@babel/traverse": "7.12.5",
-    "@nodecorejs/utils": "0.2.1-alpha.0"
+    "@nodecorejs/utils": "0.3.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/babel-plugin-lock-core-js-3",
-  "version": "0.2.1-alpha.0",
+  "version": "0.3.0",
   "description": "@nodecorejs/babel-plugin-lock-core-js-3",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,7 +12,6 @@
     "type": "git",
     "url": "https://github.com/nodecorejs/umi"
   },
- 
   "authors": [
     "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
   ],
@@ -23,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.2.1-alpha.0",
+    "@nodecorejs/utils": "0.3.0",
     "core-js": "3.6.5"
   }
 }
