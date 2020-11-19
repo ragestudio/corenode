@@ -38,5 +38,3 @@ export const getGit = () => {
     }
     return envs.originGit
 }
-
-console.log(getGit())

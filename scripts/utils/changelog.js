@@ -4,7 +4,7 @@ const git = require('./git');
 
 exports.getChangelog = async () => {
   const repoUrl = getGit();
-  if (repoUrl) {
+  if (!repoUrl) {
     throw new Error(`Development git not found at runtime`);
   }
   const latest = await git.latestTagOrFirstCommit();
