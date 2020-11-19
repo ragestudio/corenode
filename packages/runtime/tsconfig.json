@@ -16,7 +16,7 @@
     "node_modules",
     "dist",
     "**/*.spec.ts",
-    "lib",
+    "dist",
     "fixtures",
     "examples"
   ]

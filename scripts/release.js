@@ -170,7 +170,11 @@ async function release() {
     body: changelog,
     isPrerelease: isNext,
   });
-  await open(url);
+  try {
+    await open(url);
+  } catch (error) {
+    console.log("Try opening url >", url)
+  }
 
   logStep('done');
 }

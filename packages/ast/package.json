@@ -2,10 +2,10 @@
   "name": "@nodecorejs/ast",
   "version": "0.3.1",
   "description": "@nodecorejs/ast",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "repository": {
     "type": "git",

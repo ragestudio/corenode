@@ -124,7 +124,7 @@ export default (api) => {
         api.writeTmpFile({
             path: `${TMP_PLUGIN_DIR}/${CLIENT_EXPORTS}.ts`,
             content: Mustache.render(clientExportsContent, {
-                SSRUtils: winPath(require.resolve('@nodecorejs/utils/lib/ssr')),
+                SSRUtils: winPath(require.resolve('@nodecorejs/utils/dist/ssr')),
             }),
         });
     });

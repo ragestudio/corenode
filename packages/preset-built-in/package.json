@@ -1,10 +1,10 @@
 {
   "name": "@nodecorejs/preset-built-in",
   "version": "0.3.1",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,4 +1,4 @@
-export * from './lib/cjs';
+export * from './dist/cjs';
 
 // @ts-ignore
 export * from '@@/core/coreExports';

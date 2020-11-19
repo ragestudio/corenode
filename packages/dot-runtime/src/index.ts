@@ -1,5 +1,3 @@
-// TODO: Add RuntimeLogs plugin from api core
-
 // find up these files
 const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.json']
 
@@ -9,7 +7,7 @@ import { IRuntimeEnv } from './types'
 const findenvs = require('find-up').sync(syncEnvs)
 
 let runtimeEnv = <IRuntimeEnv>{}
-const rootPackage = path.resolve(`${process.cwd()}/package.json`)
+export const rootPackage = path.resolve(`${process.cwd()}/package.json`)
 
 if(findenvs){
     try {
@@ -21,6 +19,10 @@ if(findenvs){
     }
 }else{
     console.log("Runtime env (.nodecore) is missing")
+}
+
+export const getRuntimeEnv = () => {
+    return runtimeEnv
 }
 
 export const getDevRuntimeEnvs: any = () => {
@@ -37,4 +39,20 @@ export const getGit = () => {
         return false
     }
     return envs.originGit
+}
+
+export const getRootPackage = () => {
+    if (!rootPackage) {
+        return false
+    }
+    try {
+        // @ts-ignore
+        const fileStream = JSON.parse(fs.readFileSync(rootPackage))
+        if (fileStream) {
+            return fileStream
+        }
+        return false
+    } catch (error) {
+        return false   
+    }
 }

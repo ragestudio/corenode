@@ -1,5 +1,5 @@
 declare function _exports(context: any, opts: any): {
-    presets: (((context: any, opts?: import("./lib").IOpts | undefined) => any) | {
+    presets: (((context: any, opts?: import("./dist").IOpts | undefined) => any) | {
         typescript: boolean;
         env: {
             useBuiltIns: string;

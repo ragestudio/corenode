@@ -79,7 +79,7 @@ export function pathToObj({ type, path, cwd, }) {
     else {
         id = winPath(path);
     }
-    id = id.replace('@nodecorejs/preset-built-in/lib/plugins', '@@');
+    id = id.replace('@nodecorejs/preset-built-in/dist/plugins', '@@');
     id = id.replace(/\.js$/, '');
     const key = isPkgPlugin
         ? pkgNameToKey(pkg.name, type)

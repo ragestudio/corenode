@@ -5,7 +5,7 @@ module.exports = function (api, opts) {
   return {
     presets: [
       [
-        require('./lib').default,
+        require('./dist').default,
         require('@nodecorejs/utils').deepmerge(
           {
             env: {

@@ -1,0 +1,40 @@
+{
+  "name": "@nodecorejs/cli",
+  "version": "0.3.1",
+  "main": "dist/cli.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "ndc": "dist/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ragestudio/nodecorejs"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "7zip-bin": "^5.0.3",
+    "@nodecorejs/dot-runtime": "^0.3.1",
+    "axios": "^0.20.0",
+    "chalk": "^4.1.0",
+    "cli-spinners": "^2.5.0",
+    "dotenv": "^8.2.0",
+    "execa": "^4.1.0",
+    "find-up": "^5.0.0",
+    "inquirer": "^7.3.3",
+    "listr": "^0.14.3",
+    "log4js": "^6.3.0",
+    "node-7z": "^2.1.2",
+    "node-fetch": "^2.6.1",
+    "open": "^7.3.0",
+    "open-in-editor": "^2.2.0",
+    "ora": "^5.1.0",
+    "prompt": "^1.0.0",
+    "yargs": "^16.1.0"
+  }
+}

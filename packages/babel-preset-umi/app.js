@@ -5,7 +5,7 @@ module.exports = function (context, opts) {
   return {
     presets: [
       [
-        require('./lib').default,
+        require('./dist').default,
         require('@nodecorejs/utils').deepmerge(
           {
             typescript: true,

@@ -2,10 +2,10 @@
   "name": "@nodecorejs/bundler-webpack",
   "version": "0.3.1",
   "description": "@nodecorejs/bundler-webpack",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "lib",
+    "dist",
     "bin",
     "bundled",
     "mini-css-extract-plugin"

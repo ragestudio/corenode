@@ -9,5 +9,5 @@ if (!process.env.USE_GLOBAL_UMI && localCLI && localCLI !== __filename) {
   debug('Using local install of umi');
   require(localCLI);
 } else {
-  require('../lib/cli');
+  require('../dist/cli');
 }

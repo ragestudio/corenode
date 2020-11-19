@@ -24,9 +24,9 @@ const getPackages = require('./utils/getPackages');
       const json = {
         name,
         version,
-        main: 'lib/index.js',
-        types: 'lib/index.d.ts',
-        files: ['lib', 'src'],
+        main: 'dist/index.js',
+        types: 'dist/index.d.ts',
+        files: ['dist', 'src'],
         repository: {
           type: 'git',
           url: 'https://github.com/ragestudio/nodecorejs',

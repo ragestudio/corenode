@@ -2,7 +2,7 @@
   "name": "@nodecorejs/types",
   "version": "0.3.1",
   "description": "@nodecorejs/types",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "types": "index",
   "files": [
     "index.d.ts",
