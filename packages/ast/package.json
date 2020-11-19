@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/ast",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "@nodecorejs/ast",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -21,6 +21,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.3.0"
+    "@nodecorejs/utils": "0.3.1"
   }
 }
