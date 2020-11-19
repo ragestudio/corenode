@@ -7,6 +7,7 @@
 /.changelog
 /dist
 .DS_Store
+.yarn-error.logs
 .umi
 .umi-production
 .umi-test
