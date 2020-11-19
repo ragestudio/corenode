@@ -31,11 +31,13 @@
     "@testing-library/react": "^10.4.6",
     "@types/babel__core": "7.1.9",
     "@types/babel__traverse": "7.0.13",
+    "@types/find-up": "^4.0.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.0.23",
     "benchmark": "^2.1.4",
     "escape-goat": "^3.0.0",
     "father-build": "^1.18.1",
+    "find-up": "^3.0.0",
     "lerna": "^3.22.1",
     "lint-staged": "^10.2.11",
     "new-github-release-url": "^1.0.0",
@@ -50,7 +52,6 @@
     "url": "git+https://github.com/ragestudio/nodecorejs.git"
   },
   "dependencies": {
-    "@types/find-up": "^4.0.0",
-    "find-up": "^3.0.0"
+    "@nodecorejs/dot-runtime": "^0.2.1"
   }
 }

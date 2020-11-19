@@ -1,11 +1,10 @@
-//* TODO: add devRuntime to .nodecore runtime
 const { yParser, execa, chalk } = require('@nodecorejs/utils');
+const { getDevRuntimeEnvs } = require('@nodecorejs/dot-runtime');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
 const newGithubReleaseUrl = require('new-github-release-url');
 const open = require('open');
 const exec = require('./utils/exec');
-const syncTNPM = require('./syncTNPM');
 const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
 const { getChangelog } = require('./utils/changelog');
@@ -128,12 +127,17 @@ async function release() {
 
   // Publish
   // Umi must be the latest.
+  const runtimeEnvs = getDevRuntimeEnvs()
+  if (!runtimeEnvs.headPackage) {
+    return printErrorAndExit(`headPackage is missing on runtime`);
+  }
+
   const pkgs = args.publishOnly ? getPackages() : updated;
   logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`);
   const currVersion = require('../lerna').version;
   const isNext = isNextVersion(currVersion);
   pkgs.sort((a) => {
-      return a === 'nodecore' ? 1 : -1; // TODO: Get headPackage name form devRuntime (runtime)
+      return a === runtimeEnvs.headPackage ? 1 : -1;
     })
     .forEach((pkg, index) => {
       const pkgPath = join(cwd, 'packages', pkg);
@@ -151,20 +155,23 @@ async function release() {
       }
     });
 
+
+  if (!runtimeEnvs.originGit) {
+    return printErrorAndExit(`originGit is missing on runtime`);
+  }
+
   logStep('create github release');
   const tag = `v${currVersion}`;
   const changelog = releaseNotes(tag);
   console.log(changelog);
   const url = newGithubReleaseUrl({
-    repoUrl: 'https://github.com/ragestudio/nodecorejs',
+    repoUrl: runtimeEnvs.originGit,
     tag,
     body: changelog,
     isPrerelease: isNext,
   });
   await open(url);
 
-  logStep('sync packages to tnpm');
-  syncTNPM(pkgs);
   logStep('done');
 }
 

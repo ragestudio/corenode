@@ -16,33 +16,27 @@ if(findenvs){
         // @ts-ignore
         runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
     } catch (error) {
+        console.log("Failed trying load runtime env")
         // (⓿_⓿) terrible...
     }
+}else{
+    console.log("Runtime env (.nodecore) is missing")
 }
 
 export const getDevRuntimeEnvs: any = () => {
-    if (!runtimeEnv) {
+    if (!runtimeEnv || typeof(runtimeEnv.devRuntime) == "undefined") {
         return false
     }
 
-    if (typeof(runtimeEnv.devRuntime) !== "undefined") {
-        return runtimeEnv.devRuntime
-    }
-    
-    return false
+    return runtimeEnv.devRuntime
 }
 
 export const getGit = () => {
     const envs = getDevRuntimeEnvs()
-    if (!envs) {
+    if (!envs || typeof(envs.originGit) == "undefined") {
         return false
     }
-    
-    if (typeof(envs.originGit) !== "undefined") {
-        return envs.originGit
-    }
-
-    return false
+    return envs.originGit
 }
 
-getGit()
+console.log(getGit())

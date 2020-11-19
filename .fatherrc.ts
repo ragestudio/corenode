@@ -3,7 +3,7 @@ import { join } from 'path';
 
 // utils must build before core
 // runtime must build before renderer-react
-const headPkgs = ['utils', 'ast', 'runtime', 'core', 'server'];
+const headPkgs = ['dot-runtime', 'utils', 'ast', 'runtime', 'core', 'server'];
 const otherPkgs = readdirSync(join(__dirname, 'packages')).filter(
   (pkg) =>
     pkg.charAt(0) !== '.' && !headPkgs.includes(pkg)
