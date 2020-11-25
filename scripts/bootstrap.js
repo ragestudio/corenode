@@ -1,5 +1,6 @@
 const { existsSync, writeFileSync, readdirSync } = require('fs');
 const { join } = require('path');
+const { getGit } = require('@nodecorejs/dot-runtime')
 const { yParser } = require('@nodecorejs/utils');
 const getPackages = require('./utils/getPackages');
 
@@ -9,14 +10,14 @@ const getPackages = require('./utils/getPackages');
 
   const pkgs = getPackages();
 
-  pkgs.forEach((shortName) => {
-    const name = shortName === 'nodecorejs' ? shortName : `@nodecorejs/${shortName}`;
+  pkgs.forEach((packageName) => {
+    const name = `@nodecorejs/${packageName}`;
 
     const pkgJSONPath = join(
       __dirname,
       '..',
       'packages',
-      shortName,
+      packageName,
       'package.json',
     );
     const pkgJSONExists = existsSync(pkgJSONPath);
@@ -29,7 +30,7 @@ const getPackages = require('./utils/getPackages');
         files: ['dist', 'src'],
         repository: {
           type: 'git',
-          url: 'https://github.com/ragestudio/nodecorejs',
+          url: getGit(),
         },
         license: 'MIT',
         publishConfig: {
@@ -56,12 +57,12 @@ const getPackages = require('./utils/getPackages');
       writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`);
     }
 
-    if (shortName !== 'umi') {
+    if (packageName !== 'umi') {
       const readmePath = join(
         __dirname,
         '..',
         'packages',
-        shortName,
+        packageName,
         'README.md',
       );
       if (args.force || !existsSync(readmePath)) {
