@@ -1,5 +1,5 @@
 /node_modules
-/packages/*/dist
+/packages/*/lib
 /packages/*/dist
 /packages/*/node_modules
 /coverage
