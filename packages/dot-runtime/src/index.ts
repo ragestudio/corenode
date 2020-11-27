@@ -56,3 +56,5 @@ export const getRootPackage = () => {
         return false   
     }
 }
+
+export default runtimeEnv
