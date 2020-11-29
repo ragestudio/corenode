@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/bundler-webpack",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "@nodecorejs/bundler-webpack",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,9 +28,9 @@
   },
   "dependencies": {
     "@babel/core": "7.12.3",
-    "@nodecorejs/bundler-utils": "0.3.2",
-    "@nodecorejs/types": "0.3.2",
-    "@nodecorejs/utils": "0.3.2",
+    "@nodecorejs/bundler-utils": "0.3.3",
+    "@nodecorejs/types": "0.3.3",
+    "@nodecorejs/utils": "0.3.3",
     "@types/sockjs-client": "1.1.1",
     "@types/webpack": "4.41.22",
     "@types/webpack-dev-middleware": "3.7.2",
