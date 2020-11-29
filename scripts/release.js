@@ -150,7 +150,9 @@ async function release() {
         const cliArgs = isNext ? ['publish', '--tag', 'next'] : ['publish'];
         const { stdout } = execa.sync('npm', cliArgs, {
           cwd: pkgPath,
-        });
+        }).catch((err) => {
+          console.log(`❌ Failed to publish > %{pkg} >`, err)
+        })
         console.log(stdout);
       }
     });
