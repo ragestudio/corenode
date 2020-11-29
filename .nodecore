@@ -1,6 +1,6 @@
 {
     "devRuntime": {
-        "headPackage": "nodecorejs",
+        "headPackage": "nodecore",
         "originGit": "https://github.com/ragestudio/nodecorejs",
         "outputlogs": "debug_logs.log"
     }
