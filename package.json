@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "bootstrap": "node ./scripts/bootstrap.js",
-    "build": "father-build",
+    "build": "kayser-build",
     "debug": "node --inspect-brk packages/umi/bin/umi.js",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:umi": "cd packages/umi && yarn link && cd -",
@@ -27,8 +27,8 @@
   "devDependencies": {
     "@babel/core": "7.10.4",
     "@nodecorejs/core": "0.3.1",
-    "@nodecorejs/utils": "0.3.1",
     "@nodecorejs/dot-runtime": "^0.2.1",
+    "@nodecorejs/utils": "0.3.1",
     "@testing-library/react": "^10.4.6",
     "@types/babel__core": "7.1.9",
     "@types/babel__traverse": "7.0.13",
@@ -37,8 +37,8 @@
     "@types/node": "^14.0.23",
     "benchmark": "^2.1.4",
     "escape-goat": "^3.0.0",
-    "father-build": "^1.18.1",
     "find-up": "^3.0.0",
+    "kayser-build": "^0.1.3001",
     "lerna": "^3.22.1",
     "lint-staged": "^10.2.11",
     "new-github-release-url": "^1.0.0",
