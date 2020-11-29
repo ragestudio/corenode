@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/babel-plugin-lock-core-js-3",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "@nodecorejs/babel-plugin-lock-core-js-3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.3.1",
+    "@nodecorejs/utils": "0.3.2",
     "core-js": "3.6.5"
   }
 }
