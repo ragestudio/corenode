@@ -8,9 +8,9 @@
 /dist
 .DS_Store
 .yarn-error.logs
-.umi
-.umi-production
-.umi-test
+.nodecore
+.nodecore-production
+.nodecore-test
 **/fixtures/**/dist
 .now
 **/*.less.d.ts

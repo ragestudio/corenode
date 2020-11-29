@@ -13,10 +13,10 @@
 # misc
 .DS_Store
 
-# umi
-/src/.umi
-/src/.umi-production
-/src/.umi-test
+# nodecore
+/src/.nodecore
+/src/.nodecore-production
+/src/.nodecore-test
 /.env.local
 .history
 mock

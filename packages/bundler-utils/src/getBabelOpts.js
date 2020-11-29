@@ -9,7 +9,7 @@ function getBasicBabelLoaderOpts({ cwd }) {
         sourceType: 'unambiguous',
         babelrc: false,
         cacheDirectory: process.env.BABEL_CACHE !== 'none'
-            ? winPath(`${prefix}/.umi/.cache/babel-loader`)
+            ? winPath(`${prefix}/.nodecore/.cache/babel-loader`)
             : false,
     };
 }

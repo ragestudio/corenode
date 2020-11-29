@@ -10,10 +10,10 @@ module.exports = {
       '!packages/bundler-webpack/src/webpackHotDevClient/*',
 
       '!packages/bundler-webpack/src/cli.ts',
-      '!packages/umi/src/cli.ts',
-      '!packages/umi/src/forkedDev.ts',
-      '!packages/umi/src/ServiceWithBuiltIn.ts',
-      '!packages/umi/src/utils/fork.ts',
+      '!packages/nodecore/src/cli.ts',
+      '!packages/nodecore/src/forkedDev.ts',
+      '!packages/nodecore/src/ServiceWithBuiltIn.ts',
+      '!packages/nodecore/src/utils/fork.ts',
 
       '!packages/preset-built-in/src/plugins/commands/dev/**/*',
     ]);

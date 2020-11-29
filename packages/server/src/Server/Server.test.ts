@@ -262,14 +262,14 @@ describe('proxy', () => {
     const app = express();
     app.get('/api', (req, res) => {
       res.json({
-        hello: 'umi proxy',
+        hello: 'nodecore proxy',
       });
     });
     app.get('/compiler', (req, res) => {
       res.send('proxy compiler');
     });
     app.get('/', (req, res) => {
-      res.send('Hello Umi');
+      res.send('Hello nodecore');
     });
     app.get('/users', (req, res) => {
       res.set(req.headers);
@@ -287,7 +287,7 @@ describe('proxy', () => {
     const app2 = express();
     app2.get('/api2', (req, res) => {
       res.json({
-        hello: 'umi proxy2',
+        hello: 'nodecore proxy2',
       });
     });
 
@@ -357,7 +357,7 @@ describe('proxy', () => {
     const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
     expect(proxyBody).toEqual(
       JSON.stringify({
-        hello: 'umi proxy',
+        hello: 'nodecore proxy',
       }),
     );
 
@@ -372,7 +372,7 @@ describe('proxy', () => {
     const { body: proxy2Body } = await got(`http://${hostname}:${port}/api2`);
     expect(proxy2Body).toEqual(
       JSON.stringify({
-        hello: 'umi proxy2',
+        hello: 'nodecore proxy2',
       }),
     );
     server.listeningApp?.close();
@@ -408,7 +408,7 @@ describe('proxy', () => {
     const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
     expect(proxyBody).toEqual(
       JSON.stringify({
-        hello: 'umi proxy',
+        hello: 'nodecore proxy',
       }),
     );
 
@@ -427,7 +427,7 @@ describe('proxy', () => {
     );
     expect(proxyChangeBody).toEqual(
       JSON.stringify({
-        hello: 'umi proxy2',
+        hello: 'nodecore proxy2',
       }),
     );
     server.listeningApp?.close();
@@ -478,7 +478,7 @@ describe('proxy', () => {
     const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
     expect(proxyBody).toEqual(
       JSON.stringify({
-        hello: 'umi proxy',
+        hello: 'nodecore proxy',
       }),
     );
 
@@ -493,7 +493,7 @@ describe('proxy', () => {
     const { body: proxy2Body } = await got(`http://${hostname}:${port}/api2`);
     expect(proxy2Body).toEqual(
       JSON.stringify({
-        hello: 'umi proxy2',
+        hello: 'nodecore proxy2',
       }),
     );
     server.listeningApp?.close();
@@ -527,11 +527,11 @@ describe('proxy', () => {
       },
     });
 
-    sock.send('Hello umi');
+    sock.send('Hello nodecore');
 
     await delay(100);
 
-    expect(messages).toEqual(['Hello umi']);
+    expect(messages).toEqual(['Hello nodecore']);
     sock?.close();
     await delay(100);
 
@@ -568,7 +568,7 @@ describe('proxy', () => {
     const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
     expect(proxyBody).toEqual(
       JSON.stringify({
-        hello: 'umi proxy',
+        hello: 'nodecore proxy',
       }),
     );
 
@@ -618,7 +618,7 @@ describe('proxy', () => {
     const { body: proxyBody } = await got(`http://${hostname}:${port}/api`);
     expect(proxyBody).toEqual(
       JSON.stringify({
-        hello: 'umi proxy',
+        hello: 'nodecore proxy',
       }),
     );
 

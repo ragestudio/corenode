@@ -2,13 +2,13 @@ import { chalk } from '@nodecorejs/utils';
 export default (api) => {
     api.registerCommand({
         name: 'config',
-        description: 'umi config cli',
+        description: 'nodecore config cli',
         details: `
 # List configs
-$ umi config list
+$ nodecore config list
 
 # List the specific config
-$ umi config list --name history
+$ nodecore config list --name history
     `.trim(),
         fn({ args }) {
             const command = args._[0];
@@ -17,7 +17,7 @@ $ umi config list --name history
                     list();
                     break;
                 default:
-                    throw new Error(`Unsupported sub command ${command} for umi config.`);
+                    throw new Error(`Unsupported sub command ${command} for nodecore config.`);
             }
             function list() {
                 const getValue = (value) => {

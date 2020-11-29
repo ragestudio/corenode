@@ -60,7 +60,7 @@ export const handleHTML = async (opts = {}) => {
             const cssChunkSet = new Set();
             chunks.forEach(chunk => {
                 Object.keys(manifest || {}).forEach(manifestChunk => {
-                    if (manifestChunk !== 'umi.css'
+                    if (manifestChunk !== 'nodecore.css'
                         && chunk
                         && manifestChunk.startsWith(chunk)
                         && manifest

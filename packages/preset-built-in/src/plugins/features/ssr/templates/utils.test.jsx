@@ -10,18 +10,18 @@ const defaultHTML = `<!DOCTYPE html>
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
     />
-    <link rel="stylesheet" href="/umi.css" />
+    <link rel="stylesheet" href="/nodecore.css" />
     <script>
       window.routerBase = "/";
     </script>
     <script>
-      //! umi version: undefined
+      //! nodecore version: undefined
     </script>
   </head>
   <body>
     <div id="root"></div>
 
-    <script src="/umi.js"></script>
+    <script src="/nodecore.js"></script>
   </body>
 </html>
 `;
@@ -110,8 +110,8 @@ test('handleHTML dynamicImport', async () => {
             "p__index.js": "/public/p__index.js",
             "p__users.css": "/public/p__users.chunk.css",
             "p__users.js": "/public/p__users.js",
-            "umi.css": "/public/umi.css",
-            "umi.js": "/public/umi.js",
+            "nodecore.css": "/public/nodecore.css",
+            "nodecore.js": "/public/nodecore.js",
             "vendors~p__index.css": "/public/vendors~p__index.chunk.css",
             "vendors~p__index.js": "/public/vendors~p__index.js",
             "index.html": "/public/index.html",

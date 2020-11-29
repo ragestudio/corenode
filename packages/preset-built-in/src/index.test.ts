@@ -42,7 +42,7 @@ test('api.writeTmpFile', async () => {
     name: 'foo',
     args: {},
   });
-  const tmpFile = join(cwd, '.umi-test', 'foo');
+  const tmpFile = join(cwd, '.nodecore-test', 'foo');
   expect(readFileSync(tmpFile, 'utf-8')).toEqual('foo');
   rimraf.sync(tmpFile);
 });
@@ -58,7 +58,7 @@ test('api.writeTmpFile with ts-nocheck', async () => {
     name: 'foo',
     args: {},
   });
-  const tmpFile = join(cwd, '.umi-test', 'foo.ts');
+  const tmpFile = join(cwd, '.nodecore-test', 'foo.ts');
   expect(readFileSync(tmpFile, 'utf-8')).toEqual(`// @ts-nocheck${EOL}foo`);
   rimraf.sync(tmpFile);
 });
@@ -74,7 +74,7 @@ test('api.writeTmpFile without ts-nocheck', async () => {
     name: 'foo',
     args: {},
   });
-  const tmpFile = join(cwd, '.umi-test', 'foo.ts');
+  const tmpFile = join(cwd, '.nodecore-test', 'foo.ts');
   expect(readFileSync(tmpFile, 'utf-8')).toEqual('foo');
   rimraf.sync(tmpFile);
 });
@@ -91,7 +91,7 @@ test('global js', async () => {
       _: ['g', 'tmp'],
     },
   });
-  const reactNode = require(join(cwd, 'src', '.umi-test', 'umi.ts')).default;
+  const reactNode = require(join(cwd, 'src', '.nodecore-test', 'nodecore.ts')).default;
   const { container } = render(reactNode);
   expect(container.textContent).toEqual('hello Global');
 });
@@ -112,7 +112,7 @@ test('html', async () => {
     str?.replace(/[\r\n]/g, '')?.replace(/\ +/g, '');
   const html = readFileSync(join(cwd, 'dist', 'index.html'), 'utf-8');
   const $ = cheerio.load(html);
-  expect($('head meta[name="keywords"]').attr('content')).toEqual('umi');
+  expect($('head meta[name="keywords"]').attr('content')).toEqual('nodecore');
   expect($('head link[href="//a.alicdn.com/common.css"]')).toBeTruthy();
   expect($('head link[href="//a.alicdn.com/antd.css"]')).toBeTruthy();
   expect(removeSpace($('head style').eq(0).html())).toEqual(`.a{color:red;}`);
@@ -136,8 +136,8 @@ test('html', async () => {
 
 test('ssr', async () => {
   const cwd = join(fixtures, 'ssr');
-  const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
-  const tmpExportFile = join(cwd, '.umi-test', 'core', 'coreExports.ts');
+  const tmpServerFile = join(cwd, '.nodecore-test', 'core', 'server.ts');
+  const tmpExportFile = join(cwd, '.nodecore-test', 'core', 'coreExports.ts');
 
   delete require.cache[tmpServerFile];
 
@@ -165,13 +165,13 @@ test('ssr', async () => {
   expect(rootContainer).toEqual(expectRootContainer);
   const $ = cheerio.load(html);
   expect($('#root').html()).toEqual(expectRootContainer);
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 });
 
 test('ssr modifyServerHTML', async () => {
   const cwd = join(fixtures, 'ssr-modifyServerHTML');
-  const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
-  const tmpExportFile = join(cwd, '.umi-test', 'core', 'coreExports.ts');
+  const tmpServerFile = join(cwd, '.nodecore-test', 'core', 'server.ts');
+  const tmpExportFile = join(cwd, '.nodecore-test', 'core', 'coreExports.ts');
 
   delete require.cache[tmpServerFile];
 
@@ -200,12 +200,12 @@ test('ssr modifyServerHTML', async () => {
   expect(html).toMatch('<script>alert(123);</script>');
   const $ = cheerio.load(html);
   expect($('#root').html()).toEqual(expectRootContainer);
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 });
 
 test('ssr beforeRenderServer', async () => {
   const cwd = join(fixtures, 'ssr-beforeRenderServer');
-  const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
+  const tmpServerFile = join(cwd, '.nodecore-test', 'core', 'server.ts');
 
   delete require.cache[tmpServerFile];
 
@@ -231,12 +231,12 @@ test('ssr beforeRenderServer', async () => {
   expect(rootContainer).toEqual(expectRootContainer);
   const $ = cheerio.load(html);
   expect($('#root').html()).toEqual(expectRootContainer);
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 });
 
 test('ssr getInitialPropsCtx', async () => {
   const cwd = join(fixtures, 'ssr-getInitialPropsCtx');
-  const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
+  const tmpServerFile = join(cwd, '.nodecore-test', 'core', 'server.ts');
 
   delete require.cache[tmpServerFile];
 
@@ -264,15 +264,15 @@ test('ssr getInitialPropsCtx', async () => {
   expect(rootContainer).toEqual(expectRootContainer);
   const $ = cheerio.load(html);
   expect($('#root').html()).toEqual(expectRootContainer);
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 });
 
 test('ssr using stream', (done) => {
   const cwd = join(fixtures, 'ssr-stream');
-  const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
+  const tmpServerFile = join(cwd, '.nodecore-test', 'core', 'server.ts');
 
   delete require.cache[tmpServerFile];
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 
   const service = new Service({
     cwd,
@@ -313,7 +313,7 @@ test('ssr using stream', (done) => {
 test('ssr htmlTemplate', async () => {
   process.env.__IS_SERVER = true;
   const cwd = join(fixtures, 'ssr-htmlTemplate');
-  const tmpServerFile = join(cwd, '.umi-test', 'core', 'server.ts');
+  const tmpServerFile = join(cwd, '.nodecore-test', 'core', 'server.ts');
 
   delete require.cache[tmpServerFile];
 
@@ -344,19 +344,19 @@ test('ssr htmlTemplate', async () => {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
         />
-        <link rel="stylesheet" href="/umi.css" />
+        <link rel="stylesheet" href="/nodecore.css" />
         <script>console.log(1);</script>
         <script>
           window.routerBase = "/";
         </script>
         <script>
-          //! umi version: undefined
+          //! nodecore version: undefined
         </script>
       </head>
       <body>
         <div id="root"></div>
 
-        <script src="/umi.js"></script>
+        <script src="/nodecore.js"></script>
       </body>
     </html>`,
   });
@@ -365,13 +365,13 @@ test('ssr htmlTemplate', async () => {
   expect(html).toMatch('<script>console.log(1);</script>');
   const $ = cheerio.load(html);
   expect($('#root').html()).toEqual(expectRootContainer);
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 });
 
 test('ssr dynamicImport', async () => {
   process.env.__IS_SERVER = true;
   const cwd = join(fixtures, 'ssr-dynamicImport');
-  const corePath = join(cwd, '.umi-test', 'core');
+  const corePath = join(cwd, '.nodecore-test', 'core');
   const tmpServerFile = join(corePath, 'server.ts');
   delete require.cache[tmpServerFile];
 
@@ -401,7 +401,7 @@ test('ssr dynamicImport', async () => {
   const expectRootContainer =
     '<div><ul><li>hello</li><li>world</li></ul></div>';
   expect(homeResult.rootContainer).toEqual(expectRootContainer);
-  expect(homeResult.html).toMatch('<script src="/umi.js"></script>');
+  expect(homeResult.html).toMatch('<script src="/nodecore.js"></script>');
   expect(homeResult.html).toMatch(
     '<link rel="stylesheet" href="/p__index.chunk.css" />',
   );
@@ -414,9 +414,9 @@ test('ssr dynamicImport', async () => {
   });
   expect(BarResult.rootContainer).toEqual('<h2>Bar</h2>');
 
-  expect(BarResult.html).toMatch('<script src="/umi.js"></script>');
+  expect(BarResult.html).toMatch('<script src="/nodecore.js"></script>');
   expect(BarResult.html).toMatch(
     '<link rel="stylesheet" href="/p__Bar.chunk.css" />',
   );
-  rimraf.sync(join(cwd, '.umi-test'));
+  rimraf.sync(join(cwd, '.nodecore-test'));
 });

@@ -1,27 +1,16 @@
 {
   "name": "@nodecorejs/babel-plugin-auto-css-modules",
   "version": "0.3.3",
-  "description": "@nodecorejs/babel-plugin-auto-css-modules",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nodecorejs/umi"
-  },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "http://github.com/nodecorejs/umi/issues",
-  "homepage": "https://github.com/nodecorejs/umi/tree/master/packages/babel-plugin-auto-css-modules#readme",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@babel/traverse": "7.12.5",
+    "@babel/traverse": "7.12.9",
     "@nodecorejs/utils": "0.3.3"
   }
 }

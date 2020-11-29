@@ -7,15 +7,11 @@ import { ServiceStage } from '../Service/enums';
 import { getUserConfigWithKey, updateUserConfigWithKey, } from './utils/configUtils';
 import isEqual from './utils/isEqual';
 import mergeDefault from './utils/mergeDefault';
-const debug = createDebug('umi:core:Config');
-const CONFIG_FILES = [
-    '.umirc.ts',
-    '.umirc.js',
-    'config/config.ts',
-    'config/config.js',
-];
-// TODO:
-// 1. custom config file
+import { getWachtedEnv } from '@nodecorejs/dot-runtime'
+
+const debug = createDebug('nodecore:core:Config');
+const CONFIG_FILES = getWachtedEnv()
+
 export default class Config {
     constructor(opts) {
         this.cwd = opts.cwd || process.cwd();
@@ -24,7 +20,6 @@ export default class Config {
     }
     async getDefaultConfig() {
         const pluginIds = Object.keys(this.service.plugins);
-        // collect default config
         let defaultConfig = pluginIds.reduce((memo, pluginId) => {
             const { key, config = {} } = this.service.plugins[pluginId];
             if ('default' in config)
@@ -36,23 +31,16 @@ export default class Config {
     getConfig({ defaultConfig }) {
         assert(this.service.stage >= ServiceStage.pluginReady, `Config.getConfig() failed, it should not be executed before plugin is ready.`);
         const userConfig = this.getUserConfig();
-        // 用于提示用户哪些 key 是未定义的
-        // TODO: 考虑不排除 false 的 key
         const userConfigKeys = Object.keys(userConfig).filter((key) => {
             return userConfig[key] !== false;
         });
-        // get config
         const pluginIds = Object.keys(this.service.plugins);
         pluginIds.forEach((pluginId) => {
             const { key, config = {} } = this.service.plugins[pluginId];
-            // recognize as key if have schema config
             if (!config.schema)
                 return;
             const value = getUserConfigWithKey({ key, userConfig });
-            // 不校验 false 的值，此时已禁用插件
-            if (value === false)
-                return;
-            // do validate
+            if (value === false) return;
             const schema = config.schema(joi);
             assert(joi.isSchema(schema), `schema return from plugin ${pluginId} is not valid schema.`);
             const { error } = schema.validate(value);
@@ -61,12 +49,10 @@ export default class Config {
                 e.stack = error.stack;
                 throw e;
             }
-            // remove key
             const index = userConfigKeys.indexOf(key.split('.')[0]);
             if (index !== -1) {
                 userConfigKeys.splice(index, 1);
             }
-            // update userConfig with defaultConfig
             if (key in defaultConfig) {
                 const newValue = mergeDefault({
                     defaultConfig: defaultConfig[key],
@@ -88,8 +74,6 @@ export default class Config {
     getUserConfig() {
         const configFile = this.getConfigFile();
         this.configFile = configFile;
-        // 潜在问题：
-        // .local 和 .env 的配置必须有 configFile 才有效
         if (configFile) {
             let envConfigFile;
             if (process.env.UMI_ENV) {
@@ -112,7 +96,6 @@ export default class Config {
                 .filter((f) => !!f)
                 .map((f) => join(this.cwd, f))
                 .filter((f) => existsSync(f));
-            // clear require cache and set babel register
             const requireDeps = files.reduce((memo, file) => {
                 memo = memo.concat(parseRequireDeps(file));
                 return memo;
@@ -122,7 +105,6 @@ export default class Config {
                 key: 'config',
                 value: requireDeps,
             });
-            // require config and merge
             return this.mergeConfig(...this.requireConfigs(files));
         }
         else {
@@ -139,13 +121,11 @@ export default class Config {
     mergeConfig(...configs) {
         let ret = {};
         for (const config of configs) {
-            // TODO: 精细化处理，比如处理 dotted config key
             ret = deepmerge(ret, config);
         }
         return ret;
     }
     getConfigFile() {
-        // TODO: support custom config file
         const configFile = CONFIG_FILES.find((f) => existsSync(join(this.cwd, f)));
         return configFile ? winPath(configFile) : null;
     }

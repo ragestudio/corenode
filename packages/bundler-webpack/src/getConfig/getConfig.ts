@@ -179,8 +179,6 @@ export default async function getConfig(
       .test(/\.(js|mjs|jsx|ts|tsx)$/)
       .include.add([
         cwd,
-        // import module out of cwd using APP_ROOT
-        // issue: https://github.com/nodecorejs/umi/issues/5594
         ...(process.env.APP_ROOT ? [process.cwd()] : [])
       ]).end()
       .exclude.add(/node_modules/).end()
@@ -188,8 +186,6 @@ export default async function getConfig(
         .loader(require.resolve('babel-loader'))
         .options(babelOpts);
 
-  // umi/dist/index.esm.js 走 babel 编译
-  // why? 极速模式下不打包 @nodecorejs/runtime
   if (process.env.UMI_DIR) {
     // prettier-ignore
     webpackConfig.module
@@ -230,6 +226,7 @@ export default async function getConfig(
         .add(/node_modules/)
         .end()
       .exclude.add((path) => {
+        // @ts-ignore
         return isMatch({ path, pkgs });
       })
         .end();
@@ -238,6 +235,7 @@ export default async function getConfig(
       ...es5ImcompatibleVersionsToPkg(),
       ...excludeToPkgs({ exclude: nodeModulesTransform.exclude || [] }),
     };
+    // @ts-ignore
     rule.include
       .add((path) => {
         return isMatch({
@@ -265,7 +263,6 @@ export default async function getConfig(
       .options({
         limit: config.inlineLimit || 10000,
         name: 'static/[name].[hash:8].[ext]',
-        // require 图片的时候不用加 .default
         esModule: false,
         fallback: {
           loader: require.resolve('file-loader'),

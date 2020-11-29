@@ -11,7 +11,7 @@
     "strict": true,
     "paths": {
       "@/*": ["src/*"],
-      "@@/*": ["src/.umi/*"]
+      "@@/*": ["src/.nodecore/*"]
     },
     "allowSyntheticDefaultImports": true
   },
@@ -19,7 +19,7 @@
     "mock/**/*",
     "src/**/*",
     "config/**/*",
-    ".umirc.ts",
+    ".nodecore",
     "typings.d.ts"
   ]
 }

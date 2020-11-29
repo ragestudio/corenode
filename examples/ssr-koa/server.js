@@ -40,7 +40,7 @@ app.use(async (ctx, next) => {
   // 符合要求的路由才进行服务端渲染，否则走静态文件逻辑
   if (!ext) {
     if (!render) {
-      render = require('./dist/umi.server');
+      render = require('./dist/nodecore.server');
     }
     // 这里默认是字符串渲染
     ctx.type = 'text/html';
@@ -59,7 +59,7 @@ app.use(async (ctx, next) => {
      *  缓存
      */
     if (isDev) {
-      delete require.cache[require.resolve('./dist/umi.server')];
+      delete require.cache[require.resolve('./dist/nodecore.server')];
     }
     ctx.body = html;
   } else {
@@ -67,11 +67,6 @@ app.use(async (ctx, next) => {
   }
 });
 
-/**
- *  注意这里的静态目录设置，需要和umi打包出来的目录是同一个
- *  这里最好是用nginx配置静态目录，如果是用cdn方式部署，这里可以忽略
- *
- */
 app.use(mount('/dist', require('koa-static')(root)));
 
 app.listen(7001);

@@ -1,4 +1,4 @@
-import { IApi } from 'umi';
+import { IApi } from 'nodecore';
 import { BundlerConfigType } from '@nodecorejs/types';
 
 export default (api: IApi) => {

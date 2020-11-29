@@ -9,7 +9,7 @@ test('normal', async () => {
         cwd,
         Service,
     });
-    const content = readFileSync(join(cwd, '.umi-test', 'core', 'polyfill.ts'), 'utf-8');
+    const content = readFileSync(join(cwd, '.nodecore-test', 'core', 'polyfill.ts'), 'utf-8');
     expect(content).toContain(`import 'core-js';`);
     expect(content).toContain(`import 'regenerator-runtime/runtime';`);
 });

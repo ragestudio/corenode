@@ -23,8 +23,8 @@ test('onBuildComplete normal', async () => {
         compilation: {
           chunks: [
             {
-              name: 'umi',
-              files: ['umi.6f4c357e.css', 'umi.e1837763.js'],
+              name: 'nodecore',
+              files: ['nodecore.6f4c357e.css', 'nodecore.e1837763.js'],
             },
           ],
         },
@@ -37,6 +37,6 @@ test('onBuildComplete normal', async () => {
     err: null,
     stats,
   });
-  expect(serverContent).toContain('/umi.6f4c357e.css');
-  expect(serverContent).toContain('/umi.e1837763.js');
+  expect(serverContent).toContain('/nodecore.6f4c357e.css');
+  expect(serverContent).toContain('/nodecore.e1837763.js');
 });

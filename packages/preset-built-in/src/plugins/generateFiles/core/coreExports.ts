@@ -2,7 +2,7 @@ import { IApi } from '@nodecorejs/types';
 import { lodash, winPath } from '@nodecorejs/utils';
 import assert from 'assert';
 
-const reserveLibrarys = ['umi']; // reserve library
+const reserveLibrarys = ['nodecore']; // reserve library
 const reserveExportsNames = [
   'Link',
   'NavLink',

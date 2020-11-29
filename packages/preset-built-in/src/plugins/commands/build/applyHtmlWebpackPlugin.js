@@ -19,7 +19,6 @@ export default function (api) {
         apply(compiler) {
             compiler.hooks.emit.tapPromise('UmiHtmlGeneration', async (compilation) => {
                 if (api.config.ssr) {
-                    // waiting umi.server.js emited
                     await ensureServerFileExisted();
                 }
                 const html = getHtmlGenerator({ api });

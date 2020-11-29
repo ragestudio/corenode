@@ -7,21 +7,11 @@
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nodecorejs/umi"
-  },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "http://github.com/nodecorejs/umi/issues",
-  "homepage": "https://github.com/nodecorejs/umi/tree/master/packages/bundler-utils#readme",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/babel-preset-umi": "0.3.3",
+    "@nodecorejs/babel-preset-nodecore": "0.3.3",
     "@nodecorejs/types": "0.3.3",
     "@nodecorejs/utils": "0.3.3"
   }

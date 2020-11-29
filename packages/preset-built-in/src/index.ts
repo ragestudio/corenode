@@ -14,7 +14,7 @@ export default function () {
       require.resolve('./plugins/generateFiles/core/routes'),
       require.resolve('./plugins/generateFiles/core/coreExports'),
       require.resolve('./plugins/generateFiles/core/configTypes'),
-      require.resolve('./plugins/generateFiles/umi'),
+      require.resolve('./plugins/generateFiles/nodecore'),
 
       // bundle configs
       require.resolve('./plugins/features/alias'),

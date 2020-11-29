@@ -128,13 +128,13 @@ class Bundler {
       onListening: ({ server }) => {
         function addHooks(compiler: defaultWebpack.Compiler) {
           const { compile, invalid, done } = compiler.hooks;
-          compile.tap('umi-dev-server', () => {
+          compile.tap('nodecore-dev-server', () => {
             server.sockWrite({ type: 'invalid' });
           });
-          invalid.tap('umi-dev-server', () => {
+          invalid.tap('nodecore-dev-server', () => {
             server.sockWrite({ type: 'invalid' });
           });
-          done.tap('umi-dev-server', (stats) => {
+          done.tap('nodecore-dev-server', (stats) => {
             sendStats({
               server,
               sockets: server.sockets,

@@ -51,7 +51,7 @@ export default ({
     }
 
     if (req.path === '/favicon.ico') {
-      res.sendFile(join(__dirname, 'umi.png'));
+      res.sendFile(join(__dirname, 'nodecore.png'));
     } else if (ASSET_EXTNAMES.includes(extname(req.path))) {
       next();
     } else {

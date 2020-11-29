@@ -1,13 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "build": "cross-env umi build",
+    "build": "cross-env nodecore build",
     "start": "node server.js",
-    "dev": "cross-env UMI_UI=none NODE_ENV=development concurrently \"umi dev\" \"nodemon server.js\"",
-    "postinstall": "umi generate tmp",
+    "dev": "cross-env UMI_UI=none NODE_ENV=development concurrently \"nodecore dev\" \"nodemon server.js\"",
+    "postinstall": "nodecore generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
-    "test": "umi-test",
-    "test:coverage": "umi-test --coverage"
+    "test": "nodecore-test",
+    "test:coverage": "nodecore-test --coverage"
   },
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [
@@ -27,7 +27,7 @@
     "lint-staged": "^10.0.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "umi": "^3.2.9"
+    "nodecore": "^3.2.9"
   },
   "devDependencies": {
     "prettier": "^1.19.1",

@@ -22,8 +22,10 @@ import {
 } from './utils/configUtils';
 import isEqual from './utils/isEqual';
 import mergeDefault from './utils/mergeDefault';
+// @ts-ignore
+import { getWachtedEnv } from '@nodecorejs/dot-runtime'
 
-const debug = createDebug('umi:core:Config');
+const debug = createDebug('nodecore:core:Config');
 
 interface IChanged {
   key: string;
@@ -36,12 +38,7 @@ interface IOpts {
   localConfig?: boolean;
 }
 
-const CONFIG_FILES = [
-  '.umirc.ts',
-  '.umirc.js',
-  'config/config.ts',
-  'config/config.js',
-];
+const CONFIG_FILES = getWachtedEnv()
 
 export default class Config {
   cwd: string;

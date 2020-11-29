@@ -1,5 +1,5 @@
 // find up these files
-const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.json']
+const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 
 import path from 'path'
 import fs from 'fs'
@@ -19,6 +19,10 @@ if(findenvs){
     }
 }else{
     console.log("Runtime env (.nodecore) is missing")
+}
+
+export const getWachtedEnv = () => {
+    return syncEnvs
 }
 
 export const getRuntimeEnv = () => {

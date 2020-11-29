@@ -3,7 +3,7 @@ const { fork } = require('child_process');
 
 const { glob, signale } = require('@nodecorejs/utils');
 
-const UMI_SCRIPT = path.join(__dirname, '../packages/umi/bin/umi.js');
+const UMI_SCRIPT = path.join(__dirname, '../packages/nodecore/bin/nodecore.js');
 
 function build({ cwd }) {
   return new Promise((resolve) => {

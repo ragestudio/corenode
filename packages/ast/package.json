@@ -1,22 +1,11 @@
 {
   "name": "@nodecorejs/ast",
   "version": "0.3.3",
-  "description": "@nodecorejs/ast",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nodecorejs/umi"
-  },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "http://github.com/nodecorejs/umi/issues",
-  "homepage": "https://github.com/nodecorejs/umi/tree/master/packages/ast#readme",
   "publishConfig": {
     "access": "public"
   },

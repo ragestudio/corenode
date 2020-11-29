@@ -12,7 +12,7 @@ import { Stream } from 'stream';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { Server, IServerOpts } from '@nodecorejs/server';
 import { Generator } from '@nodecorejs/utils';
-import { IOpts as IBabelPresetUmiOpts } from '@nodecorejs/babel-preset-umi';
+import { IOpts as IBabelPresetUmiOpts } from '@nodecorejs/babel-preset-nodecore';
 import {
   IRouteComponentProps,
   IRoute as IRouteProps,

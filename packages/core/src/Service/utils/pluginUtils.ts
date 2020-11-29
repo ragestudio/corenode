@@ -12,7 +12,7 @@ import {
 import { PluginType } from '../enums';
 import { IPackage, IPlugin } from '../types';
 
-const debug = createDebug('umi:core:Service:util:plugin');
+const debug = createDebug('nodecore:core:Service:util:plugin');
 
 interface IOpts {
   pkg: IPackage;
@@ -30,8 +30,8 @@ interface IResolvePluginsOpts extends IOpts {
 }
 
 const RE = {
-  [PluginType.plugin]: /^(@nodecorejs\/|umi-)plugin-/,
-  [PluginType.preset]: /^(@nodecorejs\/|umi-)preset-/,
+  [PluginType.plugin]: /^(@nodecorejs\/|nodecore-)plugin-/,
+  [PluginType.preset]: /^(@nodecorejs\/|nodecore-)preset-/,
 };
 
 export function isPluginOrPreset(type: PluginType, name: string) {

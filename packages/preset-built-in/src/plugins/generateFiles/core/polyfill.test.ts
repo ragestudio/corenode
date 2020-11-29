@@ -12,7 +12,7 @@ test('normal', async () => {
     Service,
   });
   const content = readFileSync(
-    join(cwd, '.umi-test', 'core', 'polyfill.ts'),
+    join(cwd, '.nodecore-test', 'core', 'polyfill.ts'),
     'utf-8',
   );
   expect(content).toContain(`import 'core-js';`);
@@ -26,7 +26,7 @@ test('imports', async () => {
     Service,
   });
   const content = readFileSync(
-    join(cwd, '.umi-test', 'core', 'polyfill.ts'),
+    join(cwd, '.nodecore-test', 'core', 'polyfill.ts'),
     'utf-8',
   );
   expect(content).toContain(`import 'core-js/es/array';`);

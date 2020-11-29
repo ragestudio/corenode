@@ -21,7 +21,7 @@ import Config from '../Config/Config';
 import { getUserConfigWithKey } from '../Config/utils/configUtils';
 import getPaths from './getPaths';
 
-const logger = new Logger('umi:core:Service');
+const logger = new Logger('nodecore:core:Service');
 
 export interface IServiceOpts {
   cwd: string;
@@ -32,6 +32,7 @@ export interface IServiceOpts {
 }
 
 interface IConfig {
+  config?: any;
   presets?: string[];
   plugins?: string[];
   [key: string]: any;
@@ -40,6 +41,7 @@ interface IConfig {
 // TODO
 // 1. duplicated key
 export default class Service extends EventEmitter {
+  defaultConfig: any;
   cwd: string;
   pkg: IPackage;
   skipPluginIds: Set<string> = new Set<string>();
@@ -66,7 +68,7 @@ export default class Service extends EventEmitter {
   // user config
   userConfig: IConfig;
   configInstance: Config;
-  config: IConfig | null = null;
+  config: any;
   // babel register
   babelRegister: BabelRegister;
   // hooks
@@ -232,6 +234,7 @@ export default class Service extends EventEmitter {
       key: 'modifyConfig',
       type: this.ApplyPluginsType.modify,
       initialValue: this.configInstance.getConfig({
+        // @ts-ignore
         defaultConfig,
       }) as any,
     });
@@ -467,6 +470,7 @@ ${name} from ${plugin.path} register failed.`);
               // @ts-ignore
               before: hook.before,
             },
+            // @ts-ignore
             async (memo: any[]) => {
               const items = await hook.fn(opts.args);
               return memo.concat(items);
@@ -511,6 +515,7 @@ ${name} from ${plugin.path} register failed.`);
             },
           );
         }
+        // @ts-ignore
         return await tEvent.promise();
       default:
         throw new Error(

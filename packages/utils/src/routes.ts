@@ -26,11 +26,8 @@ export const routeToChunkName: IRouteToChunkName = (
         .replace(/\.tsx?$/, '')
         .replace(/^src__/, '')
         .replace(/\.\.__/g, '')
-        // 约定式路由的 [ 会导致 webpack 的 code splitting 失败
-        // ref: https://github.com/nodecorejs/umi/issues/4155
         .replace(/[\[\]]/g, '')
-        // 插件层的文件也可能是路由组件，比如 plugin-layout 插件
-        .replace(/^.umi-production__/, 't__')
+        .replace(/^.nodecore-production__/, 't__')
         .replace(/^pages__/, 'p__')
         .replace(/^page__/, 'p__')
     : '';

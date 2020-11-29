@@ -10,7 +10,7 @@ import compress from 'compression';
 import sockjs from 'sockjs';
 import { getCredentials } from './utils';
 const logger = new Logger('@nodecorejs/server');
-const debug = createDebug('umi:server:Server');
+const debug = createDebug('nodecore:server:Server');
 const defaultOpts = {
     afterMiddlewares: [],
     beforeMiddlewares: [],

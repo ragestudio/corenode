@@ -6,10 +6,10 @@ const fixtures = join(__dirname, 'fixtures');
 
 test('normal', () => {
   const fixture = join(fixtures, 'normal');
-  const ret = parseRequireDeps(join(fixture, '.umirc.ts')).map((p) =>
+  const ret = parseRequireDeps(join(fixture, '.nodecore.ts')).map((p) =>
     p.replace(winPath(fixture), '.'),
   );
-  expect(ret).toEqual(['./.umirc.ts', './config/foo.ts', './src/a.js']);
+  expect(ret).toEqual(['./.nodecore.ts', './config/foo.ts', './src/a.js']);
 });
 
 test('directory index', () => {

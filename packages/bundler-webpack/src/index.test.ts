@@ -78,8 +78,6 @@ readdirSync(fixtures).forEach((fixture) => {
   });
 });
 
-// TODO:
-// Module '/private/tmp/sorrycc-Vtm508/umi-next/node_modules/babel-loader/lib/index.js' is not a loader
 test.skip('dev', async () => {
   const cwd = join(fixtures, 'alias');
 

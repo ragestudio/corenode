@@ -163,12 +163,11 @@ function getSocketHost() {
   const dataFromSrc = scripts[scripts.length - 1]
     ? scripts[scripts.length - 1].getAttribute('src')
     : '';
-  if (dataFromSrc && dataFromSrc.includes('umi.js')) {
+  if (dataFromSrc && dataFromSrc.includes('nodecore.js')) {
     const urlParsed = url.parse(dataFromSrc);
     host = urlParsed.host;
     protocol = urlParsed.protocol;
   } else {
-    // 某些场景可能没有 umi.js，比如微前端的场景
     host = location.host;
     protocol = location.protocol;
   }

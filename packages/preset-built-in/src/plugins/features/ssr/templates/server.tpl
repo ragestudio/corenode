@@ -1,4 +1,4 @@
-// umi.server.js
+// nodecore.server.js
 import '{{{ RuntimePolyfill }}}';
 import { format } from 'url';
 import renderServer from '{{{ Renderer }}}';

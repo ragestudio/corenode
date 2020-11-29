@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import {resolve} from 'path';
 import { createDebug } from '@nodecorejs/utils';
 
-const debug = createDebug('umi:dtstest');
+const debug = createDebug('nodecore:dtstest');
 
 const typeCheckFile = (files: string[]): boolean => {
   let program = ts.createProgram(files, {});

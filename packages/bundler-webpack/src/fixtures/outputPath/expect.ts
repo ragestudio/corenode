@@ -9,7 +9,6 @@ export default ({ ignored }: IExpectOpts) => {
   expect(
     anymatch(ignored as any)(path.join(__dirname, 'bar'))
   ).toBeFalsy();
-  // issue: https://github.com/nodecorejs/umi/issues/5416
   expect(anymatch(ignored as any)(path.join(__dirname, 'distributor', 'index.tsx'))).toBeFalsy();
   expect(anymatch(ignored as any)(path.join(__dirname, 'distributor'))).toBeFalsy();
   expect(anymatch(ignored as any)(path.join(__dirname, 'node_modules'))).toBeTruthy();

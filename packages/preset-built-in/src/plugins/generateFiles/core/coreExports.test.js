@@ -49,11 +49,11 @@ test('reserve library', () => {
                         exported: 'dva',
                     },
                 ],
-                source: 'umi',
+                source: 'nodecore',
             },
             coreExportsHook: {},
         });
-    }).toThrow("umi is reserve library, Please don't use it.");
+    }).toThrow("nodecore is reserve library, Please don't use it.");
 });
 test('reserve name', () => {
     expect(() => {

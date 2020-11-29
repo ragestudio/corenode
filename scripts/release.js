@@ -62,7 +62,7 @@ async function release() {
     updated = updatedStdout
       .split('\n')
       .map((pkg) => {
-        if (pkg === 'umi') return pkg;
+        if (pkg === 'nodecore') return pkg;
         else return pkg.split('/')[1];
       })
       .filter(Boolean);

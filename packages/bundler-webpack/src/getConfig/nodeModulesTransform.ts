@@ -21,8 +21,6 @@ interface IPkgs {
   [name: string]: string[];
 }
 
-// 参考：
-// https://github.com/nodecorejs/umi/blob/2.x/packages/af-webpack/src/getWebpackConfig/es5ImcompatibleVersions.js
 export function isMatch(opts: { path: string; pkgs: IPkgs }) {
   const pkgPath = getPkgPath(opts);
 

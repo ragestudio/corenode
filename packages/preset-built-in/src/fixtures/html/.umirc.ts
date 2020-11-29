@@ -10,7 +10,7 @@ export default {
     { rel: 'stylesheet', type: 'text/css', charset: 'utf-8', href: '//a.alicdn.com/common.css' },
   ],
   metas: [
-    { name: 'keywords', content: 'umi' },
+    { name: 'keywords', content: 'nodecore' },
   ],
   styles: [
     '//g.alicdn.com/antd.css',

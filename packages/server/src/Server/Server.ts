@@ -17,7 +17,7 @@ import sockjs, { Connection, Server as SocketServer } from 'sockjs';
 import { getCredentials } from './utils';
 
 const logger = new Logger('@nodecorejs/server');
-const debug = createDebug('umi:server:Server');
+const debug = createDebug('nodecore:server:Server');
 
 interface IServerProxyConfigItem extends ProxyOptions {
   path?: string | string[];

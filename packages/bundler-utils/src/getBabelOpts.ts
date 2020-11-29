@@ -14,13 +14,11 @@ interface IOpts {
 function getBasicBabelLoaderOpts({ cwd }: { cwd: string }) {
   const prefix = existsSync(join(cwd, 'src')) ? join(cwd, 'src') : cwd;
   return {
-    // Tell babel to guess the type, instead assuming all files are modules
-    // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
     sourceType: 'unambiguous',
     babelrc: false,
     cacheDirectory:
       process.env.BABEL_CACHE !== 'none'
-        ? winPath(`${prefix}/.umi/.cache/babel-loader`)
+        ? winPath(`${prefix}/.nodecore/.cache/babel-loader`)
         : false,
   };
 }
@@ -51,7 +49,7 @@ export function getBabelOpts({
   return {
     ...getBasicBabelLoaderOpts({ cwd }),
     presets: [
-      [require.resolve('@nodecorejs/babel-preset-umi/app'), presetOpts],
+      [require.resolve('@nodecorejs/babel-preset-nodecore/app'), presetOpts],
       ...(config.extraBabelPresets || []),
     ],
     plugins: [...(config.extraBabelPlugins || [])].filter(Boolean),
@@ -71,7 +69,7 @@ export function getBabelDepsOpts({
     ...getBasicBabelLoaderOpts({ cwd }),
     presets: [
       [
-        require.resolve('@nodecorejs/babel-preset-umi/dependency'),
+        require.resolve('@nodecorejs/babel-preset-nodecore/dependency'),
         {
           nodeEnv: env,
           dynamicImportNode: !config.dynamicImport,

@@ -137,7 +137,6 @@ export default (api: IApi) => {
           ? process.env.RM_SERVER_FILE !== 'none'
           : !serverRenderFailed
       ) {
-        // remove umi.server.js
         const serverFilePath = join(
           api.paths.absOutputPath!,
           OUTPUT_SERVER_FILENAME,

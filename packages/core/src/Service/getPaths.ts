@@ -28,7 +28,7 @@ export default function getServicePaths({
     ? join(absSrcPath, 'page')
     : join(absSrcPath, 'pages');
 
-  const tmpDir = ['.umi', env !== 'development' && env]
+  const tmpDir = ['.nodecore', env !== 'development' && env]
     .filter(Boolean)
     .join('-');
   return normalizeWithWinPath({

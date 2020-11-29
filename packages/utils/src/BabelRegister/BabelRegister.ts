@@ -1,6 +1,6 @@
 import { createDebug, lodash, winPath } from '../';
 
-const debug = createDebug('umi:utils:BabelRegister');
+const debug = createDebug('nodecore:utils:BabelRegister');
 
 export default class BabelRegister {
   only: Record<string, string[]> = {};
@@ -23,7 +23,7 @@ export default class BabelRegister {
         .map(winPath),
     );
     require('@babel/register')({
-      presets: [require.resolve('@nodecorejs/babel-preset-umi/node')],
+      presets: [require.resolve('@nodecorejs/babel-preset-nodecore/node')],
       ignore: [/node_modules/],
       only,
       extensions: ['.jsx', '.js', '.ts', '.tsx'],

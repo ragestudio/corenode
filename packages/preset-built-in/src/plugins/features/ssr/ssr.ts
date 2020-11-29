@@ -67,7 +67,7 @@ export default (api: IApi) => {
               .description('remove window.g_initialProps in html'),
             devServerRender: joi
               .boolean()
-              .description('disable serve-side render in umi dev mode.'),
+              .description('disable serve-side render in nodecore dev mode.'),
             mode: joi.string().valid('stream', 'string'),
             staticMarkup: joi
               .boolean()
@@ -97,7 +97,6 @@ export default (api: IApi) => {
         'The manifest file will be generated if enabling `dynamicImport` in ssr.',
       );
     }
-    // ref: https://github.com/nodecorejs/umi/issues/5501
     if (!process.env.WATCH_IGNORED) {
       const { outputPath } = api.config;
       const absOutputPath = winPath(
@@ -224,7 +223,6 @@ export default (api: IApi) => {
 
   // modify devServer content
   api.modifyDevHTMLContent(async (defaultHtml, { req }) => {
-    // umi dev to enable server side render by default
     const { stream, devServerRender = true } = api.config?.ssr || {};
     const serverPath = path.join(
       api.paths.absOutputPath!,

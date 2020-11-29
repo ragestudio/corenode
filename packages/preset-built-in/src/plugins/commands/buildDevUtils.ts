@@ -39,7 +39,7 @@ export async function getBundleAndConfigs({
         port,
         hot: type === BundlerConfigType.csr && process.env.HMR !== 'none',
         entry: {
-          umi: join(api.paths.absTmpPath!, 'umi.ts'),
+          nodecore: join(api.paths.absTmpPath!, 'nodecore.ts'),
         },
         // @ts-ignore
         bundleImplementor,
@@ -161,7 +161,7 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
     ?.map((a) => {
       a.name = a.name.split('?')[0];
       // These sizes are pretty large
-      const isMainBundle = a.name.indexOf('umi.') === 0;
+      const isMainBundle = a.name.indexOf('nodecore.') === 0;
       const maxRecommendedSize = isMainBundle
         ? WARN_AFTER_BUNDLE_GZIP_SIZE
         : WARN_AFTER_CHUNK_GZIP_SIZE;
@@ -227,8 +227,6 @@ export function printFileSizes(stats: webpack.Stats, dir: string) {
   );
 
   if (orderedAssets?.some((asset) => asset.suggested)) {
-    // We'll warn for bundles exceeding them.
-    // TODO: use umi docs
     console.log();
     console.log(
       chalk.yellow('The bundle size is significantly larger than recommended.'),

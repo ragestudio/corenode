@@ -3,7 +3,7 @@ import { IApi } from '@nodecorejs/types';
 import { createDebug } from '@nodecorejs/utils';
 import { getGlobalFile } from '../utils';
 
-const debug = createDebug('umi:preset-build-in:global-js');
+const debug = createDebug('nodecore:preset-build-in:global-js');
 
 export default (api: IApi) => {
   const { paths } = api;

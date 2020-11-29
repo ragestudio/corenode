@@ -19,16 +19,16 @@
     "strict": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@@/*": ["./src/.umi/*"]
+      "@@/*": ["./src/.nodecore/*"]
     }
   },
-  "include": ["mock/**/*", "src/**/*", "config/**/*", ".umirc.ts"],
+  "include": ["mock/**/*", "src/**/*", "config/**/*", ".nodecore"],
   "exclude": [
     "node_modules",
     "build",
     "dist",
     "scripts",
-    "src/.umi/*",
+    "src/.nodecore/*",
     "webpack",
     "jest"
   ]

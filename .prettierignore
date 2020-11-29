@@ -13,4 +13,4 @@ package.json
 # coverage
 /coverage
 /dist
-/.umi
+/.nodecore

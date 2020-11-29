@@ -24,7 +24,6 @@ export default function (api: IApi) {
         'UmiHtmlGeneration',
         async (compilation: any) => {
           if (api.config.ssr) {
-            // waiting umi.server.js emited
             await ensureServerFileExisted();
           }
           const html = getHtmlGenerator({ api });

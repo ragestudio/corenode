@@ -4,13 +4,13 @@ import { chalk, lodash } from '@nodecorejs/utils';
 export default (api: IApi) => {
   api.registerCommand({
     name: 'plugin',
-    description: 'inspect umi plugins',
+    description: 'inspect nodecore plugins',
     details: `
 # List plugins
-$ umi plugin list
+$ nodecore plugin list
 
 # List plugins with key
-$ umi plugin list --key
+$ nodecore plugin list --key
     `.trim(),
     fn({ args }) {
       const command = args._[0];
@@ -19,7 +19,7 @@ $ umi plugin list --key
           list();
           break;
         default:
-          throw new Error(`Unsupported sub command ${command} for umi plugin.`);
+          throw new Error(`Unsupported sub command ${command} for nodecore plugin.`);
       }
 
       function list() {

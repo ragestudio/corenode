@@ -1,4 +1,4 @@
-import { importsToStr } from './umi';
+import { importsToStr } from './nodecore';
 
 test('importsToStr', () => {
   expect(

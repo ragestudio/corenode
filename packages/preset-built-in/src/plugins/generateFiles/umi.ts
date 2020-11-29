@@ -38,14 +38,14 @@ export default function (api: IApi) {
   });
 
   api.onGenerateFiles(async (args) => {
-    const umiTpl = readFileSync(join(__dirname, 'umi.tpl'), 'utf-8');
+    const umiTpl = readFileSync(join(__dirname, 'nodecore.tpl'), 'utf-8');
     const rendererPath = await api.applyPlugins({
       key: 'modifyRendererPath',
       type: api.ApplyPluginsType.modify,
       initialValue: renderReactPath,
     });
     api.writeTmpFile({
-      path: 'umi.ts',
+      path: 'nodecore.ts',
       content: Mustache.render(umiTpl, {
         // @ts-ignore
         enableTitle: api.config.title !== false,

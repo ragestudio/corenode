@@ -1,4 +1,4 @@
-import { IRouteComponentProps } from 'umi'
+import { IRouteComponentProps } from 'nodecore'
 
 // only export isBrowser for user
 export { isBrowser } from '{{{ SSRUtils }}}';

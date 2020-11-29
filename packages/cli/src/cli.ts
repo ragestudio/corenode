@@ -2,7 +2,7 @@
 
 let command = null;
 try {
-    command = require(`${process.cwd()}/node_modules/@nodecore/cli/dist`);
+    command = require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
 } catch (e) {
-    command = require("@nodecore/cli/dist");
+    command = require("@nodecorejs/cli/dist");
 }

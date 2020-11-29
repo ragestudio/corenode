@@ -9,7 +9,7 @@ import {
 } from '../buildDevUtils';
 import generateFiles from '../generateFiles';
 
-const logger = new Logger('umi:preset-build-in');
+const logger = new Logger('nodecore:preset-build-in');
 
 export default function (api: IApi) {
   const {

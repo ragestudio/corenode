@@ -13,7 +13,7 @@ import { ApplyPluginsType, ConfigChangeType, EnableBy, PluginType, ServiceStage,
 import Config from '../Config/Config';
 import { getUserConfigWithKey } from '../Config/utils/configUtils';
 import getPaths from './getPaths';
-const logger = new Logger('umi:core:Service');
+const logger = new Logger('nodecore:core:Service');
 // TODO
 // 1. duplicated key
 export default class Service extends EventEmitter {

@@ -1,0 +1,30 @@
+{
+  "name": "nodecore",
+  "version": "0.3.3",
+  "main": "index.js",
+  "types": "types.d.ts",
+  "files": [
+    "dist",
+    "types.d.ts",
+    "bin"
+  ],
+  "sideEffects": false,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@babel/core": "7.12.9",
+    "@nodecorejs/core": "0.3.3",
+    "@nodecorejs/preset-built-in": "0.3.3",
+    "@nodecorejs/runtime": "0.3.3",
+    "@nodecorejs/types": "0.3.3",
+    "@nodecorejs/utils": "0.3.3",
+    "react": "^17.0.1",
+    "resolve-cwd": "3.0.0"
+  },
+  "bin": {
+    "nodecore": "bin/cli.js"
+  },
+  "module": "dist/index.esm.js"
+}

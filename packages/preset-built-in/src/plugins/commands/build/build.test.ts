@@ -17,7 +17,7 @@ test('build', async () => {
     name: 'build',
   });
 
-  expect(existsSync(join(cwd, 'dist', 'umi.js'))).toEqual(true);
+  expect(existsSync(join(cwd, 'dist', 'nodecore.js'))).toEqual(true);
   // expect(existsSync(join(cwd, 'dist', 'index.html'))).toEqual(true);
   rimraf.sync(join(cwd, 'dist'));
 });

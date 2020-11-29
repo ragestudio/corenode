@@ -2,12 +2,12 @@
   "name": "normal",
   "version": "1.0.0",
   "scripts": {
-    "dev": "umi dev",
-    "build": "umi build"
+    "dev": "nodecore dev",
+    "build": "nodecore build"
   },
   "private": true,
   "peerDependencies": {
-    "umi": "latest"
+    "nodecore": "latest"
   },
   "license": "ISC"
 }

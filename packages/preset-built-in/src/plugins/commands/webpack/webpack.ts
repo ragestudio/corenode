@@ -10,9 +10,9 @@ export default (api: IApi) => {
       const { bundleConfigs } = await getBundleAndConfigs({ api });
 
       let config = bundleConfigs.filter((bundleConfig: any) => {
-        return bundleConfig.entry?.umi;
+        return bundleConfig.entry?.nodecore;
       })[0];
-      assert(config, `No valid config found with umi entry.`);
+      assert(config, `No valid config found with nodecore entry.`);
 
       if (api.args.rule) {
         config = config.module.rules.find(

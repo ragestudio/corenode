@@ -1,28 +1,17 @@
 {
   "name": "@nodecorejs/babel-plugin-lock-core-js-3",
   "version": "0.3.3",
-  "description": "@nodecorejs/babel-plugin-lock-core-js-3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nodecorejs/umi"
-  },
-  "authors": [
-    "chencheng <sorrycc@gmail.com> (https://github.com/sorrycc)"
-  ],
-  "license": "MIT",
-  "bugs": "http://github.com/nodecorejs/umi/issues",
-  "homepage": "https://github.com/nodecorejs/umi/tree/master/packages/babel-plugin-lock-core-js-3#readme",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
     "@nodecorejs/utils": "0.3.3",
-    "core-js": "3.6.5"
+    "core-js": "3.8.0"
   }
 }

@@ -36,8 +36,8 @@ test('generate tmp', async () => {
     await runGenerator({
         _: ['generate', 'tmp'],
     });
-    expect(existsSync(join(cwd, '.umi-test'))).toEqual(true);
-    rimraf.sync(join(cwd, '.umi-test'));
+    expect(existsSync(join(cwd, '.nodecore-test'))).toEqual(true);
+    rimraf.sync(join(cwd, '.nodecore-test'));
 });
 test('Generator not found', async () => {
     await expect(runGenerator({

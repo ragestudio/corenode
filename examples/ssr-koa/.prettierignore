@@ -3,6 +3,6 @@
 **/*.ejs
 **/*.html
 package.json
-.umi
-.umi-production
-.umi-test
+.nodecore
+.nodecore-production
+.nodecore-test

@@ -18,7 +18,7 @@ test('empty', () => {
         absOutputPath: 'dist',
         absPagesPath: 'pages',
         absSrcPath: '',
-        absTmpPath: '.umi',
+        absTmpPath: '.nodecore',
         cwd: '',
     });
 });
@@ -33,7 +33,7 @@ test('empty production', () => {
         absOutputPath: 'dist',
         absPagesPath: 'pages',
         absSrcPath: '',
-        absTmpPath: '.umi-production',
+        absTmpPath: '.nodecore-production',
         cwd: '',
     });
 });
@@ -50,7 +50,7 @@ test('empty config singular', () => {
         absOutputPath: 'dist',
         absPagesPath: 'page',
         absSrcPath: '',
-        absTmpPath: '.umi',
+        absTmpPath: '.nodecore',
         cwd: '',
     });
 });
@@ -67,7 +67,7 @@ test('empty config outputPath', () => {
         absOutputPath: 'www',
         absPagesPath: 'pages',
         absSrcPath: '',
-        absTmpPath: '.umi',
+        absTmpPath: '.nodecore',
         cwd: '',
     });
 });
@@ -82,7 +82,7 @@ test('src', () => {
         absOutputPath: 'dist',
         absPagesPath: 'src/pages',
         absSrcPath: 'src',
-        absTmpPath: 'src/.umi',
+        absTmpPath: 'src/.nodecore',
         cwd: '',
     });
 });
@@ -99,7 +99,7 @@ test('src config singular', () => {
         absOutputPath: 'dist',
         absPagesPath: 'src/page',
         absSrcPath: 'src',
-        absTmpPath: 'src/.umi',
+        absTmpPath: 'src/.nodecore',
         cwd: '',
     });
 });

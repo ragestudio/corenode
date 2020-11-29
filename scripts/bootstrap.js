@@ -57,7 +57,7 @@ const getPackages = require('./utils/getPackages');
       writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`);
     }
 
-    if (packageName !== 'umi') {
+    if (packageName !== 'nodecore') {
       const readmePath = join(
         __dirname,
         '..',

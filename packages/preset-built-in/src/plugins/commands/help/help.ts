@@ -33,7 +33,7 @@ export default (api: IApi) => {
         const command = api.service.commands[commandName];
         assert(command, `Command ${commandName} not found.`);
         console.log(`
-  Usage: umi ${commandName} [options]
+  Usage: nodecore ${commandName} [options]
 
   Options:
 
@@ -43,16 +43,16 @@ ${command.details ? padLeft(command.details.trim()) : ''}
         `);
       } else {
         console.log(`
-  Usage: umi <command> [options]
+  Usage: nodecore <command> [options]
 
   Commands:
 
 ${getDescriptions(api.service.commands).join('\n')}
 
   Run \`${chalk.bold(
-    'umi help <command>',
+    'nodecore help <command>',
   )}\` for more information of specific commands.
-  Visit ${chalk.bold('https://nodecorejs.org/')} to learn more about Umi.
+  Visit ${chalk.bold('https://nodecorejs.org/')} to learn more about nodecore.
       `);
       }
     },

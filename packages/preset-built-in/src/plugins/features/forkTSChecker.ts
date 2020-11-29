@@ -1,4 +1,4 @@
-import { IApi, utils } from 'umi';
+import { IApi, utils } from 'nodecore';
 
 export default (api: IApi) => {
   const { deepmerge } = utils;
