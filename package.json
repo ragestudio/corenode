@@ -26,9 +26,9 @@
   },
   "devDependencies": {
     "@babel/core": "7.12.9",
-    "@nodecorejs/core": "0.4.0",
-    "@nodecorejs/dot-runtime": "0.4.0",
-    "@nodecorejs/utils": "0.4.0",
+    "@nodecorejs/core": "0.4.1",
+    "@nodecorejs/dot-runtime": "0.4.1",
+    "@nodecorejs/utils": "0.4.1",
     "@testing-library/react": "^11.2.2",
     "@types/babel__core": "7.1.12",
     "@types/babel__traverse": "7.0.16",

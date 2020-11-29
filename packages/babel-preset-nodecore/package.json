@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/babel-preset-nodecore",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -34,9 +34,9 @@
     "@babel/preset-react": "7.12.7",
     "@babel/preset-typescript": "7.12.7",
     "@babel/runtime": "7.12.5",
-    "@nodecorejs/babel-plugin-auto-css-modules": "0.4.0",
-    "@nodecorejs/babel-plugin-import-to-await-require": "0.4.0",
-    "@nodecorejs/babel-plugin-lock-core-js-3": "0.4.0",
+    "@nodecorejs/babel-plugin-auto-css-modules": "0.4.1",
+    "@nodecorejs/babel-plugin-import-to-await-require": "0.4.1",
+    "@nodecorejs/babel-plugin-lock-core-js-3": "0.4.1",
     "@svgr/webpack": "5.5.0",
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-import": "^1.13.1",
