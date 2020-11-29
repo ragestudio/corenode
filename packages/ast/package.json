@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/ast",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -10,6 +10,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.3.3"
+    "@nodecorejs/utils": "0.4.0"
   }
 }

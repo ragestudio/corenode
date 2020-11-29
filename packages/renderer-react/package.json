@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/renderer-react",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,7 +12,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/runtime": "0.3.3",
+    "@nodecorejs/runtime": "0.4.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-config": "^5.0.1",
