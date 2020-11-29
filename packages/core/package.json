@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/core",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -14,10 +14,10 @@
     "@babel/core": "7.12.9",
     "@babel/register": "7.12.1",
     "@hapi/joi": "17.1.1",
-    "@nodecorejs/ast": "0.4.1",
-    "@nodecorejs/babel-preset-nodecore": "0.4.1",
-    "@nodecorejs/dot-runtime": "0.4.1",
-    "@nodecorejs/utils": "0.4.1",
+    "@nodecorejs/ast": "0.4.2",
+    "@nodecorejs/babel-preset-nodecore": "0.4.2",
+    "@nodecorejs/dot-runtime": "0.4.2",
+    "@nodecorejs/utils": "0.4.2",
     "@types/ejs": "3.0.5",
     "@types/hapi__joi": "17.1.6",
     "@types/marked": "^1.1.0",
