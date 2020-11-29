@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/babel-plugin-import-to-await-require",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,6 +12,6 @@
   },
   "dependencies": {
     "@babel/traverse": "7.12.9",
-    "@nodecorejs/utils": "0.4.2"
+    "@nodecorejs/utils": "0.4.3"
   }
 }
