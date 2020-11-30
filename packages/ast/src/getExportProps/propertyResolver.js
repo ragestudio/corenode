@@ -1,4 +1,4 @@
-import { t } from '@nodecorejs/utils';
+import { t } from '@nodecorejs/libs';
 const StringResolver = {
     is(src) {
         return t.isStringLiteral(src);

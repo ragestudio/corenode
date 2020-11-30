@@ -1,4 +1,4 @@
-import { lodash, routeToChunkName } from '@nodecorejs/utils';
+import { lodash, routeToChunkName } from '@nodecorejs/libs';
 import { IRoute } from './types';
 
 interface IOpts {

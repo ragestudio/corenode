@@ -1,4 +1,4 @@
-import { delay } from '@nodecorejs/utils';
+import { delay } from '@nodecorejs/libs';
 
 export default {
   async chainWebpack(webpackConfig: any) {

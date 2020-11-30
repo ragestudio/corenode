@@ -17,7 +17,7 @@
     "@nodecorejs/ast": "0.4.3",
     "@nodecorejs/babel-preset-nodecore": "0.4.3",
     "@nodecorejs/dot-runtime": "0.4.3",
-    "@nodecorejs/utils": "0.4.3",
+    "@nodecorejs/libs": "0.4.3",
     "@types/ejs": "3.0.5",
     "@types/hapi__joi": "17.1.6",
     "@types/marked": "^1.1.0",

@@ -19,7 +19,7 @@
     "@nodecorejs/preset-built-in": "0.4.3",
     "@nodecorejs/runtime": "0.4.3",
     "@nodecorejs/types": "0.4.3",
-    "@nodecorejs/utils": "0.4.3",
+    "@nodecorejs/libs": "0.4.3",
     "react": "^17.0.1",
     "resolve-cwd": "3.0.0"
   },

@@ -1,6 +1,6 @@
 import { join, basename } from 'path';
 import { IApi } from '@nodecorejs/types';
-import { Generator, randomColor } from '@nodecorejs/utils';
+import { Generator, randomColor } from '@nodecorejs/libs';
 
 export default function ({ api }: { api: IApi }) {
   return class PageGenerator extends Generator {

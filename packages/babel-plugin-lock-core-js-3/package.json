@@ -11,7 +11,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.4.3",
+    "@nodecorejs/libs": "0.4.3",
     "core-js": "3.8.0"
   }
 }

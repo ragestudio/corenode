@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { resolve } from 'path';
-import { createDebug } from '@nodecorejs/utils';
+import { createDebug } from '@nodecorejs/libs';
 const debug = createDebug('umi:dtstest');
 const typeCheckFile = (files) => {
     let program = ts.createProgram(files, {});

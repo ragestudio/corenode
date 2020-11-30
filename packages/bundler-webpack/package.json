@@ -20,7 +20,7 @@
     "@babel/core": "7.12.9",
     "@nodecorejs/bundler-utils": "0.4.3",
     "@nodecorejs/types": "0.4.3",
-    "@nodecorejs/utils": "0.4.3",
+    "@nodecorejs/libs": "0.4.3",
     "@types/sockjs-client": "1.5.0",
     "@types/webpack": "4.41.25",
     "@types/webpack-dev-middleware": "3.7.2",

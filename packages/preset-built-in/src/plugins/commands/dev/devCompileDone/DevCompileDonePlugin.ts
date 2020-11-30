@@ -1,5 +1,5 @@
 import { webpack } from '@nodecorejs/types';
-import { chalk, address } from '@nodecorejs/utils';
+import { chalk, address } from '@nodecorejs/libs';
 
 interface IOpts {
   port: number;

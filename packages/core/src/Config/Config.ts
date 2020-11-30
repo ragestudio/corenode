@@ -11,7 +11,7 @@ import {
   winPath,
   getFile,
   createDebug,
-} from '@nodecorejs/utils';
+} from '@nodecorejs/libs';
 import assert from 'assert';
 import joi from '@hapi/joi';
 import Service from '../Service/Service';

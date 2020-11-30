@@ -2,7 +2,7 @@ import { IApi, IBundlerConfigType, BundlerConfigType } from '@nodecorejs/types';
 import { Bundler as DefaultBundler, webpack } from '@nodecorejs/bundler-webpack';
 import { join, resolve } from 'path';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { rimraf, chalk } from '@nodecorejs/utils';
+import { rimraf, chalk } from '@nodecorejs/libs';
 import zlib from 'zlib';
 
 type Env = 'development' | 'production';

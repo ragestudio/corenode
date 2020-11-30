@@ -1,4 +1,4 @@
-import { chalk, address } from '@nodecorejs/utils';
+import { chalk, address } from '@nodecorejs/libs';
 export default class DevCompileDonePlugin {
     constructor(opts) {
         this.opts = opts;

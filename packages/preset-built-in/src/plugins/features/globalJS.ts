@@ -1,6 +1,6 @@
 import { relative } from 'path';
 import { IApi } from '@nodecorejs/types';
-import { createDebug } from '@nodecorejs/utils';
+import { createDebug } from '@nodecorejs/libs';
 import { getGlobalFile } from '../utils';
 
 const debug = createDebug('nodecore:preset-build-in:global-js');

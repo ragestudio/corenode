@@ -1,5 +1,5 @@
 import { BundlerConfigType } from '@nodecorejs/types';
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import getConfig from './getConfig';
 
 test('normal', async () => {

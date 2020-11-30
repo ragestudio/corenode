@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { chalk, yParser } from '@nodecorejs/utils';
+import { chalk, yParser } from '@nodecorejs/libs';
 import { existsSync } from 'fs';
 import { Service } from './ServiceWithBuiltIn';
 import fork from './utils/fork';

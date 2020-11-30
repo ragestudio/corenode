@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { EventEmitter } from 'events';
 import assert from 'assert';
-import { BabelRegister, lodash, NodeEnv } from '@nodecorejs/utils';
+import { BabelRegister, lodash, NodeEnv } from '@nodecorejs/libs';
 import { AsyncSeriesWaterfallHook } from 'tapable';
 import { existsSync } from 'fs';
 import Logger from '../Logger/Logger';

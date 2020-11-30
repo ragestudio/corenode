@@ -1,7 +1,7 @@
 const { existsSync, writeFileSync, readdirSync } = require('fs');
 const { join } = require('path');
 const { getGit } = require('@nodecorejs/dot-runtime')
-const { yParser } = require('@nodecorejs/utils');
+const { yParser } = require('@nodecorejs/libs');
 const getPackages = require('./utils/getPackages');
 
 (async () => {

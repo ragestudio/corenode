@@ -43,7 +43,7 @@ export class ReadableString extends Readable {
   }
 }
 
-export { default as cheerio } from '@nodecorejs/utils/dist/cheerio/cheerio'
+export { default as cheerio } from '@nodecorejs/libs/dist/cheerio/cheerio'
 
 export interface IHandleHTMLOpts {
   pageInitialProps: object;

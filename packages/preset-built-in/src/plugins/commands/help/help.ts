@@ -1,5 +1,5 @@
 import { IApi } from '@nodecorejs/types';
-import { chalk, lodash } from '@nodecorejs/utils';
+import { chalk, lodash } from '@nodecorejs/libs';
 import assert from 'assert';
 
 function getDescriptions(commands: any) {

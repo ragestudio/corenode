@@ -7,7 +7,7 @@ import {
   portfinder,
   rimraf,
   yParser,
-} from '@nodecorejs/utils';
+} from '@nodecorejs/libs';
 import { basename, extname, join } from 'path';
 import { Server } from '@nodecorejs/server';
 import assert from 'assert';

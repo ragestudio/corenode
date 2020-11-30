@@ -1,4 +1,4 @@
-import { lodash, winPath } from '@nodecorejs/utils';
+import { lodash, winPath } from '@nodecorejs/libs';
 import { join, relative } from 'path';
 import getPaths from './getPaths';
 import { IServicePaths } from './types';

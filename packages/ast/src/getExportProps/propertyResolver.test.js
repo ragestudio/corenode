@@ -1,4 +1,4 @@
-import { parser, t } from '@nodecorejs/utils';
+import { parser, t } from '@nodecorejs/libs';
 import { LITERAL_NODE_RESOLVERS, NODE_RESOLVERS } from './propertyResolver';
 test('literal', () => {
     const node = parser.parseExpression(`{

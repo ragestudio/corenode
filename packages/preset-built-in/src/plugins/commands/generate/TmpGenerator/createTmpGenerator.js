@@ -1,4 +1,4 @@
-import { Generator } from '@nodecorejs/utils';
+import { Generator } from '@nodecorejs/libs';
 import generateFiles from '../../generateFiles';
 export default ({ api }) => {
     return class TmpGenerator extends Generator {

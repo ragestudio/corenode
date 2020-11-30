@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import Service from './Service';
 import { ApplyPluginsType } from './enums';
 

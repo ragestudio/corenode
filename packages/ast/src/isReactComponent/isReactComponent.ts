@@ -1,4 +1,4 @@
-import { traverse } from '@nodecorejs/utils';
+import { traverse } from '@nodecorejs/libs';
 import { parse } from '../utils/parse';
 
 export function isReactComponent(code: string) {

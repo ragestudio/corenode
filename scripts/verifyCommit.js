@@ -1,6 +1,6 @@
 // Invoked on the commit-msg git hook by yorkie.
 
-const { chalk } = require('@nodecorejs/utils');
+const { chalk } = require('@nodecorejs/libs');
 const msgPath = process.env.GIT_PARAMS;
 const msg = require('fs').readFileSync(msgPath, 'utf-8').trim();
 

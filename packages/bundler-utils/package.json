@@ -13,6 +13,6 @@
   "dependencies": {
     "@nodecorejs/babel-preset-nodecore": "0.4.3",
     "@nodecorejs/types": "0.4.3",
-    "@nodecorejs/utils": "0.4.3"
+    "@nodecorejs/libs": "0.4.3"
   }
 }

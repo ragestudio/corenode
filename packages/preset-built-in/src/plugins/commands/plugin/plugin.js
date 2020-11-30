@@ -1,4 +1,4 @@
-import { chalk } from '@nodecorejs/utils';
+import { chalk } from '@nodecorejs/libs';
 export default (api) => {
     api.registerCommand({
         name: 'plugin',

@@ -8,7 +8,7 @@ import {
   winPath,
   pkgUp,
   lodash,
-} from '@nodecorejs/utils';
+} from '@nodecorejs/libs';
 import { PluginType } from '../enums';
 import { IPackage, IPlugin } from '../types';
 

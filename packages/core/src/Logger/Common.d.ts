@@ -1,5 +1,5 @@
 /// <reference types="debug" />
-import { Debugger } from '@nodecorejs/utils';
+import { Debugger } from '@nodecorejs/libs';
 declare abstract class Common {
     debug: Debugger;
     protected namespace: string;

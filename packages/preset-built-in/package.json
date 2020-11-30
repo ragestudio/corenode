@@ -18,7 +18,7 @@
     "@nodecorejs/runtime": "0.4.3",
     "@nodecorejs/server": "0.4.3",
     "@nodecorejs/types": "0.4.3",
-    "@nodecorejs/utils": "0.4.3",
+    "@nodecorejs/libs": "0.4.3",
     "@types/merge-stream": "1.1.2",
     "@types/multer": "1.4.4",
     "@types/react-router-config": "5.0.1",

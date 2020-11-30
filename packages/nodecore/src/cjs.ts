@@ -1,4 +1,4 @@
-import * as utils from '@nodecorejs/utils';
+import * as utils from '@nodecorejs/libs';
 import { Service } from './ServiceWithBuiltIn';
 import { defineConfig } from './defineConfig';
 

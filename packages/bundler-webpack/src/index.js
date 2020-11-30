@@ -1,7 +1,7 @@
 import { BundlerConfigType } from '@nodecorejs/types';
 import defaultWebpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import getConfig from './getConfig/getConfig';
 import { join } from 'path';
 class Bundler {

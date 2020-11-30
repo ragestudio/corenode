@@ -6,7 +6,7 @@ module.exports = function (api, opts) {
     presets: [
       [
         require('./dist').default,
-        require('@nodecorejs/utils').deepmerge(
+        require('@nodecorejs/libs').deepmerge(
           {
             env: {
               useBuiltIns: 'entry',

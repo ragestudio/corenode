@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { chalk, yParser } from '@nodecorejs/utils';
+import { chalk, yParser } from '@nodecorejs/libs';
 import { Service } from './ServiceWithBuiltIn';
 import getCwd from './utils/getCwd';
 import getPkg from './utils/getPkg';

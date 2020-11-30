@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { readdirSync, readFileSync, statSync } from 'fs';
-import { getFile, rimraf, portfinder } from '@nodecorejs/utils';
+import { getFile, rimraf, portfinder } from '@nodecorejs/libs';
 import { BundlerConfigType } from '@nodecorejs/types';
 import { Bundler } from './index';
 import { Server } from '@nodecorejs/server';

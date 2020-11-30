@@ -4,7 +4,7 @@ import { join } from 'path';
 import { EOL } from 'os';
 import cheerio from 'cheerio';
 import { render, cleanup } from '@testing-library/react';
-import { rimraf } from '@nodecorejs/utils';
+import { rimraf } from '@nodecorejs/libs';
 import { readFileSync, existsSync } from 'fs';
 
 const fixtures = join(__dirname, 'fixtures');

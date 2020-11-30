@@ -34,7 +34,7 @@ export class ReadableString extends Readable {
         }
     }
 }
-export { default as cheerio } from '@nodecorejs/utils/dist/cheerio/cheerio';
+export { default as cheerio } from '@nodecorejs/libs/dist/cheerio/cheerio';
 /**
  * handle html with rootContainer(rendered)
  * @param param

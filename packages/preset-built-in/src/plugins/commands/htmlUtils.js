@@ -1,6 +1,6 @@
 import { extname, join } from 'path';
 import { existsSync } from 'fs';
-import { lodash } from '@nodecorejs/utils';
+import { lodash } from '@nodecorejs/libs';
 import assert from 'assert';
 export function chunksToFiles(opts) {
     let chunksMap = {};

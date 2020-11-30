@@ -1,6 +1,6 @@
 import { BundlerConfigType } from '@nodecorejs/types';
 import { Server } from '@nodecorejs/server';
-import { delay } from '@nodecorejs/utils';
+import { delay } from '@nodecorejs/libs';
 import assert from 'assert';
 import { cleanTmpPathExceptCache, getBundleAndConfigs } from '../buildDevUtils';
 import createRouteMiddleware from './createRouteMiddleware';

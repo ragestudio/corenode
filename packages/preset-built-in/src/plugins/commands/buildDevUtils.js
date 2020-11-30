@@ -2,7 +2,7 @@ import { BundlerConfigType } from '@nodecorejs/types';
 import { Bundler as DefaultBundler } from '@nodecorejs/bundler-webpack';
 import { join, resolve } from 'path';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { rimraf, chalk } from '@nodecorejs/utils';
+import { rimraf, chalk } from '@nodecorejs/libs';
 import zlib from 'zlib';
 export async function getBundleAndConfigs({ api, port, }) {
     // bundler

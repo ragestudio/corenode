@@ -1,4 +1,4 @@
-import { lodash } from '@nodecorejs/utils';
+import { lodash } from '@nodecorejs/libs';
 import { IScriptConfig, IStyleConfig } from '@nodecorejs/types';
 
 export interface IHTMLTag {
