@@ -1,7 +1,7 @@
 const { existsSync, writeFileSync, readdirSync } = require('fs');
-const { join } = require('path');
+const { join, resolve } = require('path');
 const { getGit } = require('@nodecorejs/dot-runtime')
-const { yParser } = require('@nodecorejs/libs');
+const { yParser, execa } = require('@nodecorejs/libs');
 const getPackages = require('./utils/getPackages');
 
 (async () => {
@@ -12,6 +12,7 @@ const getPackages = require('./utils/getPackages');
 
   pkgs.forEach((packageName) => {
     const name = `@nodecorejs/${packageName}`;
+    const pkgPath = resolve(__dirname, `../packages/${packageName}`)
 
     const pkgJSONPath = join(
       __dirname,
@@ -69,5 +70,26 @@ const getPackages = require('./utils/getPackages');
         writeFileSync(readmePath, `# ${name}\n`);
       }
     }
+
+    try {
+      const changeDirectoryArgs = [`${pkgPath}`]
+      const installArgs = ['install']
+
+      console.log(`📦 Installing modules [${packageName}]`)
+      
+      execa.sync('cd', changeDirectoryArgs)
+      execa.sync('npm', installArgs)
+      
+    } catch (error) {
+      function errorTable(err) {
+        this.errno = err.errno
+        this.code = err.code
+        this.shortMessage = err.shortMessage
+      }
+
+      console.log(`❌ Cannot install node_modules from pkg '${packageName}'`)
+      console.table([new errorTable(error)])
+    }
+
   });
 })();
