@@ -1,5 +1,5 @@
 import { cleanup, render } from '@testing-library/react';
-import { Plugin } from '@nodecorejs/runtime';
+import { Plugin } from '../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { renderClient } from './renderClient';

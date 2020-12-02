@@ -1,4 +1,4 @@
-import { webpack } from '@nodecorejs/types';
+import { webpack } from '../../nodecorejs/src/node_modules/@nodecorejs/types';
 
 interface IOpts {
   port: number;

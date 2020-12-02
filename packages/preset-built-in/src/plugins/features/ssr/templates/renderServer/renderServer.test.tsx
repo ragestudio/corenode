@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stream } from 'stream';
-import { Plugin } from '@nodecorejs/runtime';
+import { Plugin } from '../../../../../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
 import renderServer from './renderServer';
 
 test('renderServer normal', async () => {

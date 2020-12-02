@@ -1,4 +1,4 @@
-import { IApi, IBundlerConfigType, BundlerConfigType } from '@nodecorejs/types';
+import { IApi, IBundlerConfigType, BundlerConfigType } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { Bundler as DefaultBundler, webpack } from '@nodecorejs/bundler-webpack';
 import { join, resolve } from 'path';
 import { existsSync, readdirSync, readFileSync } from 'fs';

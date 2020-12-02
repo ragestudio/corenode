@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { IApi, IRoute } from '@nodecorejs/types';
+import { IApi, IRoute } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { deepmerge, rimraf } from '@nodecorejs/libs';
 import pathToRegexp from 'path-to-regexp';
 

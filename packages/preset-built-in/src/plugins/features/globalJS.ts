@@ -1,5 +1,5 @@
 import { relative } from 'path';
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { createDebug } from '@nodecorejs/libs';
 import { getGlobalFile } from '../utils';
 

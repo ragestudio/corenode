@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import createPageGenerator from './PageGenerator/createPageGenerator';
 import createTmpGenerator from './TmpGenerator/createTmpGenerator';
 import createHTMLGenerator from './HTMLGenerator/createHTMLGenerator';

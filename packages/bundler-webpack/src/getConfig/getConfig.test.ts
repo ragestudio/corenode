@@ -1,4 +1,4 @@
-import { BundlerConfigType } from '@nodecorejs/types';
+import { BundlerConfigType } from '../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { winPath } from '@nodecorejs/libs';
 import getConfig from './getConfig';
 

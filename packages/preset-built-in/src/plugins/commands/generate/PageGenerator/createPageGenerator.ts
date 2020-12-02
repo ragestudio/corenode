@@ -1,5 +1,5 @@
 import { join, basename } from 'path';
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { Generator, randomColor } from '@nodecorejs/libs';
 
 export default function ({ api }: { api: IApi }) {

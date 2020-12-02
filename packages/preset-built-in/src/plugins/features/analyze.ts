@@ -1,5 +1,5 @@
 import { IApi } from 'nodecore';
-import { BundlerConfigType } from '@nodecorejs/types';
+import { BundlerConfigType } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 
 export default (api: IApi) => {
   api.describe({

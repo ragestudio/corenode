@@ -1,5 +1,5 @@
 import React from 'react';
-import { __RouterContext as RouterContext } from '@nodecorejs/runtime';
+import { __RouterContext as RouterContext } from '../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
 
 export default function Route(props: any) {
   return (

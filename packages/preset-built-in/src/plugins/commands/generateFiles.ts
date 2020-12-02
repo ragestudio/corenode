@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { chokidar, lodash, winPath } from '@nodecorejs/libs';
 import { join } from 'path';
 

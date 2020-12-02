@@ -1,4 +1,4 @@
-import { IApi, BundlerConfigType } from '@nodecorejs/types';
+import { IApi, BundlerConfigType } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { IServerOpts, Server } from '@nodecorejs/server';
 import { delay } from '@nodecorejs/libs';
 import assert from 'assert';

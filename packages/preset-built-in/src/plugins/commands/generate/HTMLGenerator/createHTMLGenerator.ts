@@ -1,5 +1,5 @@
 import { join, dirname } from 'path';
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { Generator, chalk } from '@nodecorejs/libs';
 import { writeFileSync } from 'fs';
 import { getHtmlGenerator } from '../../htmlUtils';

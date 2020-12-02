@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import { IRoute } from '@nodecorejs/types';
+import { IRoute } from '../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { parse, UrlWithStringQuery } from 'url';
 import mergeStream from 'merge-stream';
 import serialize from 'serialize-javascript';

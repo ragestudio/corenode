@@ -1,4 +1,4 @@
-import { BundlerConfigType } from '@nodecorejs/types';
+import { BundlerConfigType } from '../../nodecorejs/src/node_modules/@nodecorejs/types';
 import {
   BabelRegister,
   chalk,

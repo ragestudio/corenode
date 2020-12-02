@@ -3,7 +3,7 @@ import {
   ITargets,
   BundlerConfigType,
   IBundlerConfigType,
-} from '@nodecorejs/types';
+} from '../../nodecorejs/src/node_modules/@nodecorejs/types';
 
 interface IOpts {
   config: IConfig;

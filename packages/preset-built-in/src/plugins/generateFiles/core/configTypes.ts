@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import joi2Types from 'joi2types';
 import joi from '@hapi/joi';
 

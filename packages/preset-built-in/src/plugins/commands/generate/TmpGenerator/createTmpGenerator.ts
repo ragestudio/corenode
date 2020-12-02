@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { Generator } from '@nodecorejs/libs';
 import generateFiles from '../../generateFiles';
 

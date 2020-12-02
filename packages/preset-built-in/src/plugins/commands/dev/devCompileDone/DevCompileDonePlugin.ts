@@ -1,4 +1,4 @@
-import { webpack } from '@nodecorejs/types';
+import { webpack } from '../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { chalk, address } from '@nodecorejs/libs';
 
 interface IOpts {

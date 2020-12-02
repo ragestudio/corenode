@@ -3,7 +3,7 @@ import {
   IBundlerConfigType,
   BundlerConfigType,
   ICopy,
-} from '@nodecorejs/types';
+} from '../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import defaultWebpack from 'webpack';
 import Config from 'webpack-chain';
 import { join } from 'path';

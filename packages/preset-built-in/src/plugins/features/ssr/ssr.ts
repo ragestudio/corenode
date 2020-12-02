@@ -3,7 +3,7 @@ import assert from 'assert';
 import * as path from 'path';
 import { performance } from 'perf_hooks';
 import { Route } from '@nodecorejs/core';
-import { IApi, BundlerConfigType } from '@nodecorejs/types';
+import { IApi, BundlerConfigType } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { winPath, Mustache, lodash as _, routeToChunkName } from '@nodecorejs/libs';
 import { matchRoutes, RouteConfig } from 'react-router-config';
 import { webpack } from '@nodecorejs/bundler-webpack';
