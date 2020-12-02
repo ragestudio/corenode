@@ -4,7 +4,6 @@ const { getGit, getDevRuntimeEnvs } = require('@nodecorejs/dot-runtime')
 const { yParser, execa } = require('@nodecorejs/libs');
 const getPackages = require('./utils/getPackages');
 
-
 (async () => {
   const devRuntime = getDevRuntimeEnvs();
   const args = yParser(process.argv);
@@ -24,7 +23,7 @@ const getPackages = require('./utils/getPackages');
       'package.json',
     );
     const pkgJSONExists = existsSync(pkgJSONPath);
-
+    
     if (args.force || !pkgJSONExists) {
       const json = {
         name,
