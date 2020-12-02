@@ -24,7 +24,6 @@ const getPackages = require('./utils/getPackages');
       'package.json',
     );
     const pkgJSONExists = existsSync(pkgJSONPath);
-    console.log(getPackages())
 
     if (args.force || !pkgJSONExists) {
       const json = {
@@ -96,4 +95,5 @@ const getPackages = require('./utils/getPackages');
     }
 
   });
-})();
+})()
+.then(() => console.log("done"));
