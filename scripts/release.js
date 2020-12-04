@@ -62,23 +62,6 @@ async function release() {
   let updated = null;
 
   if (!args.publishOnly) {
-    // Get updated packages
-    logStep('check updated packages');
-    const updatedStdout = execa.sync(lernaCli, ['changed']).stdout;
-    updated = updatedStdout
-      .split('\n')
-      .map((pkg) => {
-        if (pkg === 'nodecore') return pkg;
-        else return pkg.split('/')[1];
-      })
-      .filter(Boolean);
-    if (!updated.length) {
-      printErrorAndExit('Release failed, no updated package is updated.');
-    }
-
-    // Clean
-    logStep('clean');
-
     // Build
     if (!args.skipBuild) {
       logStep('build');
