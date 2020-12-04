@@ -11,7 +11,6 @@
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:nodecore": "cd packages/nodecore && yarn link && cd -",
     "release": "node ./scripts/release.js",
-    "sync:tnpm": "node -e 'require(\"./scripts/syncTNPM\")()'",
     "benchmark": "node scripts/benchmarks.js",
     "startExample": "cd ./examples/normal && nodecore dev",
     "update:deps": "yarn upgrade-interactive --latest"
