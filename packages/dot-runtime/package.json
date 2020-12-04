@@ -14,5 +14,8 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "find-up": "^5.0.0"
   }
 }

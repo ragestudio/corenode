@@ -1,4 +1,4 @@
-const { yParser, execa, chalk } = require('@nodecorejs/utils');
+const { execa, chalk } = require('@nodecorejs/utils');
 const { getDevRuntimeEnvs } = require('@nodecorejs/dot-runtime');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
@@ -10,7 +10,9 @@ const isNextVersion = require('./utils/isNextVersion');
 const { getChangelog } = require('./utils/changelog');
 
 const cwd = process.cwd();
-const args = yParser(process.argv.slice(2));
+
+const args = require("args-parser")(process.argv)
+
 const lernaCli = require.resolve('lerna/cli');
 
 function printErrorAndExit(message) {
@@ -22,17 +24,21 @@ function logStep(name) {
   console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`);
 }
 
+
+async function checkGitStatus() {
+  const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout;
+  if (gitStatus.length) {
+    printErrorAndExit(`Your git status is not clean. Aborting.`);
+  }
+}
+
 async function release() {
+
   // Check git status
   if (!args.skipGitStatusCheck) {
-    const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout;
-    if (gitStatus.length) {
-      printErrorAndExit(`Your git status is not clean. Aborting.`);
-    }
+    checkGitStatus()
   } else {
-    logStep(
-      'git status check is skipped, since --skip-git-status-check is supplied',
-    );
+    logStep('Check git status skipped.');
   }
 
   // get release notes
@@ -125,17 +131,18 @@ async function release() {
     await exec('git', ['push', 'origin', 'master', '--tags']);
   }
 
-  // Publish
-  // Umi must be the latest.
+  
   const runtimeEnvs = getDevRuntimeEnvs()
   if (!runtimeEnvs.headPackage) {
     return printErrorAndExit(`headPackage is missing on runtime`);
   }
 
+  // Publish
+  // Nodecore must be the latest.
   const pkgs = args.publishOnly ? getPackages() : updated;
-  logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`);
   const currVersion = require('../lerna').version;
   const isNext = isNextVersion(currVersion);
+
   pkgs.sort((a) => {
       return a === runtimeEnvs.headPackage ? 1 : -1;
     })
@@ -143,18 +150,16 @@ async function release() {
       const pkgPath = join(cwd, 'packages', pkg);
       const { name, version } = require(join(pkgPath, 'package.json'));
       if (version === currVersion) {
-        console.log(
-          `[${index + 1}/${pkgs.length}] Publish package ${name} ${isNext ? 'with next tag' : ''
-          }`,
-        );
+        console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${isNext ? 'with next tag' : ''}`)
         const cliArgs = isNext ? ['publish', '--tag', 'next'] : ['publish'];
+
         try {
           const { stdout } = execa.sync('npm', cliArgs, {
             cwd: pkgPath,
           })
           console.log(stdout);
         } catch (error) {
-          console.log(`❌ Failed to publish > ${pkg} >`, err)
+          console.log(`❌ Failed to publish > ${pkg} >`, error)
         }
       }
     });

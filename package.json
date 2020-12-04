@@ -51,5 +51,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ragestudio/nodecorejs.git"
+  },
+  "dependencies": {
+    "args-parser": "^1.1.0"
   }
 }
