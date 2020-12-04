@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { Route } from '@nodecorejs/core';
 
 export default function (api: IApi) {

@@ -1,4 +1,4 @@
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import { dirname } from 'path';
 
 export const runtimePath = winPath(

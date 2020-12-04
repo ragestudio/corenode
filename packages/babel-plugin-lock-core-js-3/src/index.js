@@ -1,5 +1,5 @@
 import { dirname } from 'path';
-import { t } from '@nodecorejs/utils';
+import { t } from '@nodecorejs/libs';
 const CORE_JS_PATH = dirname(require.resolve('core-js/package.json'));
 export default function () {
     return {

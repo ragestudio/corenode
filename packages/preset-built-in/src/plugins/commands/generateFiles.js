@@ -1,4 +1,4 @@
-import { chokidar, lodash, winPath } from '@nodecorejs/utils';
+import { chokidar, lodash, winPath } from '@nodecorejs/libs';
 import { join } from 'path';
 export default async ({ api, watch }) => {
     const { paths } = api;

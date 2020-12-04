@@ -1,6 +1,6 @@
 import { Service } from '@nodecorejs/core';
 import { join } from 'path';
-import { rimraf } from '@nodecorejs/utils';
+import { rimraf } from '@nodecorejs/libs';
 import { existsSync } from 'fs';
 const fixtures = join(__dirname, '../../../fixtures');
 test('build', async () => {

@@ -1,5 +1,5 @@
 import { join, basename } from 'path';
-import { Generator, randomColor } from '@nodecorejs/utils';
+import { Generator, randomColor } from '@nodecorejs/libs';
 export default function ({ api }) {
     return class PageGenerator extends Generator {
         constructor(opts) {

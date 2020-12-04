@@ -11,7 +11,7 @@ import {
 import { Stream } from 'stream';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { Server, IServerOpts } from '@nodecorejs/server';
-import { Generator } from '@nodecorejs/utils';
+import { Generator } from '@nodecorejs/libs';
 import { IOpts as IBabelPresetUmiOpts } from '@nodecorejs/babel-preset-nodecore';
 import {
   IRouteComponentProps,

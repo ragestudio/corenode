@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { getFile, winPath } from '@nodecorejs/utils';
+import { getFile, winPath } from '@nodecorejs/libs';
 import { runtimePath } from '../constants';
 export default function (api) {
     const { paths, utils: { Mustache }, } = api;

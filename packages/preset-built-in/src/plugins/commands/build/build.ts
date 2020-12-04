@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { relative } from 'path';
 import { existsSync } from 'fs';
 import { Logger } from '@nodecorejs/core';

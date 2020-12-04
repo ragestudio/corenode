@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { EventEmitter } from 'events';
-import { BabelRegister, NodeEnv } from '@nodecorejs/utils';
+import { BabelRegister, NodeEnv } from '@nodecorejs/libs';
 import PluginAPI from './PluginAPI';
 import { ApplyPluginsType, ConfigChangeType, EnableBy, ServiceStage } from './enums';
 import { ICommand, IHook, IPackage, IPlugin, IPreset } from './types';

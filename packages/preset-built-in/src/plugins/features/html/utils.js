@@ -1,4 +1,4 @@
-import { lodash } from '@nodecorejs/utils';
+import { lodash } from '@nodecorejs/libs';
 const EXP_URL = /^(http:|https:)?\/\//;
 /**
  * 格式化 script => object

@@ -1,4 +1,4 @@
-import { t } from '@nodecorejs/utils';
+import { t } from '@nodecorejs/libs';
 import * as traverse from '@babel/traverse';
 
 type TLibs = (RegExp | string)[];

@@ -1,5 +1,5 @@
-import { IConfig } from '@nodecorejs/types';
-import { winPath } from '@nodecorejs/utils';
+import { IConfig } from '../../nodecorejs/src/node_modules/@nodecorejs/types';
+import { winPath } from '@nodecorejs/libs';
 import { existsSync } from 'fs';
 import { join } from 'path';
 

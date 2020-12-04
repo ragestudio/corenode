@@ -1,4 +1,4 @@
-import { t } from '@nodecorejs/utils';
+import { t } from '@nodecorejs/libs';
 export function specifiersToProperties(specifiers) {
     return specifiers.reduce((memo, s) => {
         if (t.isImportDefaultSpecifier(s)) {

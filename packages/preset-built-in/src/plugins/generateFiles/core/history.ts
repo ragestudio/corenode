@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { runtimePath } from '../constants';
 
 export default function (api: IApi) {

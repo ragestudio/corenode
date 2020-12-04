@@ -11,7 +11,7 @@ import {
   winPath,
   getFile,
   createDebug,
-} from '@nodecorejs/utils';
+} from '@nodecorejs/libs';
 import assert from 'assert';
 import joi from '@hapi/joi';
 import Service from '../Service/Service';
@@ -73,8 +73,6 @@ export default class Config {
     );
 
     const userConfig = this.getUserConfig();
-    // 用于提示用户哪些 key 是未定义的
-    // TODO: 考虑不排除 false 的 key
     const userConfigKeys = Object.keys(userConfig).filter((key) => {
       return userConfig[key] !== false;
     });
@@ -87,10 +85,8 @@ export default class Config {
       if (!config.schema) return;
 
       const value = getUserConfigWithKey({ key, userConfig });
-      // 不校验 false 的值，此时已禁用插件
       if (value === false) return;
 
-      // do validate
       const schema = config.schema(joi);
       assert(
         joi.isSchema(schema),
@@ -136,8 +132,7 @@ export default class Config {
   getUserConfig() {
     const configFile = this.getConfigFile();
     this.configFile = configFile;
-    // 潜在问题：
-    // .local 和 .env 的配置必须有 configFile 才有效
+  
     if (configFile) {
       let envConfigFile;
       if (process.env.UMI_ENV) {
@@ -145,10 +140,7 @@ export default class Config {
           configFile,
           process.env.UMI_ENV,
         );
-        const fileNameWithoutExt = envConfigFileName.replace(
-          extname(envConfigFileName),
-          '',
-        );
+        const fileNameWithoutExt = envConfigFileName.replace(extname(envConfigFileName), '');
         envConfigFile = getFile({
           base: this.cwd,
           fileNameWithoutExt,

@@ -1,6 +1,6 @@
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
-import { chalk } from '@nodecorejs/utils';
+import { chalk } from '@nodecorejs/libs';
 import UmiError, { ERROR_CODE_MAP } from './UmiError';
 import Common from './Common';
 

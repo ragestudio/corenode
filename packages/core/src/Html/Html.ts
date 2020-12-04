@@ -2,7 +2,7 @@ import ejs from 'ejs';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import assert from 'assert';
-import { cheerio } from '@nodecorejs/utils';
+import { cheerio } from '@nodecorejs/libs';
 import prettier from 'prettier';
 import { IConfig } from '..';
 import { IOpts, IGetContentArgs, IScript } from './types';

@@ -1,5 +1,5 @@
-import { IApi } from '@nodecorejs/types';
-import { lodash, winPath } from '@nodecorejs/utils';
+import { IApi } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
+import { lodash, winPath } from '@nodecorejs/libs';
 import assert from 'assert';
 
 const reserveLibrarys = ['nodecore']; // reserve library

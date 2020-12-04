@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { basename, extname, join, relative } from 'path';
-import { getFile, winPath } from '@nodecorejs/utils';
+import { getFile, winPath } from '@nodecorejs/libs';
 import { getExportProps, isReactComponent } from '@nodecorejs/ast';
 import assert from 'assert';
 import { IRoute } from './types';

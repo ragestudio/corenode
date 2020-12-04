@@ -1,4 +1,4 @@
-import { lodash } from '@nodecorejs/utils';
+import { lodash } from '@nodecorejs/libs';
 // @ts-ignore
 import set from 'set-value';
 

@@ -1,5 +1,5 @@
 import { BundlerConfigType } from '@nodecorejs/types';
-import { BabelRegister, chalk, compatESModuleRequire, getFile, portfinder, rimraf, yParser, } from '@nodecorejs/utils';
+import { BabelRegister, chalk, compatESModuleRequire, getFile, portfinder, rimraf, yParser, } from '@nodecorejs/libs';
 import { basename, extname, join } from 'path';
 import { Server } from '@nodecorejs/server';
 import assert from 'assert';

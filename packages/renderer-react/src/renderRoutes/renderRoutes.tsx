@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plugin, Redirect, ApplyPluginsType } from '@nodecorejs/runtime';
+import { Plugin, Redirect, ApplyPluginsType } from '../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
 import { IRoute, IComponent } from '..';
 import Switch from './Switch';
 import Route from './Route';

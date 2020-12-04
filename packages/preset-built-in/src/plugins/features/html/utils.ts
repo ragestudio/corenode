@@ -1,5 +1,5 @@
-import { lodash } from '@nodecorejs/utils';
-import { IScriptConfig, IStyleConfig } from '@nodecorejs/types';
+import { lodash } from '@nodecorejs/libs';
+import { IScriptConfig, IStyleConfig } from '../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 
 export interface IHTMLTag {
   [key: string]: string;

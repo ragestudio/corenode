@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import http2 from 'http2';
-import { got, delay } from '@nodecorejs/utils';
+import { got, delay } from '@nodecorejs/libs';
 import portfinder from 'portfinder';
 import SockJS from 'sockjs-client';
 import sockjs from 'sockjs';

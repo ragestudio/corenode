@@ -1,4 +1,4 @@
-import * as utils from '@nodecorejs/utils';
+import * as utils from '@nodecorejs/libs';
 import Logger from '../Logger/Logger';
 import Service from './Service';
 import { EnableBy } from './enums';

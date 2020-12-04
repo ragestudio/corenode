@@ -1,17 +1,19 @@
 const { existsSync, writeFileSync, readdirSync } = require('fs');
-const { join } = require('path');
-const { getGit } = require('@nodecorejs/dot-runtime')
-const { yParser } = require('@nodecorejs/utils');
+const { join, resolve } = require('path');
+const { getGit, getDevRuntimeEnvs } = require('@nodecorejs/dot-runtime')
+const { yParser, execa } = require('@nodecorejs/libs');
 const getPackages = require('./utils/getPackages');
 
 (async () => {
+  const devRuntime = getDevRuntimeEnvs();
   const args = yParser(process.argv);
-  const version = require('../lerna.json').version;
+  const lernaVersion = require('../lerna.json').version;
 
   const pkgs = getPackages();
 
   pkgs.forEach((packageName) => {
-    const name = `@nodecorejs/${packageName}`;
+    const name = `@${devRuntime.headPackage}/${packageName}`;
+    const pkgPath = resolve(__dirname, `../packages/${packageName}`)
 
     const pkgJSONPath = join(
       __dirname,
@@ -21,10 +23,11 @@ const getPackages = require('./utils/getPackages');
       'package.json',
     );
     const pkgJSONExists = existsSync(pkgJSONPath);
+    
     if (args.force || !pkgJSONExists) {
       const json = {
         name,
-        version,
+        version: lernaVersion,
         main: 'dist/index.js',
         types: 'dist/index.d.ts',
         files: ['dist', 'src'],
@@ -57,7 +60,7 @@ const getPackages = require('./utils/getPackages');
       writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`);
     }
 
-    if (packageName !== 'nodecore') {
+    if (packageName !== devRuntime.headPackage) {
       const readmePath = join(
         __dirname,
         '..',
@@ -69,5 +72,27 @@ const getPackages = require('./utils/getPackages');
         writeFileSync(readmePath, `# ${name}\n`);
       }
     }
+
+    try {
+      const changeDirectoryArgs = [`${pkgPath}`]
+      const installArgs = ['install']
+
+      console.log(`📦 Installing modules [${packageName}]`)
+
+      execa.sync('cd', changeDirectoryArgs)
+      execa.sync('npm', installArgs)
+
+    } catch (error) {
+      function errorTable(err) {
+        this.errno = err.errno
+        this.code = err.code
+        this.shortMessage = err.shortMessage
+      }
+
+      console.log(`❌ Cannot install node_modules from pkg '${packageName}'`)
+      console.table([new errorTable(error)])
+    }
+
   });
-})();
+})()
+.then(() => console.log("done"));

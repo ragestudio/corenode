@@ -1,8 +1,8 @@
 import { join, dirname } from 'path';
-import { Generator, chalk } from '@nodecorejs/utils';
+import { Generator, chalk } from '@nodecorejs/libs';
 import { writeFileSync } from 'fs';
 import { getHtmlGenerator } from '../../htmlUtils';
-import { mkdirp } from '@nodecorejs/utils';
+import { mkdirp } from '@nodecorejs/libs';
 export default function ({ api }) {
     return class PageGenerator extends Generator {
         constructor(opts) {

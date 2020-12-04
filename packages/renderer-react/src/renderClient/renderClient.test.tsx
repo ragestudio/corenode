@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, waitFor, getByText } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import { createMemoryHistory, Plugin, dynamic } from '@nodecorejs/runtime';
+import { createMemoryHistory, Plugin, dynamic } from '../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
 import renderClient, { preloadComponent } from './renderClient';
 
 let container;

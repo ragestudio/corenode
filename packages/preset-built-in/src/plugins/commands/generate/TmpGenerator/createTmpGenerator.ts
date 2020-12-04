@@ -1,5 +1,5 @@
-import { IApi } from '@nodecorejs/types';
-import { Generator } from '@nodecorejs/utils';
+import { IApi } from '../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
+import { Generator } from '@nodecorejs/libs';
 import generateFiles from '../../generateFiles';
 
 export default ({ api }: { api: IApi }) => {

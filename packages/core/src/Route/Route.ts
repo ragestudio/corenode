@@ -1,4 +1,4 @@
-import { lodash, winPath } from '@nodecorejs/utils';
+import { lodash, winPath } from '@nodecorejs/libs';
 import { join } from 'path';
 import { IConfig, IRoute } from '..';
 import assert from 'assert';

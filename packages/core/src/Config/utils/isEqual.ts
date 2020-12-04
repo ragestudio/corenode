@@ -1,4 +1,4 @@
-import { lodash } from '@nodecorejs/utils';
+import { lodash } from '@nodecorejs/libs';
 
 function funcToStr(obj: Function | object) {
   if (typeof obj === 'function') return obj.toString();

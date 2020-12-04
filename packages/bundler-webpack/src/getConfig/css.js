@@ -1,7 +1,7 @@
 import { BundlerConfigType } from '@nodecorejs/types';
 // @ts-ignore
 import safePostCssParser from 'postcss-safe-parser';
-import { deepmerge } from '@nodecorejs/utils';
+import { deepmerge } from '@nodecorejs/libs';
 export function createCSSRule({ webpackConfig, type, config, lang, test, isDev, loader, options, browserslist, miniCSSExtractPluginLoaderPath, }) {
     const rule = webpackConfig.module.rule(lang).test(test);
     applyLoaders(rule.oneOf('css-modules').resourceQuery(/modules/), true);

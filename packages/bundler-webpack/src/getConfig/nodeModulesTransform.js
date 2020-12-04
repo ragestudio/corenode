@@ -1,4 +1,4 @@
-import { pkgUp, semver } from '@nodecorejs/utils';
+import { pkgUp, semver } from '@nodecorejs/libs';
 import { dirname } from 'path';
 const pkgPathCache = {};
 const pkgCache = {};

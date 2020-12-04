@@ -1,4 +1,4 @@
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import { join } from 'path';
 import { getBabelDepsOpts, getBabelOpts, getBabelPresetOpts, } from './getBabelOpts';
 const fixtures = join(__dirname, 'fixtures');

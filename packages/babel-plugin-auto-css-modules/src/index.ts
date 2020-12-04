@@ -1,5 +1,5 @@
 import { NodePath, Visitor } from '@babel/traverse';
-import { t } from '@nodecorejs/utils';
+import { t } from '@nodecorejs/libs';
 import { extname } from 'path';
 
 export interface IOpts {

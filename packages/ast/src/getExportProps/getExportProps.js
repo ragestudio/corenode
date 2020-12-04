@@ -1,4 +1,4 @@
-import { t, traverse } from '@nodecorejs/utils';
+import { t, traverse } from '@nodecorejs/libs';
 import { parse } from '../utils/parse';
 import { NODE_RESOLVERS, findArrayElements, findObjectMembers, } from './propertyResolver';
 export function getExportProps(code) {

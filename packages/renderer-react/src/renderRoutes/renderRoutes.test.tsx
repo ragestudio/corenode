@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter, Plugin, Link } from '@nodecorejs/runtime';
+import { MemoryRouter, Plugin, Link } from '../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
 import { getByText, render, screen, waitFor } from '@testing-library/react';
 import renderRoutes from './renderRoutes';
 import { IRoute } from '..';

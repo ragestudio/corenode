@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { chokidar, winPath, lodash } from '@nodecorejs/utils';
+import { chokidar, winPath, lodash } from '@nodecorejs/libs';
 import { existsSync, readFileSync } from 'fs';
 import { isPluginOrPreset, PluginType } from '@nodecorejs/core';
 

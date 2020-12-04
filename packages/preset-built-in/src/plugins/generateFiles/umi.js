@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import { runtimePath, renderReactPath } from './constants';
 export function importsToStr(imports) {
     return imports.map((imp) => {

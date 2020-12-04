@@ -4,7 +4,7 @@ import * as path from 'path';
 import { performance } from 'perf_hooks';
 import { Route } from '@nodecorejs/core';
 import { BundlerConfigType } from '@nodecorejs/types';
-import { winPath, Mustache, lodash as _, routeToChunkName } from '@nodecorejs/utils';
+import { winPath, Mustache, lodash as _, routeToChunkName } from '@nodecorejs/libs';
 import { matchRoutes } from 'react-router-config';
 import { webpack } from '@nodecorejs/bundler-webpack';
 import { getHtmlGenerator } from '../../commands/htmlUtils';
@@ -124,7 +124,7 @@ export default (api) => {
         api.writeTmpFile({
             path: `${TMP_PLUGIN_DIR}/${CLIENT_EXPORTS}.ts`,
             content: Mustache.render(clientExportsContent, {
-                SSRUtils: winPath(require.resolve('@nodecorejs/utils/dist/ssr')),
+                SSRUtils: winPath(require.resolve('@nodecorejs/libs/dist/ssr')),
             }),
         });
     });

@@ -1,7 +1,7 @@
-import { IApi, IRoute, webpack, IBundlerConfigType } from '@nodecorejs/types';
+import { IApi, IRoute, webpack, IBundlerConfigType } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { extname, join } from 'path';
 import { existsSync } from 'fs';
-import { lodash } from '@nodecorejs/utils';
+import { lodash } from '@nodecorejs/libs';
 import assert from 'assert';
 
 interface IGetContentArgs {

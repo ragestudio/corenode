@@ -1,4 +1,4 @@
-import { IApi } from '@nodecorejs/types';
+import { IApi } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { dirname } from 'path';
 
 export default (api: IApi) => {

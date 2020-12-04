@@ -1,8 +1,8 @@
-import { IConfig, BundlerConfigType } from '@nodecorejs/types';
+import { IConfig, BundlerConfigType } from '../../nodecorejs/src/node_modules/@nodecorejs/types';
 import defaultWebpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import { IServerOpts, Server } from '@nodecorejs/server';
-import { winPath } from '@nodecorejs/utils';
+import { winPath } from '@nodecorejs/libs';
 import getConfig, { IOpts as IGetConfigOpts } from './getConfig/getConfig';
 import { join } from 'path';
 

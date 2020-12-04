@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
-import { IApi } from '@nodecorejs/types';
-import { winPath } from '@nodecorejs/utils';
+import { IApi } from '../../../../nodecorejs/src/node_modules/@nodecorejs/types';
+import { winPath } from '@nodecorejs/libs';
 import { runtimePath, renderReactPath } from './constants';
 
 export function importsToStr(

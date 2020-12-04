@@ -1,4 +1,4 @@
-import { parser } from '@nodecorejs/utils';
+import { parser } from '@nodecorejs/libs';
 export function parse(code) {
     return parser.parse(code, {
         sourceType: 'module',

@@ -1,5 +1,5 @@
 // @ts-ignore
-import { mergeConfig } from '@nodecorejs/utils';
+import { mergeConfig } from '@nodecorejs/libs';
 import { dirname } from 'path';
 function toObject(obj) {
     return typeof obj === 'object' ? obj : {};

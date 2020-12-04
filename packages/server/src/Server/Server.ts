@@ -1,6 +1,6 @@
 // @ts-ignore
 import { Logger } from '@nodecorejs/core';
-import { lodash, portfinder, PartialProps, createDebug } from '@nodecorejs/utils';
+import { lodash, portfinder, PartialProps, createDebug } from '@nodecorejs/libs';
 import express, { Express, RequestHandler } from 'express';
 import {
   createProxyMiddleware,

@@ -7,8 +7,8 @@ import {
   StaticRouter,
   ApplyPluginsType,
   MemoryHistory,
-} from '@nodecorejs/runtime';
-import { IRoute } from '@nodecorejs/types';
+} from '../../../../../../../nodecorejs/src/node_modules/@nodecorejs/runtime';
+import { IRoute } from '../../../../../../../nodecorejs/src/node_modules/@nodecorejs/types';
 import { renderRoutes } from '@nodecorejs/renderer-react';
 
 export interface IOpts {
