@@ -1,4 +1,9 @@
+package-lock.json
+yarn.lock
+
 /node_modules
+/packages/*/package-lock.json
+/packages/*/yarn.lock
 /packages/*/lib
 /packages/*/dist
 /packages/*/node_modules
