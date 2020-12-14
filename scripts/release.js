@@ -24,7 +24,6 @@ function logStep(name) {
   console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`);
 }
 
-
 async function checkGitStatus() {
   const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout;
   if (gitStatus.length) {

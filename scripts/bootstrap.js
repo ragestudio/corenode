@@ -73,25 +73,21 @@ const getPackages = require('./utils/getPackages');
       }
     }
 
-    try {
-      const changeDirectoryArgs = [`${pkgPath}`]
-      const installArgs = ['install']
+    // try {
+    //   console.log(`📦 Installing modules [${packageName}]`)
 
-      console.log(`📦 Installing modules [${packageName}]`)
+    //   execa.sync(`npm`, ['install'], { execPath: pkgPath })
 
-      execa.sync('cd', changeDirectoryArgs)
-      execa.sync('npm', installArgs)
+    // } catch (error) {
+    //   function errorTable(err) {
+    //     this.errno = err.errno
+    //     this.code = err.code
+    //     this.shortMessage = err.shortMessage
+    //   }
 
-    } catch (error) {
-      function errorTable(err) {
-        this.errno = err.errno
-        this.code = err.code
-        this.shortMessage = err.shortMessage
-      }
-
-      console.log(`❌ Cannot install node_modules from pkg '${packageName}'`)
-      console.table([new errorTable(error)])
-    }
+    //   console.log(`❌ Cannot install node_modules from pkg '${packageName}'`)
+    //   console.table([new errorTable(error)])
+    // }
 
   });
 })()
