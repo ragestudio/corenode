@@ -22,5 +22,23 @@
             ],
             "type": "pwa-node"
         },
+        {
+            "name": "[Compile] Kayser",
+            "request": "launch",
+            "internalConsoleOptions": "openOnSessionStart",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "runtimeArgs": [
+                "-r",  
+                "ts-node/register/transpile-only"
+            ],
+            "args": [
+                "${file}",
+                "--project ${workspaceFolder}/tsconfig.json",
+                "--ignore ['${cwd}/node_modules', '${workspaceFolder/node_modules}']"
+            ],
+            "type": "pwa-node"
+        },
     ]
 }

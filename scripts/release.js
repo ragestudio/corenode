@@ -9,6 +9,8 @@ const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
 const { getChangelog } = require('./utils/changelog');
 
+const { bumpVersion, parsedVersionToString } = require('./updateVersion')
+
 const cwd = process.cwd();
 const args = yParser(process.argv.slice(2));
 const lernaCli = require.resolve('lerna/cli');
@@ -83,16 +85,9 @@ async function release() {
     }
 
     // Bump version
-    logStep('bump version with lerna version');
-    await exec(lernaCli, [
-      'version',
-      '--exact',
-      '--no-commit-hooks',
-      '--no-git-tag-version',
-      '--no-push',
-    ]);
+    bumpVersion(["minor"])
 
-    const currVersion = require('../lerna').version;
+    const currVersion = require('../.version');
 
     // Sync version to root package.json
     logStep('sync version to root package.json');
