@@ -2,7 +2,8 @@ import { __installPackage, __installCore, __initCreateRuntime } from './scripts'
 import outputLog from './utils/outputLog'
 
 import commands from './commands.json'
-import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { buildProyect } from '@nodecorejs/builder'
+import { getRuntimeEnv, getVersion, bootstrapProyect } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
 const args = process.argv.slice(2);
@@ -27,24 +28,48 @@ const functionalMap = {
     },
     initRuntime: () => {
         __initCreateRuntime()
+    },
+    buildProyect: () => {
+        buildProyect()
+    },
+    bootstrapProyect: () => {
+        bootstrapProyect()
+    },
+    version: () => {
+        console.log(getVersion())
+    },
+    versionManager: () => {
+        if (args[1]) {
+            switch (args[1]) {
+                case "update": {
+                    console.log(`⚙ Updating version (${version}) to (${args[2]})`)
+                    return updateVersion(args[2])
+                }
+                case "bump": {
+                    return bumpVersion(args[2])
+                }
+                default: {
+                    console.error("Invalid arguments!")
+                    break;
+                }
+            }
+        }
     }
 }
 
-
-if (args) {
+if (args[0]) {
     try {
-        let argv = {}
-
-        args.forEach(arg => {
-            argv[arg]
-            if (typeof (commands[arg]) !== "undefined") {
-                if (typeof (functionalMap[commands[arg]]) == "function") {
-                    return commands[arg](args)
-                }
+        if (typeof(commands[args[0]]) !== "undefined") {
+            const command = functionalMap[commands[args[0]]]
+            if (typeof (command) == "function") {
+                command(args)
+            }else{
+                console.log("🆘 Invalid command, is not an function! ")
             }
-        })
+        }
     } catch (error) {
-        console.log("Error parsing arguments")
+        console.log(`🆘 Error trying execute command! >`)
+        console.log(`\n${error}`)
     }
 }else {
     console.log("SHOW HELP")

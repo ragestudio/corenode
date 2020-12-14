@@ -1,9 +1,12 @@
-const findUp = require("find-up")
 const path = require("path")
+const process = require('process')
+const getPackages = require("./utils/getPackages")
 const fs = require("fs")
 
-const versionFile = findUp.sync(['.version'])
-let version = fs.readFileSync(versionFile, 'utf8')
+const rootPackageJSON = require(path.resolve(process.cwd(), './package.json'))
+
+const versionFile = path.resolve(process.cwd(), './.version')
+let version = null
 module.exports.version = version
 
 let parsedVersion = {
@@ -13,7 +16,13 @@ let parsedVersion = {
 }
 module.exports.parsedVersion = parsedVersion
 
-try {
+try {   //init from runtime
+    if (!fs.existsSync(versionFile)) {
+        console.log(`.version file not exist, creating...`)
+        fs.writeFileSync(versionFile, rootPackageJSON.version)
+    }
+    version = fs.readFileSync(versionFile, 'utf8')
+
     const args = process.argv.slice(2);
     const parsed = version.split('.')
 
@@ -45,6 +54,11 @@ function parsedVersionToString(version) {
     return `${version.major}.${version.minor}.${version.patch}`
 }
 module.exports.parsedVersionToString = parsedVersionToString
+
+function getVersion() {
+    return version
+}
+module.exports.getVersion = getVersion
 
 function updateVersion(to) {
     if (!to) {
@@ -89,12 +103,34 @@ function bumpVersion(params) {
     }
 
     function bumpTable(major, minor, patch) {
-        this.major = major? parsedVersion.major : false;
-        this.minor = minor? parsedVersion.minor : false;
-        this.patch = patch? parsedVersion.patch : false;
+        this.major = major ? parsedVersion.major : false;
+        this.minor = minor ? parsedVersion.minor : false;
+        this.patch = patch ? parsedVersion.patch : false;
     }
     console.table(new bumpTable(bumps.major, bumps.minor, bumps.patch));
 
     return updateVersion(parsedVersion)
 }
 module.exports.bumpVersion = bumpVersion
+
+function syncPackagesVersions() {
+    const pkgs = getPackages()
+    pkgs.forEach((pkg) => {
+        try {
+            const pkgFilePath = path.resolve(process.cwd(), `./packages/${pkg}/package.json`)
+            if (!fs.existsSync(pkgFilePath)) {
+                console.log(`[${pkg}] ❌ This package is not bootstraped! > package.json not found. > Run npm run bootstrap for init this package.`)
+                return false
+            }
+            const pkgFile = JSON.parse(fs.readFileSync(pkgFilePath, 'utf8'))
+            if (pkgFile.version !== version) {
+                console.log(`[${pkg}] ✅ New version synchronized`)
+                return fs.writeFileSync(pkgFilePath, version)
+            }
+            console.log(`[${pkg}] 💠 Version is synchronized, no changes have been made...`)
+        } catch (error) {
+            console.error(`[${pkg}] ❌ Error syncing ! > ${error}`)
+        }
+    })
+}
+module.exports.syncPackagesVersions = syncPackagesVersions

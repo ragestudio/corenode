@@ -1,3 +1,9 @@
 {
-    "--c": "clearBF"
+    "--c": "clearBF",
+    "add": "installCore",
+    "version": "version",
+    "-v": "version",
+    "build-proyect": "devBuild",
+    "bootstrap-proyect": "bootstrapProyect",
+    "versionManager": "versionManager"
 }

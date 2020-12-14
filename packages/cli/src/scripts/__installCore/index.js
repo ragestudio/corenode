@@ -16,14 +16,11 @@ import outputLog from '../../utils/outputLog'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 
-let performace: any = []
+let performace = []
 const runtimeEnv = getRuntimeEnv()
 
-interface IInstallCoreParamsTypes {
-    pkg: any
-}
 
-function outputResume(payload: any) {
+function outputResume(payload) {
     const { installPath, pkg } = payload
     console.group()
     console.log(`\n📦 Installed package (${pkg}) on > ${installPath}`)
@@ -31,7 +28,7 @@ function outputResume(payload: any) {
     console.groupEnd()
 }
 
-function handleInstall(params: IInstallCoreParamsTypes) {
+function handleInstall(params) {
     return new Promise((resolve, reject) => {
         let pkgManifest = {}
         const { pkg } = params
@@ -46,7 +43,7 @@ function handleInstall(params: IInstallCoreParamsTypes) {
         const tasks = new Listr([
             {
                 title: '📡 Fetching package',
-                task: () => __FetchPKGFromRemote(remoteSource, pkg, "lastest", (data: any) => {
+                task: () => __FetchPKGFromRemote(remoteSource, pkg, "lastest", (data) => {
                     data.extension = data.filename.split('.')[1]
                     data.address = `${remoteSource}/pkgs/${data.id}/${data.filename}`
                     if (data.scopeDir) {
@@ -67,19 +64,19 @@ function handleInstall(params: IInstallCoreParamsTypes) {
 
                         if (typeof (requires.npm) !== "undefined") {
                             observer.next('Installing npm dependencies')
-                            await asyncDoArray(requires.npm, async (key: any, value: any) => {
+                            await asyncDoArray(requires.npm, async (key, value) => {
                                 return new Promise((res, rej) => {
                                     observer.next(`[npm] Installing > ${key}`)
                                     __installPackage({ pkg: key }, pkgManifest[pkg].id)
-                                        .then((data: any) => {
+                                        .then((data) => {
                                             outputLog.setCache(`[npm] installed ${key}`)
                                             return res(data)
                                         })
-                                        .catch((err: any) => {
+                                        .catch((err) => {
                                             return rej(err)
                                         })
                                 })
-                            }, (err: any, res: any) => {
+                            }, (err, res) => {
                                 if (err) {
                                     return observer.error(err)
                                 }
@@ -167,7 +164,7 @@ function handleInstall(params: IInstallCoreParamsTypes) {
             collapse: false
         })
         tasks.run()
-            .then((res: any) => {
+            .then((res) => {
                 outputLog.text("Cleaning up temporal files...")
                 fs.rmdirSync(tmpPath, { recursive: true })
                 outputLog.spinner.succeed()
@@ -176,7 +173,7 @@ function handleInstall(params: IInstallCoreParamsTypes) {
 
                 return resolve(pkgManifest[pkg])
             })
-            .catch((err: any) => {
+            .catch((err) => {
                 outputLog.setCache(`error cathed on ${pkg} installation > ${err}`)
                 outputLog.spinner.fail(`Error installing pkg (${pkg}) > ${err}`)
                 return reject(err)
@@ -184,7 +181,7 @@ function handleInstall(params: IInstallCoreParamsTypes) {
     })
 }
 
-async function handleInstallPackageComponents(manifest: any) {
+async function handleInstallPackageComponents(manifest) {
     return new Promise((res, rej) => {
         const requires = manifest.require
 
@@ -194,7 +191,7 @@ async function handleInstallPackageComponents(manifest: any) {
         }
 
         if (requires.components) {
-            asyncDoArray(requires.components, (key: any, value: any) => {
+            asyncDoArray(requires.components, (key, value) => {
                 outputLog.setCache(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
                 __installCore({ pkg: key })
             })
@@ -209,9 +206,9 @@ async function handleInstallPackageComponents(manifest: any) {
     })
 }
 
-export async function __installCore(params: any) {
+export async function __installCore(params) {
     handleInstall(params)
-    .then((res: any) => {
+    .then((res) => {
         handleInstallPackageComponents(res).catch((err) => {
             console.error(err)
             return process.exit(1)

@@ -34,7 +34,7 @@ export function __initCreateRuntime() {
     ]
 
     inquirer.prompt(prompts)
-        .then((answers: any)=> {
+        .then((answers)=> {
             if (!answers.src) {
                 // missing source directory path, re-enter try
                 return false
@@ -52,7 +52,7 @@ export function __initCreateRuntime() {
                 execa('npm', ['init']).stdout.pipe(process.stdout)
             }
         })
-        .catch((error: any) => {
+        .catch((error) => {
             if (error.isTtyError) {
                 // Prompt couldn't be rendered in the current environment
             } else {
