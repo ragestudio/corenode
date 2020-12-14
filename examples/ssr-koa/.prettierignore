@@ -1,8 +1,0 @@
-**/*.md
-**/*.svg
-**/*.ejs
-**/*.html
-package.json
-.nodecore
-.nodecore-production
-.nodecore-test

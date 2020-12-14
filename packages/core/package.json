@@ -13,18 +13,8 @@
   "dependencies": {
     "@babel/core": "7.12.9",
     "@babel/register": "7.12.1",
-    "@hapi/joi": "17.1.1",
-    "@nodecorejs/ast": "0.4.3",
-    "@nodecorejs/babel-preset-nodecore": "0.4.3",
     "@nodecorejs/dot-runtime": "0.4.3",
     "@nodecorejs/libs": "0.4.3",
-    "@types/ejs": "3.0.5",
-    "@types/hapi__joi": "17.1.6",
-    "@types/marked": "^1.1.0",
-    "@types/marked-terminal": "^3.1.1",
-    "@types/prettier": "2.1.5",
-    "@types/tapable": "1.0.6",
-    "@umijs/error-code-map": "^1.0.1",
     "dotenv": "8.2.0",
     "ejs": "3.1.5",
     "marked": "1.2.5",
@@ -32,6 +22,7 @@
     "os-locale": "5.0.0",
     "prettier": "2.2.1",
     "set-value": "3.0.2",
+    "snowpack": "^2.18.4",
     "tapable": "2.1.1"
   }
 }

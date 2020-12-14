@@ -6,9 +6,6 @@
   "files": [
     "dist"
   ],
-  "bin": {
-    "ndc": "dist/cli.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ragestudio/nodecorejs"

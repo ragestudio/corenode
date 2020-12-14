@@ -87,6 +87,7 @@ const getPackages = require('./utils/getPackages');
         this.errno = err.errno
         this.code = err.code
         this.shortMessage = err.shortMessage
+        
       }
 
       console.log(`❌ Cannot install node_modules from pkg '${packageName}'`)

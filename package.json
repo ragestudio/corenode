@@ -35,7 +35,6 @@
     "@types/find-up": "^4.0.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.10",
-    "benchmark": "^2.1.4",
     "escape-goat": "^3.0.0",
     "find-up": "^5.0.0",
     "kayser-build": "^0.1.3001",
