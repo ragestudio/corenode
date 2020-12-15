@@ -5,8 +5,7 @@
   "types": "types.d.ts",
   "files": [
     "dist",
-    "types.d.ts",
-    "bin"
+    "types.d.ts"
   ],
   "sideEffects": false,
   "license": "MIT",
@@ -25,9 +24,6 @@
     "@nodecorejs/libs": "0.6.4",
     "@nodecorejs/types": "0.6.4",
     "resolve-cwd": "3.0.0"
-  },
-  "bin": {
-    "nodecore": "bin/cli.js"
   },
   "module": "dist/index.esm.js"
 }

@@ -11,6 +11,7 @@
     "debug": "node --inspect-brk packages/nodecore/bin/cli.js",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:main": "cd packages/nodecorejs && yarn link && cd -",
+    "link:cli": "cd packages/cli && yarn link && cd -",
     "link:builder": "cd packages/builder && yarn link && cd -",
     "release": "node ./scripts/release.js",
     "update:deps": "yarn upgrade-interactive --latest"
