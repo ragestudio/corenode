@@ -34,10 +34,12 @@ try {   //init from runtime
         switch (args[0]) {
             case "update": {
                 console.log(`⚙ Updating version (${version}) to (${args[1]})`)
-                return updateVersion(args[1])
+                updateVersion(args[1])
+                break;
             }
             case "bump": {
-                return bumpVersion(args[1])
+                bumpVersion(args[1])
+                break;
             }
             default: {
                 console.error("Invalid arguments!")
@@ -47,7 +49,6 @@ try {   //init from runtime
     }
 } catch (error) {
     console.error("Fatal error! >", error)
-    return false
 }
 
 function parsedVersionToString(version) {

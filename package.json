@@ -9,7 +9,7 @@
     "bootstrap": "nodecore dev-build",
     "debug": "node --inspect-brk packages/nodecore/bin/cli.js",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
-    "link:main": "cd packages/nodecore && yarn link && cd -",
+    "link:main": "cd packages/nodecorejs && yarn link && cd -",
     "release": "node ./scripts/release.js",
     "update:deps": "yarn upgrade-interactive --latest"
   },
@@ -21,8 +21,9 @@
       "prettier --parser=typescript --write"
     ]
   },
-  "devDependencies": {
+  "dependencies": {
     "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.9",
     "@babel/node": "^7.12.1",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.0",
@@ -32,7 +33,6 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
-    "@babel/core": "7.12.9",
     "@nodecorejs/core": "0.4.3",
     "@nodecorejs/dot-runtime": "0.4.3",
     "@nodecorejs/libs": "0.4.3",
@@ -41,17 +41,23 @@
     "@types/find-up": "^4.0.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.10",
+    "assert": "^2.0.0",
+    "chokidar": "^3.4.3",
     "escape-goat": "^3.0.0",
+    "execa": "^5.0.0",
     "find-up": "^5.0.0",
     "kayser-build": "^0.1.3001",
     "lerna": "^3.22.1",
     "new-github-release-url": "^1.0.0",
     "npm-run-all": "^4.1.5",
     "open": "^7.0.4",
+    "prompt": "^1.0.0",
+    "rimraf": "^3.0.2",
+    "slash2": "^2.0.0",
+    "through2": "^4.0.2",
     "ts-node": "^9.0.0",
+    "vinyl-fs": "^3.0.3",
+    "yargs-parser": "^20.2.4",
     "yorkie": "^2.0.0"
-  },
-  "dependencies": {
-    "prompt": "^1.0.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -8,11 +8,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ragestudio/nodecorejs"
+    "url": "https://github.com/ragestudio/nodecore"
   },
   "scripts": {
     "start": "npx babel-node ./src",
-    "test": "jest --no-cache",
     "build": "rm -rf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
   },
@@ -22,7 +21,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
-    "@nodecorejs/utils": "^0.6.0",
+    "@nodecorejs/utils": "^0.6.2",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",

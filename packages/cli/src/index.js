@@ -2,7 +2,7 @@ import { __installPackage, __installCore, __initCreateRuntime } from './scripts'
 import outputLog from './utils/outputLog'
 
 import commands from './commands.json'
-import { buildProyect } from '@nodecorejs/builder'
+import buildProyect from '@nodecorejs/builder'
 import { getRuntimeEnv, getVersion, bootstrapProyect } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
@@ -30,6 +30,7 @@ const functionalMap = {
         __initCreateRuntime()
     },
     buildProyect: () => {
+        console.log(`🔄 Starting builder...`)
         buildProyect()
     },
     bootstrapProyect: () => {

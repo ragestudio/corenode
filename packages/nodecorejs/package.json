@@ -1,6 +1,6 @@
 {
   "name": "nodecorejs",
-  "version": "0.4.3",
+  "version": "0.6.2",
   "main": "index.js",
   "types": "types.d.ts",
   "files": [
@@ -15,9 +15,10 @@
   },
   "dependencies": {
     "@babel/core": "7.12.9",
-    "@nodecorejs/core": "0.4.3",
-    "@nodecorejs/types": "0.4.3",
-    "@nodecorejs/libs": "0.4.3",
+    "@nodecorejs/cli": "^0.6.2",
+    "@nodecorejs/core": "0.6.2",
+    "@nodecorejs/libs": "0.6.2",
+    "@nodecorejs/types": "0.6.2",
     "resolve-cwd": "3.0.0"
   },
   "bin": {

@@ -91,8 +91,12 @@ export const getrootPackageJSON = () => {
     }
 }
 
-export function parsedVersionToString(version) {
+export function parsedVersionToString(version:any) {
     return `${version.major}.${version.minor}.${version.patch}`
+}
+
+export function getDevPackages() {
+    return getPackages()
 }
 
 export function getVersion() {

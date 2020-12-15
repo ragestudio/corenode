@@ -1,4 +1,3 @@
-// 
 const saveRuntimeFile = ".nodecore"
 
 import execa from 'execa'

@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/utils",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "main": "dist/cli.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -8,7 +8,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ragestudio/nodecorejs"
+    "url": "https://github.com/ragestudio/nodecore"
   },
   "license": "MIT",
   "publishConfig": {

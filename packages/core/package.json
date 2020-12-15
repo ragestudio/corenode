@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/core",
-  "version": "0.4.3",
+  "version": "0.6.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -13,8 +13,8 @@
   "dependencies": {
     "@babel/core": "7.12.9",
     "@babel/register": "7.12.1",
-    "@nodecorejs/dot-runtime": "0.4.3",
-    "@nodecorejs/libs": "0.4.3",
+    "@nodecorejs/dot-runtime": "0.6.2",
+    "@nodecorejs/libs": "0.6.2",
     "dotenv": "8.2.0",
     "ejs": "3.1.5",
     "marked": "1.2.5",

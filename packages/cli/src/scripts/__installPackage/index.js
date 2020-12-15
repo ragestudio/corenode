@@ -1,5 +1,4 @@
 import child_process from 'child_process'
-import execa from 'execa'
 
 import { __FetchPKGFromRemote } from '../../utils/remotePkg'
 import outputLog from '../../utils/outputLog'

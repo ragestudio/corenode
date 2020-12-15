@@ -3,7 +3,7 @@
     "add": "installCore",
     "version": "version",
     "-v": "version",
-    "build-proyect": "devBuild",
+    "build-proyect": "buildProyect",
     "bootstrap-proyect": "bootstrapProyect",
     "versionManager": "versionManager"
 }
