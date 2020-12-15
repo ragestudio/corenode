@@ -6,8 +6,8 @@
   ],
   "scripts": {
     "builder": "node /Users/srgooglo/repos/nodecore/packages/builder/bin/cli.js",
-    "build": "nodecore-build",
-    "bootstrap": "nodecore dev-build",
+    "build": "nodecore-builder",
+    "bootstrap": "nodecore bootstrap-proyect",
     "debug": "node --inspect-brk packages/nodecore/bin/cli.js",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:main": "cd packages/nodecorejs && yarn link && cd -",
