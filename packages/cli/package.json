@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.4.5",
+  "version": "0.4.14",
   "main": "dist/cli.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -8,7 +8,6 @@
   ],
   "scripts": {
     "start": "npx babel-node ./src",
-    "test": "jest --no-cache",
     "build": "rm -rf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
   },
@@ -22,6 +21,9 @@
   },
   "dependencies": {
     "7zip-bin": "^5.0.3",
+    "@babel/cli": "^7.12.1",
+    "@babel/node": "^7.12.1",
+    "@nodecorejs/builder": "^0.4.14",
     "@nodecorejs/dot-runtime": "0.3.3",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
