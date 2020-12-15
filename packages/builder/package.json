@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.4.12",
+  "version": "0.4.13",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -23,12 +23,9 @@
   "dependencies": {
     "@babel/core": "^7.12.10",
     "@ragestudio/nodecore-utils": "^0.1.199",
-    "assert": "^2.0.0",
-    "chokidar": "^3.4.3",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",
-    "vinyl-fs": "^3.0.3",
-    "yargs-parser": "^20.2.4"
+    "vinyl-fs": "^3.0.3"
   }
 }
