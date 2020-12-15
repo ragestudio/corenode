@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "main": "dist/cli.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -23,8 +23,8 @@
     "7zip-bin": "^5.0.3",
     "@babel/cli": "^7.12.1",
     "@babel/node": "^7.12.1",
-    "@nodecorejs/builder": "^0.6.2",
-    "@nodecorejs/dot-runtime": "^0.6.2",
+    "@nodecorejs/builder": "^0.6.3",
+    "@nodecorejs/dot-runtime": "^0.6.3",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.5.0",

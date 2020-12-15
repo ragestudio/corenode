@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/types",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "@nodecorejs/types",
   "main": "dist/index.js",
   "types": "index",
@@ -11,11 +11,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "start": "npx babel-node ./src",
+    "build": "rm -rf dist && npm run babelOut",
+    "babelOut": "babel src --out-dir dist"
+  },
   "dependencies": {
     "@nodecorejs/babel-preset-nodecore": "0.4.3",
-    "@nodecorejs/core": "0.6.2",
+    "@nodecorejs/core": "0.6.3",
     "@nodecorejs/server": "0.4.3",
-    "@nodecorejs/libs": "0.6.2",
+    "@nodecorejs/libs": "0.6.3",
     "@types/cheerio": "0.22.22",
     "@types/express": "4.17.9",
     "@types/webpack": "4.41.25",

@@ -1,7 +1,7 @@
 {
   "name": "@nodecorejs/utils",
-  "version": "0.6.2",
-  "main": "dist/cli.js",
+  "version": "0.6.3",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -13,6 +13,11 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "start": "npx babel-node ./src",
+    "build": "rm -rf dist && npm run babelOut",
+    "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
     "@babel/core": "^7.12.9",
