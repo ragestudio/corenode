@@ -24,7 +24,6 @@
     "@nodecorejs/dot-runtime": "^0.6.7",
     "@nodecorejs/libs": "0.6.7",
     "@nodecorejs/utils": "0.6.7",
-    "@nodecorejs/types": "0.6.7",
     "resolve-cwd": "3.0.0"
   },
   "module": "dist/index.esm.js"
