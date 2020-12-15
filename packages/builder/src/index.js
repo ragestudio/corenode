@@ -1,6 +1,5 @@
 const babel = require('@babel/core')
 import process from 'process'
-import { verbosity } from '@nodecorejs/utils'
 import { join, extname, sep } from 'path'
 import { existsSync, readdirSync } from 'fs'
 import rimraf from 'rimraf'
@@ -40,7 +39,7 @@ export function transform(opts = {}) {
   const { content, path, pkg, root } = opts;
   const babelConfig = getBabelConfig();
 
-  verbosity(`🔵 [${pkg.name}] Building => ${path}`)
+  console.log(`transform > 🔵 [${pkg.name}] Building => ${path}`)
 
   return babel.transform(content, {
     ...babelConfig,

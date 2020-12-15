@@ -3,7 +3,7 @@ import outputLog from './utils/outputLog'
 
 import commands from './commands.json'
 import buildProyect from '@nodecorejs/builder'
-import { getRuntimeEnv, getVersion, bootstrapProyect } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, getVersion, bootstrapProyect, releaseProyect } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
 const args = process.argv.slice(2);
@@ -33,8 +33,14 @@ const functionalMap = {
         console.log(`🔄 Starting builder...`)
         buildProyect()
     },
+    releaseProyect: () => {
+        releaseProyect()
+    },
     bootstrapProyect: () => {
         bootstrapProyect()
+    },
+    releaseProyect: () => {
+
     },
     version: () => {
         console.log(getVersion())

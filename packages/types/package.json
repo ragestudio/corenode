@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/types",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "@nodecorejs/types",
   "main": "dist/index.js",
   "types": "index",
@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@nodecorejs/babel-preset-nodecore": "0.4.3",
-    "@nodecorejs/core": "0.6.3",
+    "@nodecorejs/core": "0.6.4",
     "@nodecorejs/server": "0.4.3",
-    "@nodecorejs/libs": "0.6.3",
+    "@nodecorejs/libs": "0.6.4",
     "@types/cheerio": "0.22.22",
     "@types/express": "4.17.9",
     "@types/webpack": "4.41.25",

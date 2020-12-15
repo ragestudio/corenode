@@ -1,10 +1,11 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "repository": {
     "type": "git",
@@ -19,9 +20,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "nodecore-builder": "bin/cli.js"
+  },
   "dependencies": {
     "@babel/core": "^7.12.10",
-    "@nodecorejs/utils": "^0.6.3",
+    "@nodecorejs/utils": "^0.6.4",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",

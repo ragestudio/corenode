@@ -16,7 +16,7 @@ let parsedVersion = {
 }
 module.exports.parsedVersion = parsedVersion
 
-try {   //init from runtime
+try {
     if (!fs.existsSync(versionFile)) {
         console.log(`.version file not exist, creating...`)
         fs.writeFileSync(versionFile, rootPackageJSON.version)

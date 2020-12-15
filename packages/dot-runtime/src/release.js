@@ -24,7 +24,7 @@ function logStep(name) {
   console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`);
 }
 
-async function release() {
+export async function release() {
   // Check git status
   if (!args.skipGitStatusCheck) {
     const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout;
@@ -177,8 +177,3 @@ async function release() {
 
   logStep('done');
 }
-
-release().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});

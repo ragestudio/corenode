@@ -6,6 +6,7 @@ import getPackages from './utils/getPackages'
 import fs from 'fs'
 import bootstrap from './bootstrap'
 import { IRuntimeEnv, IPackageJSON } from './types'
+import { release } from './release'
 
 const rootPackageJSON = path.resolve(process.cwd(), './package.json')
 const versionFile = path.resolve(process.cwd(), './.version')
@@ -19,7 +20,7 @@ export let parsedVersion: any = {
 }
 let runtimeEnv = <IRuntimeEnv>{}
 
-if(findenvs){
+if (findenvs) {
     try {
         // @ts-ignore
         runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
@@ -27,11 +28,11 @@ if(findenvs){
         console.log("Failed trying load runtime env")
         // (⓿_⓿) terrible...
     }
-}else{
+} else {
     console.log("Runtime env (.nodecore) is missing")
 }
 
-try {   //init from runtime
+try {
     if (!fs.existsSync(versionFile)) {
         console.log(`.version file not exist, creating...`)
         fs.writeFileSync(versionFile, rootPackageJSON.version)
@@ -44,7 +45,15 @@ try {   //init from runtime
     parsedVersion.major = parsed[0] ? Number(parsed[0]) : 0
     parsedVersion.minor = parsed[1] ? Number(parsed[1]) : 0
     parsedVersion.patch = parsed[2] ? Number(parsed[2]) : 0
+} catch {
+    // terrible...
+}
 
+export const releaseProyect = () => {
+    release().catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });
 }
 
 export const bootstrapProyect = () => {
@@ -60,7 +69,7 @@ export const getRuntimeEnv = () => {
 }
 
 export const getDevRuntimeEnvs: any = () => {
-    if (!runtimeEnv || typeof(runtimeEnv.devRuntime) == "undefined") {
+    if (!runtimeEnv || typeof (runtimeEnv.devRuntime) == "undefined") {
         return false
     }
 
@@ -69,7 +78,7 @@ export const getDevRuntimeEnvs: any = () => {
 
 export const getGit = () => {
     const envs = getDevRuntimeEnvs()
-    if (!envs || typeof(envs.originGit) == "undefined") {
+    if (!envs || typeof (envs.originGit) == "undefined") {
         return false
     }
     return envs.originGit
@@ -87,11 +96,11 @@ export const getrootPackageJSON = () => {
         }
         return false
     } catch (error) {
-        return false   
+        return false
     }
 }
 
-export function parsedVersionToString(version:any) {
+export function parsedVersionToString(version: any) {
     return `${version.major}.${version.minor}.${version.patch}`
 }
 
