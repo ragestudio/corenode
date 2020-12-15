@@ -20,8 +20,10 @@
   "dependencies": {
     "@babel/core": "7.12.9",
     "@nodecorejs/cli": "^0.6.5",
-    "@nodecorejs/core": "0.6.5",
+    "@nodecorejs/builder": "^0.6.5",
+    "@nodecorejs/dot-runtime": "^0.6.5",
     "@nodecorejs/libs": "0.6.5",
+    "@nodecorejs/utils": "0.6.5",
     "@nodecorejs/types": "0.6.5",
     "resolve-cwd": "3.0.0"
   },
