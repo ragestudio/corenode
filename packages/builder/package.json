@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.4.5",
+  "version": "0.4.10",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
