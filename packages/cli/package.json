@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.4.14",
+  "version": "0.5.0",
   "main": "dist/cli.js",
   "types": "dist/index.d.ts",
   "files": [
