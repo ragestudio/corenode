@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/dot-runtime",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -18,5 +18,8 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@nodecorejs/libs": "^0.6.7"
   }
 }

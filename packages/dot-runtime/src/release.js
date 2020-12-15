@@ -9,7 +9,7 @@ const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
 const { getChangelog } = require('./utils/changelog');
 
-const { bumpVersion, parsedVersionToString } = require('./updateVersion')
+const { bumpVersion, parsedVersionToString } = require('./versionManager')
 
 const cwd = process.cwd();
 const args = yParser(process.argv.slice(2));

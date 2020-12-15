@@ -1,6 +1,6 @@
 {
   "name": "@ragestudio/nodecorejs",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "main": "index.js",
   "types": "types.d.ts",
   "files": [
@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "@babel/core": "7.12.9",
-    "@nodecorejs/cli": "^0.6.6",
-    "@nodecorejs/builder": "^0.6.6",
-    "@nodecorejs/dot-runtime": "^0.6.6",
-    "@nodecorejs/libs": "0.6.6",
-    "@nodecorejs/utils": "0.6.6",
-    "@nodecorejs/types": "0.6.6",
+    "@nodecorejs/cli": "^0.6.7",
+    "@nodecorejs/builder": "^0.6.7",
+    "@nodecorejs/dot-runtime": "^0.6.7",
+    "@nodecorejs/libs": "0.6.7",
+    "@nodecorejs/utils": "0.6.7",
+    "@nodecorejs/types": "0.6.7",
     "resolve-cwd": "3.0.0"
   },
   "module": "dist/index.esm.js"
