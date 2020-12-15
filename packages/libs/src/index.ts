@@ -47,10 +47,3 @@ export { t };
 export { parser };
 export { traverse };
 export { signale };
-
-export { default as getFile } from './getFile/getFile';
-export { default as winPath } from './winPath/winPath';
-export { default as winEOL, isWindows } from './winEOL/winEOL';
-export { default as BabelRegister } from './BabelRegister/BabelRegister';
-export { default as randomColor } from './randomColor/randomColor';
-export { default as delay } from './delay/delay';
