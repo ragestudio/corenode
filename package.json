@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "cli": "node ./packages/cli/bin/cli.js",
-    "initDev": "npm i && cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
+    "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
     "builder": "node ./packages/builder/dist/cli.js",
     "build": "nodecore-builder",
     "bootstrap": "nodecore bootstrap-proyect",

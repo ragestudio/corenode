@@ -23,12 +23,12 @@
     "nodecore": "./cli/nodecore.js"
   },
   "dependencies": {
-    "@babel/core": "7.12.9",
     "@nodecorejs/cli": "^0.6.7",
     "@nodecorejs/builder": "^0.6.7",
     "@nodecorejs/dot-runtime": "^0.6.7",
     "@nodecorejs/libs": "0.6.7",
     "@nodecorejs/utils": "0.6.7",
+    "@babel/core": "7.12.9",
     "resolve-cwd": "3.0.0"
   }
 }
