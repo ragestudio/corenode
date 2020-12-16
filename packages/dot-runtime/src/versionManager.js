@@ -23,30 +23,11 @@ try {
     }
     version = fs.readFileSync(versionFile, 'utf8')
 
-    const args = process.argv.slice(2);
     const parsed = version.split('.')
 
     parsedVersion.major = parsed[0] ? Number(parsed[0]) : 0
     parsedVersion.minor = parsed[1] ? Number(parsed[1]) : 0
     parsedVersion.patch = parsed[2] ? Number(parsed[2]) : 0
-
-    if (args[0]) {
-        switch (args[0]) {
-            case "update": {
-                console.log(`⚙ Updating version (${version}) to (${args[1]})`)
-                updateVersion(args[1])
-                break;
-            }
-            case "bump": {
-                bumpVersion(args[1])
-                break;
-            }
-            default: {
-                console.error("Invalid arguments!")
-                break;
-            }
-        }
-    }
 } catch (error) {
     console.error("Fatal error! >", error)
 }

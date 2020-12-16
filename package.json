@@ -5,7 +5,9 @@
     "packages/*"
   ],
   "scripts": {
-    "builder": "node /Users/srgooglo/repos/nodecore/packages/builder/bin/cli.js",
+    "cli": "node ./packages/cli/bin/cli.js",
+    "initDev": "npm i && cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
+    "builder": "node ./packages/builder/bin/cli.js",
     "build": "nodecore-builder",
     "bootstrap": "nodecore bootstrap-proyect",
     "debug": "node --inspect-brk packages/nodecore/bin/cli.js",

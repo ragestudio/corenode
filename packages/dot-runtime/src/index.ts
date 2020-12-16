@@ -39,7 +39,6 @@ try {
     }
     version = fs.readFileSync(versionFile, 'utf8')
 
-    const args = process.argv.slice(2);
     const parsed = version.split('.')
 
     parsedVersion.major = parsed[0] ? Number(parsed[0]) : 0
