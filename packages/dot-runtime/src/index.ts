@@ -183,13 +183,4 @@ export function syncPackagesVersions() {
     })
 }
 
-export const getVersion = () => {
-    const pkg = getRootPackage()
-    if (pkg && pkg.version) {
-        return pkg.version
-    }
-    
-    return "unruntimed"
-}
-
 export default runtimeEnv
