@@ -1,21 +1,25 @@
 {
   "name": "@nodecorejs/dot-runtime",
-  "version": "0.5.0",
+  "version": "0.6.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
+  "scripts": {
+    "start": "npx babel-node ./src",
+    "build": "rm -rf dist && npm run babelOut",
+    "babelOut": "babel src --out-dir dist"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ragestudio/nodecorejs"
+    "url": "https://github.com/ragestudio/nodecore"
   },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "find-up": "^5.0.0"
+    "@nodecorejs/libs": "^0.6.7"
   }
 }

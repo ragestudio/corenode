@@ -1,7 +1,7 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
-    UMI_ENV: string;
-    UMI_VERSION: string;
+    NODECORE_ENV: string;
+    NODECORE_VERSION: string;
     NODE_ENV: 'production' | 'development' | 'test';
     HTTPS: string;
     HOST: string;
@@ -16,11 +16,5 @@ declare namespace NodeJS {
     WATCH: null | 'none';
     WATCH_IGNORED: null | string;
     SYSTEM_BELL: null | 'none';
-    ANALYZE: string;
-    ANALYZE_SSR: string;
-    ANALYZE_MODE: string;
-    ANALYZE_OPEN: string;
-    ANALYZE_DUMP: string;
-    ANALYZE_LOG_LEVEL: string;
   }
 }

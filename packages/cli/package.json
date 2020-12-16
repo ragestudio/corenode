@@ -1,25 +1,32 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.4.3",
-  "main": "dist/cli.js",
+  "version": "0.6.7",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
-  "bin": {
-    "ndc": "dist/cli.js"
+  "scripts": {
+    "start": "npx babel-node ./src",
+    "build": "rm -rf dist && npm run babelOut",
+    "babelOut": "babel src --out-dir dist"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ragestudio/nodecorejs"
+    "url": "https://github.com/ragestudio/nodecore"
   },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/node": "^7.12.1",
+    "@nodecorejs/builder": "^0.6.7",
+    "@nodecorejs/dot-runtime": "^0.6.7",
     "7zip-bin": "^5.0.3",
-    "@nodecorejs/dot-runtime": "0.4.3",
+    "args-parser": "^1.1.0",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.5.0",
