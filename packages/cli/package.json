@@ -21,7 +21,7 @@
     "access": "public"
   },
   "bin": {
-    "nodecore": "bin/cli.js"
+    "nodecore": "./bin/cli.js"
   },
   "dependencies": {
     "7zip-bin": "^5.0.3",
