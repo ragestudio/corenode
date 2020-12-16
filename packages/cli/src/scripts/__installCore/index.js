@@ -31,12 +31,22 @@ function outputResume(payload) {
 function handleInstall(params) {
     return new Promise((resolve, reject) => {
         let pkgManifest = {}
-        const { pkg } = params
+        let installDir = runtimeEnv.src
+
+        const { pkg, dir } = params
+        if (typeof(dir) !== "undefined") {
+            installDir = dir    
+        }
+
+        if (!installDir || !path.resolve(process.cwd(), installDir)) {
+            console.log(`\n🆘 Invalid installation path!`)
+            return console.error(`\t⁉️ Try to use [dir] argument or configure .nodecore runtime with and default "src" path.`)
+        }
 
         performace[pkg] = performance.now()
         const remoteSource = runtimeEnv.remoteSource ?? fallbackRemoteSource
 
-        let installPath = path.resolve(`${process.cwd()}/${runtimeEnv.src}/${pkg}`)
+        let installPath = path.resolve(`${process.cwd()}/${installDir}/${pkg}`)
         let tmpPath = path.resolve(`${__dirname}/dltmp`)
         let downloadPath = path.resolve(`${tmpPath}/${pkg}_${new Date().getTime()}`)
 

@@ -5,6 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "[Compile] Builder Packages & TSNode ",
+            "request": "launch",
+            "internalConsoleOptions": "openOnSessionStart",
+            "stopOnEntry": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "preLaunchTask": "nodecore-builder",
+            "runtimeArgs": [
+                "-r",  
+                "ts-node/register/transpile-only"
+            ],
+            "args": [
+                "${file}",
+                "--project ${workspaceFolder}/tsconfig.json",
+                "--ignore ['${cwd}/node_modules', '${workspaceFolder/node_modules}']"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "[Transpile] TSNode",
             "request": "launch",
             "internalConsoleOptions": "openOnSessionStart",

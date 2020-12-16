@@ -1,12 +1,16 @@
 const babel = require('@babel/core')
 import process from 'process'
-import { join, extname, sep } from 'path'
+import { join, extname, sep, resolve } from 'path'
 import { existsSync, readdirSync } from 'fs'
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
 
+// TODO: Use nodecore/utils verbosity ramdom color api
+// import { chalkRandomColor } from '@nodecorejs/utils'
+
 const cwd = process.cwd();
+const log = console.log;
 
 let pkgCount = null;
 
@@ -39,8 +43,7 @@ export function transform(opts = {}) {
   const { content, path, pkg, root } = opts;
   const babelConfig = getBabelConfig();
 
-  console.log(`transform > 🔵 [${pkg.name}] Building => ${path}`)
-
+  log(`${`transform > 🔵 [${pkg.name}]`} => ${path}`)
   return babel.transform(content, {
     ...babelConfig,
     filename: path,
@@ -63,7 +66,12 @@ export function build(dir, opts = {}) {
 
   const buildOut = join(dir, options.outDir);
   const srcDir = join(dir, options.buildSrc);
-  
+
+  if (pkg.name == require(resolve(__dirname, '../package.json')).name) {
+    console.log(`⚠️ Avoiding build the builder source!`)
+    return false
+  }
+
   // clean
   rimraf.sync(join(options.cwd, buildOut));
 

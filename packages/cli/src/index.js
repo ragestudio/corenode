@@ -1,83 +1,11 @@
 import { __installPackage, __installCore, __initCreateRuntime } from './scripts'
 import outputLog from './utils/outputLog'
 
-import commands from './commands.json'
 import buildProyect from '@nodecorejs/builder'
+import { objectToArrayMap, cliRuntime, verbosity } from '@nodecorejs/utils'
 import { getRuntimeEnv, getVersion, bootstrapProyect, releaseProyect } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
-const parsedArgs = process.argv.slice(2);
-const args = require("args-parser")(process.argv)
-
-// Define defaults behaviors and options
-let opts = {
-    clearBefore: false,
-}
-
-const functionalMap = {
-    clearBF: () => {
-        opts.clearBefore = true
-    },
-    add: (argv) => {
-        if (typeof (argv.pkg) !== "undefined") {
-            if (argv.clear) {
-                console.clear()
-            }
-            __requiredRuntime()
-            __installCore({ pkg: argv.pkg })
-        }
-    },
-    init: () => {
-        __initCreateRuntime()
-    },
-    build: () => {
-        console.log(`🔄 Starting builder...`)
-        buildProyect()
-    },
-    release: () => {
-        releaseProyect()
-    },
-    bsproyect: () => {
-        bootstrapProyect()
-    },
-    version: () => {
-        if (args[1]) {
-            switch (args[1]) {
-                case "update": {
-                    console.log(`⚙ Updating version (${version}) to (${args[2]})`)
-                    return updateVersion(args[2])
-                }
-                case "bump": {
-                    return bumpVersion(args[2])
-                }
-                default: {
-                    console.error("Invalid arguments!")
-                    return false
-                }
-            }
-        }else {
-            console.log(getVersion())
-        }
-    },
-}
-
-if (args) {
-    try {
-        if (typeof(commands[args[0]]) !== "undefined") {
-            const command = functionalMap[args[0]]
-            if (typeof (command) == "function") {
-                command(args)
-            }else{
-                console.log("🆘 Invalid command, is not an function! ")
-            }
-        }
-    } catch (error) {
-        console.log(`🆘 Error trying execute command! >`)
-        console.log(`\n${error}`)
-    }
-}else {
-    console.log("SHOW HELP")
-}
 
 function __requiredRuntime() {
     if (!runtimeEnv) {
@@ -93,3 +21,88 @@ function __requiredRuntime() {
     }
 }
 
+let optionsMap = [
+    {
+        option: "clearBefore",
+        description: "Clear console before print",
+        alias: ["cb"],
+        type: "boolean",
+        exec: (args) => {
+            console.clear()
+        }
+    },
+]
+
+let commandMap = [
+    {
+        command: 'add [package] [dir]',
+        description: "Install an nodecore package from std",
+        args: (yargs) => {
+            yargs.positional('package', {
+                describe: 'Package to install'
+            }),
+            yargs.positional('dir', {
+                describe: 'Directory to install (default: runtimeDev)'
+            })
+        },
+        exec: (argv) => {
+            if (typeof (argv.package) !== "undefined") {
+                let opts = {
+                    pkg: argv.package
+                } 
+
+                if (argv.dir) {
+                    opts.dir = argv.dir    
+                }
+
+                __installCore(opts)
+            }else{
+                console.log(`⛔️ Nothing to install! No package defined`)
+            }
+        }
+    },
+    {
+        command: 'version',
+        description: "Show current build version",
+        exec: (argv) => {
+            console.log(getVersion())
+        }
+    },
+    {
+        command: 'release',
+        description: "Release this current development proyect",
+        exec: (argv) => {
+            releaseProyect()
+        }
+    },
+    {
+        command: 'build',
+        description: "Build this current development proyect with nodecore/builder",
+        exec: (argv) => {
+            console.log(`🔄 Starting builder...`)
+            buildProyect(argv)
+        }
+    },
+    {
+        command: 'bootstrap',
+        description: "Run bootstraper for this current development proyect",
+        exec: (argv) => {
+            bootstrapProyect(argv).then((res) => {
+                console.log(`\n✅ DONE\nAll modules bootstraped > ${res}\n`)
+            })
+        }
+    },
+    {
+        command: 'init',
+        description: "Initialize an new nodecore development proyect",
+        exec: (argv) => {
+            __initCreateRuntime()
+        }
+    },
+]
+
+
+cliRuntime({
+    options: optionsMap,
+    commands: commandMap
+})

@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "cli": "node ./packages/cli/bin/cli.js",
+    "cli": "node ./packages/cli/dist/index.js",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
     "builder": "node ./packages/builder/dist/cli.js",
     "build": "nodecore-builder",
