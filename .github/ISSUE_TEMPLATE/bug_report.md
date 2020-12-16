@@ -10,12 +10,6 @@ assignees: ''
 
 A clear and concise description of what the bug is.
 
-## Mini Showcase Repository(REQUIRED)
-
-> Provide a mini GitHub repository which can reproduce the issue. Use `yarn create @nodecorejs/umi-app` then upload to your GitHub
-
-<!-- https://github.com/YOUR_REPOSITORY_URL -->
-
 ## How To Reproduce
 
 **Steps to reproduce the behavior:** 1. 2.
@@ -24,6 +18,6 @@ A clear and concise description of what the bug is.
 
 ## Context
 
-- **Umi Version**:
+- **Version**:
 - **Node Version**:
 - **Platform**:
