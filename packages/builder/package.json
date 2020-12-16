@@ -20,9 +20,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "bin": {
-    "nodecore-builder": "bin/cli.js"
-  },
   "dependencies": {
     "@babel/core": "^7.12.10",
     "rimraf": "^3.0.2",

@@ -20,9 +20,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "bin": {
-    "nodecore": "./bin/cli.js"
-  },
   "dependencies": {
     "@babel/cli": "^7.12.1",
     "@babel/node": "^7.12.1",
