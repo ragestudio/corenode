@@ -1,5 +1,7 @@
-/node_modules
+package-lock.json
+yarn.lock
 
+/node_modules
 /packages/*/lib
 /packages/*/nodecore_logs
 /packages/*/package-lock.json
