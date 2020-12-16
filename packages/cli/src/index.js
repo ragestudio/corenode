@@ -6,7 +6,8 @@ import buildProyect from '@nodecorejs/builder'
 import { getRuntimeEnv, getVersion, bootstrapProyect, releaseProyect } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
-const args = process.argv.slice(2);
+const parsedArgs = process.argv.slice(2);
+const args = require("args-parser")(process.argv)
 
 // Define defaults behaviors and options
 let opts = {
@@ -57,17 +58,17 @@ const functionalMap = {
                 }
                 default: {
                     console.error("Invalid arguments!")
-                    break;
+                    return false
                 }
             }
         }
     }
 }
 
-if (args[0]) {
+if (args) {
     try {
         if (typeof(commands[args[0]]) !== "undefined") {
-            const command = functionalMap[commands[args[0]]]
+            const command = functionalMap[args[0]]
             if (typeof (command) == "function") {
                 command(args)
             }else{
