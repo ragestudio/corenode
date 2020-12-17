@@ -111,13 +111,13 @@ export async function releaseProyect(args) {
         currVersion = getVersion()
 
         // Commit
-        const commitMessage = `release: v${version}`
+        const commitMessage = `release: v${currVersion}`
         logStep(`git commit with ${chalk.blue(commitMessage)}`)
         await exec('git', ['commit', '--all', '--message', commitMessage])
 
         // Git Tag
-        logStep(`git tag v${version}`)
-        await exec('git', ['tag', `v${version}`])
+        logStep(`git tag v${currVersion}`)
+        await exec('git', ['tag', `v${currVersion}`])
 
         // Push
         logStep(`git push`)
