@@ -1,7 +1,7 @@
 import { htmlEscape } from 'escape-goat'
 import git from '../git'
 
-export default async (repoUrl) => {
+export const getChangelogs = async (repoUrl) => {
     if (!repoUrl) {
         throw new Error(`Please provide an git url`);
     }
@@ -24,4 +24,6 @@ export default async (repoUrl) => {
         commits
             .map((commit) => `- ${htmlEscape(commit.message)}  ${commit.id}`)
             .join('\n') + `\n\n${repoUrl}/compare/${latest}...${nextTag}`;
-};
+}
+
+export default getChangelogs
