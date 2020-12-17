@@ -11,6 +11,7 @@ import { getChangelogs } from '../../utils/getChangelogs'
 import isNextVersion from '../../utils/isNextVersion'
 import exec from '../../utils/exec'
 
+// TODO: Auto throwback when crash
 const releaseBackupFile = path.resolve(process.cwd(), './.releaseBackup')
 
 function printErrorAndExit(message) {
@@ -85,19 +86,20 @@ export async function releaseProyect(args) {
             logStep('build is skipped, since args.skipBuild is supplied')
         }
 
+        // TODO: Auto bump depending on `nextVersion`
         // Bump version
-        bumpVersion(["minor"])
+        bumpVersion(["patch"])
 
         // Sync version to root package.json
         logStep('sync version to root package.json')
         syncPackagesVersions()
-        const rootPkg = require('../package')
+        const rootPkg = require(path.resolve(process.cwd(), './package.json'))
         Object.keys(rootPkg.devDependencies).forEach((name) => {
             if (name.startsWith('@nodecorejs/')) {
                 rootPkg.devDependencies[name] = version
             }
         })
-        fs.writeFileSync(path.join(process.cwd(), '..', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
+        fs.writeFileSync(path.join(process.cwd(), '.', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
 
         // Commit
         const commitMessage = `release: v${version}`
@@ -140,6 +142,7 @@ export async function releaseProyect(args) {
                     })
                     console.log(stdout)
                 } catch (error) {
+                    fs.writeFileSync(releaseBackupFile, stateCache, 'utf-8')
                     console.log(`❌ Failed to publish > ${pkg} >`, err)
                 }
             }
@@ -165,7 +168,7 @@ export async function releaseProyect(args) {
     } catch (error) {
         console.log("Try opening url >", url)
     }
-    
+
     logStep('done')
 }
 
