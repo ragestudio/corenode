@@ -33,12 +33,7 @@ if (findenvs) {
 }
 
 try {
-    if (!fs.existsSync(versionFile)) {
-        console.log(`.version file not exist, creating...`)
-        fs.writeFileSync(versionFile, rootPackageJSON.version)
-    }
-    version = fs.readFileSync(versionFile, 'utf8')
-
+    version = getVersion()
     const parsed = version.split('.')
 
     parsedVersion.major = parsed[0] ? Number(parsed[0]) : 0
@@ -108,11 +103,12 @@ export function getDevPackages() {
 }
 
 export function getVersion() {
-    if (!fs.existsSync(versionFile)) {
+    const versionFilePath = path.resolve(process.cwd(), './.version')
+    if (!fs.existsSync(versionFilePath)) {
         console.log(`.version file not exist, creating...`)
-        fs.writeFileSync(versionFile, rootPackageJSON.version)
+        fs.writeFileSync(versionFilePath, rootPackageJSON.version)
     }
-    return fs.readFileSync(versionFile, 'utf8')
+    return fs.readFileSync(versionFilePath, 'utf8')
 }
 
 export function updateVersion(to) {
