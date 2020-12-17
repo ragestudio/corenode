@@ -43,12 +43,6 @@ try {
     // terrible...
 }
 
-export const releaseProyect = () => {
-    release().catch((err) => {
-        console.error(err);
-        process.exit(1);
-    });
-}
 
 export const bootstrapProyect = () => {
     return bootstrap()
@@ -181,6 +175,13 @@ export function syncPackagesVersions() {
             console.error(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
     })
+}
+
+export const releaseProyect = () => {
+    release().catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });
 }
 
 export default runtimeEnv
