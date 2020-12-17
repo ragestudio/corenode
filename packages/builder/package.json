@@ -1,1 +1,30 @@
-0.6.8
+{
+    "name": "@nodecorejs/builder",
+    "version": "0.6.7",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "bin"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ragestudio/nodecore"
+    },
+    "scripts": {
+        "start": "npx babel-node ./src",
+        "build": "rm -rf dist && npm run babelOut",
+        "babelOut": "babel src --out-dir dist"
+    },
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "dependencies": {
+        "@babel/core": "^7.12.10",
+        "rimraf": "^3.0.2",
+        "slash2": "^2.0.0",
+        "through2": "^4.0.2",
+        "vinyl-fs": "^3.0.3"
+    }
+}

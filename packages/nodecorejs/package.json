@@ -1,1 +1,34 @@
-0.6.8
+{
+    "name": "@ragestudio/nodecorejs",
+    "version": "0.6.7",
+    "main": "cli/nodecore.js",
+    "types": "types.d.ts",
+    "files": [
+        "dist",
+        "cli",
+        "types.d.ts"
+    ],
+    "sideEffects": false,
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "start": "npx babel-node ./src",
+        "build": "rm -rf dist && npm run babelOut",
+        "babelOut": "babel src --out-dir dist"
+    },
+    "bin": {
+        "nodecore-builder": "./cli/nodecore-builder.js",
+        "nodecore": "./cli/nodecore.js"
+    },
+    "dependencies": {
+        "@nodecorejs/cli": "^0.6.7",
+        "@nodecorejs/builder": "^0.6.7",
+        "@nodecorejs/dot-runtime": "^0.6.7",
+        "@nodecorejs/libs": "0.6.7",
+        "@nodecorejs/utils": "0.6.7",
+        "@babel/core": "7.12.9",
+        "resolve-cwd": "3.0.0"
+    }
+}
