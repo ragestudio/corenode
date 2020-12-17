@@ -1,9 +1,9 @@
-import { __installPackage, __installCore, __initCreateRuntime } from './scripts'
+import { __installPackage, __installCore, __initCreateRuntime, releaseProyect } from './scripts'
 import outputLog from './utils/outputLog'
 
 import buildProyect from '@nodecorejs/builder'
 import { objectToArrayMap, cliRuntime, verbosity } from '@nodecorejs/utils'
-import { getRuntimeEnv, getVersion, bootstrapProyect, releaseProyect } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, getVersion, bootstrapProyect } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
 
