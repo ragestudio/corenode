@@ -11,15 +11,16 @@ let opts = {
     method: true,
     file: false,
     time: true,
-    colors: {
-        decorator: {
-            textColor: "blue",
-            backgroundColor: false
-        },
-        log: {
-            textColor: false,
-            backgroundColor: false
-        },
+}
+
+let colorsOpts = {
+    decorator: {
+        textColor: "blue",
+        backgroundColor: false
+    },
+    log: {
+        textColor: false,
+        backgroundColor: false
     }
 }
 
@@ -46,21 +47,28 @@ const verbosify = (data) => {
         }
 
         const paint = (type, data) => {
+            if (typeof(data) !== "string") {
+                return data
+            }
             let target = chalk
 
-            const colors = opts.colors
+            const colors = colorsOpts
 
             let textColor = colors[type].textColor
             let backgroundColor = colors[type].backgroundColor
 
             if (textColor) {
-                target = target[textColor]
+                if (target[textColor]) {
+                    target = target[textColor]
+                }
             }
 
             if (backgroundColor) {
-                target = target[backgroundColor]
+                if (target[backgroundColor]) {
+                    target = target[backgroundColor]
+                }
             }
-
+          
             return target(data)
         }
 
@@ -79,51 +87,10 @@ const verbosify = (data) => {
         const logMap = objectToArrayMap(log)
         for (let index = 0; index < logMap.length; index++) {
             const element = logMap[index];
-            logStr.push(element)
+            logStr.push(paint('log', element.value))
         }
-        
 
-        console.log(decoratorStr, logStr)
-
-        // for (let i = 0; i < stackTraceLength; i++) {
-        //     const key = stackTraceKeys[i]
-        //     const stackTraceDataKey = `${stackTraceData[key]}`
-
-        //     if (typeof (stackTraceData[key]) !== "undefined" && decoratorOptions[key]) {
-        //         if (Array.isArray(data)) {
-        //             if (modifyCount == 0) {
-        //                 tmp = (getColor(stackTraceDataKey, 0) + divisor)
-        //             } else {
-        //                 tmp = (getColor(stackTraceDataKey, 0) + divisor + tmp)
-        //             }
-        //             if (i == (stackTraceLength - 1)) {
-        //                 let mix = []
-        //                 data.forEach((element) => {
-        //                     if (options.decoratorColor[1] || options.logColor[1]) {
-        //                         if (typeof (element) == "string") {
-        //                             return mix.push(getColor(element, 1))
-        //                         }
-        //                     }
-        //                     mix.push(element)
-        //                 })
-        //                 mix.unshift(tmp)
-        //                 data = mix
-        //             }
-        //         } else {
-        //             // @ts-ignore
-        //             data = (getColor(stackTraceDataKey, 0) + divisor + getColor(data, 1))
-        //         }
-        //         modifyCount++
-        //     }
-        // }
-
-        // if (Array.isArray(data)) {
-        //     // @ts-ignore
-        //     return console[opt.type](...data)
-        // }
-
-        // @ts-ignore
-        return [decoratorStr, logStr]
+        return [decoratorStr, ...logStr]
     } catch (error) {
         return error
     }
@@ -136,7 +103,7 @@ const method = `[${trace.getFunctionName()}]`
 
 export default {
     log: function (...context) {
-        console.log(verbosify({
+        let response = verbosify({
             trace: {
                 file,
                 line,
@@ -145,17 +112,32 @@ export default {
             log: {
                 ...context
             }
-        }))
+        })
+        console.log(...response)
         return this
     },
     random: function (...context) {
         console.log(chalkRandomColor(verbosify(null, ...context)))
         return this
     },
-    options: function (argument) {
-        // TODO: Option validation
-        if (typeof (argument) !== "undefined" && argument != null) {
-            opts = { ...opts, ...argument }
+    options: function (params) {
+        // TODO: Options validation
+        if (typeof (params) !== "undefined" && params != null) {
+            opts = { ...opts, ...params }
+        }
+        return this
+    },
+    colors: function (params) {
+        if (typeof(params) !== "undefined" && params != null) {
+            try {
+                objectToArrayMap(params).forEach((param) => {
+                    if (colorsOpts[param.key]) {
+                        colorsOpts[param.key] = { ...colorsOpts[param.key], ...param.value }
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
         }
         return this
     }
