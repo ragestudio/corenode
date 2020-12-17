@@ -2,13 +2,16 @@ import chalk from 'chalk'
 import execa from 'execa'
 import fs from 'fs'
 import path from 'path'
+import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
-import { getPackages, getGit} from '@nodecorejs/dot-runtime'
+import { getPackages, getGit, bumpVersion, syncPackagesVersions } from '@nodecorejs/dot-runtime'
 
 import { getChangelogs } from '../../utils/getChangelogs'
 import isNextVersion from '../../utils/isNextVersion'
 import exec from '../../utils/exec'
+
+const releaseBackupFile = path.resolve(process.cwd(), './.releaseBackup')
 
 function printErrorAndExit(message) {
     console.error(chalk.red(message))
@@ -20,7 +23,19 @@ function logStep(name) {
     console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`)
 }
 
+let lastState = null
+let stateCache = {}
+
 export async function releaseProyect(args) {
+    if (fs.existsSync(releaseBackupFile)) {
+        lastState = fs.readFileSync(releaseBackupFile, 'utf-8')
+        if (lastState || lastState.crash) {
+            stateCache = lastState
+        }else {
+            fs.unlinkSync(releaseBackupFile)
+        }
+    }
+
     let opts = {
         skipGitStatusCheck: false,
         publishOnly: false,
@@ -46,7 +61,7 @@ export async function releaseProyect(args) {
     // get release notes
     logStep('get release notes')
     const releaseNotes = await getChangelogs(getGit())
-    console.log(releaseNotes(''))
+    stateCache.releaseNotes = releaseNotes
 
     // Check npm registry
     logStep('check npm registry')
@@ -150,7 +165,7 @@ export async function releaseProyect(args) {
     } catch (error) {
         console.log("Try opening url >", url)
     }
-
+    
     logStep('done')
 }
 

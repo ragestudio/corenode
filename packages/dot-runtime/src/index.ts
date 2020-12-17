@@ -104,7 +104,7 @@ export function getVersion() {
     return fs.readFileSync(versionFilePath, 'utf8')
 }
 
-export function updateVersion(to:any) {
+export function updateVersion(to: any) {
     if (!to) {
         return false
     }
@@ -125,7 +125,7 @@ export function updateVersion(to:any) {
     return fs.writeFileSync(versionFile, updated)
 }
 
-export function bumpVersion(params:any) {
+export function bumpVersion(params: any) {
     const bumps = {
         major: params.includes("major"),
         minor: params.includes("minor"),
@@ -145,7 +145,7 @@ export function bumpVersion(params:any) {
         parsedVersion.patch = parsedVersion.patch + 1
     }
 
-    function bumpTable(major:any, minor:any, patch:any) {
+    function bumpTable(major: any, minor: any, patch: any) {
         this.major = major ? parsedVersion.major : false;
         this.minor = minor ? parsedVersion.minor : false;
         this.patch = patch ? parsedVersion.patch : false;

@@ -17,3 +17,6 @@ yarn.lock
 .yarn-error.logs
 yarn-error.log
 test.js
+.releaseBackup
+
+./.releaseBackup
