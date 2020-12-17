@@ -7,6 +7,7 @@
         {
             "name": "[Compile] Builder Packages & TSNode ",
             "request": "launch",
+            "console": "integratedTerminal",
             "internalConsoleOptions": "openOnSessionStart",
             "stopOnEntry": true,
             "skipFiles": [

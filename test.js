@@ -1,3 +1,6 @@
 import { verbosity } from './packages/utils/dist' 
 
-verbosity.log('aloo')
+function FakeFunction(params) {
+    verbosity.options({ line: true }).log('ajam')
+}
+FakeFunction()
