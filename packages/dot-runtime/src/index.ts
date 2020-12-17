@@ -5,21 +5,24 @@ import process from 'process'
 import fs from 'fs'
 import bootstrap from './bootstrap'
 import { IRuntimeEnv } from './types'
+import { objectToArrayMap } from '@nodecorejs/utils'
 
 const rootPackageJSON = path.resolve(process.cwd(), './package.json')
 const versionFile = path.resolve(process.cwd(), './.version')
 const findenvs = require('find-up').sync(syncEnvs)
 
-export let version: string
-export let parsedVersion: any = {
-    major: 0,
-    minor: 0,
-    patch: 0
-}
+let versionOrderScheme = { mayor: 0, minor: 1, patch: 2, stage: 3 }
+let version = getVersion()
+let currentParsedVersion = {}
+const versionsKeys = Object.keys(versionOrderScheme)
+
 let runtimeEnv = <IRuntimeEnv>{}
 
 if (findenvs) {
     try {
+        objectToArrayMap(getVersion().split('.')).forEach((entry:any) => {
+            currentParsedVersion[versionsKeys[entry.key]] = Number(entry.value)
+        })
         // @ts-ignore
         runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
     } catch (error) {
@@ -28,17 +31,6 @@ if (findenvs) {
     }
 } else {
     console.log("Runtime env (.nodecore) is missing")
-}
-
-try {
-    version = getVersion()
-    const parsed = version.split('.')
-
-    parsedVersion.major = parsed[0] ? Number(parsed[0]) : 0
-    parsedVersion.minor = parsed[1] ? Number(parsed[1]) : 0
-    parsedVersion.patch = parsed[2] ? Number(parsed[2]) : 0
-} catch {
-    // terrible...
 }
 
 // Functions
@@ -54,7 +46,7 @@ export const getRuntimeEnv = () => {
     return runtimeEnv
 }
 
-export const getDevRuntimeEnvs: any = () => {
+export const getDevRuntimeEnv: any = () => {
     if (!runtimeEnv || typeof (runtimeEnv.devRuntime) == "undefined") {
         return false
     }
@@ -62,7 +54,7 @@ export const getDevRuntimeEnvs: any = () => {
 }
 
 export const getGit = () => {
-    const envs = getDevRuntimeEnvs()
+    const envs = getDevRuntimeEnv()
     if (!envs || typeof (envs.originGit) == "undefined") {
         return false
     }
@@ -86,7 +78,12 @@ export const getRootPackageJSON = () => {
 }
 
 export function parsedVersionToString(version: any) {
-    return `${version.major}.${version.minor}.${version.patch}`
+    let v = []
+    objectToArrayMap(version).forEach(element => {
+        v[versionOrderScheme[element.key]] = element.value
+    })
+    console.log(v.join('.'))
+    return v.join('.')
 }
 
 export function getPackages() {
@@ -108,52 +105,83 @@ export function updateVersion(to: any) {
     if (!to) {
         return false
     }
-    let updated
+    let updated = ''
 
-    if (typeof (to) == "object") {
-        updated = parsedVersionToString(to)
+    if (typeof (to) !== "string") {
+        currentParsedVersion = { ...currentParsedVersion, ...to } 
+        updated = parsedVersionToString(currentParsedVersion)
     } else {
-        const parsed = to.split('.')
-        parsedVersion.major = parsed[0] ? Number(parsed[0]) : 0
-        parsedVersion.minor = parsed[1] ? Number(parsed[1]) : 0
-        parsedVersion.patch = parsed[2] ? Number(parsed[2]) : 0
-
-        updated = parsedVersionToString(parsedVersion)
+        updated = to
     }
 
     console.log(`✅ Version updated to > ${updated}`)
     version = updated
-    return fs.writeFileSync(versionFile, updated)
+    //return fs.writeFileSync(versionFile, updated)
 }
 
 export function bumpVersion(params: any) {
-    const bumps = {
-        major: params.includes("major"),
-        minor: params.includes("minor"),
-        patch: params.includes("patch"),
+    if (!params) {
+        return false
     }
 
-    if (bumps.major) {
-        parsedVersion.major = parsedVersion.major + 1
-        parsedVersion.minor = 0
-        parsedVersion.path = 0
-    }
-    if (bumps.minor) {
-        parsedVersion.minor = parsedVersion.minor + 1
-        parsedVersion.path = 0
-    }
-    if (bumps.patch) {
-        parsedVersion.patch = parsedVersion.patch + 1
+    let update: any = {
+        major: 0,
+        minor: 0,
+        patch: 0,
+        stage: ""
     }
 
-    function bumpTable(major: any, minor: any, patch: any) {
-        this.major = major ? parsedVersion.major : false;
-        this.minor = minor ? parsedVersion.minor : false;
-        this.patch = patch ? parsedVersion.patch : false;
-    }
-    console.table(new bumpTable(bumps.major, bumps.minor, bumps.patch));
+    const bumps = [
+        {
+            type: "major",
+            do: () => {
+                update.major = update.major + 1
+                update.minor = 0
+                update.path = 0
+            }
+        },
+        {
+            type: "minor",
+            do: () => {
+                update.minor = update.minor + 1
+                update.path = 0
+            }
+        },
+        {
+            type: "patch",
+            do: () => {
+                update.patch = update.patch + 1
+            }
+        },
+        {
+            type: "nightly",
+            do: () => {
+                update.stage = "nightly"
+            }
+        },
+        {
+            type: "alpha",
+            do: () => {
+                update.stage = "alpha"
+            }
+        },
+        {
+            type: "beta",
+            do: () => {
+                update.stage = "beta"
+            }
+        },
+    ]
 
-    return updateVersion(parsedVersion)
+    bumps.forEach(bump => {
+        if (params.includes(bump.type)) {
+            if (typeof(bump.do) == "function") {
+                bump.do()
+            }
+        }
+    })
+
+    return updateVersion(update)
 }
 
 export function syncPackagesVersions() {

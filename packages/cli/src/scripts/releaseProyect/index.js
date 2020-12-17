@@ -5,7 +5,7 @@ import path from 'path'
 import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
-import { getPackages, getGit, bumpVersion, syncPackagesVersions, getVersion, getDevRuntimeEnvs } from '@nodecorejs/dot-runtime'
+import { getPackages, getGit, bumpVersion, syncPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
 import { getChangelogs } from '../../utils/getChangelogs'
 import isNextVersion from '../../utils/isNextVersion'
@@ -24,7 +24,7 @@ function logStep(name) {
     console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`)
 }
 
-let devRuntime = getDevRuntimeEnvs()
+let devRuntime = getDevRuntimeEnv()
 let currVersion = getVersion()
 let lastState = null
 let stateCache = {}
@@ -63,12 +63,8 @@ export async function releaseProyect(args) {
 
     // get release notes
     logStep('get release notes')
-    const getNotes = async () => {
-        await getChangelogs(getGit())
-    }
-
-    const releaseNotes = await getNotes
-    stateCache.releaseNotes = releaseNotes()
+    const releaseNotes = await getChangelogs
+    stateCache.releaseNotes = releaseNotes(getGit())
 
     if (!opts.publishOnly) {
         // Build
@@ -158,7 +154,7 @@ export async function releaseProyect(args) {
 
     logStep('create github release')
     const tag = `v${currVersion}`
-    const changelog = releaseNotes()
+    const changelog = releaseNotes(getGit())
     console.log(changelog)
     const url = newGithubReleaseUrl({
         repoUrl: devRuntime.originGit,

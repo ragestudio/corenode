@@ -1,4 +1,4 @@
-export declare const getDevRuntimeEnvs: any;
+export declare const getDevRuntimeEnv: any;
 export declare const getGit: () => any;
 
 export interface IRuntimeEnv {

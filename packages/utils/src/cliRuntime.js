@@ -46,7 +46,8 @@ function cliRuntime({ commands, options }) {
                 }
                 cmd.exec(argv)
             } catch (error) {
-                console.log(`🆘 Error executing command!`)
+                console.log(`🆘 Error executing command! >`)
+                console.error(`\n\t`, error)
             }
         } : (() => console.log(`Invalid CMD`))
 

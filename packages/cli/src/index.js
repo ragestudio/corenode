@@ -3,7 +3,7 @@ import outputLog from './utils/outputLog'
 
 import buildProyect from '@nodecorejs/builder'
 import { objectToArrayMap, cliRuntime, verbosity } from '@nodecorejs/utils'
-import { getRuntimeEnv, getVersion, bootstrapProyect } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, getVersion, bootstrapProyect, bumpVersion } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
 
@@ -41,22 +41,22 @@ let commandMap = [
             yargs.positional('package', {
                 describe: 'Package to install'
             }),
-            yargs.positional('dir', {
-                describe: 'Directory to install (default: runtimeDev)'
-            })
+                yargs.positional('dir', {
+                    describe: 'Directory to install (default: runtimeDev)'
+                })
         },
         exec: (argv) => {
             if (typeof (argv.package) !== "undefined") {
                 let opts = {
                     pkg: argv.package
-                } 
+                }
 
                 if (argv.dir) {
-                    opts.dir = argv.dir    
+                    opts.dir = argv.dir
                 }
 
                 __installCore(opts)
-            }else{
+            } else {
                 console.log(`⛔️ Nothing to install! No package defined`)
             }
         }
@@ -64,7 +64,35 @@ let commandMap = [
     {
         command: 'version',
         description: "Show current build version",
+        args: (yargs) => {
+            yargs.positional('bump-minor', {
+                describe: 'Bump version'
+            }),
+                yargs.positional('bump-mayor', {
+                    describe: 'Bump version'
+                }),
+                yargs.positional('bump-patch', {
+                    describe: 'Bump version'
+                }),
+                yargs.positional('set', {
+                    describe: 'Set version'
+                })
+        },
         exec: (argv) => {
+            if (argv) {
+                let bumps = []
+                const discriminators = ["bump-mayor", "bump-minor", "bump-patch", "alpha", "beta", "nightly"]
+                discriminators.forEach((bump) => {
+                    const parsedBump = bump.split('-')[1]
+                    if (argv[bump]) {
+                        if (!parsedBump) {
+                            return bumps.push(bump)
+                        }
+                        bumps.push(parsedBump)
+                    }
+                })
+                bumpVersion(bumps)
+            }
             console.log(getVersion())
         }
     },

@@ -1,8 +1,8 @@
 import ora from 'ora'
 import log4js from 'log4js'
-import { getDevRuntimeEnvs } from '@nodecorejs/dot-runtime'
+import { getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
-const outputlogs = getDevRuntimeEnvs().outputLogs ?? null
+const outputlogs = getDevRuntimeEnv().outputLogs ?? null
 
 log4js.configure({
     appenders: {
