@@ -1,6 +1,6 @@
 module.exports = function (version) {
   return (
-    version.includes('-rc.') ||
+    version.includes('-nightly.') ||
     version.includes('-beta.') ||
     version.includes('-alpha.')
   );

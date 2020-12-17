@@ -24,7 +24,7 @@ function logStep(name) {
     console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`)
 }
 
-let devRuntime = getDevRuntimeEnvs
+let devRuntime = getDevRuntimeEnvs()
 let currVersion = getVersion()
 let lastState = null
 let stateCache = {}
@@ -63,21 +63,12 @@ export async function releaseProyect(args) {
 
     // get release notes
     logStep('get release notes')
-    const releaseNotes = await getChangelogs(getGit())
-    stateCache.releaseNotes = releaseNotes
+    const getNotes = async () => {
+        await getChangelogs(getGit())
+    }
 
-    // Check npm registry
-    logStep('check npm registry')
-    const userRegistry = execa.sync(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['config', 'get', 'registry']).stdout
-    if (userRegistry.includes('https://registry.yarnpkg.com/')) {
-        printErrorAndExit(
-            `Release failed, please use ${chalk.blue('npm run release')}.`,
-        )
-    }
-    if (!userRegistry.includes('https://registry.npmjs.org/')) {
-        const registry = chalk.blue('https://registry.npmjs.org/')
-        printErrorAndExit(`Release failed, npm registry must be ${registry}.`)
-    }
+    const releaseNotes = await getNotes
+    stateCache.releaseNotes = releaseNotes()
 
     if (!opts.publishOnly) {
         // Build
@@ -88,10 +79,13 @@ export async function releaseProyect(args) {
             logStep('build is skipped, since args.skipBuild is supplied')
         }
 
-        // TODO: Auto bump depending on `nextVersion`
         // Bump version
-        bumpVersion(["patch"])
-
+        if (isNextVersion(currVersion)) {
+            bumpVersion(["patch"])
+        }else {
+            bumpVersion(["minor"])
+        }
+        
         // Sync version to root package.json
         logStep('sync version to root package.json')
         syncPackagesVersions()
@@ -158,14 +152,13 @@ export async function releaseProyect(args) {
             }
         })
 
-
     if (!devRuntime.originGit) {
         return printErrorAndExit(`originGit is missing on runtime`)
     }
 
     logStep('create github release')
     const tag = `v${currVersion}`
-    const changelog = releaseNotes(tag)
+    const changelog = releaseNotes()
     console.log(changelog)
     const url = newGithubReleaseUrl({
         repoUrl: devRuntime.originGit,
