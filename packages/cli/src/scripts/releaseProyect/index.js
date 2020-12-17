@@ -6,9 +6,9 @@ import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
 import { getPackages } from '@nodecorejs/dot-runtime'
 
-const exec = require('../../utils/exec')
-const isNextVersion = require('../../utils/isNextVersion')
-const getChangelogs = require('../../utils/getChangelogs')
+import { getChangelogs } from '../../utils/getChangelogs'
+import isNextVersion from '../../utils/isNextVersion'
+import exec from '../../utils/exec'
 
 function printErrorAndExit(message) {
     console.error(chalk.red(message));
