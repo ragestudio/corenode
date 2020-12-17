@@ -164,10 +164,11 @@ export function syncPackagesVersions() {
                 console.log(`[${pkg}] ❌ This package is not bootstraped! > package.json not found. > Run npm run bootstrap for init this package.`)
                 return false
             }
-            const pkgFile = JSON.parse(fs.readFileSync(pkgFilePath, 'utf8'))
+            let pkgFile = JSON.parse(fs.readFileSync(pkgFilePath, 'utf8'))
             if (pkgFile.version !== version) {
                 console.log(`[${pkg}] ✅ New version synchronized`)
-                return fs.writeFileSync(pkgFilePath, version)
+                pkgFile.version = version
+                return fs.writeFileSync(pkgFilePath, pkgFile)
             }
             console.log(`[${pkg}] 💠 Version is synchronized, no changes have been made...`)
         } catch (error) {

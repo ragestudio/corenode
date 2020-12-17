@@ -93,14 +93,21 @@ export async function releaseProyect(args) {
         // Sync version to root package.json
         logStep('sync version to root package.json')
         syncPackagesVersions()
-        const rootPkg = require(path.resolve(process.cwd(), './package.json'))
-        Object.keys(rootPkg.devDependencies).forEach((name) => {
-            if (name.startsWith('@nodecorejs/')) {
-                rootPkg.devDependencies[name] = version
+        let rootPkg = require(path.resolve(process.cwd(), './package.json'))
+        const versionUpdateDescriminator = ["devDependencies", "dependencies"]
+        console.log(rootPkg)
+
+        versionUpdateDescriminator.forEach((from) => {
+            if (typeof(rootPkg[from]) !== "undefined") {
+                Object.keys(rootPkg[from]).forEach((name) => {
+                    if (name.startsWith('@nodecorejs/')) {
+                        rootPkg[from][name] = version
+                    }
+                })
+                fs.writeFileSync(path.join(process.cwd(), '.', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
             }
         })
-        fs.writeFileSync(path.join(process.cwd(), '.', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
-
+    
         // Commit
         const commitMessage = `release: v${version}`
         logStep(`git commit with ${chalk.blue(commitMessage)}`)
