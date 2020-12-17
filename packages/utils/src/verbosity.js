@@ -6,25 +6,7 @@ import chalk from 'chalk'
 import { objectToArrayMap } from './objectToArray'
 import chalkRandomColor from './chalkRandomColor'
 
-let opts = {
-    line: false,
-    method: true,
-    file: false,
-    time: true,
-}
-
-let colorsOpts = {
-    decorator: {
-        textColor: "blue",
-        backgroundColor: false
-    },
-    log: {
-        textColor: false,
-        backgroundColor: false
-    }
-}
-
-const verbosify = (data) => {
+const verbosify = (data, opts, colorsOpts) => {
     let { log, trace } = data
 
     let decoratorStr = ''
@@ -38,15 +20,20 @@ const verbosify = (data) => {
     }
 
     try {
-        if (typeof (trace) !== "undefined" && trace != null) {
-            objectToArrayMap(decoratorData).forEach((element) => {
-                if (opts[element.key] && trace[element.key]) {
-                    decoratorData[element.key] = trace[element.key]
-                }
-            })
-        }
+        if (opts) {
+            if (typeof (trace) !== "undefined" && trace != null) {
+                objectToArrayMap(decoratorData).forEach((element) => {
+                    if (opts[element.key] && trace[element.key]) {
+                        decoratorData[element.key] = trace[element.key]
+                    }
+                })
+            }
+        }  
 
         const paint = (type, data) => {
+            if (!colorsOpts) {
+                return data
+            }
             if (typeof(data) !== "string") {
                 return data
             }
@@ -102,6 +89,22 @@ const file = path.basename(trace.getFileName())
 const method = `[${trace.getFunctionName()}]`
 
 export default {
+    opts: {
+        line: false,
+        method: true,
+        file: false,
+        time: true,
+    },
+    colorsOpts: {
+        decorator: {
+            textColor: "blue",
+            backgroundColor: false
+        },
+        log: {
+            textColor: false,
+            backgroundColor: false
+        }
+    },
     log: function (...context) {
         let response = verbosify({
             trace: {
@@ -112,18 +115,28 @@ export default {
             log: {
                 ...context
             }
-        })
+        }, this.opts, this.colorsOpts)
         console.log(...response)
         return this
     },
     random: function (...context) {
-        console.log(chalkRandomColor(verbosify(null, ...context)))
+        let response = verbosify({
+            trace: {
+                file,
+                line,
+                method,
+            },
+            log: {
+                ...context
+            }
+        }, this.opts)
+        console.log(chalkRandomColor(response))
         return this
     },
     options: function (params) {
         // TODO: Options validation
         if (typeof (params) !== "undefined" && params != null) {
-            opts = { ...opts, ...params }
+            this.opts = { ...this.opts, ...params }
         }
         return this
     },
@@ -131,12 +144,12 @@ export default {
         if (typeof(params) !== "undefined" && params != null) {
             try {
                 objectToArrayMap(params).forEach((param) => {
-                    if (colorsOpts[param.key]) {
-                        colorsOpts[param.key] = { ...colorsOpts[param.key], ...param.value }
+                    if (this.colorsOpts[param.key]) {
+                        this.colorsOpts[param.key] = { ...this.colorsOpts[param.key], ...param.value }
                     }
                 })
             } catch (error) {
-                console.log(error)
+                // terrible
             }
         }
         return this

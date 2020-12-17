@@ -19,16 +19,16 @@ const colors = [
 let index = 0;
 const cache = {};
 
-export default function (pkg:any) {
-  if (!cache[pkg]) {
+export default function (string:any) {
+  if (!cache[string]) {
     const color = colors[index];
-    let str = chalk[color].bold(pkg);
-    cache[pkg] = str;
+    let str = chalk[color].bold(string);
+    cache[string] = str;
     if (index === colors.length - 1) {
       index = 0;
     } else {
       index += 1;
     }
   }
-  return cache[pkg];
+  return cache[string].replace(',', '');
 }
