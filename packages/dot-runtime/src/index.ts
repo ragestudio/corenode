@@ -108,7 +108,11 @@ export function getDevPackages() {
 }
 
 export function getVersion() {
-    return version
+    if (!fs.existsSync(versionFile)) {
+        console.log(`.version file not exist, creating...`)
+        fs.writeFileSync(versionFile, rootPackageJSON.version)
+    }
+    return fs.readFileSync(versionFile, 'utf8')
 }
 
 export function updateVersion(to) {
