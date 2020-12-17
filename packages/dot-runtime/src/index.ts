@@ -122,6 +122,7 @@ export function updateVersion(to: any) {
     }
 
     console.log(`✅ Version updated to > ${updated}`)
+    version = updated
     return fs.writeFileSync(versionFile, updated)
 }
 
@@ -156,6 +157,7 @@ export function bumpVersion(params: any) {
 }
 
 export function syncPackagesVersions() {
+    const currentVersion = getVersion()
     const pkgs = getPackages()
     pkgs.forEach((pkg) => {
         try {
@@ -165,9 +167,9 @@ export function syncPackagesVersions() {
                 return false
             }
             let pkgFile = JSON.parse(fs.readFileSync(pkgFilePath, 'utf8'))
-            if (pkgFile.version !== version) {
+            if (pkgFile.version !== currentVersion) {
                 console.log(`[${pkg}] ✅ New version synchronized`)
-                pkgFile.version = version
+                pkgFile.version = currentVersion
                 return fs.writeFileSync(pkgFilePath, pkgFile)
             }
             console.log(`[${pkg}] 💠 Version is synchronized, no changes have been made...`)

@@ -5,7 +5,7 @@ import path from 'path'
 import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
-import { getPackages, getGit, bumpVersion, syncPackagesVersions } from '@nodecorejs/dot-runtime'
+import { getPackages, getGit, bumpVersion, syncPackagesVersions, getVersion } from '@nodecorejs/dot-runtime'
 
 import { getChangelogs } from '../../utils/getChangelogs'
 import isNextVersion from '../../utils/isNextVersion'
@@ -24,6 +24,7 @@ function logStep(name) {
     console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`)
 }
 
+let currVersion = getVersion()
 let lastState = null
 let stateCache = {}
 
@@ -95,19 +96,20 @@ export async function releaseProyect(args) {
         syncPackagesVersions()
         let rootPkg = require(path.resolve(process.cwd(), './package.json'))
         const versionUpdateDescriminator = ["devDependencies", "dependencies"]
-        console.log(rootPkg)
 
         versionUpdateDescriminator.forEach((from) => {
             if (typeof(rootPkg[from]) !== "undefined") {
                 Object.keys(rootPkg[from]).forEach((name) => {
                     if (name.startsWith('@nodecorejs/')) {
-                        rootPkg[from][name] = version
+                        rootPkg[from][name] = currVersion
                     }
                 })
                 fs.writeFileSync(path.join(process.cwd(), '.', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
             }
         })
-    
+        // Refesh Current Version
+        currVersion = getVersion()
+
         // Commit
         const commitMessage = `release: v${version}`
         logStep(`git commit with ${chalk.blue(commitMessage)}`)
@@ -122,7 +124,7 @@ export async function releaseProyect(args) {
         await exec('git', ['push', 'origin', 'master', '--tags'])
     }
 
-    const currVersion = getVersion()
+    
     // Publish
     if (!runtimeEnv.devRuntime) {
         return printErrorAndExit(`headPackage is missing on runtime`)
