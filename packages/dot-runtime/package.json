@@ -22,7 +22,9 @@
   "dependencies": {
     "@nodecorejs/libs": "^0.6.7",
     "chalk": "^4.1.0",
+    "escape-goat": "^3.0.0",
     "execa": "^4.1.0",
+    "new-github-release-url": "^1.0.0",
     "open": "^7.3.0"
   }
 }

@@ -5,7 +5,7 @@ import process from 'process'
 import getPackages from './utils/getPackages'
 import fs from 'fs'
 import bootstrap from './bootstrap'
-import { IRuntimeEnv, IPackageJSON } from './types'
+import { IRuntimeEnv } from './types'
 import chalk from 'chalk'
 import execa from 'execa'
 
@@ -14,12 +14,11 @@ const versionFile = path.resolve(process.cwd(), './.version')
 const findenvs = require('find-up').sync(syncEnvs)
 
 const { join } = require('path')
-const { writeFileSync } = require('fs')
 const newGithubReleaseUrl = require('new-github-release-url')
 const open = require('open')
 const exec = require('./utils/exec')
 const isNextVersion = require('./utils/isNextVersion')
-const { getChangelog } = require('./utils/changelog')
+const getChangelog = require('./utils/changelog')
 
 export let version: string
 export let parsedVersion: any = {
@@ -69,7 +68,6 @@ export const getDevRuntimeEnvs: any = () => {
     if (!runtimeEnv || typeof (runtimeEnv.devRuntime) == "undefined") {
         return false
     }
-
     return runtimeEnv.devRuntime
 }
 
@@ -258,7 +256,7 @@ export const releaseProyect = async (args:any) => {
                 rootPkg.devDependencies[name] = version;
             }
         });
-        writeFileSync(join(process.cwd(), '..', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8');
+        fs.writeFileSync(join(process.cwd(), '..', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8');
 
         // Commit
         const commitMessage = `release: v${version}`;

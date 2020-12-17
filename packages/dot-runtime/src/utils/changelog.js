@@ -1,8 +1,8 @@
-const { htmlEscape } = require('escape-goat');
-const { getGit } = require('../index');
-const git = require('./git');
+import {htmlEscape} from 'escape-goat'
+import git from './git' 
+import { getGit, getDevRuntimeEnvs } from '../index'
 
-exports.getChangelog = async () => {
+export default async () => {
   const repoUrl = getGit();
   if (!repoUrl) {
     throw new Error(`Development git not found at runtime`);
