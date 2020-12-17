@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@nodecorejs/libs": "^0.6.7",
-    "execa": "^4.1.0"
+    "chalk": "^4.1.0",
+    "execa": "^4.1.0",
+    "open": "^7.3.0"
   }
 }
