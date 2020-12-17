@@ -1,5 +1,5 @@
 const { htmlEscape } = require('escape-goat');
-const { getGit } = require('@nodecorejs/dot-runtime');
+const { getGit } = require('../index');
 const git = require('./git');
 
 exports.getChangelog = async () => {

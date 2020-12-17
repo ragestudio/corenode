@@ -36,11 +36,15 @@ export default async (params) => {
             version,
             main: 'dist/index.js',
             types: 'dist/index.d.ts',
-            files: ['dist', 'src'],
             publishConfig: {
               access: 'public',
             },
           };
+
+          if (!pkgJSONExists) {
+            json.version = version
+            json.files = ['dist', 'src']
+          }
 
           if (opt.originGit) {
             json.repository = {

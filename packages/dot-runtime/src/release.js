@@ -1,5 +1,6 @@
+import { syncPackagesVersions, getDevRuntimeEnvs, bumpVersion, getVersion } from './index'
+
 const { yParser, execa, chalk } = require('@nodecorejs/libs');
-const { getDevRuntimeEnvs } = require('@nodecorejs/dot-runtime');
 const { join } = require('path');
 const { writeFileSync } = require('fs');
 const newGithubReleaseUrl = require('new-github-release-url');
@@ -9,11 +10,10 @@ const getPackages = require('./utils/getPackages');
 const isNextVersion = require('./utils/isNextVersion');
 const { getChangelog } = require('./utils/changelog');
 
-const { bumpVersion, parsedVersionToString } = require('./versionManager')
-
 const cwd = process.cwd();
 const args = yParser(process.argv.slice(2));
-const lernaCli = require.resolve('lerna/cli');
+const currVersion = getVersion();
+const runtimeEnvs = getDevRuntimeEnvs()
 
 function printErrorAndExit(message) {
   console.error(chalk.red(message));
@@ -21,6 +21,7 @@ function printErrorAndExit(message) {
 }
 
 function logStep(name) {
+  // TODO: Replace with verbosity API
   console.log(`${chalk.gray('>> Release:')} ${chalk.magenta.bold(name)}`);
 }
 
@@ -55,31 +56,11 @@ export async function release() {
     printErrorAndExit(`Release failed, npm registry must be ${registry}.`);
   }
 
-  let updated = null;
-
   if (!args.publishOnly) {
-    // Get updated packages
-    logStep('check updated packages');
-    const updatedStdout = execa.sync(lernaCli, ['changed']).stdout;
-    updated = updatedStdout
-      .split('\n')
-      .map((pkg) => {
-        if (pkg === 'nodecore') return pkg;
-        else return pkg.split('/')[1];
-      })
-      .filter(Boolean);
-    if (!updated.length) {
-      printErrorAndExit('Release failed, no updated package is updated.');
-    }
-
-    // Clean
-    logStep('clean');
-
     // Build
     if (!args.skipBuild) {
       logStep('build');
-      await exec('npm', ['run', 'build']);
-      require('./tsIngoreDefineConfig');
+      await exec('nodecore', ['build']);
     } else {
       logStep('build is skipped, since args.skipBuild is supplied');
     }
@@ -87,24 +68,16 @@ export async function release() {
     // Bump version
     bumpVersion(["minor"])
 
-    const currVersion = require('../.version');
-
     // Sync version to root package.json
     logStep('sync version to root package.json');
+    syncPackagesVersions()
     const rootPkg = require('../package');
     Object.keys(rootPkg.devDependencies).forEach((name) => {
-      if (
-        name.startsWith('@nodecorejs/') &&
-        !name.startsWith('@nodecorejs/p')
-      ) {
+      if (name.startsWith('@nodecorejs/') ) {
         rootPkg.devDependencies[name] = currVersion;
       }
     });
-    writeFileSync(
-      join(__dirname, '..', 'package.json'),
-      JSON.stringify(rootPkg, null, 2) + '\n',
-      'utf-8',
-    );
+    writeFileSync(join(cwd, '..', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8');
 
     // Commit
     const commitMessage = `release: v${currVersion}`;
@@ -122,14 +95,12 @@ export async function release() {
 
   // Publish
   // Umi must be the latest.
-  const runtimeEnvs = getDevRuntimeEnvs()
   if (!runtimeEnvs.headPackage) {
     return printErrorAndExit(`headPackage is missing on runtime`);
   }
 
-  const pkgs = args.publishOnly ? getPackages() : updated;
+  const pkgs = getPackages();
   logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`);
-  const currVersion = require('../lerna').version;
   const isNext = isNextVersion(currVersion);
   pkgs.sort((a) => {
       return a === runtimeEnvs.headPackage ? 1 : -1;
