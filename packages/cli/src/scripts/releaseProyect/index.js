@@ -5,7 +5,7 @@ import path from 'path'
 import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
-import { getPackages, getGit, bumpVersion, syncPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
 import { getChangelogs } from '../../utils/getChangelogs'
 import isNextVersion from '../../utils/isNextVersion'
@@ -93,7 +93,7 @@ export async function releaseProyect(args) {
 
         // Sync version to root package.json
         logStep('sync versions')
-        syncPackagesVersions()
+        syncAllPackagesVersions()
         let rootPkg = require(rootPackageJSONPath)
 
         if (typeof (rootPkg["dependencies"]) !== "undefined") {
