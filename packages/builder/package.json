@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.12.11",
+  "version": "0.13.11",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
-    "@nodecorejs/utils": "0.12.11",
+    "@nodecorejs/utils": "0.13.11",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",
