@@ -129,12 +129,15 @@ export function bumpVersion(params: any, confirmation: boolean) {
             type: "major",
             do: () => {
                 currentVersion.major = currentVersion.major + 1
+                currentVersion.minor = 0
+                currentVersion.patch = 0
             }
         },
         {
             type: "minor",
             do: () => {
                 currentVersion.minor = currentVersion.minor + 1
+                currentVersion.patch = 0
             }
         },
         {
