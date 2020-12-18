@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 const fs = require("fs")
-const process = require("process")
+const resolveCwd = require('resolve-cwd');
 
 let command = null;
-const isDev = fs.existsSync(process.cwd(), './.devflag')
+const isDev = fs.existsSync(resolveCwd('./.devflag'))
 
 try {
-    command = require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
-} catch (e) {
     if (isDev){
         command = require(`${process.cwd()}/packages/cli/dist`);
     }else {
-        console.log(`❌ nodecore-cli failed`)
+        command = require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
     }
+} catch (e) {
+    console.log(`❌ Nodecore failed to load CLI`)
 }

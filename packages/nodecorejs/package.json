@@ -1,7 +1,7 @@
 {
   "name": "@ragestudio/nodecorejs",
   "version": "0.13.11",
-  "main": "cli/nodecore.js",
+  "main": "./cli/nodecore.js",
   "types": "types.d.ts",
   "files": [
     "dist",
@@ -19,7 +19,6 @@
     "babelOut": "babel src --out-dir dist"
   },
   "bin": {
-    "nodecore-builder": "./cli/nodecore-builder.js",
     "nodecore": "./cli/nodecore.js"
   },
   "dependencies": {
