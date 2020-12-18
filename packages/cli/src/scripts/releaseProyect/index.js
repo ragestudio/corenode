@@ -28,7 +28,6 @@ function logStep(name) {
 let devRuntime = getDevRuntimeEnv()
 let currVersion = getVersion()
 
-const isNext = isNextVersion(currVersion)
 const pkgs = getPackages()
 
 let lastState = null
@@ -85,10 +84,10 @@ export async function releaseProyect(args) {
         }
 
         // Bump version
-        if (isNext) {
-            bumpVersion(["patch"])
+        if (isNextVersion(currVersion)) {
+            bumpVersion(["patch"], true)
         } else {
-            bumpVersion(["minor"])
+            bumpVersion(["minor"], true)
         }
 
         // Sync version to root package.json
@@ -128,8 +127,8 @@ export async function releaseProyect(args) {
         const pkgPath = path.join(process.cwd(), 'packages', pkg)
         const { name, version } = require(path.join(pkgPath, 'package.json'))
         if (version === currVersion) {
-            console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${isNext ? 'with next tag' : ''}`)
-            const cliArgs = isNext ? ['publish', '--tag', 'next'] : ['publish']
+            console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${isNextVersion(currVersion) ? 'with next tag' : ''}`)
+            const cliArgs = isNextVersion(currVersion) ? ['publish', '--tag', 'next'] : ['publish']
             try {
                 const { stdout } = execa.sync('npm', cliArgs, {
                     cwd: pkgPath,
@@ -155,7 +154,7 @@ export async function releaseProyect(args) {
         repoUrl: getGit(),
         tag,
         body: changelog,
-        isPrerelease: isNext,
+        isPrerelease: isNextVersion(currVersion),
     })
     try {
         await open(url)
