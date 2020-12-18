@@ -63,7 +63,7 @@ let commandMap = [
     },
     {
         command: 'version',
-        description: "Show current build version",
+        description: "Show current build version or update/bump version",
         args: (yargs) => {
             yargs.positional('bump-minor', {
                 describe: 'Bump version'
@@ -73,27 +73,26 @@ let commandMap = [
                 }),
                 yargs.positional('bump-patch', {
                     describe: 'Bump version'
-                }),
-                yargs.positional('set', {
-                    describe: 'Set version'
                 })
         },
         exec: (argv) => {
-            if (argv) {
-                let bumps = []
-                const discriminators = ["bump-mayor", "bump-minor", "bump-patch", "alpha", "beta", "nightly"]
-                discriminators.forEach((bump) => {
-                    const parsedBump = bump.split('-')[1]
-                    if (argv[bump]) {
-                        if (!parsedBump) {
-                            return bumps.push(bump)
-                        }
-                        bumps.push(parsedBump)
+            let bumps = []
+            const discriminators = ["bump-mayor", "bump-minor", "bump-patch", "alpha", "beta", "nightly", "release"]
+            discriminators.forEach((bump) => {
+                const parsedBump = bump.split('-')[1]
+                if (argv[bump]) {
+                    if (!parsedBump) {
+                        return bumps.push(bump)
                     }
-                })
-                bumpVersion(bumps)
+                    bumps.push(parsedBump)
+                }
+            })
+
+            if (bumps.length > 0) {
+                bumpVersion(bumps, argv.save)
+            } else {
+                console.log(`🏷 Using current version v${getVersion()}`)
             }
-            console.log(getVersion())
         }
     },
     {

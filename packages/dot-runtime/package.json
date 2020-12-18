@@ -20,8 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/libs": "^0.6.7",
-    "@nodecorejs/utils": "^0.7.10",
+    "@nodecorejs/utils": "^0.8.10.NaN",
     "chalk": "^4.1.0",
     "escape-goat": "^3.0.0",
     "execa": "^4.1.0",

@@ -11,17 +11,35 @@ const rootPackageJSON = path.resolve(process.cwd(), './package.json')
 const versionFile = path.resolve(process.cwd(), './.version')
 const findenvs = require('find-up').sync(syncEnvs)
 
-let versionOrderScheme = { mayor: 0, minor: 1, patch: 2, stage: 3 }
-let version = getVersion()
-let currentParsedVersion = {}
-const versionsKeys = Object.keys(versionOrderScheme)
+let versionOrderScheme = {
+    mayor: 0,
+    minor: 1,
+    patch: 2,
+    stage: 3,
+}
+
+let currentVersion = {}
+const versionsTypes = Object.keys(versionOrderScheme)
 
 let runtimeEnv = <IRuntimeEnv>{}
 
 if (findenvs) {
     try {
-        objectToArrayMap(getVersion().split('.')).forEach((entry:any) => {
-            currentParsedVersion[versionsKeys[entry.key]] = Number(entry.value)
+        versionsTypes.forEach((type) => {
+            currentVersion[type] = null
+        })
+        objectToArrayMap(getVersion().split('.')).forEach((entry: any) => {
+            let entryValue = null
+            
+            if (isNaN(Number(entry.value))) {
+                entryValue = entry.value
+            }else {
+                entryValue = Number(entry.value)
+            }
+
+            if (entryValue != null && entryValue != NaN) {
+                currentVersion[versionsTypes[entry.key]] = entryValue
+            }
         })
         // @ts-ignore
         runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
@@ -93,86 +111,81 @@ export const bootstrapProyect = () => {
     return bootstrap()
 }
 
-export function parsedVersionToString(version: any) {
-    let v = []
+export function versionToString(version: any) {
+    let v: any = []
     objectToArrayMap(version).forEach(element => {
-        v[versionOrderScheme[element.key]] = element.value
+        if (typeof(element.value) !== "undefined" && element.value != null) {
+            v[versionOrderScheme[element.key]] = element.value
+        }
     })
     return v.join('.')
 }
 
-export function updateVersion(to: any) {
-    if (!to) {
-        return false
-    }
-    let updated = ''
-
-    if (typeof (to) !== "string") {
-        currentParsedVersion = { ...currentParsedVersion, ...to } 
-        updated = parsedVersionToString(currentParsedVersion)
-    } else {
-        updated = to
-    }
-
-    console.log(`✅ Version updated to > ${updated}`)
-    version = updated
-    return fs.writeFileSync(versionFile, updated)
-}
-
-export function bumpVersion(params: any) {
+export function bumpVersion(params: any, confirmation: boolean) {
     if (!params) {
         return false
     }
-
-    let update: any = {}
     const bumps = [
         {
             type: "major",
             do: () => {
-                update.major = currentParsedVersion.major + 1
+                currentVersion.major = currentVersion.major + 1
             }
         },
         {
             type: "minor",
             do: () => {
-                update.minor = currentParsedVersion.minor + 1
+                currentVersion.minor = currentVersion.minor + 1
             }
         },
         {
             type: "patch",
             do: () => {
-                update.patch = currentParsedVersion.patch + 1
+                currentVersion.patch = currentVersion.patch + 1
             }
         },
         {
             type: "nightly",
             do: () => {
-                update.stage = "nightly"
+                currentVersion.stage = "nightly"
             }
         },
         {
             type: "alpha",
             do: () => {
-                update.stage = "alpha"
+                currentVersion.stage = "alpha"
             }
         },
         {
             type: "beta",
             do: () => {
-                update.stage = "beta"
+                currentVersion.stage = "beta"
+            }
+        },
+        {
+            type: "release",
+            do: () => {
+                currentVersion.stage = null
             }
         },
     ]
 
     bumps.forEach(bump => {
         if (params.includes(bump.type)) {
-            if (typeof(bump.do) == "function") {
+            if (typeof (bump.do) == "function") {
                 bump.do()
             }
         }
     })
 
-    return updateVersion(update)
+    let before = getVersion()
+    let after = versionToString(currentVersion)
+
+    console.log(`\n🏷 New version ${before} > ${after} \t(For overwrite the current version use --save)`)
+    if (confirmation) {
+        console.log(`✅ Version updated`)
+        return fs.writeFileSync(versionFile, after)
+    }
 }
 
 export function syncPackagesVersions() {
