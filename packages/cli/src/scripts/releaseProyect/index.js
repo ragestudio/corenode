@@ -72,7 +72,7 @@ export async function releaseProyect(args) {
 
     // get release notes
     logStep('get release notes')
-    const releaseNotes = await getChangelog(getGit())
+    const releaseNotes = await getChangelogs(getGit())
     stateCache.releaseNotes = releaseNotes()
 
     if (!opts.publishOnly) {
