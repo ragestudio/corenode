@@ -78,7 +78,7 @@ let commandMap = [
         },
         exec: (argv) => {
             let bumps = []
-            const discriminators = ["bump-mayor", "bump-minor", "bump-patch", "alpha", "beta", "nightly", "release"]
+            const discriminators = ["bump-mayor", "bump-minor", "bump-patch"]
             discriminators.forEach((bump) => {
                 const parsedBump = bump.split('-')[1]
                 if (argv[bump]) {

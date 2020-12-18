@@ -5,7 +5,7 @@ import { existsSync, readdirSync } from 'fs'
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
-
+    
 import { verbosity } from '@nodecorejs/utils'
 
 const cwd = process.cwd();

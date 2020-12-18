@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
-    "@nodecorejs/utils": "0.11.11.nightly",
+    "@nodecorejs/utils": "0.11.11",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",

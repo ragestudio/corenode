@@ -14,8 +14,7 @@ const findenvs = require('find-up').sync(syncEnvs)
 let versionOrderScheme = {
     mayor: 0,
     minor: 1,
-    patch: 2,
-    stage: 3,
+    patch: 2
 }
 
 let currentVersion = {}
@@ -57,9 +56,9 @@ export function getVersion() {
     const versionFilePath = path.resolve(process.cwd(), './.version')
     if (!fs.existsSync(versionFilePath)) {
         console.log(`.version file not exist, creating...`)
-        fs.writeFileSync(versionFilePath, rootPackageJSON.version)
+        fs.writeFileSync(versionFilePath, rootPackageJSON.version, 'utf-8')
     }
-    return fs.readFileSync(versionFilePath, 'utf8')
+    return fs.readFileSync(versionFilePath, 'utf-8')
 }
 
 export const getWachtedEnv = () => {
@@ -142,30 +141,6 @@ export function bumpVersion(params: any, confirmation: boolean) {
             type: "patch",
             do: () => {
                 currentVersion.patch = currentVersion.patch + 1
-            }
-        },
-        {
-            type: "nightly",
-            do: () => {
-                currentVersion.stage = "nightly"
-            }
-        },
-        {
-            type: "alpha",
-            do: () => {
-                currentVersion.stage = "alpha"
-            }
-        },
-        {
-            type: "beta",
-            do: () => {
-                currentVersion.stage = "beta"
-            }
-        },
-        {
-            type: "release",
-            do: () => {
-                currentVersion.stage = null
             }
         },
     ]
