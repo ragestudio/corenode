@@ -13,6 +13,7 @@ import exec from '../../utils/exec'
 
 // TODO: Auto throwback when crash
 const releaseBackupFile = path.resolve(process.cwd(), './.releaseBackup')
+const rootPackageJSONPath = path.resolve(process.cwd(), './package.json')
 
 function printErrorAndExit(message) {
     console.error(chalk.red(message))
@@ -26,10 +27,18 @@ function logStep(name) {
 
 let devRuntime = getDevRuntimeEnv()
 let currVersion = getVersion()
+
+const isNext = isNextVersion(currVersion)
+const pkgs = getPackages()
+
 let lastState = null
 let stateCache = {}
 
 export async function releaseProyect(args) {
+    if (!devRuntime) {
+        return printErrorAndExit(`devRuntime is missing on runtime`)
+    }
+
     if (fs.existsSync(releaseBackupFile)) {
         lastState = fs.readFileSync(releaseBackupFile, 'utf-8')
         if (lastState || lastState.crash) {
@@ -63,8 +72,8 @@ export async function releaseProyect(args) {
 
     // get release notes
     logStep('get release notes')
-    const releaseNotes = await getChangelogs
-    stateCache.releaseNotes = releaseNotes(getGit())
+    const releaseNotes = await getChangelog(getGit())
+    stateCache.releaseNotes = releaseNotes()
 
     if (!opts.publishOnly) {
         // Build
@@ -76,28 +85,26 @@ export async function releaseProyect(args) {
         }
 
         // Bump version
-        if (isNextVersion(currVersion)) {
+        if (isNext) {
             bumpVersion(["patch"])
-        }else {
+        } else {
             bumpVersion(["minor"])
         }
-        
-        // Sync version to root package.json
-        logStep('sync version to root package.json')
-        syncPackagesVersions()
-        let rootPkg = require(path.resolve(process.cwd(), './package.json'))
-        const versionUpdateDescriminator = ["devDependencies", "dependencies"]
 
-        versionUpdateDescriminator.forEach((from) => {
-            if (typeof (rootPkg[from]) !== "undefined") {
-                Object.keys(rootPkg[from]).forEach((name) => {
-                    if (name.startsWith('@nodecorejs/')) {
-                        rootPkg[from][name] = currVersion
-                    }
-                })
-                fs.writeFileSync(path.join(process.cwd(), '.', 'package.json'), JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
-            }
-        })
+        // Sync version to root package.json
+        logStep('sync versions')
+        syncPackagesVersions()
+        let rootPkg = require(rootPackageJSONPath)
+
+        if (typeof (rootPkg["dependencies"]) !== "undefined") {
+            Object.keys(rootPkg["dependencies"]).forEach((name) => {
+                if (name.startsWith(devRuntime.headPackage)) {
+                    rootPkg["dependencies"][name] = currVersion
+                }
+            })
+            fs.writeFileSync(rootPackageJSONPath, JSON.stringify(rootPkg, null, 2) + '\n', 'utf-8')
+        }
+
         // Refesh Current Version
         currVersion = getVersion()
 
@@ -115,49 +122,37 @@ export async function releaseProyect(args) {
         await exec('git', ['push', 'origin', 'master', '--tags'])
     }
 
-
     // Publish
-    if (!devRuntime) {
-        return printErrorAndExit(`headPackage is missing on runtime`)
-    }
-
-    const pkgs = getPackages()
     logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`)
-    const isNext = isNextVersion(currVersion)
-    pkgs.sort((a) => {
-        return a === devRuntime.headPackage ? 1 : -1
-    })
-        .forEach((pkg, index) => {
-            const pkgPath = path.join(process.cwd(), 'packages', pkg)
-            const { name, version } = require(path.join(pkgPath, 'package.json'))
-            if (version === currVersion) {
-                console.log(
-                    `[${index + 1}/${pkgs.length}] Publish package ${name} ${isNext ? 'with next tag' : ''
-                    }`,
-                )
-                const cliArgs = isNext ? ['publish', '--tag', 'next'] : ['publish']
-                try {
-                    const { stdout } = execa.sync('npm', cliArgs, {
-                        cwd: pkgPath,
-                    })
-                    console.log(stdout)
-                } catch (error) {
-                    fs.writeFileSync(releaseBackupFile, stateCache, 'utf-8')
-                    console.log(`❌ Failed to publish > ${pkg} >`, err)
-                }
+    pkgs.forEach((pkg, index) => {
+        const pkgPath = path.join(process.cwd(), 'packages', pkg)
+        const { name, version } = require(path.join(pkgPath, 'package.json'))
+        if (version === currVersion) {
+            console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${isNext ? 'with next tag' : ''}`)
+            const cliArgs = isNext ? ['publish', '--tag', 'next'] : ['publish']
+            try {
+                const { stdout } = execa.sync('npm', cliArgs, {
+                    cwd: pkgPath,
+                })
+                console.log(stdout)
+            } catch (error) {
+                fs.writeFileSync(releaseBackupFile, stateCache, 'utf-8')
+                console.log(`❌ Failed to publish > ${pkg} >`, err)
             }
-        })
+        }
+    })
 
+
+    logStep('create github release')
     if (!devRuntime.originGit) {
         return printErrorAndExit(`originGit is missing on runtime`)
     }
-
-    logStep('create github release')
     const tag = `v${currVersion}`
-    const changelog = releaseNotes(getGit())
+    const changelog = releaseNotes()
     console.log(changelog)
+
     const url = newGithubReleaseUrl({
-        repoUrl: devRuntime.originGit,
+        repoUrl: getGit(),
         tag,
         body: changelog,
         isPrerelease: isNext,

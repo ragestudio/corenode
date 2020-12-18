@@ -1,9 +1,10 @@
 import { __installPackage, __installCore, __initCreateRuntime, releaseProyect } from './scripts'
 import outputLog from './utils/outputLog'
+import { getChangelogs } from './utils/getChangelogs'
 
 import buildProyect from '@nodecorejs/builder'
 import { objectToArrayMap, cliRuntime, verbosity } from '@nodecorejs/utils'
-import { getRuntimeEnv, getVersion, bootstrapProyect, bumpVersion } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, getVersion, bootstrapProyect, bumpVersion, syncPackageVersionFromName, getGit } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
 
@@ -117,6 +118,21 @@ let commandMap = [
             bootstrapProyect(argv).then((res) => {
                 console.log(`\n✅ DONE\nAll modules bootstraped > ${res}\n`)
             })
+        }
+    },
+    {
+        command: 'syncversion [package]',
+        description: "Sync current version to package",
+        exec: (argv) => {
+            syncPackageVersionFromName(argv.package, argv.write)
+        }
+    },
+    {
+        command: 'changelogs',
+        description: "Print changelogs from this proyect",
+        exec: async (argv) => {
+            const changes = await getChangelogs(getGit())
+            console.log(changes())
         }
     },
     {

@@ -30,10 +30,10 @@ if (findenvs) {
         })
         objectToArrayMap(getVersion().split('.')).forEach((entry: any) => {
             let entryValue = null
-            
+
             if (isNaN(Number(entry.value))) {
                 entryValue = entry.value
-            }else {
+            } else {
                 entryValue = Number(entry.value)
             }
 
@@ -114,7 +114,7 @@ export const bootstrapProyect = () => {
 export function versionToString(version: any) {
     let v: any = []
     objectToArrayMap(version).forEach(element => {
-        if (typeof(element.value) !== "undefined" && element.value != null) {
+        if (typeof (element.value) !== "undefined" && element.value != null) {
             v[versionOrderScheme[element.key]] = element.value
         }
     })
@@ -188,23 +188,40 @@ export function bumpVersion(params: any, confirmation: boolean) {
     }
 }
 
-export function syncPackagesVersions() {
+export function syncPackageVersionFromName(name: string, write?: boolean) {
     const currentVersion = getVersion()
+    const packageDir = path.resolve(process.cwd(), `./packages/${name}`)
+    const pkgJSON = path.resolve(packageDir, './package.json')
+
+    if (fs.existsSync(packageDir) && fs.existsSync(pkgJSON)) {
+        let pkg = require(pkgJSON)
+        if (pkg) {
+            pkg.version = currentVersion
+            if (typeof (pkg["dependencies"]) !== "undefined") {
+                Object.keys(pkg["dependencies"]).forEach((name) => {
+                    // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
+                    if (name.startsWith(`@${runtimeEnv.devRuntime.headPackage}`)) {
+                        pkg["dependencies"][name] = currentVersion
+                    }
+                })
+                if (write) {
+                    fs.writeFileSync(pkgJSON, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+                } else {
+                    console.log(pkg)
+                    return pkg
+                }
+            }
+        }
+
+    }
+}
+
+export function syncAllPackagesVersions() {
     const pkgs = getPackages()
     pkgs.forEach((pkg) => {
         try {
-            const pkgFilePath = path.resolve(process.cwd(), `./packages/${pkg}/package.json`)
-            if (!fs.existsSync(pkgFilePath)) {
-                console.log(`[${pkg}] ❌ This package is not bootstraped! > package.json not found. > Run npm run bootstrap for init this package.`)
-                return false
-            }
-            let pkgFile = JSON.parse(fs.readFileSync(pkgFilePath, 'utf8'))
-            if (pkgFile.version !== currentVersion) {
-                console.log(`[${pkg}] ✅ New version synchronized`)
-                pkgFile.version = currentVersion
-                return fs.writeFileSync(pkgFilePath, JSON.stringify(pkgFile, null, 2) + '\n', 'utf-8')
-            }
-            console.log(`[${pkg}] 💠 Version is synchronized, no changes have been made...`)
+            syncPackageVersionFromName(pkg, true)
+            console.log(`[${pkg}] ✅ New version synchronized`)
         } catch (error) {
             console.error(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
