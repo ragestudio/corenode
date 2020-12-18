@@ -1,8 +1,7 @@
-import { existsSync, writeFileSync, readdirSync } from 'fs'
+import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getDevRuntimeEnv, version } from './index'
+import { getGit, getDevRuntimeEnv, version, getPackages } from './index'
 import process from 'process'
-import getPackages from './index'
 
 export default async (params) => {
   return new Promise(async (resolve, reject) => {

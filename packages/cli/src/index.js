@@ -3,7 +3,7 @@ import outputLog from './utils/outputLog'
 import { getChangelogs } from './utils/getChangelogs'
 
 import buildProyect from '@nodecorejs/builder'
-import { objectToArrayMap, cliRuntime, verbosity } from '@nodecorejs/utils'
+import { cliRuntime, verbosity } from '@nodecorejs/utils'
 import { getRuntimeEnv, getVersion, bootstrapProyect, bumpVersion, syncPackageVersionFromName, getGit } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()

@@ -6,11 +6,9 @@ import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
 
-// TODO: Use nodecore/utils verbosity ramdom color api
-// import { chalkRandomColor } from '@nodecorejs/utils'
+import { verbosity } from '@nodecorejs/utils'
 
 const cwd = process.cwd();
-const log = console.log;
 
 let pkgCount = null;
 
@@ -40,10 +38,10 @@ function getBabelConfig() {
 }
 
 export function transform(opts = {}) {
-  const { content, path, pkg, root } = opts;
+  const { content, path, pkg } = opts;
   const babelConfig = getBabelConfig();
 
-  log(`${`transform > 🔵 [${pkg.name}]`} => ${path}`)
+  verbosity.options({ method: false }).random(`${`transform > 🔵 [${pkg.name}]`} => ${path}`)
   return babel.transform(content, {
     ...babelConfig,
     filename: path,
