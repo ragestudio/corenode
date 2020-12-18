@@ -34,8 +34,14 @@ if (findenvs) {
 }
 
 // Functions
-export const bootstrapProyect = () => {
-    return bootstrap()
+
+export function getVersion() {
+    const versionFilePath = path.resolve(process.cwd(), './.version')
+    if (!fs.existsSync(versionFilePath)) {
+        console.log(`.version file not exist, creating...`)
+        fs.writeFileSync(versionFilePath, rootPackageJSON.version)
+    }
+    return fs.readFileSync(versionFilePath, 'utf8')
 }
 
 export const getWachtedEnv = () => {
@@ -61,6 +67,12 @@ export const getGit = () => {
     return envs.originGit
 }
 
+export function getPackages() {
+    return fs.readdirSync(path.join(process.cwd(), './packages')).filter(
+        (pkg) => pkg.charAt(0) !== '.',
+    );
+}
+
 export const getRootPackageJSON = () => {
     if (!rootPackageJSON) {
         return false
@@ -76,29 +88,17 @@ export const getRootPackageJSON = () => {
         return false
     }
 }
+// Scripts Functions
+export const bootstrapProyect = () => {
+    return bootstrap()
+}
 
 export function parsedVersionToString(version: any) {
     let v = []
     objectToArrayMap(version).forEach(element => {
         v[versionOrderScheme[element.key]] = element.value
     })
-    console.log(v.join('.'))
     return v.join('.')
-}
-
-export function getPackages() {
-    return fs.readdirSync(path.join(process.cwd(), './packages')).filter(
-        (pkg) => pkg.charAt(0) !== '.',
-    );
-}
-
-export function getVersion() {
-    const versionFilePath = path.resolve(process.cwd(), './.version')
-    if (!fs.existsSync(versionFilePath)) {
-        console.log(`.version file not exist, creating...`)
-        fs.writeFileSync(versionFilePath, rootPackageJSON.version)
-    }
-    return fs.readFileSync(versionFilePath, 'utf8')
 }
 
 export function updateVersion(to: any) {
@@ -116,7 +116,7 @@ export function updateVersion(to: any) {
 
     console.log(`✅ Version updated to > ${updated}`)
     version = updated
-    //return fs.writeFileSync(versionFile, updated)
+    return fs.writeFileSync(versionFile, updated)
 }
 
 export function bumpVersion(params: any) {
@@ -124,33 +124,24 @@ export function bumpVersion(params: any) {
         return false
     }
 
-    let update: any = {
-        major: 0,
-        minor: 0,
-        patch: 0,
-        stage: ""
-    }
-
+    let update: any = {}
     const bumps = [
         {
             type: "major",
             do: () => {
-                update.major = update.major + 1
-                update.minor = 0
-                update.path = 0
+                update.major = currentParsedVersion.major + 1
             }
         },
         {
             type: "minor",
             do: () => {
-                update.minor = update.minor + 1
-                update.path = 0
+                update.minor = currentParsedVersion.minor + 1
             }
         },
         {
             type: "patch",
             do: () => {
-                update.patch = update.patch + 1
+                update.patch = currentParsedVersion.patch + 1
             }
         },
         {
