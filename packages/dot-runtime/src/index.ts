@@ -5,7 +5,7 @@ import process from 'process'
 import fs from 'fs'
 import bootstrap from './bootstrap'
 import { IRuntimeEnv } from './types'
-import { objectToArrayMap } from '@nodecorejs/utils'
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 const rootPackageJSON = path.resolve(process.cwd(), './package.json')
 const versionFile = path.resolve(process.cwd(), './.version')
@@ -43,11 +43,11 @@ if (findenvs) {
         // @ts-ignore
         runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
     } catch (error) {
-        console.log("Failed trying load runtime env")
+        verbosity.log("Failed trying load runtime env")
         // (⓿_⓿) terrible...
     }
 } else {
-    console.log("Runtime env (.nodecore) is missing")
+    verbosity.log("Runtime env (.nodecore) is missing")
 }
 
 // Functions
@@ -55,7 +55,7 @@ if (findenvs) {
 export function getVersion() {
     const versionFilePath = path.resolve(process.cwd(), './.version')
     if (!fs.existsSync(versionFilePath)) {
-        console.log(`.version file not exist, creating...`)
+        verbosity.log(`.version file not exist, creating...`)
         fs.writeFileSync(versionFilePath, rootPackageJSON.version, 'utf-8')
     }
     return fs.readFileSync(versionFilePath, 'utf-8')
@@ -196,9 +196,9 @@ export function syncAllPackagesVersions() {
     pkgs.forEach((pkg) => {
         try {
             syncPackageVersionFromName(pkg, true)
-            console.log(`[${pkg}] ✅ New version synchronized`)
+            verbosity.log(`[${pkg}] ✅ New version synchronized`)
         } catch (error) {
-            console.error(`[${pkg}] ❌ Error syncing ! > ${error}`)
+            verbosity.log(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
     })
 }

@@ -1,7 +1,7 @@
 import { htmlEscape } from 'escape-goat'
 import git from '../git'
 
-export const getChangelogs = async (repoUrl, version) => {
+export const getChangelogs = async (repoUrl) => {
     if (!repoUrl) {
         throw new Error(`Please provide an git url`);
     }

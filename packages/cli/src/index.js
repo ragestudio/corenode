@@ -101,6 +101,7 @@ let commandMap = [
         description: "Release this current development proyect",
         exec: (argv) => {
             releaseProyect({
+                preRelease: argv.preRelease ?? false,
                 skipGitStatusCheck: argv.skipGit ?? false,
                 publishOnly: argv.publishOnly ?? false,
                 skipBuild: argv.skipBuild ?? false

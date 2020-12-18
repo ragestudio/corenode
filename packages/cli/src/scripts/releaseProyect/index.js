@@ -8,7 +8,6 @@ import open from 'open'
 import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
 import { getChangelogs } from '../../utils/getChangelogs'
-import isNextVersion from '../../utils/isNextVersion'
 import exec from '../../utils/exec'
 
 // TODO: Auto throwback when crash
@@ -48,6 +47,7 @@ export async function releaseProyect(args) {
     }
 
     let opts = {
+        preRelease: false,
         skipGitStatusCheck: false,
         publishOnly: false,
         skipBuild: false
@@ -84,7 +84,7 @@ export async function releaseProyect(args) {
         }
 
         // Bump version
-        if (isNextVersion(currVersion)) {
+        if (opts.preRelease) {
             bumpVersion(["patch"], true)
         } else {
             bumpVersion(["minor"], true)
@@ -127,8 +127,8 @@ export async function releaseProyect(args) {
         const pkgPath = path.join(process.cwd(), 'packages', pkg)
         const { name, version } = require(path.join(pkgPath, 'package.json'))
         if (version === currVersion) {
-            console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${isNextVersion(currVersion) ? 'with next tag' : ''}`)
-            const cliArgs = isNextVersion(currVersion) ? ['publish', '--tag', 'next'] : ['publish']
+            console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${opts.preRelease ? 'with next tag' : ''}`)
+            const cliArgs = opts.preRelease ? ['publish', '--tag', 'next'] : ['publish']
             try {
                 const { stdout } = execa.sync('npm', cliArgs, {
                     cwd: pkgPath,
@@ -147,14 +147,14 @@ export async function releaseProyect(args) {
         return printErrorAndExit(`originGit is missing on runtime`)
     }
     const tag = `v${currVersion}`
-    const changelog = releaseNotes()
+    const changelog = releaseNotes(tag)
     console.log(changelog)
 
     const url = newGithubReleaseUrl({
         repoUrl: getGit(),
         tag,
         body: changelog,
-        isPrerelease: isNextVersion(currVersion),
+        isPrerelease: opts.preRelease,
     })
     try {
         await open(url)
