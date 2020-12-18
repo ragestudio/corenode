@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/dot-runtime",
-  "version": "0.10.10.nightly",
+  "version": "0.11.10.nightly",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.10.10.nightly",
+    "@nodecorejs/utils": "0.11.10.nightly",
     "chalk": "^4.1.0",
     "escape-goat": "^3.0.0",
     "execa": "^4.1.0",
