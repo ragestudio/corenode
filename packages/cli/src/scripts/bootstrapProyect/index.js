@@ -1,6 +1,6 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getDevRuntimeEnv, version, getPackages } from './index'
+import { getGit, getDevRuntimeEnv, version, getPackages } from '@nodecorejs/dot-runtime'
 import process from 'process'
 
 export default async (params) => {

@@ -13,7 +13,7 @@ yarn.lock
 yarn.lock
 .yarn-error.logs
 yarn-error.log
-.releaseBackup
 
-./.releaseBackup
+.releaseBackup
 lastTest.js
+nodecore_logs

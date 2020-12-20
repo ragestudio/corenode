@@ -5,7 +5,6 @@ import outputLog from '../../utils/outputLog'
 
 import { getRootPackage } from '@nodecorejs/dot-runtime'
 
-
 export async function __installPackage({params, caller}) {
     // to do: check version & auto update if not match
     // to do: add support for version selection

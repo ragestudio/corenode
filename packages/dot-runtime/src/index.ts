@@ -3,7 +3,6 @@ const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
-import bootstrap from './bootstrap'
 import { IRuntimeEnv } from './types'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
@@ -107,11 +106,14 @@ export function getPackages() {
     return false
 }
 
-// Scripts Functions
-export const bootstrapProyect = () => {
-    return bootstrap()
+export function getRootPackage() {
+    if (fs.existsSync(proyectPkgPath)) {
+        return require(proyectPkgPath)
+    }
+    return false
 }
 
+// Scripts Functions
 export function versionToString(version: any) {
     let v: any = []
     objectToArrayMap(version).forEach(element => {
