@@ -1,8 +1,7 @@
 import { __installPackage, __installCore, __initCreateRuntime, releaseProyect } from './scripts'
 import bootstrapProyect from './scripts/bootstrapProyect'
 
-import outputLog from './utils/outputLog'
-import { getChangelogs } from './utils/getChangelogs'
+import { getChangelogs } from './scripts/utils/getChangelogs'
 
 import buildProyect from '@nodecorejs/builder'
 import { cliRuntime } from '@nodecorejs/utils'
@@ -10,20 +9,6 @@ import { cliRuntime } from '@nodecorejs/utils'
 import { getRuntimeEnv, getVersion, bumpVersion, syncPackageVersionFromName, getGit } from '@nodecorejs/dot-runtime'
 
 const runtimeEnv = getRuntimeEnv()
-
-function __requiredRuntime() {
-    if (!runtimeEnv) {
-        outputLog.spinner.fail(`runtimeEnv is not present`)
-        return process.exit(1)
-    }
-    if (!runtimeEnv.src) {
-        outputLog.spinner.fail(`(src) is not defined on runtimeEnv file`)
-        return process.exit(1)
-    }
-    if (runtimeEnv.remoteSource) {
-        return outputLog.spinner.warn(`remoteSource is not provided! Using fallback`)
-    }
-}
 
 let optionsMap = [
     {

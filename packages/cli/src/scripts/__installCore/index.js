@@ -10,9 +10,9 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import { __installPackage } from '../__installPackage'
 
-import { __FetchPKGFromRemote, downloadWithPipe } from '../../utils/remotePkg'
-import { asyncDoArray } from '../../utils/doArray'
-import outputLog from '../../utils/outputLog'
+import { __FetchPKGFromRemote, downloadWithPipe } from '../utils/remotePkg'
+import { asyncDoArray } from '../utils/doArray'
+import outputLog from '../utils/outputLog'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 

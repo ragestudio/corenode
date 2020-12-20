@@ -7,8 +7,8 @@ import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
 import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
-import { getChangelogs } from '../../utils/getChangelogs'
-import exec from '../../utils/exec'
+import { getChangelogs } from '../utils/getChangelogs'
+import exec from '../utils/exec'
 
 // TODO: Auto throwback when crash
 const releaseBackupFile = path.resolve(process.cwd(), './.releaseBackup')

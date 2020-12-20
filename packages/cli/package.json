@@ -21,11 +21,12 @@
     "access": "public"
   },
   "dependencies": {
+    "7zip-bin": "^5.0.3",
     "@babel/cli": "^7.12.1",
     "@babel/node": "^7.12.1",
     "@nodecorejs/builder": "0.13.24",
     "@nodecorejs/dot-runtime": "0.13.24",
-    "7zip-bin": "^5.0.3",
+    "@nodecorejs/utils": "^0.13.24",
     "args-parser": "^1.1.0",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
