@@ -47,6 +47,7 @@ export async function releaseProyect(args) {
     }
 
     let opts = {
+        publishNpm: false,
         preRelease: false,
         skipGitStatusCheck: false,
         publishOnly: false,
@@ -123,24 +124,25 @@ export async function releaseProyect(args) {
 
     // Publish
     logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`)
-    pkgs.forEach((pkg, index) => {
-        const pkgPath = path.join(process.cwd(), 'packages', pkg)
-        const { name, version } = require(path.join(pkgPath, 'package.json'))
-        if (version === currVersion) {
-            console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${opts.preRelease ? 'with next tag' : ''}`)
-            const cliArgs = opts.preRelease ? ['publish', '--tag', 'next'] : ['publish']
-            try {
-                const { stdout } = execa.sync('npm', cliArgs, {
-                    cwd: pkgPath,
-                })
-                console.log(stdout)
-            } catch (error) {
-                fs.writeFileSync(releaseBackupFile, stateCache, 'utf-8')
-                console.log(`❌ Failed to publish > ${pkg} >`, err)
+    if (opts.publishNpm) {
+        pkgs.forEach((pkg, index) => {
+            const pkgPath = path.join(process.cwd(), 'packages', pkg)
+            const { name, version } = require(path.join(pkgPath, 'package.json'))
+            if (version === currVersion) {
+                console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${opts.preRelease ? 'with next tag' : ''}`)
+                const cliArgs = opts.preRelease ? ['publish', '--tag', 'next'] : ['publish']
+                try {
+                    const { stdout } = execa.sync('npm', cliArgs, {
+                        cwd: pkgPath,
+                    })
+                    console.log(stdout)
+                } catch (error) {
+                    fs.writeFileSync(releaseBackupFile, stateCache, 'utf-8')
+                    console.log(`❌ Failed to publish > ${pkg} >`, err)
+                }
             }
-        }
-    })
-
+        })
+    }
 
     logStep('create github release')
     if (!devRuntime.originGit) {
