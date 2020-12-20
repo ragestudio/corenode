@@ -7,6 +7,7 @@ let command = null;
 const isDev = fs.existsSync(path.resolve(__dirname, '../.local'))
 
 try {
+    console.log(`${isDev? 'Running NodecoreJS on .local mode' : ''}`)
     if (isDev){
         command = require(`${process.cwd()}/packages/cli/dist`);
     }else {
@@ -14,7 +15,7 @@ try {
     }
 } catch (e) {
     try {
-        command = require(`${process.cwd()}/packages/cli/dist`);
+        command = require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
     } catch (error) {
         console.log(`❌ Nodecore failed to load CLI`)
         console.log(e)
