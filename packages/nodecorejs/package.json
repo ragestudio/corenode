@@ -28,6 +28,5 @@
     "@nodecorejs/libs": "0.13.12",
     "@nodecorejs/utils": "0.13.12",
     "@babel/core": "7.12.9",
-    "resolve-cwd": "3.0.0"
   }
 }

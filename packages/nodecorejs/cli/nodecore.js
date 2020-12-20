@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 const fs = require("fs")
-const resolveCwd = require('resolve-cwd');
+const path = require("path")
 const process = require("process")
 
 let command = null;
-const isDev = fs.existsSync(resolveCwd('./.devflag'))
+const isDev = fs.existsSync(path.resolve(process.cwd(), './.devflag'))
 
 try {
     if (isDev){
