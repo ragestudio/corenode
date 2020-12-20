@@ -25,7 +25,6 @@
     "@nodecorejs/cli": "0.13.19",
     "@nodecorejs/builder": "0.13.19",
     "@nodecorejs/dot-runtime": "0.13.19",
-    "@nodecorejs/libs": "0.13.19",
     "@nodecorejs/utils": "0.13.19",
     "@babel/core": "7.12.9"
   }

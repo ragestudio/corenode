@@ -4,7 +4,7 @@ const path = require("path")
 const process = require("process")
 
 let command = null;
-const isDev = fs.existsSync(path.resolve(process.cwd(), './.devflag'))
+const isDev = fs.existsSync(path.resolve(__dirname, '../.local'))
 
 try {
     if (isDev){
@@ -13,6 +13,10 @@ try {
         command = require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
     }
 } catch (e) {
-    console.log(`❌ Nodecore failed to load CLI`)
-    console.log(e)
+    try {
+        command = require(`${process.cwd()}/packages/cli/dist`);
+    } catch (error) {
+        console.log(`❌ Nodecore failed to load CLI`)
+        console.log(e)
+    }
 }
