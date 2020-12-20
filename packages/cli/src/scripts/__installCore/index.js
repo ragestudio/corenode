@@ -16,6 +16,7 @@ import outputLog from '../utils/outputLog'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 import { verbosity } from '@nodecorejs/utils'
+import execa from 'execa'
 
 let performace = []
 const runtimeEnv = getRuntimeEnv()
@@ -78,14 +79,10 @@ function handleInstall(params) {
                             await asyncDoArray(requires.npm, async (key, value) => {
                                 return new Promise((res, rej) => {
                                     observer.next(`[npm] Installing > ${key}`)
-                                    __installPackage({ pkg: key }, pkgManifest[pkg].id)
-                                        .then((data) => {
-                                            verbosity.log(`[npm] installed ${key}`)()
-                                            return res(data)
-                                        })
-                                        .catch((err) => {
-                                            return rej(err)
-                                        })
+                                    const { stdout } = execa.sync('npm', ['install',`${key}`], {
+                                        cwd: process.cwd(),
+                                    })
+                                    console.log(stdout)
                                 })
                             }, (err, res) => {
                                 if (err) {
