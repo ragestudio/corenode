@@ -101,7 +101,7 @@ export async function releaseProyect(args) {
                     rootPkg["dependencies"][name] = currVersion
                 }
             })
-            fs.writeFileSync(rootPackageJSONPath, J, 'utf-8')
+            fs.writeFileSync(rootPackageJSONPath, JSON.stringify(rootPkg, null, 2), 'utf-8')
         }
 
         // Refesh Current Version
