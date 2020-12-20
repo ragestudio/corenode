@@ -27,6 +27,6 @@
     "@nodecorejs/dot-runtime": "0.13.12",
     "@nodecorejs/libs": "0.13.12",
     "@nodecorejs/utils": "0.13.12",
-    "@babel/core": "7.12.9",
+    "@babel/core": "7.12.9"
   }
 }
