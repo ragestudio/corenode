@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.13.21",
+  "version": "0.13.22",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -23,8 +23,8 @@
   "dependencies": {
     "@babel/cli": "^7.12.1",
     "@babel/node": "^7.12.1",
-    "@nodecorejs/builder": "0.13.21",
-    "@nodecorejs/dot-runtime": "0.13.21",
+    "@nodecorejs/builder": "0.13.22",
+    "@nodecorejs/dot-runtime": "0.13.22",
     "7zip-bin": "^5.0.3",
     "args-parser": "^1.1.0",
     "axios": "^0.21.0",
