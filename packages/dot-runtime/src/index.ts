@@ -43,11 +43,11 @@ if (findenvs) {
         // @ts-ignore
         runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
     } catch (error) {
-        verbosity.log("Failed trying load runtime env")
-        // (⓿_⓿) terrible...
+        verbosity.log("🆘 Failed trying load nodecore runtime environment")
+        verbosity.log(error)
     }
 } else {
-    verbosity.log("Runtime env (.nodecore) is missing")
+    verbosity.log("❌ Nodecore Runtime environment is missing! (.nodecore)")
 }
 
 // Functions
@@ -55,8 +55,7 @@ if (findenvs) {
 export function getVersion() {
     const versionFilePath = path.resolve(process.cwd(), './.version')
     if (!fs.existsSync(versionFilePath)) {
-        verbosity.log(`.version file not exist, creating...`)
-        fs.writeFileSync(versionFilePath, rootPackageJSON.version, 'utf-8')
+        fs.writeFileSync(versionFilePath, JSON.stringify(rootPackageJSON.version), 'utf-8')
     }
     return fs.readFileSync(versionFilePath, 'utf-8')
 }
