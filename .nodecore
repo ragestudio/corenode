@@ -1,7 +1,8 @@
 {
-    "devRuntime": {
-        "headPackage": "nodecorejs",
-        "originGit": "https://github.com/ragestudio/nodecore",
-        "outputlogs": "debug_logs.log"
-    }
+  "version": "0.13.14",
+  "devRuntime": {
+    "headPackage": "nodecorejs",
+    "originGit": "https://github.com/ragestudio/nodecore",
+    "outputlogs": "debug_logs.log"
+  }
 }

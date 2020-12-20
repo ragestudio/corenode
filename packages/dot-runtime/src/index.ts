@@ -7,9 +7,8 @@ import bootstrap from './bootstrap'
 import { IRuntimeEnv } from './types'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
-const rootPackageJSON = path.resolve(process.cwd(), './package.json')
-const versionFile = path.resolve(process.cwd(), './.version')
-const findenvs = require('find-up').sync(syncEnvs)
+const rootPkgPath = path.resolve(process.cwd(), './package.json')
+const runtimeEnvPath = require('find-up').sync(syncEnvs)
 
 let versionOrderScheme = {
     mayor: 0,
@@ -22,11 +21,15 @@ const versionsTypes = Object.keys(versionOrderScheme)
 
 let runtimeEnv = <IRuntimeEnv>{}
 
-if (findenvs) {
+if (runtimeEnvPath) {
     try {
+        // @ts-ignore
+        runtimeEnv = JSON.parse(fs.readFileSync(runtimeEnvPath))
+
         versionsTypes.forEach((type) => {
             currentVersion[type] = null
         })
+
         objectToArrayMap(getVersion().split('.')).forEach((entry: any) => {
             let entryValue = null
 
@@ -40,8 +43,7 @@ if (findenvs) {
                 currentVersion[versionsTypes[entry.key]] = entryValue
             }
         })
-        // @ts-ignore
-        runtimeEnv = JSON.parse(fs.readFileSync(findenvs))
+
     } catch (error) {
         verbosity.log("🆘 Failed trying load nodecore runtime environment")
         verbosity.log(error)
@@ -51,13 +53,12 @@ if (findenvs) {
 }
 
 // Functions
-
 export function getVersion() {
-    const versionFilePath = path.resolve(process.cwd(), './.version')
-    if (!fs.existsSync(versionFilePath)) {
-        fs.writeFileSync(versionFilePath, JSON.stringify(rootPackageJSON.version), 'utf-8')
+    if (runtimeEnv.version) {
+        return runtimeEnv.version
+    } else {
+        return require(rootPkgPath).version
     }
-    return fs.readFileSync(versionFilePath, 'utf-8')
 }
 
 export const getWachtedEnv = () => {
@@ -90,12 +91,12 @@ export function getPackages() {
 }
 
 export const getRootPackageJSON = () => {
-    if (!rootPackageJSON) {
+    if (!rootPkgPath) {
         return false
     }
     try {
         // @ts-ignore
-        const fileStream = JSON.parse(fs.readFileSync(rootPackageJSON))
+        const fileStream = JSON.parse(fs.readFileSync(rootPkgPath))
         if (fileStream) {
             return fileStream
         }
@@ -104,6 +105,7 @@ export const getRootPackageJSON = () => {
         return false
     }
 }
+
 // Scripts Functions
 export const bootstrapProyect = () => {
     return bootstrap()
@@ -161,7 +163,8 @@ export function bumpVersion(params: any, confirmation: boolean) {
     console.log(`\n🏷 New version ${before} > ${after} \t(For overwrite the current version use --save)`)
     if (confirmation) {
         console.log(`✅ Version updated`)
-        return fs.writeFileSync(versionFile, after)
+        runtimeEnv.version = after
+        return rewriteRuntimeEnv()
     }
 }
 
@@ -203,6 +206,10 @@ export function syncAllPackagesVersions() {
             verbosity.log(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
     })
+}
+
+function rewriteRuntimeEnv() {
+    return fs.writeFileSync(runtimeEnvPath, JSON.stringify(runtimeEnv, null, 2) + '\n', 'utf-8')
 }
 
 export default runtimeEnv
