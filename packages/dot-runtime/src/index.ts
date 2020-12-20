@@ -85,9 +85,13 @@ export const getGit = () => {
 }
 
 export function getPackages() {
-    return fs.readdirSync(path.join(process.cwd(), './packages')).filter(
-        (pkg) => pkg.charAt(0) !== '.',
-    );
+    const packagesDir = path.resolve(process.cwd(), './packages')
+    if (fs.existsSync(packagesDir)) {
+        return fs.readdirSync(packagesDir).filter(
+            (pkg) => pkg.charAt(0) !== '.',
+        );
+    }
+    return false
 }
 
 export const getRootPackageJSON = () => {
