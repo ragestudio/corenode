@@ -30,7 +30,6 @@ export async function asyncDoArray(array, exec, callback) {
             if (typeof (callback) !== "undefined") {
                 callback(error, false)
             }
-            outputLog.setCache(error)
             return reject(error)
         }
     })

@@ -15,6 +15,7 @@ import { asyncDoArray } from '../utils/doArray'
 import outputLog from '../utils/outputLog'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { verbosity } from '@nodecorejs/utils'
 
 let performace = []
 const runtimeEnv = getRuntimeEnv()
@@ -79,7 +80,7 @@ function handleInstall(params) {
                                     observer.next(`[npm] Installing > ${key}`)
                                     __installPackage({ pkg: key }, pkgManifest[pkg].id)
                                         .then((data) => {
-                                            outputLog.setCache(`[npm] installed ${key}`)
+                                            verbosity.log(`[npm] installed ${key}`)()
                                             return res(data)
                                         })
                                         .catch((err) => {
