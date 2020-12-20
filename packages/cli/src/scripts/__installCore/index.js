@@ -15,7 +15,7 @@ import { asyncDoArray } from '../utils/doArray'
 import outputLog from '../utils/outputLog'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { verbosity } from '@nodecorejs/utils'
+import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
 import execa from 'execa'
 
 let performace = []
@@ -76,22 +76,15 @@ function handleInstall(params) {
 
                         if (typeof (requires.npm) !== "undefined") {
                             observer.next('Installing npm dependencies')
-                            await asyncDoArray(requires.npm, async (key, value) => {
-                                return new Promise((res, rej) => {
-                                    observer.next(`[npm] Installing > ${key}`)
-                                    const { stdout } = execa.sync('npm', ['install',`${key}`], {
-                                        cwd: process.cwd(),
-                                    })
-                                    console.log(stdout)
-                                })
-                            }, (err, res) => {
-                                if (err) {
-                                    return observer.error(err)
-                                }
-                                if (res) {
-                                    return observer.complete()
-                                }
+                            let cliArgs = ['install']
+                            objectToArrayMap(requires.npm).forEach(dependency => {
+                                cliArgs.push(`${dependency.key}`) // TODO: Parse version
                             })
+                            const { stdout } = execa.sync('npm', cliArgs, {
+                                cwd: process.cwd(),
+                            })
+                            console.log(stdout)
+                            observer.complete()
                         }
 
                     })
