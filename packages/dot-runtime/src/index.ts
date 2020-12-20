@@ -7,7 +7,7 @@ import bootstrap from './bootstrap'
 import { IRuntimeEnv } from './types'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
-const enginePkgPath = path.resolve(__dirname, './package.json')
+const enginePkgPath = path.resolve(__filename, '../../package.json')
 const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
 let versionOrderScheme = {
@@ -19,45 +19,28 @@ let versionOrderScheme = {
 let currentVersion = {}
 const versionsTypes = Object.keys(versionOrderScheme)
 
-
-let engineRuntimePath = null
-let engineRuntime = <IRuntimeEnv>{}
-
-let proyectRuntimePath = null
+let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore') // For this repo only watch .nodecore
 let proyectRuntime = <IRuntimeEnv>{}
 
-
+let _envDone = false
 syncEnvs.forEach(runtime => {
-    if (!engineRuntime) {
-        const fromPath = path.resolve(__dirname, `./${runtime}`)
-        if (fs.existsSync(fromPath)) {
-            engineRuntimePath = fromPath
-            try {
-                const parsed = JSON.parse(fs.readFileSync(fromPath))
-                engineRuntime = parsed
-            } catch (error) {
-                // failed to load this runtime
-            }
-        }
-    }
-})
-
-syncEnvs.forEach(runtime => {
-    if (!proyectRuntime) {
+    if (!_envDone) {
         const fromPath = path.resolve(process.cwd(), `./${runtime}`)
         if (fs.existsSync(fromPath)) {
             proyectRuntimePath = fromPath
             try {
                 const parsed = JSON.parse(fs.readFileSync(fromPath))
                 proyectRuntime = parsed
+                _envDone = true
             } catch (error) {
+                console.log(error)
                 // failed to load this runtime
             }
         }
     }
 })
 
-if (proyectRuntimePath) {
+if (proyectRuntime["version"]) {
     try {
         versionsTypes.forEach((type) => {
             currentVersion[type] = null
@@ -78,22 +61,20 @@ if (proyectRuntimePath) {
         })
 
     } catch (error) {
-        verbosity.log("🆘 Failed trying load nodecore runtime environment")
+        verbosity.log("🆘 Failed trying load nodecore runtime environment version")
         verbosity.log(error)
     }
-} else {
-    verbosity.log("❌ Nodecore Runtime environment is missing! (.nodecore)")
 }
 
 // Functions
 export function getVersion(engine?: boolean) {
-    const runtimeSource = engine ? engineRuntime : proyectRuntime
-    const packageSource = engine ? enginePkgPath : proyectPkgPath
-
-    if (runtimeSource["version"]) {
-        return runtimeSource["version"]
+    if (engine) {
+        return require(enginePkgPath)["version"]
+    }
+    if (proyectRuntime.version) {
+        return proyectRuntime.version
     } else {
-        return require(packageSource)["version"]
+        return require(proyectPkgPath).version
     }
 }
 

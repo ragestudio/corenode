@@ -1,6 +1,5 @@
 package-lock.json
 yarn.lock
-test.js
 
 /node_modules
 /packages/*/lib
@@ -11,12 +10,10 @@ test.js
 
 /dist
 
-.nodecore
-
 yarn.lock
 .yarn-error.logs
 yarn-error.log
-test.js
 .releaseBackup
 
 ./.releaseBackup
+lastTest.js
