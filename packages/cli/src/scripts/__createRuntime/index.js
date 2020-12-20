@@ -1,61 +1,72 @@
-const saveRuntimeFile = ".nodecore"
-
+import path from 'path'
 import execa from 'execa'
 import fs from 'fs'
+import process from 'process'
 import inquirer from 'inquirer'
+
+const saveRuntimeFile = path.resolve(process.cwd(), '.nodecore')
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 
-const runtimeEnv = getRuntimeEnv()
+let runtimeEnv = getRuntimeEnv()
 
 export function __initCreateRuntime() {
-    if (runtimeEnv) {
-        console.log(`⚠ It seems this project has already been initialized previously, the parameters you enter will be replaced...`)
-    }
-
     const prompts = [
         {
-            name: "src",
+            name: "headPackage",
             type: "input",
-            message: "Source directory path (Relative) >",
-            default: runtimeEnv.src ?? "/src"
+            message: "Name of the headPackage >",
+            default: runtimeEnv.devRuntime.headPackage ?? "examplePKG"
         },
         {
-            name: "add_basicframework",
-            message: "Install basic framework >",
-            type: "confirm"
+            name: "originGit",
+            type: "input",
+            message: "Input the source of git uri >",
+            default: runtimeEnv.devRuntime.originGit ?? "https://github.com/me/awesomeApp"
         },
         {
-            name: "init_npm",
-            message: "You want to iniatilize npm proyect now >",
+            name: "create_proyectScheme",
+            message: "You want to create proyect directories scheme? >",
             type: "confirm"
-        }
+        },
     ]
 
     inquirer.prompt(prompts)
         .then((answers)=> {
+            if (!runtimeEnv) {
+                return false
+            }
             if (!answers.src) {
                 // missing source directory path, re-enter try
                 return false
             }
-            const nodecoreRuntimeString = {
-                src: answers.src
+
+            runtimeEnv = {
+                ...runtimeEnv,
+                src: answers.src,
+                devRuntime: {
+                    headPackage: answers.headPackage,
+                    originGit: answers.originGit
+                }
             }
 
-            fs.writeFile(saveRuntimeFile ?? '.nodecore', JSON.stringify(nodecoreRuntimeString, null, "\t"), function (err) {
+            fs.writeFile(saveRuntimeFile, JSON.stringify(runtimeEnv, null, "\t"), function (err) {
                 if (err) throw err;
-                console.log('✳ Saved runtime file! >', saveRuntimeFile ?? '.nodecore');
-            });
+                console.log('✳ Saved runtime file! >', saveRuntimeFile)
+            })
 
-            if (answers.init_npm) {
-                execa('npm', ['init']).stdout.pipe(process.stdout)
+            if (answers.create_proyectScheme) {
+                execa('mkdir', ['./packages']).stdout.pipe(process.stdout)
+                execa('cd', ['./packages']).stdout.pipe(process.stdout)
+                execa('mdkir', [`${answers.headPackage}`]).stdout.pipe(process.stdout)
+                execa('nodecore', ['bootstrap']).stdout.pipe(process.stdout)
             }
         })
         .catch((error) => {
             if (error.isTtyError) {
                 // Prompt couldn't be rendered in the current environment
             } else {
-                // Something else when wrong
+                console.log(error)
             }
         });
 }
