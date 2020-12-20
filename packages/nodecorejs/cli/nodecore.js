@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs")
 const resolveCwd = require('resolve-cwd');
+const process = require("process")
 
 let command = null;
 const isDev = fs.existsSync(resolveCwd('./.devflag'))
@@ -13,4 +14,5 @@ try {
     }
 } catch (e) {
     console.log(`❌ Nodecore failed to load CLI`)
+    console.log(e)
 }
