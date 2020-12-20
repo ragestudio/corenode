@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/libs",
-  "version": "0.13.18",
+  "version": "0.13.19",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
