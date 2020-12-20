@@ -92,7 +92,7 @@ let commandMap = [
             if (bumps.length > 0) {
                 bumpVersion(bumps, argv.save)
             } else {
-                console.log(`🏷 Using current version v${getVersion()}`)
+                console.log(`🏷 Using current version v${getVersion(argv.engine)}`)
             }
         }
     },
@@ -101,6 +101,7 @@ let commandMap = [
         description: "Release this current development proyect",
         exec: (argv) => {
             releaseProyect({
+                publishNpm: argv.npm ?? false,
                 preRelease: argv.preRelease ?? false,
                 skipGitStatusCheck: argv.skipGit ?? false,
                 publishOnly: argv.publishOnly ?? false,

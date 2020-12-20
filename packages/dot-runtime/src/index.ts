@@ -7,8 +7,8 @@ import bootstrap from './bootstrap'
 import { IRuntimeEnv } from './types'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
-const rootPkgPath = path.resolve(process.cwd(), './package.json')
-const runtimeEnvPath = require('find-up').sync(syncEnvs)
+const enginePkgPath = path.resolve(__dirname, './package.json')
+const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
 let versionOrderScheme = {
     mayor: 0,
@@ -19,13 +19,46 @@ let versionOrderScheme = {
 let currentVersion = {}
 const versionsTypes = Object.keys(versionOrderScheme)
 
-let runtimeEnv = <IRuntimeEnv>{}
 
-if (runtimeEnvPath) {
+let engineRuntimePath = null
+let engineRuntime = <IRuntimeEnv>{}
+
+let proyectRuntimePath = null
+let proyectRuntime = <IRuntimeEnv>{}
+
+
+syncEnvs.forEach(runtime => {
+    if (!engineRuntime) {
+        const fromPath = path.resolve(__dirname, `./${runtime}`)
+        if (fs.existsSync(fromPath)) {
+            engineRuntimePath = fromPath
+            try {
+                const parsed = JSON.parse(fs.readFileSync(fromPath))
+                engineRuntime = parsed
+            } catch (error) {
+                // failed to load this runtime
+            }
+        }
+    }
+})
+
+syncEnvs.forEach(runtime => {
+    if (!proyectRuntime) {
+        const fromPath = path.resolve(process.cwd(), `./${runtime}`)
+        if (fs.existsSync(fromPath)) {
+            proyectRuntimePath = fromPath
+            try {
+                const parsed = JSON.parse(fs.readFileSync(fromPath))
+                proyectRuntime = parsed
+            } catch (error) {
+                // failed to load this runtime
+            }
+        }
+    }
+})
+
+if (proyectRuntimePath) {
     try {
-        // @ts-ignore
-        runtimeEnv = JSON.parse(fs.readFileSync(runtimeEnvPath))
-
         versionsTypes.forEach((type) => {
             currentVersion[type] = null
         })
@@ -53,27 +86,26 @@ if (runtimeEnvPath) {
 }
 
 // Functions
-export function getVersion() {
-    if (runtimeEnv.version) {
-        return runtimeEnv.version
-    } else {
-        return require(rootPkgPath).version
-    }
-}
+export function getVersion(engine?: boolean) {
+    const runtimeSource = engine ? engineRuntime : proyectRuntime
+    const packageSource = engine ? enginePkgPath : proyectPkgPath
 
-export const getWachtedEnv = () => {
-    return syncEnvs
+    if (runtimeSource["version"]) {
+        return runtimeSource["version"]
+    } else {
+        return require(packageSource)["version"]
+    }
 }
 
 export const getRuntimeEnv = () => {
-    return runtimeEnv
+    return proyectRuntime
 }
 
 export const getDevRuntimeEnv: any = () => {
-    if (!runtimeEnv || typeof (runtimeEnv.devRuntime) == "undefined") {
+    if (!proyectRuntime || typeof (proyectRuntime.devRuntime) == "undefined") {
         return false
     }
-    return runtimeEnv.devRuntime
+    return proyectRuntime.devRuntime
 }
 
 export const getGit = () => {
@@ -89,25 +121,9 @@ export function getPackages() {
     if (fs.existsSync(packagesDir)) {
         return fs.readdirSync(packagesDir).filter(
             (pkg) => pkg.charAt(0) !== '.',
-        );
+        )
     }
     return false
-}
-
-export const getRootPackageJSON = () => {
-    if (!rootPkgPath) {
-        return false
-    }
-    try {
-        // @ts-ignore
-        const fileStream = JSON.parse(fs.readFileSync(rootPkgPath))
-        if (fileStream) {
-            return fileStream
-        }
-        return false
-    } catch (error) {
-        return false
-    }
 }
 
 // Scripts Functions
@@ -167,7 +183,7 @@ export function bumpVersion(params: any, confirmation: boolean) {
     console.log(`\n🏷 New version ${before} > ${after} \t(For overwrite the current version use --save)`)
     if (confirmation) {
         console.log(`✅ Version updated`)
-        runtimeEnv.version = after
+        proyectRuntime.version = after
         return rewriteRuntimeEnv()
     }
 }
@@ -184,7 +200,7 @@ export function syncPackageVersionFromName(name: string, write?: boolean) {
             if (typeof (pkg["dependencies"]) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
                     // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
-                    if (name.startsWith(`@${runtimeEnv.devRuntime.headPackage}`)) {
+                    if (name.startsWith(`@${proyectRuntime.devRuntime.headPackage}`)) {
                         pkg["dependencies"][name] = currentVersion
                     }
                 })
@@ -213,7 +229,7 @@ export function syncAllPackagesVersions() {
 }
 
 function rewriteRuntimeEnv() {
-    return fs.writeFileSync(runtimeEnvPath, JSON.stringify(runtimeEnv, null, 2) + '\n', 'utf-8')
+    return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
 }
 
-export default runtimeEnv
+export default proyectRuntime
