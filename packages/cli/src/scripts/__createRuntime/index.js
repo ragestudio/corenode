@@ -6,23 +6,26 @@ import inquirer from 'inquirer'
 
 const saveRuntimeFile = path.resolve(process.cwd(), '.nodecore')
 
-import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, getRootPackage } from '@nodecorejs/dot-runtime'
 
 let runtimeEnv = getRuntimeEnv()
+let pkgjson = getRootPackage() ?? {}
 
 export function __initCreateRuntime() {
+    let defData = runtimeEnv? runtimeEnv : pkgjson
+
     const prompts = [
         {
             name: "headPackage",
             type: "input",
             message: "Name of the headPackage >",
-            default: runtimeEnv.devRuntime.headPackage ?? "examplePKG"
+            default: defData.headPackage ?? "examplePKG"
         },
         {
             name: "originGit",
             type: "input",
             message: "Input the source of git uri >",
-            default: runtimeEnv.devRuntime.originGit ?? "https://github.com/me/awesomeApp"
+            default: defData.originGit ?? "https://github.com/me/awesomeApp"
         },
         {
             name: "create_proyectScheme",
