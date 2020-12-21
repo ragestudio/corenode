@@ -2,16 +2,16 @@
 const fs = require("fs")
 const path = require("path")
 const process = require("process")
+const resolveCwd = require('resolve-cwd');
 
 const isDev = fs.existsSync(path.resolve(__dirname, '../.local'))
+const cliDist = resolveCwd.silent(`@nodecorejs/cli/dist`)
 
 try {
-    //console.log(`${isDev? 'Running NodecoreJS on .local mode' : ''}`)
     if (isDev){
-        require(`${process.cwd()}/packages/cli/dist`);
-    }else {
-        require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
+        return require(`${process.cwd()}/packages/cli/dist`);
     }
+    require(cliDist)
 } catch (e) {
     try {
         require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`);
