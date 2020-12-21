@@ -24,7 +24,7 @@ function cliRuntime({ commands, options }) {
                 optionsTrigger[a] = exec
             })
         } else {
-            optionsTrigger[alias]
+            optionsTrigger[alias] = exec
         }
 
         argumentParser.option(option, { alias, type, description })
