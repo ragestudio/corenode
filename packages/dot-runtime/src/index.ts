@@ -67,14 +67,22 @@ if (proyectRuntime["version"]) {
 
 // Functions
 export function getVersion(engine?: boolean) {
-    if (engine) {
-        return require(enginePkgPath)["version"]
+    const pkgEngine = require(enginePkgPath)
+    const pkgProyect = require(proyectPkgPath)
+
+    if (engine && typeof(pkgEngine["version"]) !== "undefined") {
+        return pkgEngine["version"]
     }
+    
     if (proyectRuntime.version) {
         return proyectRuntime.version
-    } else {
-        return require(proyectPkgPath).version
+    } 
+
+    if (typeof(pkgProyect["version"]) !== "undefined") {
+        return pkgProyect["version"]
     }
+
+    return "0.0.0"
 }
 
 export const getRuntimeEnv = () => {
