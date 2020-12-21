@@ -175,9 +175,9 @@ export function bumpVersion(params: any, confirmation: boolean) {
     let before = getVersion()
     let after = versionToString(currentVersion)
 
-    console.log(`\n🏷 New version ${before} > ${after} \t(For overwrite the current version use --save)`)
+    console.log(`\n🏷 New version ${before} > ${after}`)
     if (confirmation) {
-        console.log(`✅ Version updated`)
+        console.log(`✅ Version updated & saved`)
         proyectRuntime.version = after
         return rewriteRuntimeEnv()
     }
@@ -224,6 +224,7 @@ export function syncAllPackagesVersions() {
 }
 
 function rewriteRuntimeEnv() {
+    verbosity.log(`Rewrited runtime env > ${proyectRuntimePath}`)
     return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
 }
 
