@@ -6,9 +6,7 @@ import { getChangelogs } from './scripts/utils/getChangelogs'
 import buildProyect from '@nodecorejs/builder'
 import { cliRuntime } from '@nodecorejs/utils'
 
-import { getRuntimeEnv, getVersion, bumpVersion, syncPackageVersionFromName, getGit } from '@nodecorejs/dot-runtime'
-
-const runtimeEnv = getRuntimeEnv()
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit } from '@nodecorejs/dot-runtime'
 
 let optionsMap = [
     {
