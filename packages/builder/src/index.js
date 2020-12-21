@@ -7,6 +7,7 @@ import vfs from 'vinyl-fs'
 import through from 'through2'
 
 import { verbosity } from '@nodecorejs/utils'
+const BabelEsmPlugin = require('babel-esm-plugin')
 
 const cwd = process.cwd();
 
@@ -29,6 +30,7 @@ function getBabelConfig() {
       ],
     ],
     plugins: [
+      new BabelEsmPlugin(),
       require.resolve('@babel/plugin-transform-runtime'),
       require.resolve('@babel/plugin-proposal-export-default-from'),
       require.resolve('@babel/plugin-proposal-do-expressions'),
