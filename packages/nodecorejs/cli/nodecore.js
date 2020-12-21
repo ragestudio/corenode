@@ -6,7 +6,7 @@ const process = require("process")
 const isDev = fs.existsSync(path.resolve(__dirname, '../.local'))
 
 try {
-    c//onsole.log(`${isDev? 'Running NodecoreJS on .local mode' : ''}`)
+    //console.log(`${isDev? 'Running NodecoreJS on .local mode' : ''}`)
     if (isDev){
         require(`${process.cwd()}/packages/cli/dist`);
     }else {
