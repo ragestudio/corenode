@@ -1,4 +1,4 @@
-export async function asyncDoArray(array, exec, callback) {
+export default async function asyncDoArray(array, exec, callback) {
     return new Promise(async (resolve, reject) => {
         if (!array) {
             return reject("doArray is not provided")

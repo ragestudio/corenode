@@ -1,7 +1,5 @@
-import { __installPackage, __installCore, __initCreateRuntime, releaseProyect } from './scripts'
-import bootstrapProyect from './scripts/bootstrapProyect'
-
-import { getChangelogs } from './scripts/utils/getChangelogs'
+import { __installPackage, __installCore, __initCreateRuntime, releaseProyect, bootstrapProyect } from './scripts'
+import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
 import { cliRuntime } from '@nodecorejs/utils'
