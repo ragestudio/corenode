@@ -4,7 +4,7 @@ import { getChangelogs } from './scripts/utils'
 import buildProyect from '@nodecorejs/builder'
 import { cliRuntime } from '@nodecorejs/utils'
 
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit } from '@nodecorejs/dot-runtime'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage } from '@nodecorejs/dot-runtime'
 
 let optionsMap = [
     {
@@ -76,7 +76,11 @@ let commandMap = [
             if (bumps.length > 0) {
                 bumpVersion(bumps, argv.save)
             } else {
-                console.log(`🏷 Using current version v${getVersion(argv.engine)}`)
+                if (argv.engine) {
+                    return console.log(`⚙️ Using engine > NodecoreJS v${getVersion(true)}`)
+                }
+                const proyectPkg = getRootPackage()
+                console.log(`🏷 ${proyectPkg.name ?? "Proyect"} v${getVersion(argv.engine)}`)
             }
         }
     },
