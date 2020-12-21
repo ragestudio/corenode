@@ -121,6 +121,10 @@ export function getRootPackage() {
     return false
 }
 
+export function isLocalMode() {
+    return fs.existsSync(path.resolve(process.cwd(), './.local'))
+}
+
 // Scripts Functions
 export function versionToString(version: any) {
     let v: any = []
