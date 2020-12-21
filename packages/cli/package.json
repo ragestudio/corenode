@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.14.2",
+  "version": "0.14.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -21,9 +21,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/builder": "0.14.2",
-    "@nodecorejs/dot-runtime": "0.14.2",
-    "@nodecorejs/utils": "0.14.2",
+    "@nodecorejs/builder": "0.14.3",
+    "@nodecorejs/dot-runtime": "0.14.3",
+    "@nodecorejs/utils": "0.14.3",
     "7zip-bin": "^5.0.3",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
