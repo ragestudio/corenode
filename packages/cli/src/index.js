@@ -128,7 +128,7 @@ let commandMap = [
         description: "Print changelogs from this proyect",
         exec: async (argv) => {
             const changes = await getChangelogs(getGit())
-            console.log(changes())
+            console.log(`\n`,changes(''))
         }
     },
     {
