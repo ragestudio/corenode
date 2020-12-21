@@ -54,7 +54,7 @@ if (proyectRuntime["version"]) {
                 entryValue = Number(entry.value)
             }
 
-            if (entryValue != null && entryValue != NaN) {
+            if (entryValue != null) {
                 currentVersion[versionsTypes[entry.key]] = entryValue
             }
         })
