@@ -131,7 +131,7 @@ export async function releaseProyect(args) {
             const pkgPath = path.join(process.cwd(), 'packages', pkg)
             const { name, version } = require(path.join(pkgPath, 'package.json'))
             if (version === currVersion) {
-                console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${opts.preRelease ? 'with next tag' : ''}`)
+                console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${opts.next ? 'with next tag' : ''}`)
                 const cliArgs = opts.next ? ['publish', '--tag', 'next'] : ['publish']
                 try {
                     const { stdout } = execa.sync('npm', cliArgs, {
