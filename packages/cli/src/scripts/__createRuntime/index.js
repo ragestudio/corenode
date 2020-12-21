@@ -59,9 +59,8 @@ export function __initCreateRuntime() {
             })
 
             if (answers.create_proyectScheme) {
-                execa('mkdir', ['./packages']).stdout.pipe(process.stdout)
-                execa('cd', ['./packages']).stdout.pipe(process.stdout)
-                execa('mdkir', [`${answers.headPackage}`]).stdout.pipe(process.stdout)
+                const schemePath = path.resolve(process.cwd(), `./packages/${answers.headPackage}`)
+                fs.mkdirSync(schemePath, { recursive: true })
                 execa('nodecore', ['bootstrap']).stdout.pipe(process.stdout)
             }
         })
