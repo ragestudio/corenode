@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/dot-runtime",
-  "version": "0.13.27",
+  "version": "0.13.28",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.13.27",
+    "@nodecorejs/utils": "0.13.28",
     "chalk": "^4.1.0",
     "escape-goat": "^3.0.0",
     "execa": "^4.1.0",
