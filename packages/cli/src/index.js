@@ -103,8 +103,11 @@ let commandMap = [
         command: 'build',
         description: "Build this current development proyect with nodecore/builder",
         exec: (argv) => {
-            console.log(`🔄 Starting builder...`)
-            buildProyect(argv)
+            console.log(`🔄 Building...`)
+            buildProyect({
+                buildBuilder: argv.buildBuilder,
+                silent: argv.silent
+            })
         }
     },
     {

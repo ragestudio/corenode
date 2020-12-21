@@ -5,7 +5,7 @@ import { existsSync, readdirSync } from 'fs'
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
-    
+
 import { verbosity } from '@nodecorejs/utils'
 
 const cwd = process.cwd();
@@ -38,25 +38,30 @@ function getBabelConfig() {
 }
 
 export function transform(opts = {}) {
-  const { content, path, pkg } = opts;
+  const { content, path, pkg, silent } = opts;
   const babelConfig = getBabelConfig();
 
-  verbosity.options({ method: false }).random(`${`transform > 🔵 [${pkg.name}]`} => ${path}`)
+  if (!silent) {
+    verbosity.options({ method: false }).random(`${`transform > 🔵 [${pkg.name}]`} => ${path}`)
+  }
+
   return babel.transform(content, {
     ...babelConfig,
     filename: path,
   }).code;
 }
 
-export function build(dir, opts = {}) {
-  let options = { // Define defualt options
+export function build(dir, opts) {
+  let options = { // Define default options
+    buildBuilder: false,
     cwd: cwd,
+    silent: false,
     outDir: 'dist',
     buildSrc: 'src'
   }
 
-  if (typeof(opts) !== "undefined") {
-    options = {...options, ...opts}
+  if (typeof (opts) !== "undefined") {
+    options = { ...options, ...opts }
   }
 
   const pkgPath = join(options.cwd, dir, 'package.json');
@@ -66,8 +71,10 @@ export function build(dir, opts = {}) {
   const srcDir = join(dir, options.buildSrc);
 
   if (pkg.name == require(resolve(__dirname, '../package.json')).name) {
-    console.log(`⚠️ Avoiding build the builder source!`)
-    return false
+    if (!options.buildBuilder && !options.silent) {
+      console.log(`⚠️ Avoiding build the builder source!`)
+      return false
+    }
   }
 
   // clean
@@ -87,6 +94,7 @@ export function build(dir, opts = {}) {
         if (['.js', '.ts'].includes(extname(f.path)) && !f.path.includes(`${sep}templates${sep}`)) {
           f.contents = Buffer.from(
             transform({
+              silent: options.silent,
               content: f.contents,
               path: f.path,
               pkg,
@@ -117,11 +125,11 @@ export function buildProyect(opts) {
     const dirs = readdirSync(join(cwd, 'packages')).filter(dir => dir.charAt(0) !== '.');
     pkgCount = dirs.length;
     dirs.forEach(pkg => {
-      build(`./packages/${pkg}`, { cwd, opts });
+      build(`./packages/${pkg}`, { cwd, ...opts });
     });
   } else {
     pkgCount = 1;
-    build('./', { cwd, opts });
+    build('./', { cwd, ...opts });
   }
 }
 
