@@ -81,7 +81,7 @@ export async function releaseProyect(args) {
         // Build
         if (!opts.skipBuild) {
             logStep('build')
-            await exec('nodecore', ['build'])
+            await exec('nodecore', ['build', '--silent'])
         } else {
             logStep('build is skipped, since args.skipBuild is supplied')
         }
