@@ -55,6 +55,8 @@ function cliRuntime({ commands, options }) {
     })
 
     argumentParser
+        .showHelpOnFail(true)
+        .demandCommand(1, '')
         .help()
         .argv
 }
