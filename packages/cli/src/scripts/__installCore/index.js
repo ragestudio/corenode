@@ -8,14 +8,13 @@ import sevenBin from '7zip-bin'
 import { extractFull } from 'node-7z'
 import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
+
 import { __installPackage } from '../__installPackage'
 
-import { __FetchPKGFromRemote, downloadWithPipe } from '../utils/remotePkg'
-import { asyncDoArray } from '../utils/doArray'
-import outputLog from '../utils/outputLog'
+import { asyncDoArray, outputLog, downloadWithPipe, __FetchPKGFromRemote } from '../utils'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
+import { objectToArrayMap } from '@nodecorejs/utils'
 import execa from 'execa'
 
 let performace = []
