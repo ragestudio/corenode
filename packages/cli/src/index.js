@@ -4,7 +4,7 @@ import { getChangelogs } from './scripts/utils'
 import buildProyect from '@nodecorejs/builder'
 import { cliRuntime } from '@nodecorejs/utils'
 
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode } from '@nodecorejs/dot-runtime'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
 
 let optionsMap = [
     {
@@ -120,10 +120,13 @@ let commandMap = [
         }
     },
     {
-        command: 'syncversion [package]',
-        description: "Sync current version to package",
+        command: 'sync [package]',
+        description: "Sync proyect versions",
         exec: (argv) => {
-            syncPackageVersionFromName(argv.package, argv.write)
+            if (!argv.package) {
+                return syncAllPackagesVersions()
+            }
+            return syncPackageVersionFromName(argv.package, argv.write)
         }
     },
     {
