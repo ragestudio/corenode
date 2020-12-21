@@ -49,9 +49,11 @@ export async function releaseProyect(args) {
     let opts = {
         publishNpm: false,
         preRelease: false,
+        next: false,
         skipGitStatusCheck: false,
         publishOnly: false,
-        skipBuild: false
+        skipBuild: false,
+        minor: false,
     }
 
     if (typeof (args) !== "undefined") {
@@ -85,9 +87,9 @@ export async function releaseProyect(args) {
         }
 
         // Bump version
-        if (opts.preRelease) {
-            bumpVersion(["patch"], true)
-        } else {
+        bumpVersion(["patch"], true)
+
+        if (opts.minor) {
             bumpVersion(["minor"], true)
         }
 
@@ -130,7 +132,7 @@ export async function releaseProyect(args) {
             const { name, version } = require(path.join(pkgPath, 'package.json'))
             if (version === currVersion) {
                 console.log(`[${index + 1}/${pkgs.length}] Publish package ${name} ${opts.preRelease ? 'with next tag' : ''}`)
-                const cliArgs = opts.preRelease ? ['publish', '--tag', 'next'] : ['publish']
+                const cliArgs = opts.next ? ['publish', '--tag', 'next'] : ['publish']
                 try {
                     const { stdout } = execa.sync('npm', cliArgs, {
                         cwd: pkgPath,
