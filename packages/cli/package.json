@@ -33,6 +33,7 @@
     "inquirer": "^7.3.3",
     "listr": "^0.14.3",
     "log4js": "^6.3.0",
+    "new-github-release-url": "^1.0.0",
     "node-7z": "^2.1.2",
     "node-fetch": "^2.6.1",
     "open": "^7.3.0",
