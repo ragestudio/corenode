@@ -2,7 +2,7 @@ import { __installPackage, __installCore, __initCreateRuntime, releaseProyect, b
 import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
-import { cliRuntime } from '@nodecorejs/utils'
+import cliRuntime from './cliRuntime'
 
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
 

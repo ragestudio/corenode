@@ -1,4 +1,3 @@
-export { default as cliRuntime } from './cliRuntime'
 export { default as delay } from './delay'
 export { default as getObjectPaths } from './getObjectPaths'
 export { default as hasDuplicates } from './hasDuplicates'

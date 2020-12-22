@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@babel/core": "7.12.9",
+    "@babel/runtime": "^7.12.5",
     "@nodecorejs/builder": "0.14.6",
     "@nodecorejs/cli": "0.14.6",
     "@nodecorejs/dot-runtime": "0.14.6",
