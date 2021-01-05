@@ -58,7 +58,7 @@ export default async (params) => {
           }
 
           if (pkgJSONExists) {
-            const pkg = require(pkgJSONPath)
+            const pkg = require(pkgJSONPath);
             [
               'dependencies',
               'devDependencies',
@@ -70,7 +70,7 @@ export default async (params) => {
               'main',
               'module',
             ].forEach((key) => {
-              if (pkg[key]) json[key] = pkg[key]
+              if (pkg[key]) json[key] = pkg[key];
             })
           }
           writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`)
