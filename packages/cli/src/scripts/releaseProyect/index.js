@@ -28,7 +28,6 @@ let currVersion = getVersion()
 
 const pkgs = getPackages()
 
-let lastState = null
 let stateCache = {}
 
 export async function releaseProyect(args) {
