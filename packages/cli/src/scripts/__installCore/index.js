@@ -15,12 +15,11 @@ import { __installPackage } from '../__installPackage'
 import { asyncDoArray, downloadWithPipe, __FetchPKGFromRemote } from '../utils'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { objectToArrayMap } from '@nodecorejs/utils'
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 import execa from 'execa'
 
 let performace = []
 const runtimeEnv = getRuntimeEnv()
-
 
 function outputResume(payload) {
     const { installPath, pkg } = payload
@@ -75,7 +74,7 @@ function handleInstall(params) {
                     return new Observable(async (observer) => {
                         const requires = pkgManifest[pkg].require
                         if (!requires) {
-                            outputLog.dump(`No require on pkg [${pkgManifest[pkg].id}] > ${requires}`)
+                            verbosity.dump(`No require on pkg [${pkgManifest[pkg].id}] > ${requires}`)
                             return observer.complete()
                         }
 
@@ -102,14 +101,14 @@ function handleInstall(params) {
                         observer.next(`Creating paths`);
 
                         if (!fs.existsSync(installPath)) {
-                            outputLog.dump(`Creating [installPath] "${installPath}"`);
+                            verbosity.dump(`Creating [installPath] "${installPath}"`);
                             fs.mkdir(installPath, { recursive: true }, e => {
                                 if (e) return rej(console.error(e))
                             })
                         }
 
                         if (!fs.existsSync(downloadPath)) {
-                            outputLog.dump(`Creating [downloadPath] "${downloadPath}"`);
+                            verbosity.dump(`Creating [downloadPath] "${downloadPath}"`);
                             fs.mkdir(downloadPath, { recursive: true }, e => {
                                 if (e) return rej(console.error(e))
                             })
@@ -142,25 +141,25 @@ function handleInstall(params) {
                                 let printStr = `Extracting ${progress.filename ?? 'file ...'}`
 
                                 observer.next(printStr)
-                                outputLog.dump(printStr)
+                                verbosity.dump(printStr)
                             })
 
                             unpackStream.on('end', () => {
                                 const perf_extract1 = performance.now()
                                 setTimeout(() => {
-                                    outputLog.dump(`Extracted ${fileCount} files in ${(perf_extract1 - perf_extract0).toFixed(2)} ms`)
+                                    verbosity.dump(`Extracted ${fileCount} files in ${(perf_extract1 - perf_extract0).toFixed(2)} ms`)
                                     return observer.complete()
                                 }, 300)
                             })
 
                             unpackStream.on('error', (err) => {
-                                outputLog.dump(err)
+                                verbosity.dump(err)
                                 return observer.error(err)
                             })
 
                         } else {
                             const err = `File is not available. Failed download?`
-                            outputLog.dump(err)
+                            verbosity.dump(err)
                             return observer.error(err)
                         }
                     })
@@ -180,7 +179,7 @@ function handleInstall(params) {
                 return resolve(pkgManifest[pkg])
             })
             .catch((err) => {
-                outputLog.dump(`error cathed on ${pkg} installation > ${err}`)
+                verbosity.dump(`error cathed on ${pkg} installation > ${err}`)
                 spinner.fail(`Error installing pkg (${pkg}) > ${err}`)
                 return reject(err)
             })
@@ -192,20 +191,20 @@ async function handleInstallPackageComponents(manifest) {
         const requires = manifest.require
 
         if (!requires) {
-            outputLog.dump(`No required components [${manifest.id}]`)
+            verbosity.dump(`No required components [${manifest.id}]`)
             return res()
         }
 
         if (requires.components) {
             asyncDoArray(requires.components, (key, value) => {
-                outputLog.dump(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
+                verbosity.dump(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
                 __installCore({ pkg: key })
             })
                 .then(() => {
                     return res()
                 })
                 .catch((err) => {
-                    outputLog.dump(err)
+                    verbosity.dump(err)
                     return rej(err)
                 })
         }

@@ -16,4 +16,6 @@ yarn-error.log
 
 .releaseBackup
 lastTest.js
+test.js
 nodecore_logs
+logs_dump.log

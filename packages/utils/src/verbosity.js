@@ -1,10 +1,9 @@
-
 import path from 'path'
-// @ts-ignore
 import stackTrace from 'stack-trace'
 import chalk from 'chalk'
 import { objectToArrayMap } from './objectToArray'
 import chalkRandomColor from './chalkRandomColor'
+import log4js from 'log4js'
 
 const verbosify = (data, opts, colorsOpts) => {
     let { log, trace } = data
@@ -28,13 +27,13 @@ const verbosify = (data, opts, colorsOpts) => {
                     }
                 })
             }
-        }  
+        }
 
         const paint = (type, data) => {
             if (!colorsOpts) {
                 return data
             }
-            if (typeof(data) !== "string") {
+            if (typeof (data) !== "string") {
                 return data
             }
             let target = chalk
@@ -55,7 +54,7 @@ const verbosify = (data, opts, colorsOpts) => {
                     target = target[backgroundColor]
                 }
             }
-          
+
             return target(data)
         }
 
@@ -119,6 +118,20 @@ export default {
         console.log(...response)
         return this
     },
+    dump: function (...context) {
+        log4js.configure({
+            appenders: {
+                logs: { type: "file", filename: `logs_dump.log` },
+            },
+            categories: {
+                default: { appenders: ["logs"], level: "debug" }
+            }
+        })
+        const logger = log4js.getLogger("logs")
+
+        logger.debug(...context)
+        return this
+    },
     random: function (...context) {
         let response = verbosify({
             trace: {
@@ -141,7 +154,7 @@ export default {
         return this
     },
     colors: function (params) {
-        if (typeof(params) !== "undefined" && params != null) {
+        if (typeof (params) !== "undefined" && params != null) {
             try {
                 objectToArrayMap(params).forEach((param) => {
                     if (this.colorsOpts[param.key]) {
