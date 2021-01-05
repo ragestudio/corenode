@@ -1,13 +1,14 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getDevRuntimeEnv, version, getPackages } from '@nodecorejs/dot-runtime'
+import { getGit, getDevRuntimeEnv, getVersion, getPackages } from '@nodecorejs/dot-runtime'
 import process from 'process'
 
 export default async (params) => {
   return new Promise(async (resolve, reject) => {
     {
-      const devRuntime = getDevRuntimeEnv();
-      const pkgs = getPackages();
+      const version = getVersion()
+      const devRuntime = getDevRuntimeEnv()
+      const pkgs = getPackages()
 
       let opt = {
         license: 'MIT',
@@ -20,14 +21,14 @@ export default async (params) => {
       }
 
       pkgs.forEach((packageName) => {
-        const name = `@${opt.headPackage}/${packageName}`;
+        const name = `@${opt.headPackage}/${packageName}`
         const pkgPath = path.resolve(process.cwd(), `./packages/${packageName}`)
 
         const readmePath = path.resolve(pkgPath, `./README.md`)
         const pkgJSONPath = path.resolve(pkgPath, `./package.json`)
 
-        const pkgJSONExists = existsSync(pkgJSONPath);
-        const readmeExist = existsSync(readmePath);
+        const pkgJSONExists = existsSync(pkgJSONPath)
+        const readmeExist = existsSync(readmePath)
 
         if (opt.force || !pkgJSONExists) {
           const json = {
@@ -38,7 +39,7 @@ export default async (params) => {
             publishConfig: {
               access: 'public',
             },
-          };
+          }
 
           if (!pkgJSONExists) {
             json.version = version
@@ -57,7 +58,7 @@ export default async (params) => {
           }
 
           if (pkgJSONExists) {
-            const pkg = require(pkgJSONPath);
+            const pkg = require(pkgJSONPath)
             [
               'dependencies',
               'devDependencies',
@@ -69,15 +70,15 @@ export default async (params) => {
               'main',
               'module',
             ].forEach((key) => {
-              if (pkg[key]) json[key] = pkg[key];
-            });
+              if (pkg[key]) json[key] = pkg[key]
+            })
           }
-          writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`);
+          writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`)
         }
 
         if (packageName !== opt.headPackage) {
           if (opt.force || !readmeExist) {
-            writeFileSync(readmePath, `# ${name}\n`);
+            writeFileSync(readmePath, `# ${name}\n`)
           }
         }
       })
