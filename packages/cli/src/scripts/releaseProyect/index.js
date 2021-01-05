@@ -37,15 +37,6 @@ export async function releaseProyect(args) {
         return printErrorAndExit(`devRuntime is missing on runtime`)
     }
 
-    if (fs.existsSync(releaseBackupFile)) {
-        lastState = fs.readFileSync(releaseBackupFile, 'utf-8')
-        if (lastState || lastState.crash) {
-            stateCache = lastState
-        } else {
-            fs.unlinkSync(releaseBackupFile)
-        }
-    }
-
     let opts = {
         publishNpm: false,
         preRelease: false,
