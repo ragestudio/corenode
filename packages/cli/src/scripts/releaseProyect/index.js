@@ -139,7 +139,7 @@ export async function releaseProyect(args) {
                     })
                     console.log(stdout)
                 } catch (error) {
-                    console.log(`❌ Failed to publish > ${pkg} >`, err)
+                    console.log(`❌ Failed to publish > ${pkg} >`, error)
                 }
             }
         })
