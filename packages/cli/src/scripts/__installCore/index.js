@@ -2,6 +2,7 @@
 const fallbackRemoteSource = "https://api.ragestudio.net/std/nodecore_cores"
 
 import Listr from 'listr'
+import ora from 'ora'
 import fs from 'fs'
 import path from 'path'
 import sevenBin from '7zip-bin'
@@ -11,7 +12,7 @@ import { Observable } from 'rxjs'
 
 import { __installPackage } from '../__installPackage'
 
-import { asyncDoArray, outputLog, downloadWithPipe, __FetchPKGFromRemote } from '../utils'
+import { asyncDoArray, downloadWithPipe, __FetchPKGFromRemote } from '../utils'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 import { objectToArrayMap } from '@nodecorejs/utils'
@@ -28,6 +29,11 @@ function outputResume(payload) {
     console.log(`⏱ Operation tooks ${(performance.now() - performace[pkg]).toFixed(2)}ms \n`)
     console.groupEnd()
 }
+
+const spinner = ora({
+    spinner: "dots",
+    text: "Initalizing..."
+})
 
 function handleInstall(params) {
     return new Promise((resolve, reject) => {
@@ -69,7 +75,7 @@ function handleInstall(params) {
                     return new Observable(async (observer) => {
                         const requires = pkgManifest[pkg].require
                         if (!requires) {
-                            outputLog.setCache(`No require on pkg [${pkgManifest[pkg].id}] > ${requires}`)
+                            outputLog.dump(`No require on pkg [${pkgManifest[pkg].id}] > ${requires}`)
                             return observer.complete()
                         }
 
@@ -96,14 +102,14 @@ function handleInstall(params) {
                         observer.next(`Creating paths`);
 
                         if (!fs.existsSync(installPath)) {
-                            outputLog.setCache(`Creating [installPath] "${installPath}"`);
+                            outputLog.dump(`Creating [installPath] "${installPath}"`);
                             fs.mkdir(installPath, { recursive: true }, e => {
                                 if (e) return rej(console.error(e))
                             })
                         }
 
                         if (!fs.existsSync(downloadPath)) {
-                            outputLog.setCache(`Creating [downloadPath] "${downloadPath}"`);
+                            outputLog.dump(`Creating [downloadPath] "${downloadPath}"`);
                             fs.mkdir(downloadPath, { recursive: true }, e => {
                                 if (e) return rej(console.error(e))
                             })
@@ -136,25 +142,25 @@ function handleInstall(params) {
                                 let printStr = `Extracting ${progress.filename ?? 'file ...'}`
 
                                 observer.next(printStr)
-                                outputLog.setCache(printStr)
+                                outputLog.dump(printStr)
                             })
 
                             unpackStream.on('end', () => {
                                 const perf_extract1 = performance.now()
                                 setTimeout(() => {
-                                    outputLog.setCache(`Extracted ${fileCount} files in ${(perf_extract1 - perf_extract0).toFixed(2)} ms`)
+                                    outputLog.dump(`Extracted ${fileCount} files in ${(perf_extract1 - perf_extract0).toFixed(2)} ms`)
                                     return observer.complete()
                                 }, 300)
                             })
 
                             unpackStream.on('error', (err) => {
-                                outputLog.setCache(err)
+                                outputLog.dump(err)
                                 return observer.error(err)
                             })
 
                         } else {
                             const err = `File is not available. Failed download?`
-                            outputLog.setCache(err)
+                            outputLog.dump(err)
                             return observer.error(err)
                         }
                     })
@@ -165,17 +171,17 @@ function handleInstall(params) {
         })
         tasks.run()
             .then((res) => {
-                outputLog.text("Cleaning up temporal files...")
+                spinner.start("Cleaning up temporal files...")
                 fs.rmdirSync(tmpPath, { recursive: true })
-                outputLog.spinner.succeed()
+                spinner.succeed()
 
                 outputResume({ installPath, downloadPath, filename: pkgManifest[pkg].filename, pkg })
 
                 return resolve(pkgManifest[pkg])
             })
             .catch((err) => {
-                outputLog.setCache(`error cathed on ${pkg} installation > ${err}`)
-                outputLog.spinner.fail(`Error installing pkg (${pkg}) > ${err}`)
+                outputLog.dump(`error cathed on ${pkg} installation > ${err}`)
+                spinner.fail(`Error installing pkg (${pkg}) > ${err}`)
                 return reject(err)
             })
     })
@@ -186,20 +192,20 @@ async function handleInstallPackageComponents(manifest) {
         const requires = manifest.require
 
         if (!requires) {
-            outputLog.setCache(`No required components [${manifest.id}]`)
+            outputLog.dump(`No required components [${manifest.id}]`)
             return res()
         }
 
         if (requires.components) {
             asyncDoArray(requires.components, (key, value) => {
-                outputLog.setCache(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
+                outputLog.dump(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
                 __installCore({ pkg: key })
             })
                 .then(() => {
                     return res()
                 })
                 .catch((err) => {
-                    outputLog.setCache(err)
+                    outputLog.dump(err)
                     return rej(err)
                 })
         }
