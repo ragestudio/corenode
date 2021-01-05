@@ -22,7 +22,10 @@ const verbosify = (data, opts, colorsOpts) => {
         if (opts) {
             if (typeof (trace) !== "undefined" && trace != null) {
                 objectToArrayMap(decoratorData).forEach((element) => {
-                    if (opts[element.key] && trace[element.key]) {
+                    if (typeof (opts[element.key]) == "string") {
+                        decoratorData[element.key] = opts[element.key]
+                    }
+                    if (opts[element.key] === true && trace[element.key]) {
                         decoratorData[element.key] = trace[element.key]
                     }
                 })
@@ -40,8 +43,8 @@ const verbosify = (data, opts, colorsOpts) => {
 
             const colors = colorsOpts
 
-            let textColor = colors[type].textColor
-            let backgroundColor = colors[type].backgroundColor
+            let textColor = colors[type].text
+            let backgroundColor = colors[type].bg
 
             if (textColor) {
                 if (target[textColor]) {
@@ -58,12 +61,10 @@ const verbosify = (data, opts, colorsOpts) => {
             return target(data)
         }
 
-        const decoratorMap = objectToArrayMap(decoratorData)
+        const decoratorMap = objectToArrayMap(decoratorData).filter(element => element.value != null)
         for (let index = 0; index < decoratorMap.length; index++) {
-            const element = decoratorMap[index];
-
+            const element = decoratorMap[index]
             const divisor = (index == (decoratorMap.length - 1) ? " > " : " | ")
-
             if (element.value != null && typeof (element.value) !== "undefined") {
                 decoratorStr = `${decoratorStr}${element.value}${divisor}`
             }
@@ -96,12 +97,12 @@ export default {
     },
     colorsOpts: {
         decorator: {
-            textColor: "blue",
-            backgroundColor: false
+            text: "blue",
+            bg: false
         },
         log: {
-            textColor: false,
-            backgroundColor: false
+            text: false,
+            bg: false
         }
     },
     log: function (...context) {
@@ -130,6 +131,11 @@ export default {
         const logger = log4js.getLogger("logs")
 
         logger.debug(...context)
+        return this
+    },
+    error: function (...context) {
+        this.colorsOpts.log.text = "red"
+        this.log(...context)
         return this
     },
     random: function (...context) {
