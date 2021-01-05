@@ -105,8 +105,8 @@ export default {
             bg: false
         }
     },
-    log: function (...context) {
-        let response = verbosify({
+    vrb: function (opts, colors,...context) {
+        return verbosify({
             trace: {
                 file,
                 line,
@@ -115,8 +115,17 @@ export default {
             log: {
                 ...context
             }
-        }, this.opts, this.colorsOpts)
+        }, opts, colors)
+    },
+    log: function (...context) {
+        let response = this.vrb(this.opts, this.colorsOpts, ...context)
         console.log(...response)
+        return this
+    },
+    error: function (...context) {
+        this.colorsOpts.log.text = "red"
+        let response = this.vrb(this.opts, this.colorsOpts, ...context)
+        console.error(...response)
         return this
     },
     dump: function (...context) {
@@ -133,22 +142,8 @@ export default {
         logger.debug(...context)
         return this
     },
-    error: function (...context) {
-        this.colorsOpts.log.text = "red"
-        this.log(...context)
-        return this
-    },
     random: function (...context) {
-        let response = verbosify({
-            trace: {
-                file,
-                line,
-                method,
-            },
-            log: {
-                ...context
-            }
-        }, this.opts)
+        let response = this.vrb(this.opts, null, ...context)
         console.log(chalkRandomColor(response))
         return this
     },
