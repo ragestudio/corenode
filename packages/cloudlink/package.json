@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cloudlink",
-  "version": "0.14.11",
+  "version": "0.14.12",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -14,5 +14,13 @@
     "type": "git",
     "url": "https://github.com/ragestudio/nodecore"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@nodecorejs/dot-runtime": "^0.14.12",
+    "@nodecorejs/utils": "^0.14.12",
+    "axios": "^0.21.1",
+    "axios-cache-adapter": "^2.5.0",
+    "localforage": "^1.9.0",
+    "path-to-regexp": "^6.2.0"
+  }
 }
