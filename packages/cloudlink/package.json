@@ -1,5 +1,6 @@
 {
   "name": "@nodecorejs/cloudlink",
+  "version": "0.14.11",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {

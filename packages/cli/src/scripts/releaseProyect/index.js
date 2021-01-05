@@ -11,7 +11,6 @@ import { getChangelogs } from '../utils/getChangelogs'
 import exec from '../utils/exec'
 
 // TODO: Auto throwback when crash
-const releaseBackupFile = path.resolve(process.cwd(), './.releaseBackup')
 const rootPackageJSONPath = path.resolve(process.cwd(), './package.json')
 
 function printErrorAndExit(message) {
