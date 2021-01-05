@@ -1,11 +1,17 @@
 {
-  "name": "cloudlink",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "@nodecorejs/cloudlink",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
-  "author": "",
-  "license": "ISC"
+  "files": [
+    "dist",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ragestudio/nodecore"
+  },
+  "license": "MIT"
 }

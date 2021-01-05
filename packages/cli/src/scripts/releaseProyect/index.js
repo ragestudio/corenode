@@ -139,7 +139,6 @@ export async function releaseProyect(args) {
                     })
                     console.log(stdout)
                 } catch (error) {
-                    fs.writeFileSync(releaseBackupFile, stateCache, 'utf-8')
                     console.log(`❌ Failed to publish > ${pkg} >`, err)
                 }
             }
