@@ -18,8 +18,9 @@
   "dependencies": {
     "@nodecorejs/dot-runtime": "^0.14.12",
     "@nodecorejs/utils": "^0.14.12",
+    "async-mutex": "^0.2.6",
     "axios": "^0.21.1",
-    "axios-cache-adapter": "^2.5.0",
+    "express": "^4.17.1",
     "localforage": "^1.9.0",
     "path-to-regexp": "^6.2.0"
   }
