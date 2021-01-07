@@ -105,7 +105,7 @@ export default {
             bg: false
         }
     },
-    vrb: function (opts, colors,...context) {
+    vrb: function (opts, colors, ...context) {
         return verbosify({
             trace: {
                 file,
@@ -123,8 +123,16 @@ export default {
         return this
     },
     error: function (...context) {
-        this.colorsOpts.log.text = "red"
-        let response = this.vrb(this.opts, this.colorsOpts, ...context)
+        let response = this.vrb(this.opts, {
+            decorator: {
+                text: "orange",
+                bg: false
+            },
+            log: {
+                text: "red",
+                bg: false
+            }
+        }, ...context)
         console.error(...response)
         return this
     },
