@@ -1,10 +1,10 @@
-export default async function asyncDoArray(array, exec, callback) {
+export default async (array, exec, callback) => {
     return new Promise(async (resolve, reject) => {
         if (!array) {
-            return reject("doArray is not provided")
+            return reject("array is not provided")
         }
-        if (!exec) {
-            return reject("exec is not provided")
+        if (!exec && typeof(exec) == "function") {
+            return reject("exec is not provided/valid")
         }
         try {
             const keys = Object.keys(array)
@@ -13,9 +13,9 @@ export default async function asyncDoArray(array, exec, callback) {
             for (let index = 0; index < keys.length; index++) {
                 const key = keys[index]
                 const value = values[index]
-
+                
                 await exec(key, value)
-
+            
                 if (index == (keys.length - 1)) {
                     if (typeof (callback) !== "undefined") {
                         callback(false, true)
@@ -24,8 +24,6 @@ export default async function asyncDoArray(array, exec, callback) {
                 }
 
             }
-
-
         } catch (error) {
             if (typeof (callback) !== "undefined") {
                 callback(error, false)

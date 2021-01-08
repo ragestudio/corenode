@@ -196,6 +196,7 @@ async function handleInstallPackageComponents(manifest) {
         }
 
         if (requires.components) {
+            //lgtm [js/call-to-non-callable]
             asyncDoArray(requires.components, (key, value) => {
                 verbosity.dump(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
                 __installCore({ pkg: key })
