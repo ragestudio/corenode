@@ -8,9 +8,9 @@ import through from 'through2'
 
 import { verbosity } from '@nodecorejs/utils'
 
-const cwd = process.cwd();
+const cwd = process.cwd()
 
-let pkgCount = null;
+let pkgCount = null
 
 function getBabelConfig() {
   return {
@@ -38,17 +38,21 @@ function getBabelConfig() {
 }
 
 export function transform(opts = {}) {
-  const { content, path, pkg, silent } = opts;
-  const babelConfig = getBabelConfig();
+  const { content, path, pkg, silent } = opts
+  const babelConfig = getBabelConfig()
 
   if (!silent) {
-    verbosity.options({ method: false }).random(`${`transform > 🔵 [${pkg.name}]`} => ${path}`)
+    try {
+      verbosity.options({ method: `transform` }).random(`${`📦 [${pkg.name}]`} => ${path}`)
+    } catch (error) {
+      // woupsi
+    }
   }
 
   return babel.transform(content, {
     ...babelConfig,
     filename: path,
-  }).code;
+  }).code
 }
 
 export function build(dir, opts) {
@@ -64,11 +68,11 @@ export function build(dir, opts) {
     options = { ...options, ...opts }
   }
 
-  const pkgPath = join(options.cwd, dir, 'package.json');
-  const pkg = require(pkgPath);
+  const pkgPath = join(options.cwd, dir, 'package.json')
+  const pkg = require(pkgPath)
 
-  const buildOut = join(dir, options.outDir);
-  const srcDir = join(dir, options.buildSrc);
+  const buildOut = join(dir, options.outDir)
+  const srcDir = join(dir, options.buildSrc)
 
   if (pkg.name == require(resolve(__dirname, '../package.json')).name) {
     if (!options.buildBuilder && !options.silent) {
@@ -78,7 +82,7 @@ export function build(dir, opts) {
   }
 
   // clean
-  rimraf.sync(join(options.cwd, buildOut));
+  rimraf.sync(join(options.cwd, buildOut))
 
   function createStream(src) {
     return vfs
@@ -100,36 +104,36 @@ export function build(dir, opts) {
               pkg,
               root: join(options.cwd, dir),
             }),
-          );
-          f.path = f.path.replace(extname(f.path), '.js');
+          )
+          f.path = f.path.replace(extname(f.path), '.js')
         }
-        cb(null, f);
+        cb(null, f)
       }))
-      .pipe(vfs.dest(buildOut));
+      .pipe(vfs.dest(buildOut))
   }
 
-  const stream = createStream(join(srcDir, '**/*'));
+  const stream = createStream(join(srcDir, '**/*'))
   stream.on('end', () => {
-    pkgCount -= 1;
+    pkgCount -= 1
 
     if (pkgCount === 0 && process.send) {
-      process.send('BUILD_COMPLETE');
+      process.send('BUILD_COMPLETE')
     }
-  });
+  })
 }
 
 export function buildProyect(opts) {
   const packagesPath = join(cwd, 'packages')
 
   if (existsSync(packagesPath)) {
-    const dirs = readdirSync(join(cwd, 'packages')).filter(dir => dir.charAt(0) !== '.');
-    pkgCount = dirs.length;
+    const dirs = readdirSync(join(cwd, 'packages')).filter(dir => dir.charAt(0) !== '.')
+    pkgCount = dirs.length
     dirs.forEach(pkg => {
-      build(`./packages/${pkg}`, { cwd, ...opts });
-    });
+      build(`./packages/${pkg}`, { cwd, ...opts })
+    })
   } else {
-    pkgCount = 1;
-    build('./', { cwd, ...opts });
+    pkgCount = 1
+    build('./', { cwd, ...opts })
   }
 }
 
