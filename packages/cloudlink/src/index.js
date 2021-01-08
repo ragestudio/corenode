@@ -9,14 +9,16 @@ import express from 'express'
 let app = express()
 const httpServer = http.createServer(app)
 
-const WebSocketClient = require('websocket').client
 const clientLock = new Mutex()
 
 try {
     if (!global.cloudlink) {
         global.cloudlink = {
             origin: null,
-            nodes: {}
+            nodes: {},
+            server: {
+                uuid: null
+            }
         }
     }
 
@@ -28,23 +30,21 @@ try {
     verbosity.error(error)
 }
 
-function stopExpress(params) {
-    httpServer.close()
-}
-
 function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = {}) {
+    const con = verbosity.options({ method: "createCloudLinkServer" })
+
     try {
         if (typeof (endpoints) !== "object") {
-            console.error("Invalid endpoints")
+            con.error("Invalid endpoints")
             return false
         }
         endpoints.forEach((api) => {
             if (typeof (api.path) == "undefined") {
-                console.log(`Path is required!`)
+                con.log(`Path is required!`)
                 return false
             }
             if (typeof (Controllers[api.controller]) == "undefined") {
-                console.log(`Controller (${api.controller}) not loaded!`)
+                con.log(`Controller (${api.controller}) not loaded!`)
                 return false
             }
             let model = [`/${api.path}`]
@@ -67,7 +67,7 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
             app[api.method.toLowerCase() ?? "get"](...model)
         })
     } catch (error) {
-        console.error(error)
+        con.error(error)
         return false
     }
 
@@ -77,12 +77,15 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
 }
 
 function register(params) {
+    const con = verbosity.options({ method: "CloudLinkRegister" })
     const registerTarget = `${params.https ? "https" : "http"}://${params.origin}${params.originPort ? `:${params.originPort}` : ''}/register`
     createCloudLinkServer(params.listenPort, params.endpoints, params.controllers)
 
     axios(registerTarget, {
         method: "POST",
+        httpAgent: new http.Agent({ keepAlive: true }),
         headers: {
+            "Connection": 'keep-alive',
             "Content-Type": "application/json"
         },
         data: {
@@ -94,29 +97,13 @@ function register(params) {
         }
     })
         .then((res) => {
-            let client = new WebSocketClient()
-
-            client.on('connectFailed', (error) => {
-                console.log('WS Connect Error: ' + error.toString())
-            })
-
-            client.on('connect', (socket) => {
-                socket.on('error', (error) => {
-                    console.log("Connection Error: " + error.toString())
-                })
-                socket.on('close', () => {
-                    console.log('Connection Closed')
-                    stopExpress()
-                })
-            })
-
-            client.connect(`ws://${params.origin}:${params.originPort}`)
+            if (res.status == 200) {
+                con.log(`✅ New link server registered to source [${registerTarget}] > UUID [${res.data}]`)
+                global.cloudlink.server.uuid = res.data
+            }
         })
         .catch((err) => {
-            console.error(`[Error ${err.response.status}] ${err.response.data}`)
-        })
-        .then(() => {
-
+            con.error(`[Error ${err.response.status}] ${err.response.data}`)
         })
     return this
 }
