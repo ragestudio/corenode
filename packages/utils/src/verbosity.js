@@ -4,7 +4,6 @@ import chalk from 'chalk'
 import { objectToArrayMap } from './objectToArray'
 import chalkRandomColor from './chalkRandomColor'
 import log4js from 'log4js'
-import { isNumber } from 'lodash'
 
 const stack = stackTrace.get()[1]
 
