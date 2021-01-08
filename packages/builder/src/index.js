@@ -42,10 +42,12 @@ export function transform(opts = {}) {
   const babelConfig = getBabelConfig()
 
   if (!silent) {
+    const logStr = `${`📦 [${pkg.name}]`} => ${path}`
     try {
-      verbosity.options({ method: `transform` }).random(`${`📦 [${pkg.name}]`} => ${path}`)
+      verbosity.options({ method: `transform` }).random(logStr)
     } catch (error) {
       // woupsi
+      console.log(logStr)
     }
   }
 
