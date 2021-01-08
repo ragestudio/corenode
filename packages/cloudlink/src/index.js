@@ -1,10 +1,12 @@
 import axios from 'axios'
-import { verbosity } from '@nodecorejs/utils'
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { verbosity as veb } from '@nodecorejs/utils'
 import { Mutex } from 'async-mutex'
 
 import http from 'http'
 import express from 'express'
+
+const verbosity = veb.options({ method: "Cloudlink" })
 
 let app = express()
 const httpServer = http.createServer(app)
@@ -31,20 +33,18 @@ try {
 }
 
 function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = {}) {
-    const con = verbosity.options({ method: "createCloudLinkServer" })
-
     try {
         if (typeof (endpoints) !== "object") {
-            con.error("Invalid endpoints")
+            verbosity.error("Invalid endpoints")
             return false
         }
         endpoints.forEach((api) => {
             if (typeof (api.path) == "undefined") {
-                con.log(`Path is required!`)
+                verbosity.log(`Path is required!`)
                 return false
             }
             if (typeof (Controllers[api.controller]) == "undefined") {
-                con.log(`Controller (${api.controller}) not loaded!`)
+                verbosity.log(`Controller (${api.controller}) not loaded!`)
                 return false
             }
             let model = [`/${api.path}`]
@@ -67,7 +67,7 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
             app[api.method.toLowerCase() ?? "get"](...model)
         })
     } catch (error) {
-        con.error(error)
+        verbosity.error(error)
         return false
     }
 
@@ -77,7 +77,6 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
 }
 
 function register(params) {
-    const con = verbosity.options({ method: "CloudLinkRegister" })
     const registerTarget = `${params.https ? "https" : "http"}://${params.origin}${params.originPort ? `:${params.originPort}` : ''}/register`
     createCloudLinkServer(params.listenPort, params.endpoints, params.controllers)
 
@@ -98,12 +97,12 @@ function register(params) {
     })
         .then((res) => {
             if (res.status == 200) {
-                con.log(`✅ New link server registered to source [${registerTarget}] > UUID [${res.data}]`)
+                verbosity.log(`✅ New link server registered to source [${registerTarget}] > UUID [${res.data}]`)
                 global.cloudlink.server.uuid = res.data
             }
         })
         .catch((err) => {
-            con.error(`[Error ${err.response.status}] ${err.response.data}`)
+            verbosity.error(`[Error ${err.response.status}] ${err.response.data}`)
         })
     return this
 }
