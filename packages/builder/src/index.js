@@ -7,13 +7,14 @@ import vfs from 'vinyl-fs'
 import through from 'through2'
 
 import { verbosity } from '@nodecorejs/utils'
+import { getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
 const cwd = process.cwd()
 
 let pkgCount = null
 
 function getBabelConfig() {
-  return {
+  let config = {
     presets: [
       [
         require.resolve('@babel/preset-typescript'),
@@ -35,6 +36,12 @@ function getBabelConfig() {
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
   }
+  const { babel } = getDevRuntimeEnv()
+  if (babel) {
+    config = { ...config, ...babel }
+  }
+
+  return config
 }
 
 export function transform(opts = {}) {
@@ -46,7 +53,6 @@ export function transform(opts = {}) {
     try {
       verbosity.options({ method: `transform` }).random(logStr)
     } catch (error) {
-      // woupsi
       console.log(logStr)
     }
   }
@@ -126,7 +132,7 @@ export function build(dir, opts) {
 
 export function buildProyect(opts) {
   const packagesPath = join(cwd, 'packages')
-
+  
   if (existsSync(packagesPath)) {
     const dirs = readdirSync(join(cwd, 'packages')).filter(dir => dir.charAt(0) !== '.')
     pkgCount = dirs.length
