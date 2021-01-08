@@ -2,6 +2,10 @@
   "version": "0.15.1",
   "devRuntime": {
     "headPackage": "nodecorejs",
-    "originGit": "https://github.com/ragestudio/nodecore"
+    "originGit": "https://github.com/ragestudio/nodecore",
+    "babel": {
+        "retainLines": true,
+        "sourceMap": "both"
+    }
   }
 }

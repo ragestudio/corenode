@@ -77,7 +77,8 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
 }
 
 function register(params) {
-    const registerTarget = `${params.https ? "https" : "http"}://${params.origin}${params.originPort ? `:${params.originPort}` : ''}/register`
+    const originAddress = `${params.origin}${params.originPort ? `:${params.originPort}` : ''}`
+    const registerTarget = `${params.https ? "https" : "http"}://${originAddress}/register`
     createCloudLinkServer(params.listenPort, params.endpoints, params.controllers)
 
     axios(registerTarget, {
@@ -97,7 +98,7 @@ function register(params) {
     })
         .then((res) => {
             if (res.status == 200) {
-                verbosity.log(`✅ New link server registered to source [${registerTarget}] > UUID [${res.data}]`)
+                verbosity.log(`✅ New register to source [${originAddress}] > UUID [${res.data}]`)
                 global.cloudlink.server.uuid = res.data
             }
         })
