@@ -77,6 +77,9 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
 }
 
 function register(params) {
+    if (typeof(params.originPort) !== "undefined") {
+        params.originPort = 6050
+    }
     const originAddress = `${params.origin}${params.originPort ? `:${params.originPort}` : ''}`
     const registerTarget = `${params.https ? "https" : "http"}://${originAddress}/register`
     createCloudLinkServer(params.listenPort, params.endpoints, params.controllers)
