@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@nodecorejs/builder": "0.15.1",
+    "@nodecorejs/log": "0.15.1",
     "@nodecorejs/dot-runtime": "0.15.1",
     "@nodecorejs/utils": "0.15.1",
     "7zip-bin": "^5.0.3",
