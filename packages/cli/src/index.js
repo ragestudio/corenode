@@ -1,4 +1,4 @@
-import { __installPackage, __installCore, __initCreateRuntime, releaseProyect, bootstrapProyect } from './scripts'
+import { __installPackage, __installCore, __initCreateRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
@@ -116,6 +116,17 @@ let commandMap = [
         exec: (argv) => {
             bootstrapProyect(argv).then((res) => {
                 console.log(`\n✅ DONE\nAll modules bootstraped > ${res}\n`)
+            })
+        }
+    },
+    {
+        command: 'doc',
+        description: "Generate documentation",
+        exec: (argv) => {
+            generateDocs({
+                dir: argv.dir,
+                proyect: argv.proyect,
+                destination: argv.destination
             })
         }
     },
