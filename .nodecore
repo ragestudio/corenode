@@ -6,6 +6,7 @@
     "babel": {
         "retainLines": true,
         "sourceMap": "both"
-    }
+    },
+    "docs": ["dot-runtime", "utils", "cloudlink"]
   }
 }

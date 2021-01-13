@@ -3,7 +3,6 @@ const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
-import { IRuntimeEnv } from './types'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 const enginePkgPath = path.resolve(__filename, '../../package.json')
@@ -19,7 +18,7 @@ let currentVersion = {}
 const versionsTypes = Object.keys(versionOrderScheme)
 
 let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore') // For this repo only watch .nodecore
-let proyectRuntime = <IRuntimeEnv>{}
+let proyectRuntime = {}
 
 let _envDone = false
 syncEnvs.forEach(runtime => {
@@ -45,7 +44,7 @@ if (proyectRuntime["version"]) {
             currentVersion[type] = null
         })
 
-        objectToArrayMap(getVersion().split('.')).forEach((entry: any) => {
+        objectToArrayMap(getVersion().split('.')).forEach((entry) => {
             let entryValue = null
 
             if (isNaN(Number(entry.value))) {
@@ -65,8 +64,7 @@ if (proyectRuntime["version"]) {
     }
 }
 
-// Functions
-export function getVersion(engine?: boolean) {
+export function getVersion(engine) {
     const pkgEngine = require(enginePkgPath)
     const pkgProyect = require(proyectPkgPath)
 
@@ -89,14 +87,17 @@ export const getRuntimeEnv = () => {
     return proyectRuntime
 }
 
-export const getDevRuntimeEnv: any = () => {
+export const getDevRuntimeEnv = () => {
     if (!proyectRuntime || typeof (proyectRuntime.devRuntime) == "undefined") {
         return false
     }
     return proyectRuntime.devRuntime
 }
 
-export const getGit = () => {
+/**
+ * Get `originGit` from `.nodecore` env
+ */
+export function getGit() {
     const envs = getDevRuntimeEnv()
     if (!envs || typeof (envs.originGit) == "undefined") {
         return false
@@ -126,8 +127,8 @@ export function isLocalMode() {
 }
 
 // Scripts Functions
-export function versionToString(version: any) {
-    let v: any = []
+export function versionToString(version) {
+    let v = []
     objectToArrayMap(version).forEach(element => {
         if (typeof (element.value) !== "undefined" && element.value != null) {
             v[versionOrderScheme[element.key]] = element.value
@@ -136,7 +137,7 @@ export function versionToString(version: any) {
     return v.join('.')
 }
 
-export function bumpVersion(params: any, confirmation: boolean) {
+export function bumpVersion(params, confirmation) {
     if (!params) {
         return false
     }
@@ -183,7 +184,7 @@ export function bumpVersion(params: any, confirmation: boolean) {
     }
 }
 
-export function syncPackageVersionFromName(name: string, write?: boolean) {
+export function syncPackageVersionFromName(name, write) {
     const currentVersion = getVersion()
     const packageDir = path.resolve(process.cwd(), `./packages/${name}`)
     const pkgJSON = path.resolve(packageDir, './package.json')
