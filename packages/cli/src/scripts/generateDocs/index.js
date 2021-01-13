@@ -1,5 +1,5 @@
 
-import { getPackages } from '@nodecorejs/dot-runtime'
+import { getPackages, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 import ESDoc from 'esdoc'
 import path from 'path'
 
@@ -11,7 +11,13 @@ export function generateDocs(params) {
         plugins: [
             {
                 name: "esdoc-standard-plugin"
-            }
+            },
+            {
+                name: "esdoc-ecmascript-proposal-plugin",
+                option: {
+                    all: true
+                }
+            },
         ]
     }
 
@@ -19,9 +25,12 @@ export function generateDocs(params) {
 
     if (typeof(params.plugins) !== "undefined" && Array.isArray(params.plugins) ) {
         params.plugins.forEach(plugin => {
-            opts.plugins.push({
-                name: plugin
-            })
+            if (typeof(plugin) !== "object") {
+                return opts.plugins.push({
+                    name: plugin
+                })
+            }
+            opts.plugins.push(plugin)
         })
     }
 
@@ -30,8 +39,19 @@ export function generateDocs(params) {
     }
 
     if (buildFromProyect) {
-        getPackages().forEach((pkg) => {
-            pkgs.push(`packages/${pkg}`)
+        let includes = []
+
+        const pkgsFromRuntime = getDevRuntimeEnv().docs
+        const allPackages = getPackages()
+
+        if (typeof(pkgsFromRuntime) !== "undefined") {
+            includes = pkgsFromRuntime
+        }else {
+            includes = allPackages
+        }
+
+        includes.forEach((pkg) => {
+            pkgs.push(`packages/${pkg}/src`)
         })
     }
     
@@ -41,7 +61,9 @@ export function generateDocs(params) {
 
     console.log(pkgs)
     pkgs.forEach((pkg) => {
-        console.log(pkg)
-        ESDoc.generate({ ...opts, source: path.resolve(__dirname, pkg) })
+        const dir = path.resolve(process.cwd(), pkg)
+
+        console.log(`📕 Generating docs for package [${pkg}] > ${dir}\n`)
+        ESDoc.generate({ ...opts, source: dir })
     })
 }
