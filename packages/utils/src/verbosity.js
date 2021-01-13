@@ -3,7 +3,6 @@ import stackTrace from 'stack-trace'
 import chalk from 'chalk'
 import { objectToArrayMap } from './objectToArray'
 import chalkRandomColor from './chalkRandomColor'
-import log4js from 'log4js'
 
 const stack = stackTrace.get()[1]
 
@@ -184,21 +183,6 @@ export default {
         } catch (error) {
             // woupssi
         }
-        return this
-    },
-    dump: function (...context) {
-        log4js.configure({
-            appenders: {
-                logs: { type: "file", filename: `logs_dump.log` },
-            },
-            categories: {
-                default: { appenders: ["logs"], level: "debug" }
-            }
-        })
-        const logger = log4js.getLogger("logs")
-
-        logger.debug(...context)
-
         return this
     },
     options: function (params) {
