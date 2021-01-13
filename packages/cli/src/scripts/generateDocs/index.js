@@ -5,7 +5,7 @@ import Docma from 'docma'
 import path from 'path'
 
 const engines = {
-    Docma: (params) => {
+    Docma: async (params) => {
         let include = [
             `${params.source}/**/*.js`,
         ]
@@ -22,12 +22,42 @@ const engines = {
                 })
             }
         }
+
         let conf = {
             src: include,
             dest: params.destination,
-            clean: params.options.cleanBefore ?? true
+            clean: params.options?.cleanBefore ?? true,
+            debug: params.options?.debug ?? false,
+            jsdoc: {
+                recurse: true,
+                // plugins: [
+                //     "jsdoc-plugin-typescript"
+                // ],
+                ...params.jsdoc
+            }
         }
-        Docma.create().build(conf)
+        let appOptions = {
+            base: path.resolve(process.cwd(), conf.dest)
+        }
+
+
+        if (typeof (params.options.app) !== "undefined") {
+            appOptions = { ...appOptions, ...params.options.app }
+        }
+
+        // if (typeof (params.plugins) !== "undefined" && Array.isArray(params.plugins)) {
+        //     params.plugins.forEach((plugin) => {
+        //         if (!conf.jsdoc.plugins.includes(plugin)) {
+        //             conf.jsdoc.plugins.push(plugin)
+        //         }
+        //     })
+        // }
+
+        await Docma.create().build({ ...conf, appOptions }).then(success => {
+            console.log('Documentation is built successfully.')
+        }).catch(error => {
+            console.log(error.stack)
+        })
     },
     ESDoc: (params) => {
         let conf = {
@@ -35,6 +65,7 @@ const engines = {
             destination: params.destination,
             plugins: params.plugins
         }
+        console.log(conf)
         ESDoc.generate(conf)
     }
 }
@@ -51,8 +82,13 @@ export function generateDocs(params) {
             },
         ],
         options: {
+            debug: params.debug,
+            app: params.app,
             includes: [],
             includeTypes: ["js", "ts"]
+        },
+        jsdoc: {
+            ...params.jsdoc
         }
     }
 
@@ -86,7 +122,7 @@ export function generateDocs(params) {
         }
 
         includes.forEach((pkg) => {
-            pkgs.push(`packages/${pkg}/src`)
+            pkgs.push(`packages/${pkg}`)
         })
     }
 
@@ -96,7 +132,7 @@ export function generateDocs(params) {
 
     console.log(pkgs)
     pkgs.forEach((pkg) => {
-        const dir = path.resolve(process.cwd(), pkg)
+        const dir = path.resolve(process.cwd(), `./${pkg}/dist`)
 
         if (typeof (engines[opts.engine]) !== "function") {
             return console.error(`⛔️  Invalid engine for docs generation !`)

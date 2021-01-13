@@ -75,7 +75,10 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
         verbosity.log(`CloudLink server ready!`)
     })
 }
-
+/**
+ * Create an cloudlink-node-server and register to an source cloudlink-server
+ * @return this
+ */
 function register(params) {
     if (typeof(params.originPort) !== "undefined") {
         params.originPort = 6050
