@@ -2,7 +2,7 @@ import axios from 'axios'
 import fetch from 'node-fetch'
 import fs from 'fs'
 
-export function __FetchPKGFromRemote(remoteSource, pkg, version, callback) {
+export function fetchRemotePkg(remoteSource, pkg, version, callback) {
     return new Promise((resolve, reject) => {
         if (!version) {
             version = "lastest"

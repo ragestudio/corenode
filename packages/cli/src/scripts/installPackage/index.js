@@ -1,11 +1,9 @@
 import child_process from 'child_process'
 
-import { __FetchPKGFromRemote } from '../utils/remotePkg'
-
 import { getRootPackage } from '@nodecorejs/dot-runtime'
 import { verbosity } from '@nodecorejs/utils'
 
-export async function __installPackage({params, caller}) {
+export async function installDependency({params, caller}) {
     // to do: check version & auto update if not match
     // to do: add support for version selection
     return new Promise((resolve, reject) => {
@@ -34,3 +32,5 @@ export async function __installPackage({params, caller}) {
         })
     })
 }
+
+export default installDependency

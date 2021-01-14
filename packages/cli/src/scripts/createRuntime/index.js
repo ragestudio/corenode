@@ -11,7 +11,7 @@ import { getRuntimeEnv, getRootPackage } from '@nodecorejs/dot-runtime'
 let runtimeEnv = getRuntimeEnv()
 let pkgjson = getRootPackage() ?? {}
 
-export function __initCreateRuntime() {
+export function createRuntime() {
     let defData = runtimeEnv? runtimeEnv : pkgjson
 
     const prompts = [
@@ -72,3 +72,5 @@ export function __initCreateRuntime() {
             }
         });
 }
+
+export default createRuntime
