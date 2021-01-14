@@ -109,7 +109,8 @@ function register(params) {
             }
         })
         .catch((err) => {
-            verbosity.error(`[Error ${err.response.status}] ${err.response.data}`)
+            verbosity.error(`An error occurred while trying to register this node to the origin [${registerTarget}] > \n`)
+            console.error(err)
         })
     return this
 }
