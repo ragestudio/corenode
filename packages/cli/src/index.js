@@ -1,10 +1,9 @@
-import { __installPackage, __installCore, __initCreateRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
-import { getChangelogs } from './scripts/utils'
-
 import buildProyect from '@nodecorejs/builder'
 import cliRuntime from './cliRuntime'
 
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
+import { installCore, createRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
+import { getChangelogs } from './scripts/utils'
 
 let optionsMap = [
     {
@@ -40,9 +39,9 @@ let commandMap = [
                     opts.dir = argv.dir
                 }
 
-                __installCore(opts)
+                installCore(opts)
             } else {
-                console.log(`⛔️ Nothing to install! No package defined`)
+                console.log(`⛔️ Nothing to install!`)
             }
         }
     },
@@ -120,7 +119,7 @@ let commandMap = [
         }
     },
     {
-        command: 'doc',
+        command: 'docs',
         description: "Generate documentation",
         exec: (argv) => {
             generateDocs({
@@ -154,7 +153,7 @@ let commandMap = [
         command: 'init',
         description: "Initialize an new nodecore development proyect",
         exec: (argv) => {
-            __initCreateRuntime()
+            createRuntime()
         }
     },
 ]

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { verbosity as veb } from '@nodecorejs/utils'
+import { verbosity as veb } from 'nodecorejs/utils'
 import { Mutex } from 'async-mutex'
 
 import http from 'http'

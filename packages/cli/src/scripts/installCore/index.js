@@ -9,16 +9,13 @@ import sevenBin from '7zip-bin'
 import { extractFull } from 'node-7z'
 import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
+import execa from 'execa'
 
-import { __installPackage } from '../__installPackage'
-
-import { asyncDoArray, downloadWithPipe, __FetchPKGFromRemote } from '../utils'
+import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 import { objectToArrayMap } from '@nodecorejs/utils'
 import logDump from '@nodecorejs/log' 
-
-import execa from 'execa'
 
 let performace = []
 const runtimeEnv = getRuntimeEnv()
@@ -26,8 +23,8 @@ const runtimeEnv = getRuntimeEnv()
 function outputResume(payload) {
     const { installPath, pkg } = payload
     console.group()
-    console.log(`\n📦 Installed package (${pkg}) on > ${installPath}`)
-    console.log(`⏱ Operation tooks ${(performance.now() - performace[pkg]).toFixed(2)}ms \n`)
+    console.log(`\n📦  Installed package (${pkg}) on > ${installPath}`)
+    console.log(`⏱  Operation tooks ${(performance.now() - performace[pkg]).toFixed(2)}ms \n`)
     console.groupEnd()
 }
 
@@ -61,7 +58,7 @@ function handleInstall(params) {
         const tasks = new Listr([
             {
                 title: '📡 Fetching package',
-                task: () => __FetchPKGFromRemote(remoteSource, pkg, "lastest", (data) => {
+                task: () => fetchRemotePkg(remoteSource, pkg, "lastest", (data) => {
                     data.extension = data.filename.split('.')[1]
                     data.address = `${remoteSource}/pkgs/${data.id}/${data.filename}`
                     if (data.scopeDir) {
@@ -82,11 +79,10 @@ function handleInstall(params) {
 
                         if (typeof (requires.npm) !== "undefined") {
                             observer.next('Installing npm dependencies')
-                            let cliArgs = ['install']
                             objectToArrayMap(requires.npm).forEach(dependency => {
                                 cliArgs.push(`${dependency.key}`) // TODO: Parse version
                             })
-                            const { stdout } = execa.sync('npm', cliArgs, {
+                            const { stdout } = execa.sync('npm', ['install'], {
                                 cwd: process.cwd(),
                             })
                             console.log(stdout)
@@ -200,7 +196,7 @@ async function handleInstallPackageComponents(manifest) {
         if (requires.components) {
             asyncDoArray(requires.components, (key, value) => { //lgtm [js/call-to-non-callable]
                 logDump(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
-                __installCore({ pkg: key })
+                installCore({ pkg: key })
             })
                 .then(() => {
                     return res()
@@ -213,7 +209,7 @@ async function handleInstallPackageComponents(manifest) {
     })
 }
 
-export async function __installCore(params) {
+export async function installCore(params) {
     handleInstall(params)
     .then((res) => {
         handleInstallPackageComponents(res).catch((err) => {
@@ -222,3 +218,5 @@ export async function __installCore(params) {
         })
     })
 }
+
+export default installCore
