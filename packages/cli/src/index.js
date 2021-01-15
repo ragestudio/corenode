@@ -1,4 +1,5 @@
 import buildProyect from '@nodecorejs/builder'
+import testProyect from '@nodecorejs/test'
 import cliRuntime from './cliRuntime'
 
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
@@ -154,6 +155,13 @@ let commandMap = [
         description: "Initialize an new nodecore development proyect",
         exec: (argv) => {
             createRuntime()
+        }
+    },
+    {
+        command: 'test',
+        description: "Run test",
+        exec: (argv) => {
+            testProyect(argv)
         }
     },
 ]

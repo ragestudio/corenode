@@ -126,6 +126,13 @@ export function isLocalMode() {
     return fs.existsSync(path.resolve(process.cwd(), './.local'))
 }
 
+export function isProyectMode(path) {
+    if (path) {
+        
+    }
+    return getPackages() ? true : false
+}
+
 // Scripts Functions
 export function versionToString(version) {
     let v = []

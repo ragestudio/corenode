@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { verbosity as veb } from 'nodecorejs/utils'
+import { verbosity as veb } from '@nodecorejs/utils'
 import { Mutex } from 'async-mutex'
 
 import http from 'http'
@@ -71,6 +71,10 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
         return false
     }
 
+    app.post("/alive", (req, res, next) => {
+        res.send(true)
+    })
+
     httpServer.listen(port, () => {
         verbosity.log(`CloudLink server ready!`)
     })
@@ -80,7 +84,7 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
  * @return this
  */
 function register(params) {
-    if (typeof(params.originPort) !== "undefined") {
+    if (typeof(params.originPort) == "undefined") {
         params.originPort = 6050
     }
     const originAddress = `${params.origin}${params.originPort ? `:${params.originPort}` : ''}`
@@ -103,6 +107,7 @@ function register(params) {
         }
     })
         .then((res) => {
+            console.log(res.data)
             if (res.status == 200) {
                 verbosity.log(`✅ New register to source [${originAddress}] > UUID [${res.data}]`)
                 global.cloudlink.server.uuid = res.data
@@ -137,7 +142,7 @@ function plug(socket, opt) {
 
     if (typeof (node) == "undefined") {
         verbosity.error(`Node not available`)
-        return this
+        throw new Error(`🚫 [${socket}] Node not available/exists`)
     }
     const endpoints = node.endpoints
 
