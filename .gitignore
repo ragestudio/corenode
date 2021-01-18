@@ -1,21 +1,22 @@
+.yarn-error.logs
+yarn-error.log
 package-lock.json
 yarn.lock
 
-/node_modules
-/packages/*/lib
+/packages/*/dist
+/packages/*/docs
 /packages/*/nodecore_logs
 /packages/*/package-lock.json
-/packages/*/dist
+/packages/*/.DS_Store
 /packages/*/node_modules
 
 /dist
+/docs
+/node_modules
 
-yarn.lock
-.yarn-error.logs
-yarn-error.log
-
-.releaseBackup
+.DS_Store
 lastTest.js
 test.js
+unitTest.js
 nodecore_logs
 logs_dump.log
