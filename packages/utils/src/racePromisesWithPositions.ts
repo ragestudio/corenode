@@ -3,9 +3,6 @@ import castArray from 'lodash/castArray'
 import isPositiveInteger from './isPositiveInteger'
 import racePromises from './racePromises'
 
-/**
- * Race promises and get the winner's index ordered by their finishing position
- */
 export default <T>(promises: readonly Promise<T>[], limit = Infinity) => {
   const len = promises.length
 

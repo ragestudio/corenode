@@ -1,3 +1,9 @@
+/**
+ * Nodecore runtime utils & functions
+ * @module @nodecorejs/dot-runtime 
+ * @return {object} proyectRuntime
+ */
+
 const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 import path from 'path'
 import process from 'process'

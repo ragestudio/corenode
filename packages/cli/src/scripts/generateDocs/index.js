@@ -93,7 +93,7 @@ export function generateDocs(params) {
             debug: params.debug,
             app: params.app,
             includes: [],
-            includeTypes: ["js"]
+            includeTypes: ["js", "ts"]
         },
         jsdoc: {
             ...params.jsdoc

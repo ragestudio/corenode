@@ -5,9 +5,6 @@ type Func<Args extends any[], RetVal> = (...args: Args) => Promise<RetVal>
 
 type Resolve<RetVal> = (value?: RetVal | PromiseLike<RetVal> | undefined) => void
 
-/**
- * Restricts the function to run only `numConcurrent` instances at the same time
- */
 export default <R, A extends any[], F extends Func<A, R>>(func: F, numConcurrent = Infinity): F => {
   if (numConcurrent === Infinity) {
     return func

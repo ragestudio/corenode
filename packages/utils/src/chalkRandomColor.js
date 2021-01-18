@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk from 'chalk'
 
 const colors = [
   'red',
@@ -14,21 +14,21 @@ const colors = [
   'blueBright',
   'magentaBright',
   'cyanBright',
-];
+]
 
-let index = 0;
-const cache = {};
+let index = 0
+const cache = {}
 
-export default function (string:any) {
+export default function (string) {
   if (!cache[string]) {
-    const color = colors[index];
-    let str = chalk[color].bold(string);
-    cache[string] = str;
+    const color = colors[index]
+    let str = chalk[color].bold(string)
+    cache[string] = str
     if (index === colors.length - 1) {
-      index = 0;
+      index = 0
     } else {
-      index += 1;
+      index += 1
     }
   }
-  return cache[string].replace(',', '');
+  return cache[string].replace(',', '')
 }

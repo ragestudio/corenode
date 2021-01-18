@@ -1,3 +1,8 @@
+/**
+ * Nodecorejs cloudlink module
+ * @module @nodecorejs/cloudlink
+ */
+
 import axios from 'axios'
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 import { verbosity as veb } from '@nodecorejs/utils'
@@ -79,6 +84,7 @@ function createCloudLinkServer(port, endpoints, Controllers = {}, Middlewares = 
         verbosity.log(`CloudLink server ready!`)
     })
 }
+
 /**
  * Create an cloudlink-node-server and register to an source cloudlink-server
  * @return this
@@ -120,6 +126,10 @@ function register(params) {
     return this
 }
 
+/**
+ * Create an connection instance with an origin API
+ * @return instance
+ */
 async function init(params) {
     const instance = await new Promise(async (resolve, reject) => {
         if (params.origin) {
@@ -136,6 +146,10 @@ async function init(params) {
     return instance
 }
 
+/**
+ * Connect an origin instance to an node instance
+ * @return instance
+ */
 function plug(socket, opt) {
     const protocol = opt?.https ? "https://" : "http://"
     const node = global.cloudlink.nodes[socket]
