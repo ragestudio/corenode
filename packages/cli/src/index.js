@@ -123,13 +123,7 @@ let commandMap = [
         command: 'docs',
         description: "Generate documentation",
         exec: (argv) => {
-            generateDocs({
-                debug: argv.debug,
-                engine: argv.engine,
-                dir: argv.dir,
-                proyect: argv.proyect,
-                destination: argv.destination
-            })
+            generateDocs(argv)
         }
     },
     {

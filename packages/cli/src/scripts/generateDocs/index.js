@@ -1,27 +1,33 @@
 
 import { getPackages, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
-import ESDoc from 'esdoc'
+// import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'
+import { verbosity } from '@nodecorejs/utils'
 
 const engines = {
     Docma: async (params) => {
-        let include = [
-            `${params.source}/**/*.js`,
-        ]
-
-        if (typeof (params.options) !== "undefined") {
-            const { includeTypes } = params.options
-            if (Array.isArray(includeTypes)) {
-                includeTypes.forEach((type) => {
-                    const incl = `${params.source}/**/*.${type}`
-
-                    if (!include.includes(incl)) {
-                        include.push(incl)
-                    }
-                })
-            }
+        if (!params.pkgs) {
+            return false
         }
+        let include = []
+
+        let { includeTypes } = params.options ?? ["js"]
+        const { fromDist } = params.options
+        
+        if (Array.isArray(params.pkgs)) {
+            params.pkgs.forEach((pkg) => {
+                const dir = path.resolve(process.cwd(), `./${pkg}/${fromDist? "dist" : "src"}`)
+                if (Array.isArray(includeTypes)) {
+                    return includeTypes.forEach((type) => {
+                        include.push(`${dir}/**/*.${type}`)
+                    })
+                }
+                return include.push(dir)
+            })
+        }
+
+        console.log(include)
 
         let conf = {
             src: include,
@@ -36,38 +42,31 @@ const engines = {
                 ...params.jsdoc
             }
         }
-        let appOptions = {
-            base: path.resolve(process.cwd(), conf.dest)
-        }
 
-
-        if (typeof (params.options.app) !== "undefined") {
-            appOptions = { ...appOptions, ...params.options.app }
-        }
-
-        // if (typeof (params.plugins) !== "undefined" && Array.isArray(params.plugins)) {
-        //     params.plugins.forEach((plugin) => {
-        //         if (!conf.jsdoc.plugins.includes(plugin)) {
-        //             conf.jsdoc.plugins.push(plugin)
-        //         }
-        //     })
-        // }
-
-        await Docma.create().build({ ...conf, appOptions }).then(success => {
+        await Docma.create().build(conf).then(success => {
             console.log('Documentation is built successfully.')
         }).catch(error => {
             console.log(error.stack)
         })
     },
-    ESDoc: (params) => {
-        let conf = {
-            source: params.source,
-            destination: params.destination,
-            plugins: params.plugins
-        }
-        console.log(conf)
-        ESDoc.generate(conf)
-    }
+    // ESDoc: (params) => {
+    //     let conf = {
+    //         source: params.source,
+    //         destination: params.destination,
+    //         plugins: params.plugins
+    //     }
+    //     console.log(conf)
+    //     ESDoc.generate(conf)
+    // },
+    // JSDoc: (params) => {
+    //     let conf = {
+    //         source: params.source,
+    //         destination: params.destination,
+    //         plugins: params.plugins
+    //     }
+    //     console.log(conf)
+    //     ESDoc.generate(conf)
+    // }
 }
 
 export function generateDocs(params) {
@@ -82,10 +81,12 @@ export function generateDocs(params) {
             },
         ],
         options: {
+            ...params,
+            cleanBefore: params.clean,
             debug: params.debug,
             app: params.app,
             includes: [],
-            includeTypes: ["js", "ts"]
+            includeTypes: ["js"]
         },
         jsdoc: {
             ...params.jsdoc
@@ -130,15 +131,14 @@ export function generateDocs(params) {
         pkgs.push(opts.source)
     }
 
-    console.log(pkgs)
-    pkgs.forEach((pkg) => {
-        const dir = path.resolve(process.cwd(), `./${pkg}/dist`)
+    if (typeof (engines[opts.engine]) !== "function") {
+        return console.error(`⛔️  Invalid engine for docs generation !`)
+    }
 
-        if (typeof (engines[opts.engine]) !== "function") {
-            return console.error(`⛔️  Invalid engine for docs generation !`)
-        }
-
-        console.log(`📕  [${opts.engine}] Generating docs for package [${pkg}] > ${dir}\n`)
-        engines[opts.engine]({ ...opts, source: dir })
-    })
+    try {
+        console.log(`📕  [${opts.engine}] Generating docs for packages [${pkgs}]\n`)
+        engines[opts.engine]({ ...opts, pkgs })
+    } catch (error) {
+        verbosity.error(`Failed to generate docs`)
+    }
 }

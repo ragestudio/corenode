@@ -83,11 +83,15 @@ export function getVersion(engine) {
     return "0.0.0"
 }
 
-export const getRuntimeEnv = () => {
+export function getRuntimeEnv() {
     return proyectRuntime
 }
 
-export const getDevRuntimeEnv = () => {
+/**
+ * Get dev runtime enviroment
+ * @return proyectRuntime.devRuntime
+ */
+export function getDevRuntimeEnv() {
     if (!proyectRuntime || typeof (proyectRuntime.devRuntime) == "undefined") {
         return false
     }
@@ -95,7 +99,9 @@ export const getDevRuntimeEnv = () => {
 }
 
 /**
- * Get `originGit` from `.nodecore` env
+ * Get `originGit` from `.nodecore` env 
+ * @fuction getGit 
+ * @returns {string} `originGit` from `.nodecore` env
  */
 export function getGit() {
     const envs = getDevRuntimeEnv()
@@ -105,6 +111,9 @@ export function getGit() {
     return envs.originGit
 }
 
+/**
+ * @fuction getPackages 
+ */
 export function getPackages() {
     const packagesDir = path.resolve(process.cwd(), './packages')
     if (fs.existsSync(packagesDir)) {
