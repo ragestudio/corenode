@@ -185,6 +185,15 @@ export function isProyectMode(dir) {
 }
 
 /**
+ * Check if the current proyect is on development mode
+ * @function isLocalMode 
+ * @returns {boolean}
+ */
+export function isDevMode() {
+    return fs.existsSync(path.resolve(process.cwd(), './.dev'))
+}
+
+/**
  * Stringify an parsed version to readable string
  * @function versionToString 
  * @param {object} version
