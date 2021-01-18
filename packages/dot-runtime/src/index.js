@@ -1,4 +1,3 @@
-// find up these files
 const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 import path from 'path'
 import process from 'process'
@@ -64,6 +63,12 @@ if (proyectRuntime["version"]) {
     }
 }
 
+/**
+ * Get parsed version of package
+ * @param {boolean} [engine = false] Return version of nodecore
+ * @function getVersion 
+ * @returns {string} proyectRuntime
+ */
 export function getVersion(engine) {
     const pkgEngine = require(enginePkgPath)
     const pkgProyect = require(proyectPkgPath)
@@ -83,13 +88,19 @@ export function getVersion(engine) {
     return "0.0.0"
 }
 
+/**
+ * Get the entire runtime enviroment 
+ * @function getRuntimeEnv 
+ * @returns {object} proyectRuntime
+ */
 export function getRuntimeEnv() {
     return proyectRuntime
 }
 
 /**
- * Get dev runtime enviroment
- * @return proyectRuntime.devRuntime
+ * Get development runtime enviroment 
+ * @function getDevRuntimeEnv 
+ * @returns {object} devRuntime
  */
 export function getDevRuntimeEnv() {
     if (!proyectRuntime || typeof (proyectRuntime.devRuntime) == "undefined") {
@@ -100,8 +111,8 @@ export function getDevRuntimeEnv() {
 
 /**
  * Get `originGit` from `.nodecore` env 
- * @fuction getGit 
- * @returns {string} `originGit` from `.nodecore` env
+ * @function getGit 
+ * @returns {string} originGit
  */
 export function getGit() {
     const envs = getDevRuntimeEnv()
@@ -112,7 +123,9 @@ export function getGit() {
 }
 
 /**
- * @fuction getPackages 
+ * Get all packages name from current proyect
+ * @function getPackages 
+ * @returns {object}
  */
 export function getPackages() {
     const packagesDir = path.resolve(process.cwd(), './packages')
@@ -124,6 +137,11 @@ export function getPackages() {
     return false
 }
 
+/**
+ * Get proyect package.json
+ * @function getRootPackage 
+ * @returns {object}
+ */
 export function getRootPackage() {
     if (fs.existsSync(proyectPkgPath)) {
         return require(proyectPkgPath)
@@ -131,10 +149,21 @@ export function getRootPackage() {
     return false
 }
 
+/**
+ * Check if the current proyect is on local mode
+ * @function isLocalMode 
+ * @returns {boolean}
+ */
 export function isLocalMode() {
     return fs.existsSync(path.resolve(process.cwd(), './.local'))
 }
 
+/**
+ * Check if the current proyect is on proyect mode
+ * @function isProyectMode 
+ * @param {string} [dir = undefined] Check from custom directory instead default proyect path
+ * @returns {boolean}
+ */
 export function isProyectMode(dir) {
     const from = dir ?? process.cwd()
     const packagesDir = path.resolve(from, './packages')
@@ -149,7 +178,12 @@ export function isProyectMode(dir) {
     return false
 }
 
-// Scripts Functions
+/**
+ * Stringify an parsed version to readable string
+ * @function versionToString 
+ * @param {object} version
+ * @returns {string}
+ */
 export function versionToString(version) {
     let v = []
     objectToArrayMap(version).forEach(element => {
@@ -160,7 +194,13 @@ export function versionToString(version) {
     return v.join('.')
 }
 
-export function bumpVersion(params, confirmation) {
+/**
+ * Bumps current version of the current proyect
+ * @function bumpVersion 
+ * @param {array} params "major", "minor", "patch"
+ * @param {boolean} [save = false] Force to save updated version to currect proyect
+ */
+export function bumpVersion(params, save) {
     if (!params) {
         return false
     }
@@ -200,13 +240,20 @@ export function bumpVersion(params, confirmation) {
     let after = versionToString(currentVersion)
 
     console.log(`\n🏷 New version ${before} > ${after}`)
-    if (confirmation) {
+    if (save) {
         console.log(`✅ Version updated & saved`)
         proyectRuntime.version = after
         return rewriteRuntimeEnv()
     }
 }
 
+/**
+ * Sync package version from global proyect version to one package
+ * @function syncPackageVersionFromName 
+ * @param {object} name Package name
+ * @param {boolean} [write = false] Force to write updated to defined package
+ * @returns {object} Package with syncronised version
+ */
 export function syncPackageVersionFromName(name, write) {
     const currentVersion = getVersion()
     const packageDir = path.resolve(process.cwd(), `./packages/${name}`)
@@ -225,16 +272,19 @@ export function syncPackageVersionFromName(name, write) {
                 })
                 if (write) {
                     fs.writeFileSync(pkgJSON, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-                } else {
-                    console.log(pkg)
-                    return pkg
                 }
+
+                return pkg
             }
         }
 
     }
 }
 
+/**
+ * Syncs all packages from current proyect with the global proyect version
+ * @function syncAllPackagesVersions 
+ */
 export function syncAllPackagesVersions() {
     const pkgs = getPackages()
     pkgs.forEach((pkg) => {
