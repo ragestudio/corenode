@@ -11,6 +11,7 @@ const engines = {
             return false
         }
         let include = []
+        let sourceObject = {}
 
         let { includeTypes } = params.options ?? ["js"]
         const { fromDist } = params.options
@@ -18,15 +19,21 @@ const engines = {
         if (Array.isArray(params.pkgs)) {
             params.pkgs.forEach((pkg) => {
                 const dir = path.resolve(process.cwd(), `./${pkg}/${fromDist? "dist" : "src"}`)
+                sourceObject[pkg] = []
+
                 if (Array.isArray(includeTypes)) {
                     return includeTypes.forEach((type) => {
-                        include.push(`${dir}/**/*.${type}`)
+                        if (params.options?.innerFiles ?? false) {
+                            include.push(`${dir}/**/*.${type}`)
+                        }
+                        return sourceObject[pkg].push(`${dir}/**/*.${type}`)
                     })
                 }
                 return include.push(dir)
             })
         }
 
+        include.push(sourceObject)        
         console.log(include)
 
         let conf = {
