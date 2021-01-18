@@ -7,6 +7,7 @@
     "access": "public"
   },
   "files": [
+    "helpers",
     "dist",
     "src"
   ],
@@ -16,15 +17,23 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-do-expressions": "^7.12.1",
+    "@babel/plugin-proposal-export-default-from": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-typescript": "^7.12.7",
     "@babel/core": "7.12.10",
-    "@nodecorejs/utils": "0.15.2",
     "@nodecorejs/dot-runtime": "0.15.2",
+    "@nodecorejs/utils": "0.15.2",
+    "@nodecorejs/log": "0.15.2",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^25.4.0",
     "core-js": "3.8.2",
     "identity-obj-proxy": "3.0.0",
     "jest": "^25.4.0",
     "jest-cli": "^25.4.0",
+    "jest-environment-jsdom-fourteen": "^1.0.1",
     "regenerator-runtime": "^0.13.7",
     "whatwg-fetch": "^3.5.0"
   }

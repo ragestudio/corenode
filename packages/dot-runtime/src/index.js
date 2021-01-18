@@ -68,15 +68,15 @@ export function getVersion(engine) {
     const pkgEngine = require(enginePkgPath)
     const pkgProyect = require(proyectPkgPath)
 
-    if (engine && typeof(pkgEngine["version"]) !== "undefined") {
+    if (engine && typeof (pkgEngine["version"]) !== "undefined") {
         return pkgEngine["version"]
     }
-    
+
     if (proyectRuntime.version) {
         return proyectRuntime.version
-    } 
+    }
 
-    if (typeof(pkgProyect["version"]) !== "undefined") {
+    if (typeof (pkgProyect["version"]) !== "undefined") {
         return pkgProyect["version"]
     }
 
@@ -126,11 +126,18 @@ export function isLocalMode() {
     return fs.existsSync(path.resolve(process.cwd(), './.local'))
 }
 
-export function isProyectMode(path) {
-    if (path) {
-        
+export function isProyectMode(dir) {
+    const from = dir ?? process.cwd()
+    const packagesDir = path.resolve(from, './packages')
+
+    if (fs.existsSync(packagesDir)) {
+        if (fs.readdirSync(packagesDir)) {
+            return true
+        }
+        return fañse
     }
-    return getPackages() ? true : false
+
+    return false
 }
 
 // Scripts Functions
