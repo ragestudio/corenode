@@ -9,10 +9,12 @@ yarn.lock
 /packages/*/package-lock.json
 /packages/*/.DS_Store
 /packages/*/node_modules
+/packages/*/nodecore_modules
 
 /dist
 /docs
 /node_modules
+/nodecore_modules
 
 .DS_Store
 lastTest.js

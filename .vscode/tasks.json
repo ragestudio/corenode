@@ -6,7 +6,7 @@
         {
             "label": "nodecore-builder",
             "type": "shell",
-            "command": "node ${cwd}/packages/builder/dist/cli.js"
+            "command": "node ${workspaceFolder}/packages/builder/dist/cli.js"
         }
     ]
 }

@@ -26,6 +26,35 @@
             "type": "pwa-node"
         },
         {
+            "name": "[Test] Build & Run file",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+            "stopOnEntry": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "preLaunchTask": "nodecore-builder",
+            "args": [
+                "${file}",
+            ],
+            "type": "pwa-node"
+        },
+        {
+            "name": "[Node] Run file",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+            "stopOnEntry": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "args": [
+                "${file}",
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "[Transpile] TSNode",
             "request": "launch",
             "internalConsoleOptions": "openOnSessionStart",

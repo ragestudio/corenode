@@ -10,7 +10,8 @@
     "docs": [
       "dot-runtime",
       "utils",
-      "cloudlink"
+      "cloudlink",
+      "modules"
     ]
   }
 }
