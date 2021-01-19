@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "npx babel-node ./src",
-    "build": "rm -rf dist && npm run babelOut",
+    "build": "rimraf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
   },
   "bin": {
