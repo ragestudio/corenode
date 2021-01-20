@@ -21,6 +21,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@nodecorejs/modules": "0.15.3",
     "@nodecorejs/builder": "0.15.3",
     "@nodecorejs/dot-runtime": "0.15.3",
     "@nodecorejs/log": "0.15.3",

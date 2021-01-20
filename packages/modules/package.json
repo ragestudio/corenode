@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nodecorejs/utils": "^0.15.3"
+    "@nodecorejs/utils": "^0.15.3",
+    "@nodecorejs/log": "^0.15.3"
   }
 }

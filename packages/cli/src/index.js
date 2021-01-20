@@ -4,6 +4,7 @@ import cliRuntime from './cliRuntime'
 
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
 import { installCore, createRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
+import { installModule } from './scripts/installCore'
 import { getChangelogs } from './scripts/utils'
 
 let optionsMap = [
@@ -20,15 +21,37 @@ let optionsMap = [
 
 let commandMap = [
     {
+        command: 'install [module]',
+        description: "Install an nodecore module",
+        args: (yargs) => {
+            yargs.positional('module', {
+                describe: 'Module to install'
+            })
+        },
+        exec: (argv) => {
+            const { init, modulesPath } = require("@nodecorejs/modules")
+            init({
+                force: argv.force ?? false
+            })
+            let opts = {
+                pkg: argv.module,
+                dir: modulesPath,
+                _module: true
+            }
+
+            installModule(opts)
+        }
+    },
+    {
         command: 'add [package] [dir]',
-        description: "Install an nodecore package from std",
+        description: "Install an nodecore package",
         args: (yargs) => {
             yargs.positional('package', {
                 describe: 'Package to install'
             }),
-                yargs.positional('dir', {
-                    describe: 'Directory to install (default: runtimeDev)'
-                })
+            yargs.positional('dir', {
+                describe: 'Directory to install (default: runtimeDev)'
+            })
         },
         exec: (argv) => {
             if (typeof (argv.package) !== "undefined") {

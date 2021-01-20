@@ -1,10 +1,11 @@
 // set this origin by default as an legacy fallback
-const fallbackRemoteSource = "https://api.ragestudio.net/std/nodecore_cores"
+const fallbackRemoteCoresSource = "https://api.ragestudio.net/std/nodecore_cores"
+const fallbackRemoteModulesSource = "https://nodecore.ragestudio.net/std/modules"
 
 import Listr from 'listr'
 import ora from 'ora'
 import fs from 'fs'
-import path from 'path'
+import path, { resolve } from 'path'
 import sevenBin from '7zip-bin'
 import { extractFull } from 'node-7z'
 import { performance } from 'perf_hooks'
@@ -12,19 +13,22 @@ import { Observable } from 'rxjs'
 import execa from 'execa'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
+import fetch from 'node-fetch'
 
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { objectToArrayMap } from '@nodecorejs/utils'
-import logDump from '@nodecorejs/log' 
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import logDump from '@nodecorejs/log'
+
+import { initRegistry, writeModule, writeModuleRegistry } from '@nodecorejs/modules'
 
 let performace = []
 const runtimeEnv = getRuntimeEnv()
 
 function outputResume(payload) {
-    const { installPath, pkg } = payload
+    const { installPath, pkg } = payload || null
     console.group()
-    console.log(`\n📦  Installed package (${pkg}) on > ${installPath}`)
-    console.log(`⏱  Operation tooks ${(performance.now() - performace[pkg]).toFixed(2)}ms \n`)
+    console.log(`\n📦  Installed package (${pkg}) ${installPath ? `on > ${installPath}` : ""}`)
+    performace[pkg] ? console.log(`⏱  Operation tooks ${(performance.now() - performace[pkg]).toFixed(2)}ms \n`) : null
     console.groupEnd()
 }
 
@@ -33,14 +37,129 @@ const spinner = ora({
     text: "Initalizing..."
 })
 
-function handleInstall(params) {
+const remoteCoresSource = runtimeEnv.remoteCoreSource ?? fallbackRemoteCoresSource
+const remoteModulesSource = runtimeEnv.remoteModulesSource ?? fallbackRemoteModulesSource
+const temporalPath = path.resolve(`${__dirname}/.nodecore_tmp`)
+
+function cleanTemporal(params) {
+    spinner.start("Cleaning up temporal files...")
+    fs.rmdirSync(temporalPath, { recursive: true })
+    spinner.succeed()
+}
+
+export async function installModule(params) {
+    const { pkg, dir, version = "lastest" } = params
+    if (!pkg) {
+        return console.error(`🚫 Nothing to install!`)
+    }
+    const installPath = dir
+    const downloadPath = path.resolve(`${temporalPath}/${pkg}_${new Date().getTime()}`)
+
+    const moduleFilename = `${pkg}.module`
+    const moduleFile = path.resolve(downloadPath, moduleFilename)
+    const moduleURI = `${remoteModulesSource}/${pkg}/${version}/index.module`
+
+    let moduleCodec = "utf-8" // TODO: Fetch codec info from manifest
+
+    performace[pkg] = performance.now()
+
+    let tasks = [
+        {
+            title: '📡 Checking remote',
+            task: () => {
+                return new Promise((resolve, reject) => {
+                    fetch(moduleURI).then(done => {
+                        resolve(true)
+                    }).catch((err) => {
+                        reject(err.message)
+                    })
+                })
+            }
+        },
+        {
+            title: '🧱 Processing directory',
+            task: () => {
+                return new Observable(observer => {
+                    if (!fs.existsSync(installPath)) {
+                        observer.next(`Creating installation paths`)
+
+                        logDump(`Creating [installPath] "${installPath}"`)
+                        fs.mkdir(installPath, { recursive: true }, e => {
+                            if (e) return rej(console.error(e))
+                        })
+                    }
+
+                    if (!fs.existsSync(downloadPath)) {
+                        observer.next(`Creating download paths`)
+
+                        logDump(`Creating [downloadPath] "${downloadPath}"`)
+                        fs.mkdir(downloadPath, { recursive: true }, e => {
+                            if (e) return rej(console.error(e))
+                        })
+                    }
+                    observer.complete()
+                })
+            }
+        },
+        {
+            title: '🚚 Fetching module',
+            task: () => {
+                return new Promise((resolve, reject) => {
+                    downloadWithPipe(moduleURI, moduleFilename, downloadPath).then(done => {
+                        return resolve()
+                    }).catch((err) => {
+                        return reject(err.message)
+                    })
+                })
+            }
+        },
+        {
+            title: '🔩 Processing module',
+            task: () => {
+                return new Promise((resolve, reject) => {
+                    const _module = require(moduleFile)
+                    if (typeof (_module.node_modules)) {
+
+                    }
+                    if (typeof (_module.lib)) {
+
+                    }
+
+                    writeModule(_module.pkg, null, fs.readFileSync(moduleFile, moduleCodec)).then(done => {
+                        initRegistry(true)
+                        resolve()
+                    }).catch((err) => {
+                        reject(err)
+                    })
+                })
+            }
+        },
+    ]
+
+    const list = new Listr(tasks, {
+        collapse: false
+    })
+    list.run()
+        .then((res) => {
+            cleanTemporal()
+            outputResume({ downloadPath, pkg })
+        })
+        .catch((err) => {
+            const errStr = `Failed installation Task >`
+
+            verbosity.error(errStr, err.message)
+            logDump(errStr, err)
+        })
+}
+
+function handleInstallCore(params) {
     return new Promise((resolve, reject) => {
         let pkgManifest = {}
         let installDir = runtimeEnv.src
 
         const { pkg, dir } = params
-        if (typeof(dir) !== "undefined") {
-            installDir = dir    
+        if (typeof (dir) !== "undefined") {
+            installDir = dir
         }
 
         if (!installDir || !path.resolve(process.cwd(), installDir)) {
@@ -49,11 +168,10 @@ function handleInstall(params) {
         }
 
         performace[pkg] = performance.now()
-        const remoteSource = runtimeEnv.remoteSource ?? fallbackRemoteSource
+        const remoteSource = runtimeEnv.remoteSource ?? fallbackRemoteCoresSource
 
         let installPath = path.resolve(`${process.cwd()}/${installDir}/${pkg}`)
-        let tmpPath = path.resolve(`${__dirname}/dltmp`)
-        let downloadPath = path.resolve(`${tmpPath}/${pkg}_${new Date().getTime()}`)
+        let downloadPath = path.resolve(`${temporalPath}/${pkg}_${new Date().getTime()}`)
 
         const tasks = new Listr([
             {
@@ -168,10 +286,7 @@ function handleInstall(params) {
         })
         tasks.run()
             .then((res) => {
-                spinner.start("Cleaning up temporal files...")
-                fs.rmdirSync(tmpPath, { recursive: true })
-                spinner.succeed()
-
+                cleanTemporal()
                 outputResume({ installPath, downloadPath, filename: pkgManifest[pkg].filename, pkg })
 
                 return resolve(pkgManifest[pkg])
@@ -210,8 +325,7 @@ async function handleInstallPackageComponents(manifest) {
 }
 
 export async function installCore(params) {
-    handleInstall(params)
-    .then((res) => {
+    handleInstallCore(params).then((res) => {
         handleInstallPackageComponents(res).catch((err) => {
             console.error(err)
             return process.exit(1)
