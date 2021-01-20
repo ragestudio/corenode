@@ -1,4 +1,5 @@
 export * from './installDependecy'
+export * from './installModule'
 export * from './installCore'
 export * from './createRuntime'
 export * from './releaseProyect'

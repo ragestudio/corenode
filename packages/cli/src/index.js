@@ -3,8 +3,7 @@ import testProyect from '@nodecorejs/test'
 import cliRuntime from './cliRuntime'
 
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
-import { installCore, createRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
-import { installModule } from './scripts/installCore'
+import { installCore, installModule, createRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 let optionsMap = [
