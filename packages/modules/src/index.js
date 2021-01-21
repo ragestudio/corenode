@@ -1,12 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 import logDump from '@nodecorejs/log'
+import { getRootPackage, proyectPkgPath, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
 
 let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
 
 let _modules = {}
 let _libraries = {}
+let _loaded = []
 
 const codecRegistry = 'utf-8'
 
@@ -55,8 +57,8 @@ export function readModule(moduleName, builtIn = false) {
     }
     const _module = require(initializator)
 
-    let { type, requires } = _module
-    const firstOrder = !requires ? true : false // if module doesnt requires modules is considered first level
+    let { type, requires, libs } = _module
+    const firstOrder = !libs ? true : false // if module doesnt requires libraries is considered first level
     const isLib = type === "lib" ?? false
 
     return {
@@ -75,7 +77,7 @@ export function initRegistry(forceWriteLink) {
             fs.mkdirSync(modulesPath, { recursive: true })
         }
 
-        linkAllModules()
+        linkAllModules(forceWriteLink ?? false)
 
         if (fs.existsSync(builtInLibraries)) {
             fs.readdirSync(builtInLibraries).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
@@ -125,7 +127,16 @@ export function writeModule(name, filename, _module) {
 export function writeModuleRegistry(_module) {
     try {
         let registry = readRegistry()
-        const { _lib, dir, firstOrder } = _module
+        const { _lib, dir, firstOrder, node_modules } = _module
+
+        if (node_modules) {
+            objectToArrayMap(node_modules).forEach((dep) => {
+                const isInstalled = isDependencyInstalled(dep.key) ? true : false
+                if (!isInstalled) {
+                    addDependency(dep, true)
+                }
+            })
+        }
 
         registry[_module.pkg] = {
             _lib, dir, firstOrder
@@ -141,12 +152,12 @@ export function writeModuleRegistry(_module) {
     }
 }
 
-export function linkAllModules() {
+export function linkAllModules(force = false) {
     let _registry = readRegistry()
 
     readModules().forEach((moduleName) => {
         try {
-            if (!_registry[moduleName]) {
+            if (!_registry[moduleName] || force) {
                 writeModuleRegistry(readModule(moduleName))
             }
         } catch (error) {
@@ -162,22 +173,24 @@ export function init(params) {
         initRegistry(params?.force ?? false)
         objectToArrayMap(_modules).forEach((entry) => {
             const moduleName = entry.key
+            if (_loaded.includes(moduleName)) return // Avoid load multi time per runtime
+            
             try {
                 let loadLibrary = {}
 
                 const _module = readModule(moduleName)
                 let librariesIncludes = ["builtIn"] // by default load `builtIn` library
 
-                if (typeof (_module.lib) !== "undefined") {
-                    if (Array.isArray(_module.lib)) {
-                        _module.lib.forEach((lib) => {
+                if (typeof (_module.libs) !== "undefined") {
+                    if (Array.isArray(_module.libs)) {
+                        _module.libs.forEach((lib) => {
                             if (!librariesIncludes.includes(lib)) {
                                 librariesIncludes.push(lib)
                             }
                         })
                     } else {
-                        if (!librariesIncludes.includes(_module.lib)) {
-                            librariesIncludes.push(_module.lib)
+                        if (!librariesIncludes.includes(_module.libs)) {
+                            librariesIncludes.push(_module.libs)
                         }
                     }
                 }
@@ -185,8 +198,14 @@ export function init(params) {
                 librariesIncludes.forEach((lib) => {
                     const library = _libraries[lib]
                     if (library) {
+                        const isFirstOrder = library.firstOrder
                         const isBuiltIn = library._builtIn
                         const read = readModule(lib, isBuiltIn)
+
+                        if (typeof(read.init) == "function") {
+                            read.init(_libraries)
+                        }
+
                         loadLibrary[lib] = read.load ?? read
                     }
                 })
@@ -198,6 +217,7 @@ export function init(params) {
                     _module.init(loadLibrary)
                 }
 
+                _loaded.push(moduleName)
             } catch (error) {
                 verbosity.error(`Failed at module initialization > [${moduleName}] >`, error.message)
                 logDump(error)

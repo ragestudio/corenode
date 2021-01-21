@@ -11,7 +11,7 @@ import fs from 'fs'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 const enginePkgPath = path.resolve(__filename, '../../package.json')
-const proyectPkgPath = path.resolve(process.cwd(), './package.json')
+export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
 let versionOrderScheme = {
     mayor: 0,
@@ -178,7 +178,7 @@ export function isProyectMode(dir) {
         if (fs.readdirSync(packagesDir)) {
             return true
         }
-        return fañse
+        return false
     }
 
     return false
@@ -191,6 +191,33 @@ export function isProyectMode(dir) {
  */
 export function isDevMode() {
     return fs.existsSync(path.resolve(process.cwd(), './.dev'))
+}
+
+/**
+ * Check if an dependecy is installed on current proyect
+ * @function isDependencyInstalled 
+ * @param name Package name
+ * @returns {boolean}
+ */
+export function isDependencyInstalled(name) {
+    const currentPackages = getRootPackage().dependencies ?? {}
+    return currentPackages[name] ?? false
+}
+
+/**
+ * Add an dependecy to package of the current proyect
+ * @function addDependency
+ * @param [write = false] Write to package.json
+ * @returns {object}
+ */
+export function addDependency(dep, write = false) {
+    let packageJSON = getRootPackage() ?? {}
+    packageJSON.dependencies[dep.key] = dep.value
+    
+    if (write) {
+        fs.writeFileSync(proyectPkgPath, JSON.stringify(packageJSON, null, 2) + '\n', 'utf-8')
+    }
+    return packageJSON
 }
 
 /**

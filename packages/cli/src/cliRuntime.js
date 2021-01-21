@@ -1,4 +1,5 @@
 import { objectToArrayMap } from '@nodecorejs/utils'
+import { readModule } from '@nodecorejs/modules'
 
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
