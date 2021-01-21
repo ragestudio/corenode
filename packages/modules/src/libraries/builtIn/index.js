@@ -2,7 +2,7 @@ import path from 'path'
 import { init, writeModuleRegistry, writeModule, initRegistry, readModule, readModules, readRegistry } from '@nodecorejs/modules'
 
 module.exports = {
-    _load: {
+    load: {
         _getModulesPath: () => {
             return global.nodecore_modules.modulesPath
         },

@@ -21,9 +21,11 @@ const modulesRegistry = global.nodecore_modules.modulesRegistry = path.resolve(m
 export function readRegistry() {
     let _registry = {}
     try {
-        const read = fs.readFileSync(modulesRegistry, codecRegistry)
-        if (read) {
-            _registry = JSON.parse(read)
+        if (fs.existsSync(modulesRegistry)) {
+            const read = fs.readFileSync(modulesRegistry, codecRegistry)
+            if (read) {
+                _registry = JSON.parse(read)
+            }
         }
     } catch (error) {
         verbosity.error(`Failed to read registry >`, err.message)
@@ -67,25 +69,13 @@ export function readModule(moduleName, builtIn = false) {
 
 export function initRegistry(forceWriteLink) {
     try {
-        if (!fs.existsSync(modulesRegistry)) {
-            if (!fs.existsSync(modulesPath)) {
-                fs.mkdirSync(modulesPath, { recursive: true })
-            }
-            forceWriteLink = true
-        }
-
-        if (forceWriteLink) {
-            readModules().forEach((moduleName) => {
-                try {
-                    writeModuleRegistry(readModule(moduleName))
-                } catch (error) {
-                    verbosity.error(`Failed at linking module > [${moduleName}] >`, err.message)
-                    logDump(error)
-                }
-            })
-        }
-
         let _registry = readRegistry()
+        
+        if (!fs.existsSync(modulesRegistry)) {
+            fs.mkdirSync(modulesPath, { recursive: true })
+        }
+
+        linkAllModules()
 
         if (fs.existsSync(builtInLibraries)) {
             fs.readdirSync(builtInLibraries).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
@@ -94,6 +84,7 @@ export function initRegistry(forceWriteLink) {
                 }
             })
         }
+
         objectToArrayMap(_registry).forEach((entry) => {
             const isLib = entry.value._lib
 
@@ -116,6 +107,7 @@ export function writeModule(name, filename, _module) {
             if (!fs.existsSync(moduleDir)) {
                 fs.mkdirSync(moduleDir, { recursive: true })
             }
+    
             fs.writeFileSync(`${moduleDir}/${filename ?? "index.js"}`, _module, {
                 encoding: codecRegistry,
                 recursive: true
@@ -149,6 +141,21 @@ export function writeModuleRegistry(_module) {
     }
 }
 
+export function linkAllModules() {
+    let _registry = readRegistry()
+
+    readModules().forEach((moduleName) => {
+        try {
+            if (!_registry[moduleName]) {
+                writeModuleRegistry(readModule(moduleName))
+            }
+        } catch (error) {
+            verbosity.error(`Failed at linking module > [${moduleName}] >`, err.message)
+            logDump(error)
+        }
+    })
+}
+
 // initialize Modules & Libraries
 export function init(params) {
     try {
@@ -180,7 +187,7 @@ export function init(params) {
                     if (library) {
                         const isBuiltIn = library._builtIn
                         const read = readModule(lib, isBuiltIn)
-                        loadLibrary[lib] = read._load ?? read
+                        loadLibrary[lib] = read.load ?? read
                     }
                 })
 
