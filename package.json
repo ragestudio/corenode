@@ -48,9 +48,6 @@
     "@types/node": "^14.14.10",
     "new-github-release-url": "^1.0.0",
     "rimraf": "^3.0.2",
-    "websocket": "^1.0.33",
-    "umi": "^3.3.7",
-    "@umijs/preset-react": "^1.7.13",
-    "discord.js": "^12.5.1"
+    "websocket": "^1.0.33"
   }
 }
