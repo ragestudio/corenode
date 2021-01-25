@@ -1,15 +1,23 @@
 import { objectToArrayMap } from '@nodecorejs/utils'
-import { readModule } from '@nodecorejs/modules'
 
+const _Global = global.nodecore_cli
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 
 function cliRuntime({ commands, options }) {
+    const custom = _Global?.custom ?? []
+
     const argumentParser = yargs(hideBin(process.argv))
     let optionsMap = options ?? []
     let commandMap = commands ?? []
 
     let optionsTrigger = {}
+
+    if (Array.isArray(custom)) {
+        custom.forEach((command) => {
+            commandMap.push(command)
+        })
+    }
 
     optionsMap.forEach((opt) => {
         const option = opt.option
@@ -33,7 +41,7 @@ function cliRuntime({ commands, options }) {
 
     commandMap.forEach((cmd) => {
         const command = cmd.command
-        const description = cmd.description
+        const description = cmd.description ?? ""
         const args = cmd.args ? ((yargs) => cmd.args(yargs)) : {}
         const exec = cmd.exec ? (argv) => {
             try {

@@ -1,10 +1,10 @@
-import buildProyect from '@nodecorejs/builder'
-import testProyect from '@nodecorejs/test'
-import cliRuntime from './cliRuntime'
-
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
 import { installCore, installModule, createRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
 import { getChangelogs } from './scripts/utils'
+
+import buildProyect from '@nodecorejs/builder'
+import testProyect from '@nodecorejs/test'
+import cliRuntime from './cliRuntime'
 
 let optionsMap = [
     {

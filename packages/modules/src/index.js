@@ -30,7 +30,7 @@ export function readRegistry() {
             }
         }
     } catch (error) {
-        verbosity.error(`Failed to read registry >`, err.message)
+        verbosity.error(`Failed to read registry >`, error.message)
     }
 
     return _registry
@@ -97,7 +97,7 @@ export function initRegistry(forceWriteLink) {
             }
         })
     } catch (error) {
-        verbosity.error(`Failed at registry initialization >`, err.message)
+        verbosity.error(`Failed at registry initialization >`, error.message)
         logDump(error)
     }
 }
@@ -114,7 +114,8 @@ export function writeModule(name, filename, _module) {
                 encoding: codecRegistry,
                 recursive: true
             })
-            resolve(true)
+            resolve(moduleDir)
+            return moduleDir
         } catch (error) {
             const errStr = `Failed at writting module >`
 
@@ -161,7 +162,7 @@ export function linkAllModules(force = false) {
                 writeModuleRegistry(readModule(moduleName))
             }
         } catch (error) {
-            verbosity.error(`Failed at linking module > [${moduleName}] >`, err.message)
+            verbosity.error(`Failed at linking module > [${moduleName}] >`, error.message)
             logDump(error)
         }
     })

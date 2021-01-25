@@ -14,6 +14,8 @@ export function downloadWithPipe(address, filename, downloadPath) {
                 writeStream.on('finish', (data) => {
                     return resolve(data)
                 })
+            }).catch((err) => {
+                return reject(err.message)
             })
         }
     })
