@@ -72,19 +72,23 @@ export async function installModule(params) {
                         if (_module.requireCore) {
                             try {
                                 await installCore({pkg: _module.requireCore, dir: modulePath})
+                                logDump(`Installed core!!`)
                             } catch (error) {
                                 verbosity.error(`Error installing required core >`, error.message)
                             }
                         }
+                   
                         if (_module.runtimeTemplate) {
                             const templateFile = path.resolve(modulePath, `.template.nodecore`)
                             try {
-                                if (!fs.existsSync(templateFile)) {
+                                if (fs.existsSync(templateFile)) {
                                     const template = fs.readFileSync(templateFile, moduleCodec)
-                                    console.log(template)
+                                    
                                 }
                             } catch (error) {
-                                verbosity.error(`Error processing runtime template >`, error.message)
+                                const errStr = `Error processing runtime template >`
+                                verbosity.error(errStr)
+                                logDump(errStr, error)
                             }
                         }
                         initRegistry(true)
@@ -102,7 +106,7 @@ export async function installModule(params) {
     })
     list.run()
         .then((res) => {
-            temporalDir.clean()
+            //temporalDir.clean()
             outputResume({ downloadPath, pkg })
         })
         .catch((err) => {

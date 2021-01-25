@@ -1,4 +1,3 @@
-
 import ora from 'ora'
 import fs from 'fs'
 import path from 'path'
@@ -12,7 +11,7 @@ const spinner = ora({
 
 export const temporalDir = {
     createNew: (name) => {
-        let newTemporalPath = path.resolve(`${temporalPath}/${name ?? ""}_${new Date().getTime()}`)
+        let newTemporalPath = path.resolve(process.cwd(), `${temporalPath}/${name ?? ""}_${new Date().getTime()}`)
 
         if (!fs.existsSync(newTemporalPath)) {
             fs.mkdir(newTemporalPath, { recursive: true }, e => {

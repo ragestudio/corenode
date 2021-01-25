@@ -40,7 +40,7 @@ function handleInstallCore(params) {
             return console.error(`\t⁉️ Try to use [dir] argument or configure .nodecore runtime with and default "src" path.`)
         }
 
-        let installPath = path.resolve(`${process.cwd()}/${installDir}/${pkg}`)
+        let installPath = path.resolve(process.cwd(), `${installDir}`)
         let downloadPath = temporalDir.createNew(pkg)
 
         const tasks = new Listr([
@@ -105,7 +105,7 @@ function handleInstallCore(params) {
                 title: "🚧 Installing package",
                 task: () => {
                     return new Observable(observer => {
-                        const extractDirFile = path.resolve(`${downloadPath}/${pkgManifest[pkg].filename}`)
+                        const extractDirFile = path.resolve(downloadPath, `${pkgManifest[pkg].filename}`)
 
                         if (fs.existsSync(extractDirFile)) {
                             let fileCount = 0
@@ -150,7 +150,7 @@ function handleInstallCore(params) {
         })
         tasks.run()
             .then((res) => {
-                temporalDir.clean()
+                //temporalDir.clean()
                 outputResume({ installPath, downloadPath, filename: pkgManifest[pkg].filename, pkg })
 
                 return resolve(pkgManifest[pkg])

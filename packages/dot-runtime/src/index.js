@@ -227,7 +227,10 @@ export function isDependencyInstalled(name) {
     const currentPackages = getRootPackage().dependencies ?? {}
     return currentPackages[name] ?? false
 }
-
+// TODO: modifyRuntimeEnv
+export function modifyRuntimeEnv(mutation) {
+    
+}
 /**
  * Add an dependecy to package of the current proyect
  * @function addDependency
