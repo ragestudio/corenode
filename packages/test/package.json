@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/test",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -24,9 +24,9 @@
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
     "@babel/core": "7.12.10",
-    "@nodecorejs/dot-runtime": "0.15.3",
-    "@nodecorejs/utils": "0.15.3",
-    "@nodecorejs/log": "0.15.3",
+    "@nodecorejs/dot-runtime": "0.15.4",
+    "@nodecorejs/utils": "0.15.4",
+    "@nodecorejs/log": "0.15.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^25.4.0",
     "core-js": "3.8.2",

@@ -1,6 +1,6 @@
 {
   "name": "@ragestudio/nodecorejs",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "main": "./cli/nodecore.js",
   "types": "types.d.ts",
   "files": [
@@ -24,11 +24,11 @@
   "dependencies": {
     "@babel/core": "7.12.9",
     "@babel/runtime": "^7.12.5",
-    "@nodecorejs/modules": "0.15.3",
-    "@nodecorejs/builder": "0.15.3",
-    "@nodecorejs/cli": "0.15.3",
-    "@nodecorejs/dot-runtime": "0.15.3",
-    "@nodecorejs/utils": "0.15.3",
+    "@nodecorejs/modules": "0.15.4",
+    "@nodecorejs/builder": "0.15.4",
+    "@nodecorejs/cli": "0.15.4",
+    "@nodecorejs/dot-runtime": "0.15.4",
+    "@nodecorejs/utils": "0.15.4",
     "resolve-cwd": "^3.0.0"
   }
 }
