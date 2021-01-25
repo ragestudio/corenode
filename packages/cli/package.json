@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "start": "npx babel-node ./src",
-    "build": "rm -rf dist && npm run babelOut",
+    "build": "rimraf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
   },
   "repository": {
@@ -21,6 +21,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@nodecorejs/modules": "0.15.3",
     "@nodecorejs/builder": "0.15.3",
     "@nodecorejs/dot-runtime": "0.15.3",
     "@nodecorejs/log": "0.15.3",

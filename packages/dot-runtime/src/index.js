@@ -4,28 +4,48 @@
  * @return {object} proyectRuntime
  */
 
-const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
-const enginePkgPath = path.resolve(__filename, '../../package.json')
-const proyectPkgPath = path.resolve(process.cwd(), './package.json')
-
-let versionOrderScheme = {
-    mayor: 0,
-    minor: 1,
-    patch: 2
-}
-
+let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
 let currentVersion = {}
-const versionsTypes = Object.keys(versionOrderScheme)
 
 let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore') // For this repo only watch .nodecore
 let proyectRuntime = {}
-
 let _envDone = false
+
+const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
+const versionsTypes = Object.keys(versionOrderScheme)
+const enginePkgPath = path.resolve(__filename, '../../package.json')
+export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
+
+//  INIT RUNTIME FUNTIONS
+class Globals {
+    constructor(globals) {
+        this.Allocations = globals ?? []
+        this.init()
+    }
+
+    init() {
+        if (Array.isArray(this.Allocations)) {
+            this.Allocations.forEach((_global) => {
+               this.allocate(_global)
+            })
+        }
+    }
+    
+    allocate(name, payload) {
+        if (global[name] != null) {
+            return true
+        }
+        return global[name] = payload ?? {}
+    }
+}
+
+export const RuntimeGlobals = new Globals(["nodecore_cli", "nodecore"])
+
 syncEnvs.forEach(runtime => {
     if (!_envDone) {
         const fromPath = path.resolve(process.cwd(), `./${runtime}`)
@@ -68,6 +88,10 @@ if (proyectRuntime["version"]) {
         verbosity.log(error)
     }
 }
+
+
+
+//  Nodecore Libraries
 
 /**
  * Get parsed version of package
@@ -178,7 +202,7 @@ export function isProyectMode(dir) {
         if (fs.readdirSync(packagesDir)) {
             return true
         }
-        return fañse
+        return false
     }
 
     return false
@@ -191,6 +215,36 @@ export function isProyectMode(dir) {
  */
 export function isDevMode() {
     return fs.existsSync(path.resolve(process.cwd(), './.dev'))
+}
+
+/**
+ * Check if an dependecy is installed on current proyect
+ * @function isDependencyInstalled 
+ * @param name Package name
+ * @returns {boolean}
+ */
+export function isDependencyInstalled(name) {
+    const currentPackages = getRootPackage().dependencies ?? {}
+    return currentPackages[name] ?? false
+}
+// TODO: modifyRuntimeEnv
+export function modifyRuntimeEnv(mutation) {
+    
+}
+/**
+ * Add an dependecy to package of the current proyect
+ * @function addDependency
+ * @param [write = false] Write to package.json
+ * @returns {object}
+ */
+export function addDependency(dep, write = false) {
+    let packageJSON = getRootPackage() ?? {}
+    packageJSON.dependencies[dep.key] = dep.value
+
+    if (write) {
+        fs.writeFileSync(proyectPkgPath, JSON.stringify(packageJSON, null, 2) + '\n', 'utf-8')
+    }
+    return packageJSON
 }
 
 /**

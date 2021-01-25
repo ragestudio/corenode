@@ -1,5 +1,4 @@
-// set this origin by default as an legacy fallback
-const fallbackRemoteSource = "https://api.ragestudio.net/std/nodecore_cores"
+const fallbackRemoteCoresSource = "https://nodecore.ragestudio.net/std/cores"
 
 import Listr from 'listr'
 import ora from 'ora'
@@ -11,56 +10,45 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import execa from 'execa'
 
-import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
-
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
-import { objectToArrayMap } from '@nodecorejs/utils'
-import logDump from '@nodecorejs/log' 
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import logDump from '@nodecorejs/log'
 
-let performace = []
+import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
+import temporalDir from '../temporalDir'
+import * as timing from '../performance'
+import outputResume from '../outputResume'
+
 const runtimeEnv = getRuntimeEnv()
+const spinner = ora({ spinner: "dots", text: "Initalizing..." })
+const remoteCoresSource = runtimeEnv.remoteCoreSource ?? fallbackRemoteCoresSource
 
-function outputResume(payload) {
-    const { installPath, pkg } = payload
-    console.group()
-    console.log(`\n📦  Installed package (${pkg}) on > ${installPath}`)
-    console.log(`⏱  Operation tooks ${(performance.now() - performace[pkg]).toFixed(2)}ms \n`)
-    console.groupEnd()
-}
-
-const spinner = ora({
-    spinner: "dots",
-    text: "Initalizing..."
-})
-
-function handleInstall(params) {
+function handleInstallCore(params) {
     return new Promise((resolve, reject) => {
         let pkgManifest = {}
         let installDir = runtimeEnv.src
 
         const { pkg, dir } = params
-        if (typeof(dir) !== "undefined") {
-            installDir = dir    
-        }
 
+        timing.start(pkg)
+
+        if (typeof (dir) !== "undefined") {
+            installDir = dir
+        }
         if (!installDir || !path.resolve(process.cwd(), installDir)) {
             console.log(`\n🆘 Invalid installation path!`)
             return console.error(`\t⁉️ Try to use [dir] argument or configure .nodecore runtime with and default "src" path.`)
         }
 
-        performace[pkg] = performance.now()
-        const remoteSource = runtimeEnv.remoteSource ?? fallbackRemoteSource
-
-        let installPath = path.resolve(`${process.cwd()}/${installDir}/${pkg}`)
-        let tmpPath = path.resolve(`${__dirname}/dltmp`)
-        let downloadPath = path.resolve(`${tmpPath}/${pkg}_${new Date().getTime()}`)
+        let installPath = path.resolve(process.cwd(), `${installDir}`)
+        let downloadPath = temporalDir.createNew(pkg)
 
         const tasks = new Listr([
             {
                 title: '📡 Fetching package',
-                task: () => fetchRemotePkg(remoteSource, pkg, "lastest", (data) => {
+                task: () => fetchRemotePkg(remoteCoresSource, pkg, "lastest", (data) => {
                     data.extension = data.filename.split('.')[1]
-                    data.address = `${remoteSource}/pkgs/${data.id}/${data.filename}`
+                    data.address = `${remoteCoresSource}/pkgs/${data.id}/${data.filename}`
                     if (data.scopeDir) {
                         installPath = path.resolve(`${process.cwd()}/${runtimeEnv.src}/${data.scopeDir}`)
                     }
@@ -96,7 +84,7 @@ function handleInstall(params) {
                 title: '🧱 Processing directory',
                 task: () => {
                     return new Observable(observer => {
-                        observer.next(`Creating paths`)
+                        observer.next(`Processing paths`)
 
                         if (!fs.existsSync(installPath)) {
                             logDump(`Creating [installPath] "${installPath}"`)
@@ -105,12 +93,6 @@ function handleInstall(params) {
                             })
                         }
 
-                        if (!fs.existsSync(downloadPath)) {
-                            logDump(`Creating [downloadPath] "${downloadPath}"`)
-                            fs.mkdir(downloadPath, { recursive: true }, e => {
-                                if (e) return rej(console.error(e))
-                            })
-                        }
                         observer.complete()
                     })
                 }
@@ -123,7 +105,7 @@ function handleInstall(params) {
                 title: "🚧 Installing package",
                 task: () => {
                     return new Observable(observer => {
-                        const extractDirFile = path.resolve(`${downloadPath}/${pkgManifest[pkg].filename}`)
+                        const extractDirFile = path.resolve(downloadPath, `${pkgManifest[pkg].filename}`)
 
                         if (fs.existsSync(extractDirFile)) {
                             let fileCount = 0
@@ -168,10 +150,7 @@ function handleInstall(params) {
         })
         tasks.run()
             .then((res) => {
-                spinner.start("Cleaning up temporal files...")
-                fs.rmdirSync(tmpPath, { recursive: true })
-                spinner.succeed()
-
+                //temporalDir.clean()
                 outputResume({ installPath, downloadPath, filename: pkgManifest[pkg].filename, pkg })
 
                 return resolve(pkgManifest[pkg])
@@ -210,8 +189,7 @@ async function handleInstallPackageComponents(manifest) {
 }
 
 export async function installCore(params) {
-    handleInstall(params)
-    .then((res) => {
+    handleInstallCore(params).then((res) => {
         handleInstallPackageComponents(res).catch((err) => {
             console.error(err)
             return process.exit(1)

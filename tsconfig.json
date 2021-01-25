@@ -3,6 +3,7 @@
     "transpileOnly": true,
     "exclude": [
       "node_modules",
+      "docs",
       "dist",
       "**/*.spec.ts",
       "lib",
@@ -27,6 +28,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "docs",
     "**/*.spec.ts",
     "lib",
     "fixtures",

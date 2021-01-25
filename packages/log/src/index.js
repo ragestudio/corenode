@@ -1,7 +1,7 @@
 import log4js from 'log4js'
 import { getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
-export function dump(log) {
+export function dump(...log) {
     const filename = getDevRuntimeEnv().outputLogFilename ?? "logs_dump.log"
     log4js.configure({
         appenders: {
@@ -11,7 +11,7 @@ export function dump(log) {
             default: { appenders: ["logs"], level: "debug" }
         }
     })
-    log4js.getLogger("logs").debug(log)
+    log4js.getLogger("logs").debug(...log)
 
     return this    
 }
