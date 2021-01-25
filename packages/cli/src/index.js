@@ -1,9 +1,8 @@
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
-import { installCore, installModule, createRuntime, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
+import { installCore, installModule, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
-import testProyect from '@nodecorejs/test'
 import cliRuntime from './cliRuntime'
 
 let optionsMap = [
@@ -165,21 +164,7 @@ let commandMap = [
             const changes = await getChangelogs(getGit(), argv.from)
             console.log(`\n`,changes(''))
         }
-    },
-    {
-        command: 'init',
-        description: "Initialize an new nodecore development proyect",
-        exec: (argv) => {
-            createRuntime()
-        }
-    },
-    {
-        command: 'test',
-        description: "Run test",
-        exec: (argv) => {
-            testProyect(argv)
-        }
-    },
+    }
 ]
 
 
