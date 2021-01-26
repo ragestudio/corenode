@@ -9,6 +9,7 @@
     "postinstall": "npm run initBuilder",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
     "builder": "node ./packages/builder/dist/cli.js",
+    "build:docs": "nodecore docs --innerFiles",
     "build": "nodecore build",
     "kayser-build": "kayser-build",
     "bootstrap": "nodecore bootstrap-proyect",

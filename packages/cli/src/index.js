@@ -1,5 +1,5 @@
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
-import { installCore, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
+import { installCore, releaseProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
@@ -140,13 +140,6 @@ let commandMap = [
             bootstrapProyect(argv).then((res) => {
                 console.log(`\n✅ DONE\nAll modules bootstraped > ${res}\n`)
             })
-        }
-    },
-    {
-        command: 'docs',
-        description: "Generate documentation",
-        exec: (argv) => {
-            generateDocs(argv)
         }
     },
     {

@@ -6,7 +6,7 @@
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { objectToArrayMap, verbosity, readRootDirectorySync } from '@nodecorejs/utils'
 import { Globals } from './classes'
 
 let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
@@ -133,22 +133,30 @@ export function getGit() {
  * Get all packages from current proyect
  * @function getPackages 
  * @param {boolean} [params.fullPath = false] Return array with full path to packages
- * @returns {object}
+ * @returns {array} Packages names
  */
 export function getPackages(params) {
-    const packagesDir = path.resolve(process.cwd(), './packages')
-    if (fs.existsSync(packagesDir)) {
-        let pkgs = fs.readdirSync(packagesDir).filter(
-            (pkg) => pkg.charAt(0) !== '.',
-        )
-        if (params?.fullPath ?? false) {
-            pkgs = pkgs.map((pkg) => {
-                return pkg = path.resolve(packagesDir, pkg)
-            })
-        }
-        return pkgs
-    }
-    return false
+    return readRootDirectorySync("packages", params)
+}
+
+/**
+ * Get all dependent modules from current proyect
+ * @function getInstalledNodeModules 
+ * @param {boolean} [params.fullPath = false] Return array with full path to packages
+ * @returns {array} Packages names
+ */
+export function getInstalledNodeModules(params) {
+    return readRootDirectorySync("node_modules", params)
+}
+
+/**
+ * Get all nodecore dependencies installed
+ * @function getInstalledNodecoreDependencies 
+ * @param {boolean} [params.fullPath = false] Return array with full path to packages
+ * @returns {array} Packages names
+ */
+export function getInstalledNodecoreDependencies(params) {
+    return readRootDirectorySync("node_modules/@nodecorejs", params)
 }
 
 /**

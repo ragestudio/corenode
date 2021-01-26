@@ -1,9 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import logDump from '@nodecorejs/log'
-import { isDependencyInstalled, addDependency, getPackages } from '@nodecorejs/dot-runtime'
+import { isDependencyInstalled, addDependency, getPackages, getInstalledNodecoreDependencies } from '@nodecorejs/dot-runtime'
 
-let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
+let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
 
 let _modules = {}
@@ -16,11 +16,17 @@ if (!global.nodecore_modules) {
     global.nodecore_modules = {}
 }
 
-const externalModulesPath = global.nodecore_modules.externalModulesPath = path.resolve(process.cwd(), 'node_modules/@nodecorejs/externalModules')
 const modulesPath = global.nodecore_modules.modulesPath = path.resolve(process.cwd(), 'nodecore_modules')
-
 const modulesRegistry = global.nodecore_modules.modulesRegistry = path.resolve(modulesPath, `.modules.json`)
 const builtInLibraries = global.nodecore_modules.builtInLibraries = path.resolve(__dirname, "libraries")
+
+export function listExternalPluginsNames() {
+    return getInstalledNodecoreDependencies()
+}
+
+export function listModulesNames() {
+    return readRootDirectorySync(modulesPath)
+}
 
 export function readRegistry() {
     let registry = {}
@@ -38,14 +44,18 @@ export function readRegistry() {
     return registry
 }
 
-export function readPackagesModule() {
+export function readAutoLoadPlugins() {
     let registry = {}
 
-    const packages = getPackages({ fullPath: true })
-    if (Array.isArray(packages)) {
+    const fromProyectPackages = getPackages({ fullPath: true })
+    const fromNodeModules = listExternalPluginsNames()
+
+    const paths = [...fromNodeModules, ...fromProyectPackages]
+
+    if (Array.isArray(paths)) {
         const moduleLoadFile = "load.module.js"
 
-        packages.forEach((pkg) => {
+        paths.forEach((pkg) => {
             try {
                 const _moduleFilePath = path.resolve(pkg, moduleLoadFile)
                 if (fs.existsSync(_moduleFilePath)) {
@@ -86,24 +96,6 @@ export function readModule(moduleName, builtIn = false) {
         dir: _moduleDir,
         firstOrder,
     }
-}
-
-export function listModules() {
-    let names = []
-
-    if (fs.existsSync(modulesPath)) {
-        fs.readdirSync(modulesPath).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
-            names.push(_module)
-        })
-    }
-
-    if (fs.existsSync(externalModulesPath)) {
-        fs.readdirSync(externalModulesPath).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
-            names.push(_module)
-        })
-    }
-
-    return names
 }
 
 export function loadRegistry(forceWriteLink) {
@@ -216,7 +208,7 @@ export function unlinkModule(name, write = false) {
 export function linkAllModules(force = false) {
     let registry = readRegistry()
 
-    listModules().forEach((moduleName) => {
+    listModulesNames().forEach((moduleName) => {
         try {
             if (!registry[moduleName] || force) {
                 linkModule(readModule(moduleName), true)
@@ -233,9 +225,9 @@ export function initModules(params) {
     try {
         loadRegistry(params?.force ?? false)
 
-        const packagesModule = readPackagesModule()
-        if (packagesModule) {
-            _modules = { ..._modules, ...packagesModule }
+        const autoLoadPlugins = readAutoLoadPlugins()
+        if (autoLoadPlugins) {
+            _modules = { ..._modules, ...autoLoadPlugins }
         }
         
         objectToArrayMap(_modules).forEach((entry) => {

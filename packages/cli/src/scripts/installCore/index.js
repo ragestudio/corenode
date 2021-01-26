@@ -11,7 +11,7 @@ import { Observable } from 'rxjs'
 import execa from 'execa'
 
 import { getRuntimeEnv, addDependency } from '@nodecorejs/dot-runtime'
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { objectToArrayMap } from '@nodecorejs/utils'
 import logDump from '@nodecorejs/log'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'

@@ -3,6 +3,15 @@
  * @module @nodecorejs/utils
  */
 
+/**
+* Read all directories from root path
+* @param {string} [dir = ""]
+* @param {object} [params = undefined]
+* @param {object} [params.cwd = proccess.cwd]
+* @param {object} [params.dotFilter = true]
+* @function readRootDirectorySync
+*/
+export { default as readRootDirectorySync } from './readRootDirectorySync'
 
 /**
 * Promisified `setTimeout`

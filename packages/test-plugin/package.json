@@ -1,5 +1,5 @@
 {
-  "name": "@nodecorejs/test",
+  "name": "@nodecorejs/test-plugin",
   "version": "0.15.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,8 @@
   "files": [
     "helpers",
     "dist",
-    "src"
+    "src",
+    "load.module.js"
   ],
   "repository": {
     "type": "git",

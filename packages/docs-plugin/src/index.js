@@ -149,3 +149,5 @@ export function generateDocs(params) {
         verbosity.error(`Failed to generate docs`)
     }
 }
+
+export default generateDocs
