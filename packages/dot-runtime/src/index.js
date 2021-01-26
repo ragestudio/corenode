@@ -19,7 +19,7 @@ let _envLoad = false
 const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionsTypes = Object.keys(versionOrderScheme)
 
-const proyectRuntimePath = path.resolve(process.cwd(), '.nodecore')
+let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore')
 const enginePkgPath = path.resolve(__filename, '../../package.json')
 export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
