@@ -44,6 +44,7 @@ export function readRegistry(params) {
             })
         }
     } catch (error) {
+        logDump(error)
         verbosity.error(`Failed to read registry >`, error.message)
     }
 
@@ -76,6 +77,7 @@ export function readAutoLoadPlugins() {
                     return false
                 }
             } catch (error) {
+                logDump(error)
                 verbosity.error(`Failed to load custom package module > [${pkg}] >`, error.message)
             }
         })
@@ -88,11 +90,17 @@ export function readModule(moduleName, builtIn = false) {
     const initializator = path.resolve(_moduleDir, `./index.js`)
 
     if (!fs.existsSync(initializator)) {
-        throw new Error(`Initializator not found!`)
+        throw new Error(`Module file is missing!`)
     }
+ 
     const _module = require(initializator)
 
+    if (typeof(_module) !== "object") {
+        throw new Error(`Invalid data type`)
+    }
+   
     let { type, libs } = _module
+    
     const firstOrder = !libs ? true : false // if module doesnt requires libraries is considered first level
     const isLib = type === "lib" ?? false
 
@@ -132,8 +140,8 @@ export function loadRegistry(forceWriteLink) {
             }
         })
     } catch (error) {
-        verbosity.error(`Failed at registry initialization >`, error.message)
         logDump(error)
+        verbosity.error(`Failed at registry initialization >`, error.message)
     }
 }
 
@@ -163,9 +171,7 @@ export function writeModule(name, filename, _module) {
             resolve(moduleDir)
             return moduleDir
         } catch (error) {
-            const errStr = `Failed at writting module >`
-
-            logDump(errStr, error)
+            logDump(error)
             return reject(error)
         }
     })
@@ -193,8 +199,8 @@ export function linkModule(_module, write = false) {
         }
         return registry
     } catch (error) {
-        verbosity.error(`Failed at writting registry >`, error.message)
         logDump(error)
+        verbosity.error(`Failed at writting registry >`, error.message)
     }
 }
 
@@ -206,6 +212,7 @@ export function unlinkModule(name, write = false, purge = false) {
         }
         delete registry[name]
     } catch (error) {
+        logDump(error)
         // who cares
     }
     if (write) {
@@ -223,8 +230,8 @@ export function linkAllModules(force = false) {
                 linkModule(readModule(moduleName), true)
             }
         } catch (error) {
-            verbosity.error(`Failed at linking module > [${moduleName}] >`, error.message)
             logDump(error)
+            verbosity.error(`Failed at linking module > [${moduleName}] >`, error.message)
         }
     })
 }
@@ -289,14 +296,14 @@ export function initModules(params) {
 
                 _loaded.push(moduleName)
             } catch (error) {
-                verbosity.error(`Failed at module initialization > [${moduleName}] >`, error.message)
                 logDump(error)
+                verbosity.error(`Failed at module initialization > [${moduleName}] >`, error.message)
             }
         })
 
     } catch (error) {
-        verbosity.error(`Fatal error at initialization >`)
-        console.log(error)
+        logDump(error)
+        verbosity.error(`Fatal error at initialization > `, error.message)
     }
 }
 

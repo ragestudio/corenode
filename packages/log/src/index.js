@@ -5,10 +5,10 @@ export function dump(...log) {
     const filename = getDevRuntimeEnv().outputLogFilename ?? "logs_dump.log"
     log4js.configure({
         appenders: {
-            logs: { type: "file", filename: filename },
+            dumps: { type: "file", filename: filename },
         },
         categories: {
-            default: { appenders: ["logs"], level: "debug" }
+            default: { appenders: ["dumps"], level: "debug" }
         }
     })
     log4js.getLogger("logs").debug(...log)
