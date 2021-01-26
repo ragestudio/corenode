@@ -121,7 +121,7 @@ let commandMap = [
             releaseProyect({
                 minor: argv.minor ?? false,
                 next: argv.next ?? false,
-                module: argv.module ?? false,
+                nodecoreModule: argv.module ?? false,
                 publishNpm: argv.npm ?? false,
                 preRelease: argv.preRelease ?? false,
                 skipGitStatusCheck: argv.skipGit ?? false,

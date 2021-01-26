@@ -38,6 +38,7 @@ export async function releaseProyect(args) {
     }
 
     let opts = {
+        nodecoreModule: false,
         publishNpm: false,
         preRelease: false,
         next: false,
