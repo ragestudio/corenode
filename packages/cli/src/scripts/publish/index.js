@@ -1,4 +1,4 @@
-import { verbosity } from '@nodecorejs/utils/src'
+import { verbosity } from '@nodecorejs/utils'
 import Listr from 'listr'
 
 export async function publishProyect(args) {

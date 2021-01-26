@@ -117,8 +117,8 @@ export async function releaseProyect(args) {
     }
 
     // Publish
-    logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`)
     if (opts.publishNpm) {
+        logStep(`publish packages: ${chalk.blue(pkgs.join(', '))}`)
         pkgs.forEach((pkg, index) => {
             const pkgPath = path.join(process.cwd(), 'packages', pkg)
             const { name, version } = require(path.join(pkgPath, 'package.json'))
