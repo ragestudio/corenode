@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.16.3",
+  "version": "0.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -29,8 +29,8 @@
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
     "@babel/runtime": "^7.12.5",
-    "@nodecorejs/dot-runtime": "0.16.3",
-    "@nodecorejs/utils": "0.16.3",
+    "@nodecorejs/dot-runtime": "0.0.0",
+    "@nodecorejs/utils": "0.0.0",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",
