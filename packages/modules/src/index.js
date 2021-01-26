@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import rimraf from 'rimraf'
 import logDump from '@nodecorejs/log'
 import { isDependencyInstalled, addDependency, getPackages, getInstalledNodecoreDependencies } from '@nodecorejs/dot-runtime'
 
@@ -28,7 +29,7 @@ export function listModulesNames() {
     return readRootDirectorySync(modulesPath)
 }
 
-export function readRegistry() {
+export function readRegistry(params) {
     let registry = {}
     try {
         if (fs.existsSync(modulesRegistry)) {
@@ -36,6 +37,11 @@ export function readRegistry() {
             if (read) {
                 registry = JSON.parse(read)
             }
+        }
+        if (params?.onlyNames ?? false) {
+            return objectToArrayMap(registry).map((entry) => {
+                return entry.key
+            })
         }
     } catch (error) {
         verbosity.error(`Failed to read registry >`, error.message)
@@ -192,9 +198,12 @@ export function linkModule(_module, write = false) {
     }
 }
 
-export function unlinkModule(name, write = false) {
+export function unlinkModule(name, write = false, purge = false) {
     let registry = readRegistry()
     try {
+        if (purge && fs.existsSync(registry[name].dir)) {
+            rimraf.sync(registry[name].dir)
+        }
         delete registry[name]
     } catch (error) {
         // who cares

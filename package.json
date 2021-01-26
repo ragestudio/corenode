@@ -5,18 +5,13 @@
     "packages/*"
   ],
   "scripts": {
-    "cli": "node ./packages/cli/dist/index.js",
     "postinstall": "npm run initBuilder",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "build": "nodecore build",
-    "kayser-build": "kayser-build",
-    "bootstrap": "nodecore bootstrap-proyect",
-    "debug": "node --inspect-brk packages/nodecore/bin/cli.js",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:main": "cd packages/nodecorejs && yarn link && cd -",
-    "release": "node ./scripts/release.js",
     "update:deps": "yarn upgrade-interactive --latest"
   },
   "lint-staged": {
@@ -44,10 +39,8 @@
     "@babel/preset-typescript": "^7.12.7",
     "@types/babel__core": "7.1.12",
     "@types/babel__traverse": "7.0.16",
-    "@types/find-up": "^4.0.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.10",
-    "new-github-release-url": "^1.0.0",
     "rimraf": "^3.0.2"
   }
 }

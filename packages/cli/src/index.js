@@ -31,12 +31,19 @@ let commandMap = [
                 case ("remove"): {
                     const { unlinkModule } = require("@nodecorejs/modules")
                     // TODO: purge files & data, env templates, registry...etc
-                    unlinkModule(argv.module, true)
+                    try {
+                        unlinkModule(argv.module, true, true)
+                        console.log(`✅  Removed ${argv.module}`)
+                    } catch (error) {
+                        console.log(`❌  Failed to remove ${argv.module}`)
+                    }
                     break
                 }
                 default: {
                     const { readRegistry } = require("@nodecorejs/modules")
-                    console.log(readRegistry())
+                    const registry = readRegistry({ onlyNames: true })
+
+                    console.table(registry.map((name) => { return { "module": name } }))
                     break
                 }
             }
@@ -108,12 +115,13 @@ let commandMap = [
         }
     },
     {
-        command: 'release',
-        description: "Release this current development proyect",
+        command: 'publish',
+        description: "Publish this current proyect",
         exec: (argv) => {
             releaseProyect({
                 minor: argv.minor ?? false,
                 next: argv.next ?? false,
+                module: argv.module ?? false,
                 publishNpm: argv.npm ?? false,
                 preRelease: argv.preRelease ?? false,
                 skipGitStatusCheck: argv.skipGit ?? false,

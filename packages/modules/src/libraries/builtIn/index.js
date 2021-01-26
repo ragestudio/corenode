@@ -1,16 +1,9 @@
-import { Aliaser } from "@nodecorejs/dot-runtime/dist/classes"
+import { Aliaser, Globals } from "@nodecorejs/dot-runtime/dist/classes"
 
 module.exports = {
     load: {
-        _getModulesPath: () => {
-            return global.nodecore_modules.modulesPath
-        },
-        registerModule: () => {
-
-        },
-        unloadModule: () => {
-
-        },
+        Aliaser,
+        Globals,
         cli: {
             add: (command) => {
                 if (typeof (command) == "object") {
@@ -20,10 +13,18 @@ module.exports = {
                     global.nodecore_cli.custom.push(command)
                 }
             },
+            // TODO
             call: (command) => {
-
+                return false
             }
         },
-        Aliaser
+        // TODO
+        registerModule: () => {
+
+        },
+        // TODO
+        unloadModule: () => {
+
+        },
     }
 }
