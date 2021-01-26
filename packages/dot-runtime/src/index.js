@@ -13,12 +13,13 @@ let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
 let currentVersion = {}
 
 export let RuntimeGlobals = new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
-let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore') // For this repo only watch .nodecore
 let proyectRuntime = {}
 let _envLoad = false
 
 const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionsTypes = Object.keys(versionOrderScheme)
+
+const proyectRuntimePath = path.resolve(process.cwd(), '.nodecore')
 const enginePkgPath = path.resolve(__filename, '../../package.json')
 export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
@@ -35,7 +36,6 @@ function _initRuntime() {
                     _envLoad = true
                 } catch (error) {
                     console.log(error)
-                    // failed to load this runtime
                 }
             }
         }
@@ -77,21 +77,24 @@ function _initRuntime() {
  * @returns {string} proyectRuntime
  */
 export function getVersion(engine) {
-    const pkgEngine = require(enginePkgPath)
-    const pkgProyect = require(proyectPkgPath)
+    try {
+        const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
+        const pkgProyect = fs.existsSync(pkgProyect) ? require(pkgProyect) : {}
 
-    if (engine && typeof (pkgEngine["version"]) !== "undefined") {
-        return pkgEngine["version"]
+        if (engine && typeof (pkgEngine["version"]) !== "undefined") {
+            return pkgEngine["version"]
+        }
+
+        if (proyectRuntime.version) {
+            return proyectRuntime.version
+        }
+
+        if (typeof (pkgProyect["version"]) !== "undefined") {
+            return pkgProyect["version"]
+        }
+    } catch (error) {
+        // terrible
     }
-
-    if (proyectRuntime.version) {
-        return proyectRuntime.version
-    }
-
-    if (typeof (pkgProyect["version"]) !== "undefined") {
-        return pkgProyect["version"]
-    }
-
     return "0.0.0"
 }
 
