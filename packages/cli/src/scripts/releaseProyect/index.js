@@ -6,6 +6,7 @@ import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import open from 'open'
 import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
+import buildProyect from '@nodecorejs/builder'
 
 import { getChangelogs } from '../utils/getChangelogs'
 // TODO: Support for release nodecore modules to Relic services
@@ -72,7 +73,7 @@ export async function releaseProyect(args) {
         // Build
         if (!opts.skipBuild) {
             logStep('build')
-            execa.sync('nodecore', ['build', '--silent'])
+            buildProyect({ silent: true })
         } else {
             logStep('build is skipped, since args.skipBuild is supplied')
         }
