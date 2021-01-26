@@ -2,16 +2,17 @@
 const fs = require("fs")
 const path = require("path")
 const process = require("process")
-const resolveCwd = require('resolve-cwd')
 
 const isDev = fs.existsSync(path.resolve(__dirname, '../.local'))
-const cliDist = resolveCwd.silent(`@nodecorejs/cli/dist`)
+const cliDist = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
 
 try {
     if (isDev){
         return require(`${process.cwd()}/packages/cli/dist`)
     }
-    require(cliDist)
+    if (fs.existsSync(cliDist)) {
+        require(cliDist)        
+    }
 } catch (e) {
     try {
         require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`)
