@@ -8,7 +8,6 @@ import open from 'open'
 import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
 import { getChangelogs } from '../utils/getChangelogs'
-import exec from '../utils/exec'
 // TODO: Support for release nodecore modules to Relic services
 
 
@@ -73,7 +72,7 @@ export async function releaseProyect(args) {
         // Build
         if (!opts.skipBuild) {
             logStep('build')
-            await exec('nodecore', ['build', '--silent'])
+            execa.sync('nodecore', ['build', '--silent'])
         } else {
             logStep('build is skipped, since args.skipBuild is supplied')
         }
@@ -105,15 +104,15 @@ export async function releaseProyect(args) {
         // Commit
         const commitMessage = `release: v${currVersion}`
         logStep(`git commit with ${chalk.blue(commitMessage)}`)
-        await exec('git', ['commit', '--all', '--message', commitMessage])
+        execa.sync('git', ['commit', '--all', '--message', commitMessage])
 
         // Git Tag
         logStep(`git tag v${currVersion}`)
-        await exec('git', ['tag', `v${currVersion}`])
+        execa.sync('git', ['tag', `v${currVersion}`])
 
         // Push
         logStep(`git push`)
-        await exec('git', ['push', 'origin', 'master', '--tags'])
+        execa.sync('git', ['push', 'origin', 'master', '--tags'])
     }
 
     // Publish
