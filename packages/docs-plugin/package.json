@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/docs-plugin",
-  "version": "0.15.4",
+  "version": "0.16.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -20,9 +20,9 @@
   "dependencies": {
     "docjs": "^0.0.1",
     "docma": "^3.2.2",
-    "@nodecorejs/dot-runtime": "0.15.4",
+    "@nodecorejs/dot-runtime": "0.16.0",
     "jsdoc": "^3.6.6",
     "jsdoc-plugin-typescript": "^2.0.6",
-    "@nodecorejs/utils": "0.15.4"
+    "@nodecorejs/utils": "0.16.0"
   }
 }
