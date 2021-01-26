@@ -47,7 +47,6 @@
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.10",
     "new-github-release-url": "^1.0.0",
-    "rimraf": "^3.0.2",
-    "websocket": "^1.0.33"
+    "rimraf": "^3.0.2"
   }
 }

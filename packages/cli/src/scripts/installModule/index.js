@@ -20,7 +20,7 @@ const runtimeEnv = getRuntimeEnv()
 const remoteModulesSource = runtimeEnv.remoteModulesSource ?? fallbackRemoteModulesSource
 
 export async function installModule(params) {
-    const { pkg, dir, version = "lastest" } = params
+    const { pkg, version = "lastest" } = params
 
     if (!pkg) {
         return console.error(`🚫 Nothing to install!`)
@@ -82,8 +82,8 @@ export async function installModule(params) {
                             const templateFile = path.resolve(modulePath, `.template.nodecore`)
                             try {
                                 if (fs.existsSync(templateFile)) {
-                                    const template = fs.readFileSync(templateFile, moduleCodec)
-                                    
+                                    //const template = fs.readFileSync(templateFile, moduleCodec)
+                                    // TODO: Apply template to .nodecore
                                 }
                             } catch (error) {
                                 const errStr = `Error processing runtime template >`

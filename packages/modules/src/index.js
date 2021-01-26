@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import logDump from '@nodecorejs/log'
-import { getRootPackage, proyectPkgPath, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
+import { isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
 
 let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
@@ -57,7 +57,7 @@ export function readModule(moduleName, builtIn = false) {
     }
     const _module = require(initializator)
 
-    let { type, requires, libs } = _module
+    let { type, libs } = _module
     const firstOrder = !libs ? true : false // if module doesnt requires libraries is considered first level
     const isLib = type === "lib" ?? false
 
@@ -199,7 +199,7 @@ export function init(params) {
                 librariesIncludes.forEach((lib) => {
                     const library = _libraries[lib]
                     if (library) {
-                        const isFirstOrder = library.firstOrder
+                        //const isFirstOrder = library.firstOrder
                         const isBuiltIn = library._builtIn
                         const read = readModule(lib, isBuiltIn)
 

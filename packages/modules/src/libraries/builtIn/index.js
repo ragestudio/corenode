@@ -1,7 +1,6 @@
 import path from 'path'
 import fs from 'fs'
 
-import { init, writeModuleRegistry, writeModule, initRegistry, readModule, readModules, readRegistry } from '@nodecorejs/modules'
 import BuiltinModule from 'module'
 import { objectToArrayMap } from '@nodecorejs/utils'
 import { getRootPackage } from '@nodecorejs/dot-runtime'
@@ -68,7 +67,6 @@ module.exports = {
                 
             }
         },
-        Aliaser,
-        linkRegistry: writeModuleRegistry
+        Aliaser
     }
 }

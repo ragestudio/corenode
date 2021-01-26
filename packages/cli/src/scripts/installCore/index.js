@@ -10,7 +10,7 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import execa from 'execa'
 
-import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, addDependency } from '@nodecorejs/dot-runtime'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 import logDump from '@nodecorejs/log'
 
@@ -61,14 +61,13 @@ function handleInstallCore(params) {
                     return new Observable(async (observer) => {
                         const requires = pkgManifest[pkg].require
                         if (!requires) {
-                            logDump(`No require on pkg [${pkgManifest[pkg].id}] > ${requires}`)
                             return observer.complete()
                         }
 
-                        if (typeof (requires.npm) !== "undefined") {
+                        if (typeof (requires.npm) !== "undefined") {  
                             observer.next('Installing npm dependencies')
                             objectToArrayMap(requires.npm).forEach(dependency => {
-                                cliArgs.push(`${dependency.key}`) // TODO: Parse version
+                                addDependency(dependency)
                             })
                             const { stdout } = execa.sync('npm', ['install'], {
                                 cwd: process.cwd(),
@@ -83,7 +82,7 @@ function handleInstallCore(params) {
             {
                 title: '🧱 Processing directory',
                 task: () => {
-                    return new Observable(observer => {
+                    return new Observable((observer) => {
                         observer.next(`Processing paths`)
 
                         if (!fs.existsSync(installPath)) {
@@ -104,7 +103,7 @@ function handleInstallCore(params) {
             {
                 title: "🚧 Installing package",
                 task: () => {
-                    return new Observable(observer => {
+                    return new Observable((observer) => {
                         const extractDirFile = path.resolve(downloadPath, `${pkgManifest[pkg].filename}`)
 
                         if (fs.existsSync(extractDirFile)) {

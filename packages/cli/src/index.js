@@ -19,7 +19,7 @@ let optionsMap = [
 
 let commandMap = [
     {
-        command: 'install [module]',
+        command: 'module [action] [module]',
         description: "Install an nodecore module",
         args: (yargs) => {
             yargs.positional('module', {
@@ -27,14 +27,13 @@ let commandMap = [
             })
         },
         exec: (argv) => {
+            const { action, module } = argv
             const { init, modulesPath } = require("@nodecorejs/modules")
-            init({
-                force: argv.force ?? false
-            })
+
+            init({ force: argv.force ?? false })
             let opts = {
                 pkg: argv.module,
-                dir: modulesPath,
-                _module: true
+                dir: modulesPath
             }
 
             installModule(opts)

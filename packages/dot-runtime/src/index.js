@@ -227,19 +227,23 @@ export function isDependencyInstalled(name) {
     const currentPackages = getRootPackage().dependencies ?? {}
     return currentPackages[name] ?? false
 }
+
 // TODO: modifyRuntimeEnv
 export function modifyRuntimeEnv(mutation) {
     
 }
+
 /**
  * Add an dependecy to package of the current proyect
  * @function addDependency
+ * @param dependency.key NPM Package name
+ * @param dependency.value NPM Package version
  * @param [write = false] Write to package.json
- * @returns {object}
+ * @returns {object} Updated package.json
  */
-export function addDependency(dep, write = false) {
+export function addDependency(dependency, write = false) {
     let packageJSON = getRootPackage() ?? {}
-    packageJSON.dependencies[dep.key] = dep.value
+    packageJSON.dependencies[dependency.key] = dependency.value
 
     if (write) {
         fs.writeFileSync(proyectPkgPath, JSON.stringify(packageJSON, null, 2) + '\n', 'utf-8')
