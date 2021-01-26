@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import logDump from '@nodecorejs/log'
-import { isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
+import { isDependencyInstalled, addDependency, getPackages } from '@nodecorejs/dot-runtime'
 
 let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
@@ -16,36 +16,55 @@ if (!global.nodecore_modules) {
     global.nodecore_modules = {}
 }
 
-const builtInLibraries = global.nodecore_modules.builtInLibraries = path.resolve(__dirname, "libraries")
+const externalModulesPath = global.nodecore_modules.externalModulesPath = path.resolve(process.cwd(), 'node_modules/@nodecorejs/externalModules')
 const modulesPath = global.nodecore_modules.modulesPath = path.resolve(process.cwd(), 'nodecore_modules')
+
 const modulesRegistry = global.nodecore_modules.modulesRegistry = path.resolve(modulesPath, `.modules.json`)
+const builtInLibraries = global.nodecore_modules.builtInLibraries = path.resolve(__dirname, "libraries")
 
 export function readRegistry() {
-    let _registry = {}
+    let registry = {}
     try {
         if (fs.existsSync(modulesRegistry)) {
             const read = fs.readFileSync(modulesRegistry, codecRegistry)
             if (read) {
-                _registry = JSON.parse(read)
+                registry = JSON.parse(read)
             }
         }
     } catch (error) {
         verbosity.error(`Failed to read registry >`, error.message)
     }
 
-    return _registry
+    return registry
 }
 
-export function readModules() {
-    let names = []
+export function readPackagesModule() {
+    let registry = {}
 
-    if (fs.existsSync(modulesPath)) {
-        fs.readdirSync(modulesPath).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
-            names.push(_module)
+    const packages = getPackages({ fullPath: true })
+    if (Array.isArray(packages)) {
+        const moduleLoadFile = "load.module.js"
+
+        packages.forEach((pkg) => {
+            try {
+                const _moduleFilePath = path.resolve(pkg, moduleLoadFile)
+                if (fs.existsSync(_moduleFilePath)) {
+                    const _module = require(_moduleFilePath)
+                    if (_module.pkg != null) {
+                        return registry[_module.pkg] = {
+                            ..._module,
+                            dir: _moduleFilePath,
+                            _autoLoaded: true
+                        }
+                    }
+                    return false
+                }
+            } catch (error) {
+                verbosity.error(`Failed to load custom package module > [${pkg}] >`, error.message)
+            }
         })
     }
-
-    return names
+    return registry
 }
 
 export function readModule(moduleName, builtIn = false) {
@@ -69,9 +88,27 @@ export function readModule(moduleName, builtIn = false) {
     }
 }
 
-export function initRegistry(forceWriteLink) {
+export function listModules() {
+    let names = []
+
+    if (fs.existsSync(modulesPath)) {
+        fs.readdirSync(modulesPath).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
+            names.push(_module)
+        })
+    }
+
+    if (fs.existsSync(externalModulesPath)) {
+        fs.readdirSync(externalModulesPath).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
+            names.push(_module)
+        })
+    }
+
+    return names
+}
+
+export function loadRegistry(forceWriteLink) {
     try {
-        let _registry = readRegistry()
+        let registry = readRegistry()
         
         if (!fs.existsSync(modulesRegistry)) {
             fs.mkdirSync(modulesPath, { recursive: true })
@@ -87,7 +124,7 @@ export function initRegistry(forceWriteLink) {
             })
         }
 
-        objectToArrayMap(_registry).forEach((entry) => {
+        objectToArrayMap(registry).forEach((entry) => {
             const isLib = entry.value._lib
 
             if (isLib) {
@@ -102,6 +139,17 @@ export function initRegistry(forceWriteLink) {
     }
 }
 
+export function overwriteRegistry(registry) {
+    if (typeof (registry) !== "object") {
+        return false
+    }
+    fs.writeFileSync(modulesRegistry, JSON.stringify(registry, null, 2), {
+        encoding: codecRegistry,
+        recursive: true
+    })
+    return true
+}
+
 export function writeModule(name, filename, _module) {
     return new Promise((resolve, reject) => {
         try {
@@ -109,7 +157,7 @@ export function writeModule(name, filename, _module) {
             if (!fs.existsSync(moduleDir)) {
                 fs.mkdirSync(moduleDir, { recursive: true })
             }
-    
+
             fs.writeFileSync(`${moduleDir}/${filename ?? "index.js"}`, _module, {
                 encoding: codecRegistry,
                 recursive: true
@@ -120,12 +168,12 @@ export function writeModule(name, filename, _module) {
             const errStr = `Failed at writting module >`
 
             logDump(errStr, error)
-            reject(error)
+            return reject(error)
         }
     })
 }
 
-export function writeModuleRegistry(_module) {
+export function linkModule(_module, write = false) {
     try {
         let registry = readRegistry()
         const { _lib, dir, firstOrder, node_modules } = _module
@@ -142,24 +190,36 @@ export function writeModuleRegistry(_module) {
         registry[_module.pkg] = {
             _lib, dir, firstOrder
         }
-
-        fs.writeFileSync(modulesRegistry, JSON.stringify(registry, null, 2), {
-            encoding: codecRegistry,
-            recursive: true
-        })
+        if (write) {
+            overwriteRegistry(registry)
+        }
+        return registry
     } catch (error) {
         verbosity.error(`Failed at writting registry >`, error.message)
         logDump(error)
     }
 }
 
-export function linkAllModules(force = false) {
-    let _registry = readRegistry()
+export function unlinkModule(name, write = false) {
+    let registry = readRegistry()
+    try {
+        delete registry[name]
+    } catch (error) {
+        // who cares
+    }
+    if (write) {
+        overwriteRegistry(registry)
+    }
+    return registry
+}
 
-    readModules().forEach((moduleName) => {
+export function linkAllModules(force = false) {
+    let registry = readRegistry()
+
+    listModules().forEach((moduleName) => {
         try {
-            if (!_registry[moduleName] || force) {
-                writeModuleRegistry(readModule(moduleName))
+            if (!registry[moduleName] || force) {
+                linkModule(readModule(moduleName), true)
             }
         } catch (error) {
             verbosity.error(`Failed at linking module > [${moduleName}] >`, error.message)
@@ -169,17 +229,25 @@ export function linkAllModules(force = false) {
 }
 
 // initialize Modules & Libraries
-export function init(params) {
+export function initModules(params) {
     try {
-        initRegistry(params?.force ?? false)
+        loadRegistry(params?.force ?? false)
+
+        const packagesModule = readPackagesModule()
+        if (packagesModule) {
+            _modules = { ..._modules, ...packagesModule }
+        }
+        
         objectToArrayMap(_modules).forEach((entry) => {
             const moduleName = entry.key
+            const moduleRegistry = entry.value
+
             if (_loaded.includes(moduleName)) return // Avoid load multi time per runtime
-            
+
             try {
                 let loadLibrary = {}
 
-                const _module = readModule(moduleName)
+                const _module = moduleRegistry?._autoLoaded ? moduleRegistry : readModule(moduleName)
                 let librariesIncludes = ["builtIn"] // by default load `builtIn` library
 
                 if (typeof (_module.libs) !== "undefined") {
@@ -203,7 +271,7 @@ export function init(params) {
                         const isBuiltIn = library._builtIn
                         const read = readModule(lib, isBuiltIn)
 
-                        if (typeof(read.init) == "function") {
+                        if (typeof (read.init) == "function") {
                             read.init(_libraries)
                         }
 
@@ -231,4 +299,4 @@ export function init(params) {
     }
 }
 
-init()
+initModules()

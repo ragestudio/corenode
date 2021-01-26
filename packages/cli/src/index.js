@@ -1,5 +1,5 @@
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
-import { installCore, installModule, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
+import { installCore, releaseProyect, bootstrapProyect, generateDocs } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
@@ -19,24 +19,27 @@ let optionsMap = [
 
 let commandMap = [
     {
-        command: 'module [action] [module]',
-        description: "Install an nodecore module",
-        args: (yargs) => {
-            yargs.positional('module', {
-                describe: 'Module to install'
-            })
-        },
+        command: 'modules [action] [module]',
+        description: "Manage nodecore modules & plugins",
         exec: (argv) => {
-            const { action, module } = argv
-            const { init, modulesPath } = require("@nodecorejs/modules")
-
-            init({ force: argv.force ?? false })
-            let opts = {
-                pkg: argv.module,
-                dir: modulesPath
+            switch (argv.action) {
+                case ("install"): {
+                    const { installModule } = require("./scripts/installModule")
+                    installModule({ pkg: argv.module })
+                    break
+                }
+                case ("remove"): {
+                    const { unlinkModule } = require("@nodecorejs/modules")
+                    // TODO: purge files & data, env templates, registry...etc
+                    unlinkModule(argv.module, true)
+                    break
+                }
+                default: {
+                    const { readRegistry } = require("@nodecorejs/modules")
+                    console.log(readRegistry())
+                    break
+                }
             }
-
-            installModule(opts)
         }
     },
     {
@@ -46,9 +49,9 @@ let commandMap = [
             yargs.positional('package', {
                 describe: 'Package to install'
             }),
-            yargs.positional('dir', {
-                describe: 'Directory to install (default: runtimeDev)'
-            })
+                yargs.positional('dir', {
+                    describe: 'Directory to install (default: runtimeDev)'
+                })
         },
         exec: (argv) => {
             if (typeof (argv.package) !== "undefined") {
@@ -97,7 +100,7 @@ let commandMap = [
                 bumpVersion(bumps, argv.save)
             } else {
                 if (argv.engine) {
-                    return console.log(`⚙️  NodecoreJS v${getVersion(true)}${isLocalMode()? "@local" : ""}`)
+                    return console.log(`⚙️  NodecoreJS v${getVersion(true)}${isLocalMode() ? "@local" : ""}`)
                 }
                 const proyectPkg = getRootPackage()
                 console.log(`🏷  ${proyectPkg.name ?? ""} v${getVersion(argv.engine)}`)
@@ -161,7 +164,7 @@ let commandMap = [
         description: "Print changelogs from this proyect",
         exec: async (argv) => {
             const changes = await getChangelogs(getGit(), argv.from)
-            console.log(`\n`,changes(''))
+            console.log(`\n`, changes(''))
         }
     }
 ]

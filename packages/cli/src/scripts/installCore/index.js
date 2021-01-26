@@ -64,7 +64,7 @@ function handleInstallCore(params) {
                             return observer.complete()
                         }
 
-                        if (typeof (requires.npm) !== "undefined") {  
+                        if (typeof (requires.npm) !== "undefined") {
                             observer.next('Installing npm dependencies')
                             objectToArrayMap(requires.npm).forEach(dependency => {
                                 addDependency(dependency)

@@ -3,93 +3,70 @@
  * @module @nodecorejs/dot-runtime 
  * @return {object} proyectRuntime
  */
-
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { Globals } from './classes'
 
 let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
 let currentVersion = {}
 
+export let RuntimeGlobals = new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore') // For this repo only watch .nodecore
 let proyectRuntime = {}
-let _envDone = false
+let _envLoad = false
 
-const syncEnvs = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
+const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionsTypes = Object.keys(versionOrderScheme)
 const enginePkgPath = path.resolve(__filename, '../../package.json')
 export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
 //  INIT RUNTIME FUNTIONS
-class Globals {
-    constructor(globals) {
-        this.Allocations = globals ?? []
-        this.init()
-    }
+function _initRuntime() {
+    runtimeEnviromentFiles.forEach(runtime => {
+        if (!_envLoad) {
+            const fromPath = path.resolve(process.cwd(), `./${runtime}`)
+            if (fs.existsSync(fromPath)) {
+                proyectRuntimePath = fromPath
+                try {
+                    const parsed = JSON.parse(fs.readFileSync(fromPath))
+                    proyectRuntime = parsed
+                    _envLoad = true
+                } catch (error) {
+                    console.log(error)
+                    // failed to load this runtime
+                }
+            }
+        }
+    })
 
-    init() {
-        if (Array.isArray(this.Allocations)) {
-            this.Allocations.forEach((_global) => {
-               this.allocate(_global)
+    if (proyectRuntime["version"]) {
+        try {
+            versionsTypes.forEach((type) => {
+                currentVersion[type] = null
             })
+
+            objectToArrayMap(getVersion().split('.')).forEach((entry) => {
+                let entryValue = null
+
+                if (isNaN(Number(entry.value))) {
+                    entryValue = entry.value
+                } else {
+                    entryValue = Number(entry.value)
+                }
+
+                if (entryValue != null) {
+                    currentVersion[versionsTypes[entry.key]] = entryValue
+                }
+            })
+
+        } catch (error) {
+            verbosity.log("🆘 Failed trying load nodecore runtime environment version")
+            verbosity.log(error)
         }
-    }
-    
-    allocate(name, payload) {
-        if (global[name] != null) {
-            return true
-        }
-        return global[name] = payload ?? {}
     }
 }
-
-export const RuntimeGlobals = new Globals(["nodecore_cli", "nodecore"])
-
-syncEnvs.forEach(runtime => {
-    if (!_envDone) {
-        const fromPath = path.resolve(process.cwd(), `./${runtime}`)
-        if (fs.existsSync(fromPath)) {
-            proyectRuntimePath = fromPath
-            try {
-                const parsed = JSON.parse(fs.readFileSync(fromPath))
-                proyectRuntime = parsed
-                _envDone = true
-            } catch (error) {
-                console.log(error)
-                // failed to load this runtime
-            }
-        }
-    }
-})
-
-if (proyectRuntime["version"]) {
-    try {
-        versionsTypes.forEach((type) => {
-            currentVersion[type] = null
-        })
-
-        objectToArrayMap(getVersion().split('.')).forEach((entry) => {
-            let entryValue = null
-
-            if (isNaN(Number(entry.value))) {
-                entryValue = entry.value
-            } else {
-                entryValue = Number(entry.value)
-            }
-
-            if (entryValue != null) {
-                currentVersion[versionsTypes[entry.key]] = entryValue
-            }
-        })
-
-    } catch (error) {
-        verbosity.log("🆘 Failed trying load nodecore runtime environment version")
-        verbosity.log(error)
-    }
-}
-
-
 
 //  Nodecore Libraries
 
@@ -153,16 +130,23 @@ export function getGit() {
 }
 
 /**
- * Get all packages name from current proyect
+ * Get all packages from current proyect
  * @function getPackages 
+ * @param {boolean} [params.fullPath = false] Return array with full path to packages
  * @returns {object}
  */
-export function getPackages() {
+export function getPackages(params) {
     const packagesDir = path.resolve(process.cwd(), './packages')
     if (fs.existsSync(packagesDir)) {
-        return fs.readdirSync(packagesDir).filter(
+        let pkgs = fs.readdirSync(packagesDir).filter(
             (pkg) => pkg.charAt(0) !== '.',
         )
+        if (params?.fullPath ?? false) {
+            pkgs = pkgs.map((pkg) => {
+                return pkg = path.resolve(packagesDir, pkg)
+            })
+        }
+        return pkgs
     }
     return false
 }
@@ -230,7 +214,7 @@ export function isDependencyInstalled(name) {
 
 // TODO: modifyRuntimeEnv
 export function modifyRuntimeEnv(mutation) {
-    
+
 }
 
 /**
@@ -375,4 +359,5 @@ function rewriteRuntimeEnv() {
     return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
 }
 
+_initRuntime()
 export default proyectRuntime
