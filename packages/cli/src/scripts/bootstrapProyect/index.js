@@ -21,7 +21,7 @@ export default async (params) => {
       }
 
       pkgs.forEach((packageName) => {
-        const name = `@${opt.headPackage}/${packageName}`
+        const name = `${opt.headPackage ? `@${opt.headPackage}/` : ''}${packageName}`
         const pkgPath = path.resolve(process.cwd(), `./packages/${packageName}`)
 
         const readmePath = path.resolve(pkgPath, `./README.md`)
@@ -43,7 +43,7 @@ export default async (params) => {
 
           if (!pkgJSONExists) {
             json.version = version
-            json.files = ['dist', 'src']
+            json.files = ['dist', 'load.module.js']
           }
 
           if (opt.originGit) {
