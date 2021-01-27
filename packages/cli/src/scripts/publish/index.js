@@ -27,8 +27,8 @@ export async function publishProyect(args) {
         skipStatus: false,
         skipBuild: false,
         skipSyncVersion: false,
-        publishNpm: false,
-        publishGithub: false,
+        npm: false,
+        github: false,
         preRelease: false,
         next: false,
         minor: false,
@@ -73,7 +73,7 @@ export async function publishProyect(args) {
             title: "📢 Publishing",
             task: () => {
                 return new Observable((observer) => {
-                    if (config.publishNpm) {
+                    if (config.npm) {
                         if (!Array.isArray(proyectPackages) && isProyect) {
                             proyectPackages = ["_Proyect"]
                         }
@@ -96,7 +96,7 @@ export async function publishProyect(args) {
                         })
                     }
 
-                    if (config.publishGithub) {
+                    if (config.github) {
                         execa.sync('git', ['commit', '--all', '--message', releaseTag])
                         execa.sync('git', ['tag', releaseTag])
                         execa.sync('git', ['push', 'origin', 'master', '--tags'])
