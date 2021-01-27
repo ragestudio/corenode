@@ -12,7 +12,6 @@ import { getChangelogs } from '../utils/getChangelogs'
 // TODO: Support for release nodecore modules to Relic services
 
 
-// TODO: Auto throwback when crash
 const rootPackageJSONPath = path.resolve(process.cwd(), './package.json')
 
 function printErrorAndExit(message) {
@@ -80,7 +79,6 @@ export async function releaseProyect(args) {
 
         // Bump version
         bumpVersion(["patch"], true)
-
         if (opts.minor) {
             bumpVersion(["minor"], true)
         }

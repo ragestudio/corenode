@@ -117,18 +117,7 @@ let commandMap = [
     {
         command: 'publish',
         description: "Publish this current proyect",
-        exec: (argv) => {
-            publishProyect({
-                minor: argv.minor ?? false,
-                next: argv.next ?? false,
-                nodecoreModule: argv.module ?? false,
-                publishNpm: argv.npm ?? false,
-                preRelease: argv.preRelease ?? false,
-                skipGitStatusCheck: argv.skipGit ?? false,
-                publishOnly: argv.publishOnly ?? false,
-                skipBuild: argv.skipBuild ?? false
-            })
-        }
+        exec: (argv) => publishProyect(argv)
     },
     {
         command: 'build',
