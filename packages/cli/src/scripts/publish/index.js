@@ -70,9 +70,9 @@ export function publishProyect(args) {
         publish: {
             title: "📢 Publishing",
             task: async () => {
-                let changelogNotes = await getChangelogs(proyectGit, releaseTag)
                 const releaseTag = `v${currentVersion}`
-
+                let changelogNotes = await getChangelogs(proyectGit, releaseTag)
+                
                 return new Observable((observer) => {
                     if (config.npm) {
                         if (!Array.isArray(proyectPackages) && isProyect) {
