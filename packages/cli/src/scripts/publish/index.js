@@ -28,19 +28,16 @@ export async function publishProyect(args) {
         skipBuild: false,
         skipSyncVersion: false,
         publishNpm: false,
-        publishGithub: true,
+        publishGithub: false,
         preRelease: false,
         next: false,
         minor: false,
         nodecoreModule: false,
     }
 
-    
     if (typeof (args) !== "undefined") {
         config = { ...config, ...args }
     }
-    
-    console.log(config, args)
 
     let tasks = {
         checkGit: {
