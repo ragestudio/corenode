@@ -35,11 +35,12 @@ export async function publishProyect(args) {
         nodecoreModule: false,
     }
 
-    console.log(config, args)
-
+    
     if (typeof (args) !== "undefined") {
         config = { ...config, ...args }
     }
+    
+    console.log(config, args)
 
     let tasks = {
         checkGit: {
