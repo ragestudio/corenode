@@ -1,5 +1,5 @@
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
-import { installCore, releaseProyect, bootstrapProyect } from './scripts'
+import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import buildProyect from '@nodecorejs/builder'
@@ -118,7 +118,7 @@ let commandMap = [
         command: 'publish',
         description: "Publish this current proyect",
         exec: (argv) => {
-            releaseProyect({
+            publishProyect({
                 minor: argv.minor ?? false,
                 next: argv.next ?? false,
                 nodecoreModule: argv.module ?? false,

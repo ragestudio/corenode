@@ -51,6 +51,10 @@ export async function publishProyect(args) {
 
     ]
 
+    if (condition) {
+        
+    }
+
     const list = new Listr(tasks, { collapse: false })
     list.run()
         .then((response) => {

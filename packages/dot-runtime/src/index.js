@@ -43,11 +43,16 @@ function _initRuntime() {
 
     if (proyectRuntime["version"]) {
         try {
+            const parsedVersion = getVersion()
+            if (typeof(parsedVersion) !== "string") {
+                throw new Error(`Invalid version type > recived > ${typeof(parsedVersion)}`)
+            }
+
             versionsTypes.forEach((type) => {
                 currentVersion[type] = null
             })
 
-            objectToArrayMap(getVersion().split('.')).forEach((entry) => {
+            objectToArrayMap(parsedVersion.split('.')).forEach((entry) => {
                 let entryValue = null
 
                 if (isNaN(Number(entry.value))) {
@@ -62,8 +67,7 @@ function _initRuntime() {
             })
 
         } catch (error) {
-            verbosity.log("🆘 Failed trying load nodecore runtime environment version")
-            verbosity.log(error)
+            verbosity.error("🆘 Failed to load current version >", error.message)
         }
     }
 }
@@ -79,7 +83,7 @@ function _initRuntime() {
 export function getVersion(engine) {
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
-        const pkgProyect = fs.existsSync(pkgProyect) ? require(pkgProyect) : {}
+        const pkgProyect = fs.existsSync(proyectPkgPath) ? require(proyectPkgPath) : {}
 
         if (engine && typeof (pkgEngine["version"]) !== "undefined") {
             return pkgEngine["version"]
@@ -94,8 +98,9 @@ export function getVersion(engine) {
         }
     } catch (error) {
         // terrible
+        return false
     }
-    return "0.16.3"
+    return false
 }
 
 /**
