@@ -14,15 +14,13 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 import { getChangelogs } from '../utils/getChangelogs'
 import buildProyect from '@nodecorejs/builder'
 
-export async function publishProyect(args) {
+export function publishProyect(args) {
     let proyectPackages = getPackages()
     let currentVersion = getVersion()
 
-    const releaseTag = `v${currentVersion}`
     const proyectGit = getGit()
     const isProyect = isProyectMode()
 
-    let changelogNotes = await getChangelogs(proyectGit, releaseTag)
     let config = {
         skipStatus: false,
         skipBuild: false,
@@ -61,9 +59,9 @@ export async function publishProyect(args) {
         syncVersions: {
             title: "🔄 Syncing versions",
             task: () => {
-                bumpVersion(["patch"], true)
+                bumpVersion(["patch"], true, { silent: true })
                 if (config.minor) {
-                    bumpVersion(["minor"], true)
+                    bumpVersion(["minor"], true, { silent: true })
                 }
                 syncAllPackagesVersions()
                 currentVersion = getVersion()
@@ -71,7 +69,10 @@ export async function publishProyect(args) {
         },
         publish: {
             title: "📢 Publishing",
-            task: () => {
+            task: async () => {
+                let changelogNotes = await getChangelogs(proyectGit, releaseTag)
+                const releaseTag = `v${currentVersion}`
+
                 return new Observable((observer) => {
                     if (config.npm) {
                         if (!Array.isArray(proyectPackages) && isProyect) {

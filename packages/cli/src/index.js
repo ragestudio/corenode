@@ -132,6 +132,7 @@ let commandMap = [
         command: 'sync [package]',
         description: "Sync proyect versions",
         exec: (argv) => {
+            console.log(`🔄 Syncing versions...`)
             if (!argv.package) {
                 return syncAllPackagesVersions()
             }

@@ -272,9 +272,10 @@ export function versionToString(version) {
  * Bumps current version of the current proyect
  * @function bumpVersion 
  * @param {array} params "major", "minor", "patch"
+ * @param {array} silent Suppres console
  * @param {boolean} [save = false] Force to save updated version to currect proyect
  */
-export function bumpVersion(params, save) {
+export function bumpVersion(params, save, options) {
     if (!params) {
         return false
     }
@@ -313,9 +314,9 @@ export function bumpVersion(params, save) {
     let before = getVersion()
     let after = versionToString(currentVersion)
 
-    console.log(`\n🏷 New version ${before} > ${after}`)
+    options?.silent ? null : console.log(`\n🏷 New version ${before} > ${after}`)
     if (save) {
-        console.log(`✅ Version updated & saved`)
+        options?.silent ? null : console.log(`✅ Version updated & saved`)
         proyectRuntime.version = after
         return rewriteRuntimeEnv()
     }
@@ -364,15 +365,15 @@ export function syncAllPackagesVersions() {
     pkgs.forEach((pkg) => {
         try {
             syncPackageVersionFromName(pkg, true)
-            verbosity.log(`[${pkg}] ✅ New version synchronized`)
+            // dumpLog verbosity.log(`[${pkg}] ✅ New version synchronized`)
         } catch (error) {
-            verbosity.log(`[${pkg}] ❌ Error syncing ! > ${error}`)
+            // dumpLog verbosity.log(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
     })
 }
 
 function rewriteRuntimeEnv() {
-    verbosity.log(`Rewrited runtime env > ${proyectRuntimePath}`)
+    // dumpLog verbosity.log(`Rewrited runtime env > ${proyectRuntimePath}`)
     return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
 }
 
