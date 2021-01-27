@@ -6,7 +6,8 @@
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
-import { objectToArrayMap, verbosity, readRootDirectorySync } from '@nodecorejs/utils'
+let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@nodecorejs/utils')
+verbosity = verbosity.options({ method: "[RUNTIME]" })
 import { Globals } from './classes'
 
 let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
@@ -44,8 +45,8 @@ function _initRuntime() {
     if (proyectRuntime["version"]) {
         try {
             const parsedVersion = getVersion()
-            if (typeof(parsedVersion) !== "string") {
-                throw new Error(`Invalid version type > recived > ${typeof(parsedVersion)}`)
+            if (typeof (parsedVersion) !== "string") {
+                throw new Error(`Invalid version type > recived > ${typeof (parsedVersion)}`)
             }
 
             versionsTypes.forEach((type) => {

@@ -78,18 +78,7 @@ let commandMap = [
     },
     {
         command: 'version',
-        description: "Show current build version or update/bump version",
-        args: (yargs) => {
-            yargs.positional('bump-minor', {
-                describe: 'Bump version'
-            }),
-                yargs.positional('bump-mayor', {
-                    describe: 'Bump version'
-                }),
-                yargs.positional('bump-patch', {
-                    describe: 'Bump version'
-                })
-        },
+        description: "Manage global proyect version",
         exec: (argv) => {
             let bumps = []
             const discriminators = ["bump-mayor", "bump-minor", "bump-patch"]
@@ -107,7 +96,7 @@ let commandMap = [
                 bumpVersion(bumps, argv.save)
             } else {
                 if (argv.engine) {
-                    return console.log(`⚙️  NodecoreJS v${getVersion(true)}${isLocalMode() ? "@local" : ""}`)
+                    return console.log(`⚙️  NodecoreJS™️ v${getVersion(true)}${isLocalMode() ? "@local" : ""}`)
                 }
                 const proyectPkg = getRootPackage()
                 console.log(`🏷  ${proyectPkg.name ?? ""} v${getVersion(argv.engine)}`)
@@ -121,7 +110,7 @@ let commandMap = [
     },
     {
         command: 'build',
-        description: "Build this current development proyect with nodecore/builder",
+        description: "Build proyect with built in builder",
         exec: (argv) => {
             console.log(`🔄 Building...`)
             buildProyect({
@@ -132,10 +121,10 @@ let commandMap = [
     },
     {
         command: 'bootstrap',
-        description: "Run bootstraper for this current development proyect",
+        description: "Bootstrap all packages for this proyect (proyectMode)",
         exec: (argv) => {
             bootstrapProyect(argv).then((res) => {
-                console.log(`\n✅ DONE\nAll modules bootstraped > ${res}\n`)
+                console.log(`\n✅ DONE\nAll packages bootstraped > ${res}\n`)
             })
         }
     },
@@ -151,10 +140,10 @@ let commandMap = [
     },
     {
         command: 'changelogs',
-        description: "Print changelogs from this proyect",
+        description: "Show the changelogs notes of this proyect",
         exec: async (argv) => {
             const changes = await getChangelogs(getGit(), argv.from)
-            console.log(`\n`, changes(''))
+            console.log(changes)
         }
     }
 ]
