@@ -63,8 +63,8 @@ export function transform(opts = {}) {
   }).code
 }
 
-export function build(dir, opts) {
-  let options = { // Define default options
+export function build(dir, opts, callback) {
+  let options = {
     buildBuilder: false,
     cwd: cwd,
     silent: false,
@@ -83,8 +83,8 @@ export function build(dir, opts) {
   const srcDir = join(dir, options.buildSrc)
 
   if (pkg.name == require(resolve(__dirname, '../package.json')).name) {
-    if (!options.buildBuilder && !options.silent) {
-      console.log(`⚠️ Avoiding build the builder source!`)
+    if (!options.buildBuilder) {
+      options.silent ? null : console.log(`⚠️ Avoiding build the builder source!`)
       return false
     }
   }
@@ -122,27 +122,26 @@ export function build(dir, opts) {
 
   const stream = createStream(join(srcDir, '**/*'))
   stream.on('end', () => {
-    pkgCount -= 1
-
-    if (pkgCount === 0 && process.send) {
-      process.send('BUILD_COMPLETE')
-    }
+    return callback(true)
   })
 }
 
 export function buildProyect(opts) {
-  const packagesPath = join(cwd, 'packages')
-  
-  if (existsSync(packagesPath)) {
-    const dirs = readdirSync(join(cwd, 'packages')).filter(dir => dir.charAt(0) !== '.')
-    pkgCount = dirs.length
-    dirs.forEach(pkg => {
-      build(`./packages/${pkg}`, { cwd, ...opts })
+  return new Promise((resolve, reject) => {
+    const packagesPath = join(cwd, 'packages')
+    let dirs = existsSync(packagesPath) ? readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ['./']
+    let count = 0
+
+    dirs.forEach((pkg) => {
+      const packageDir = `./packages/${pkg}`
+      build(packageDir, { cwd, ...opts }, done => {
+        count++
+        if (dirs.length == count) {
+          resolve(true)
+        }
+      })
     })
-  } else {
-    pkgCount = 1
-    build('./', { cwd, ...opts })
-  }
+  })
 }
 
 export default buildProyect

@@ -53,7 +53,11 @@ export function publishProyect(args) {
         buildProyect: {
             title: "📦 Building proyect",
             task: () => {
-                buildProyect({ silent: true })
+                return new Promise((resolve, reject) => {
+                    buildProyect({ silent: true }).then(done => {
+                        resolve(true)
+                    })
+                })
             }
         },
         syncVersions: {
@@ -68,12 +72,12 @@ export function publishProyect(args) {
         },
         publish: {
             title: "📢 Publishing",
-            task: async () => {
+            task: () => {
                 let changelogNotes = ""
                 const releaseTag = `v${getVersion()}`
 
                 try {
-                    changelogNotes = await getChangelogs(proyectGit, `v${beforeVersion}`)
+                    changelogNotes = getChangelogs(proyectGit, `v${beforeVersion}`)
                 } catch (error) {
                     // really terrible
                 }
@@ -137,7 +141,9 @@ export function publishProyect(args) {
         delete tasks["syncVersions"]
     }
 
-    new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false }).run()
+    const list = new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false })
+
+    list.run()
         .then((response) => {
             console.log(`✅ Publish done`)
         })
