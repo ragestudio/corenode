@@ -1,5 +1,2 @@
 #!/usr/bin/env node
-
-import _ from './index'
-
-_()
+require("./legacy").default()
