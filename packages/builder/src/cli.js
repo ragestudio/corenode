@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-import _ from './legacy'
+import _ from './index'
 
 _()
