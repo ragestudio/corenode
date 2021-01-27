@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-require("./legacy").default()
+import _ from './legacy'
+
+_()

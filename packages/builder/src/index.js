@@ -1,4 +1,4 @@
-import babel from '@babel/core'
+const babel = require('@babel/core')
 import process from 'process'
 import { join, extname, sep, resolve } from 'path'
 import { existsSync, readdirSync } from 'fs'
