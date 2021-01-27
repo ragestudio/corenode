@@ -1,6 +1,6 @@
 {
   "name": "@ragestudio/nodecorejs",
-  "version": "0.16.3",
+  "version": "0.16.4",
   "main": "./cli/nodecore.js",
   "types": "types.d.ts",
   "files": [
@@ -22,10 +22,10 @@
     "nodecore": "./cli/nodecore.js"
   },
   "dependencies": {
-    "@nodecorejs/modules": "0.16.3",
-    "@nodecorejs/builder": "0.16.3",
-    "@nodecorejs/cli": "0.16.3",
-    "@nodecorejs/dot-runtime": "0.16.3",
-    "@nodecorejs/utils": "0.16.3"
+    "@nodecorejs/modules": "0.16.4",
+    "@nodecorejs/builder": "0.16.4",
+    "@nodecorejs/cli": "0.16.4",
+    "@nodecorejs/dot-runtime": "0.16.4",
+    "@nodecorejs/utils": "0.16.4"
   }
 }
