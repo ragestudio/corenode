@@ -35,6 +35,8 @@ export async function publishProyect(args) {
         nodecoreModule: false,
     }
 
+    console.log(config)
+    
     if (typeof (args) !== "undefined") {
         config = { ...config, ...args }
     }
