@@ -1,13 +1,13 @@
 import { htmlEscape } from 'escape-goat'
-import git from '../git'
+import * as git from '../git'
 
-export async function getChangelogs(url, from) {
+export function getChangelogs(url, to, from) {
     if (!url) {
         throw new Error(`Please provide an git url`)
     }
 
-    const lastest = await git.latestTagOrFirstCommit()
-    const log = await git.commitLogFromRevision(from ?? lastest)
+    const lastest = git.latestTagOrFirstCommit()
+    const log = git.commitLogBetweenTags((from ?? lastest), to)
 
     if (!log) {
         throw new Error(`Get changelog failed, no new commits was found.`)

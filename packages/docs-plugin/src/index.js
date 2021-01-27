@@ -134,7 +134,7 @@ export function generateDocs(params) {
         })
     }
 
-    if (!pkgs.length > 0) {
+    if (pkgs.length <= 0) {
         pkgs.push(opts.source)
     }
 

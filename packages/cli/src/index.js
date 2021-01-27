@@ -143,7 +143,7 @@ let commandMap = [
         command: 'changelogs',
         description: "Show the changelogs notes of this proyect",
         exec: async (argv) => {
-            const changes = await getChangelogs(getGit(), argv.from)
+            const changes = await getChangelogs(getGit(), argv.to, argv.from)
             console.log(changes)
         }
     }

@@ -16,7 +16,7 @@ import buildProyect from '@nodecorejs/builder'
 
 export function publishProyect(args) {
     let proyectPackages = getPackages()
-    let currentVersion = getVersion()
+    let beforeVersion = getVersion()
 
     const proyectGit = getGit()
     const isProyect = isProyectMode()
@@ -64,15 +64,20 @@ export function publishProyect(args) {
                     bumpVersion(["minor"], true, { silent: true })
                 }
                 syncAllPackagesVersions()
-                currentVersion = getVersion()
             }
         },
         publish: {
             title: "📢 Publishing",
             task: async () => {
-                const releaseTag = `v${currentVersion}`
-                let changelogNotes = await getChangelogs(proyectGit, releaseTag)
-                
+                let changelogNotes = ""
+                const releaseTag = `v${getVersion()}`
+
+                try {
+                    changelogNotes = await getChangelogs(proyectGit, `v${beforeVersion}`)
+                } catch (error) {
+                    // really terrible
+                }
+
                 return new Observable((observer) => {
                     if (config.npm) {
                         if (!Array.isArray(proyectPackages) && isProyect) {
