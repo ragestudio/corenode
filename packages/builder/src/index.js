@@ -134,9 +134,9 @@ export function buildProyect(opts) {
 
     dirs.forEach((pkg) => {
       const packageDir = `./packages/${pkg}`
-      build(packageDir, { cwd, ...opts }, done => {
+      build(packageDir, { cwd, ...opts }, (done) => {
         count++
-        if (dirs.length == count) {
+        if (dirs.length == (count + 1)) {
           resolve(true)
         }
       })
