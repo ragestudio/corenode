@@ -4,21 +4,27 @@ const path = require("path")
 const process = require("process")
 
 const nodecoreLocalFile = path.resolve(__dirname, '../../../.local')
-const cliDist = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
+const isLocalMode = fs.existsSync(nodecoreLocalFile)
+
+const prodBin = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
+const localBin = `${process.cwd()}/packages/cli/dist`
+
+let targetBin = prodBin
+
+if (isLocalMode){
+    if (!fs.existsSync(localBin)) {
+       return false
+    }
+    targetBin = localBin
+} else {
+    targetBin = prodBin
+}  
 
 try {
-    if (fs.existsSync(nodecoreLocalFile)){
-        return require(`${process.cwd()}/packages/cli/dist`)
+    if (!fs.existsSync(targetBin)) {
+        throw new Error(`${isLocalMode? "[LOCALBIN]" : ""} CLI Script not exists > Should : [${targetBin}]`)
     }
-    if (!fs.existsSync(cliDist)) {
-        throw new Error(`CLI Script not found!`)
-    }
-    require(cliDist)
-} catch (e) {
-    try {
-        require(`${process.cwd()}/node_modules/@nodecorejs/cli/dist`)
-    } catch (error) {
-        console.log(`❌ Failed Nodecore runtime`)
-        console.log(e)
-    }
+    require(targetBin)
+} catch (error) {
+    console.log(`❌ Critical error > ${error.message}`)
 }
