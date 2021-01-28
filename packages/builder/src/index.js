@@ -11,8 +11,6 @@ import { getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
 
 const cwd = process.cwd()
 
-let pkgCount = null
-
 function getBabelConfig() {
   let config = {
     presets: [
