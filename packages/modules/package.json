@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/modules",
-  "version": "0.16.7",
+  "version": "0.16.8",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -16,9 +16,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nodecorejs/dot-runtime": "0.16.7",
-    "@nodecorejs/log": "0.16.7",
-    "@nodecorejs/utils": "0.16.7",
+    "@nodecorejs/dot-runtime": "0.16.8",
+    "@nodecorejs/log": "0.16.8",
+    "@nodecorejs/utils": "0.16.8",
     "rimraf": "^3.0.2"
   }
 }
