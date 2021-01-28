@@ -96,11 +96,12 @@ let commandMap = [
             if (bumps.length > 0) {
                 bumpVersion(bumps, argv.save)
             } else {
+                const fetchedVersion = getVersion(argv.engine)
                 if (argv.engine) {
-                    return console.log(`⚙️  NodecoreJS™️ v${getVersion(true)}${isLocalMode() ? "@local" : ""}`)
+                    return console.log(`⚙️  NodecoreJS™️  v${fetchedVersion}${isLocalMode() ? "@local" : ""}`)
                 }
                 const proyectPkg = getRootPackage()
-                console.log(`🏷  ${proyectPkg.name ?? ""} v${getVersion(argv.engine)}`)
+                fetchedVersion ? console.log(`🏷  ${proyectPkg.name ?? ""} v${fetchedVersion}`) : console.log("🏷  Version not available")
             }
         }
     },

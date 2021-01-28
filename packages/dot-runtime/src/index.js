@@ -186,7 +186,16 @@ export function getRootPackage() {
  * @returns {boolean}
  */
 export function isLocalMode() {
-    return fs.existsSync(path.resolve(process.cwd(), './.local'))
+    return fs.existsSync(path.resolve(process.cwd(), './.local')) && process.env.LOCAL_BIN
+}
+
+/**
+ * Check if the current proyect is on development mode
+ * @function isLocalMode 
+ * @returns {boolean}
+ */
+export function isDevMode() {
+    return fs.existsSync(path.resolve(process.cwd(), './.dev'))
 }
 
 /**
@@ -209,14 +218,6 @@ export function isProyectMode(dir) {
     return false
 }
 
-/**
- * Check if the current proyect is on development mode
- * @function isLocalMode 
- * @returns {boolean}
- */
-export function isDevMode() {
-    return fs.existsSync(path.resolve(process.cwd(), './.dev'))
-}
 
 /**
  * Check if an dependecy is installed on current proyect
