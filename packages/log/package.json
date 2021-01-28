@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/log",
-  "version": "0.16.5",
+  "version": "0.16.6",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nodecorejs/dot-runtime": "0.16.5",
+    "@nodecorejs/dot-runtime": "0.16.6",
     "log4js": "^6.3.0"
   }
 }
