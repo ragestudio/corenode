@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/utils",
-  "version": "0.16.6",
+  "version": "0.16.7",
   "main": "dist/index.js",
   "files": [
     "dist"
