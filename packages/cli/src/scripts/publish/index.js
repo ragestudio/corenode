@@ -87,6 +87,8 @@ export function publishProyect(args) {
                         // really terrible
                     }
 
+                    console.log(changelogNotes)
+
                     return new Observable((observer) => {
                         if (config.npm) {
                             if (!Array.isArray(proyectPackages) && isProyect) {
@@ -118,7 +120,7 @@ export function publishProyect(args) {
 
                             const githubReleaseUrl = newGithubReleaseUrl({
                                 repoUrl: proyectGit,
-                                releaseTag,
+                                tag: releaseTag,
                                 body: changelogNotes,
                                 isPrerelease: config.preRelease,
                             })
