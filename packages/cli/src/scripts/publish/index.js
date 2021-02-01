@@ -38,6 +38,72 @@ export function publishProyect(args) {
             config = { ...config, ...args }
         }
 
+        let publishTasks = [
+            {
+                title: "Publish on NPM",
+                enabled: () => config.npm === true,
+                task: () => {
+                    return new Observable((observer) => {
+                        if (!Array.isArray(proyectPackages) && isProyect) {
+                            proyectPackages = ["_Proyect"]
+                        }
+
+                        proyectPackages.forEach((pkg, index) => {
+                            const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
+                            const { name } = require(path.join(packagePath, 'package.json'))
+
+                            observer.next(`[${index + 1}/${proyectPackages.length}] Publish package ${name}`)
+
+                            const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
+                            try {
+                                execa.sync('npm', cliArgs, {
+                                    cwd: packagePath,
+                                })
+                                observer.next(`✅ Published > ${name}`)
+                            } catch (error) {
+                                observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
+                            }
+                        })
+                    })
+                }
+            },
+            {
+                title: 'Publish on Github',
+                enabled: () => config.github === true,
+                task: () => {
+                    return new Observable((observer) => {
+                        let changelogNotes = ""
+                        const releaseTag = `v${getVersion()}`
+
+                        try {
+                            changelogNotes = getChangelogs(proyectGit)
+                        } catch (error) {
+                            verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
+                            // really terrible
+                        }
+
+                        execa.sync('git', ['commit', '--all', '--message', releaseTag])
+                        execa.sync('git', ['tag', releaseTag])
+                        execa.sync('git', ['push', 'origin', 'master', '--tags'])
+
+                        const githubReleaseUrl = newGithubReleaseUrl({
+                            repoUrl: proyectGit,
+                            tag: releaseTag,
+                            body: changelogNotes,
+                            isPrerelease: config.preRelease,
+                        })
+                        try {
+                            open(githubReleaseUrl)
+                        } catch (error) {
+                            // terrible
+                        }
+                        observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
+                    })
+                }
+
+            }
+        ]
+
         let tasks = {
             checkGit: {
                 title: "📝 Checking git status",
@@ -81,71 +147,15 @@ export function publishProyect(args) {
             publish: {
                 title: "📢 Publishing",
                 task: () => {
-                    return new Listr([
-                        {
-                            title: "Publish on NPM",
-                            enabled: () => config.npm === true,
-                            task: () => {
-                                return new Observable((observer) => {
-                                    if (!Array.isArray(proyectPackages) && isProyect) {
-                                        proyectPackages = ["_Proyect"]
-                                    }
-
-                                    proyectPackages.forEach((pkg, index) => {
-                                        const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
-                                        const { name } = require(path.join(packagePath, 'package.json'))
-
-                                        observer.next(`[${index + 1}/${proyectPackages.length}] Publish package ${name}`)
-
-                                        const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-                                        try {
-                                            execa.sync('npm', cliArgs, {
-                                                cwd: packagePath,
-                                            })
-                                            observer.next(`✅ Published > ${name}`)
-                                        } catch (error) {
-                                            observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
-                                        }
-                                    })
-                                })
-                            }
-                        },
-                        {
-                            title: 'Publish on Github',
-                            enabled: () => config.github === true,
-                            task: () => {
-                                return new Observable((observer) => {
-                                    let changelogNotes = ""
-                                    const releaseTag = `v${getVersion()}`
-
-                                    try {
-                                        changelogNotes = getChangelogs(proyectGit)
-                                    } catch (error) {
-                                        verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
-                                        // really terrible
-                                    }
-
-                                    execa.sync('git', ['commit', '--all', '--message', releaseTag])
-                                    execa.sync('git', ['tag', releaseTag])
-                                    execa.sync('git', ['push', 'origin', 'master', '--tags'])
-
-                                    const githubReleaseUrl = newGithubReleaseUrl({
-                                        repoUrl: proyectGit,
-                                        tag: releaseTag,
-                                        body: changelogNotes,
-                                        isPrerelease: config.preRelease,
-                                    })
-                                    try {
-                                        open(githubReleaseUrl)
-                                    } catch (error) {
-                                        // terrible
-                                    }
-                                    observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
-                                })
-                            }
-
-                        }
-                    ], { concurrent: false })
+                    return new Promise((resolve, reject) => {
+                        new Listr(publishTasks, { collapse: false, concurrent: false }).run()
+                            .then((done) => {
+                                resolve(true)
+                            })
+                            .catch((err) => {
+                                reject(err)
+                            })
+                    })
                 }
             },
         }
