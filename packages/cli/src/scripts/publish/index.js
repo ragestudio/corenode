@@ -147,7 +147,7 @@ export function publishProyect(args) {
             delete tasks["syncVersions"]
         }
 
-        new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false, concurrent: true }).run()
+        new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false, concurrent: false }).run()
             .then((response) => {
                 console.log(`✅ Publish done`)
                 return resolve(true)

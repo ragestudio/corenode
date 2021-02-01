@@ -18,7 +18,7 @@ import { downloadWithPipe } from '../utils'
 const runtimeEnv = getRuntimeEnv()
 const remoteModulesSource = runtimeEnv.remoteModulesSource ?? fallbackRemoteModulesSource
 
-export async function installModule(params) {
+export function installModule(params) {
     const { pkg, version = "lastest" } = params
 
     if (!pkg) {
@@ -39,11 +39,13 @@ export async function installModule(params) {
         {
             title: '📡 Checking remote',
             task: () => {
+                verbosity.dump("checking remote")
                 return new Promise((resolve, reject) => {
                     fetch(moduleURI).then(done => {
-                        resolve(true)
+                        return resolve(true)
                     }).catch((err) => {
-                        reject(err.message)
+                        verbosity.options({ dumpFile: 'only' }).error(err)
+                        return reject(err.message)
                     })
                 })
             }
@@ -52,10 +54,12 @@ export async function installModule(params) {
             title: '🚚 Fetching module',
             task: () => {
                 // TODO: 404 handle & uri pre check status
+                verbosity.dump("Fetching module")
                 return new Promise((resolve, reject) => {
                     downloadWithPipe(moduleURI, moduleFilename, downloadPath).then(done => {
                         return resolve()
                     }).catch((err) => {
+                        verbosity.options({ dumpFile: 'only' }).error(err)
                         return reject(`Failed downloading module`)
                     })
                 })
@@ -64,9 +68,9 @@ export async function installModule(params) {
         {
             title: '🔩 Processing module',
             task: () => {
+                verbosity.dump("Processing module")
                 return new Promise((resolve, reject) => {
                     const _module = require(moduleFile)
-
                     writeModule(_module.pkg, null, fs.readFileSync(moduleFile, moduleCodec)).then(async (modulePath) => {
                         if (_module.requireCore) {
                             try {
@@ -91,14 +95,14 @@ export async function installModule(params) {
                         if (_module.node_modules) {
                             if (Boolean(params?.ignoreDeps)) {
                                 verbosity.options({ dumpFile: true }).warn(`Ignoring dependencies installation`)
-                            }else {
+                            } else {
                                 objectToArrayMap(_module.node_modules).forEach((dep) => {
                                     const isInstalled = isDependencyInstalled(dep.key) ? true : false
                                     if (!isInstalled) {
                                         addDependency(dep, true)
                                     }
                                 })
-                            }   
+                            }
                         }
 
                         loadRegistry({ force: true })
@@ -111,14 +115,10 @@ export async function installModule(params) {
         },
     ]
 
-    const list = new Listr(tasks, {
-        collapse: false
+    new Listr(tasks, { collapse: false, concurrent: false }).run().then((res) => {
+        params?.keepTmp ? null : temporalDir.clean()
+        outputResume({ downloadPath, pkg })
     })
-    list.run()
-        .then((res) => {
-            //temporalDir.clean()
-            outputResume({ downloadPath, pkg })
-        })
         .catch((err) => {
             verbosity.options({ dumpFile: true }).error(`Failed installation Task >`, err)
         })
