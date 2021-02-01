@@ -40,7 +40,7 @@ export function publishProyect(args) {
 
         let publishTasks = [
             {
-                title: "Publish on NPM",
+                title: "📢  Publish on NPM",
                 enabled: () => config.npm === true,
                 task: () => {
                     return new Observable((observer) => {
@@ -56,7 +56,7 @@ export function publishProyect(args) {
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
                             try {
-                                execa.sync('npm', cliArgs, {
+                                execa('npm', cliArgs, {
                                     cwd: packagePath,
                                 })
                                 observer.next(`✅ Published > ${name}`)
@@ -68,7 +68,7 @@ export function publishProyect(args) {
                 }
             },
             {
-                title: 'Publish on Github',
+                title: '📢 Publish on Github',
                 enabled: () => config.github === true,
                 task: () => {
                     return new Observable((observer) => {
