@@ -56,7 +56,7 @@ export function publishProyect(args) {
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
                             try {
-                                execa('npm', cliArgs, {
+                                const { stdout } = execa('npm', cliArgs, {
                                     cwd: packagePath,
                                 })
                                 observer.next(`✅ Published > ${name}`)
