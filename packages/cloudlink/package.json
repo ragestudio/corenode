@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cloudlink",
-  "version": "0.16.8",
+  "version": "0.16.9",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -16,8 +16,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nodecorejs/dot-runtime": "0.16.8",
-    "@nodecorejs/utils": "0.16.8",
+    "@nodecorejs/dot-runtime": "0.16.9",
+    "@nodecorejs/utils": "0.16.9",
     "async-mutex": "^0.2.6",
     "axios": "^0.21.1",
     "express": "^4.17.1",
