@@ -13,11 +13,12 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import { getChangelogs } from '../utils/getChangelogs'
 import buildProyect from '@nodecorejs/builder'
+import logDump from '@nodecorejs/log'
 
 export function publishProyect(args) {
     return new Promise((resolve, reject) => {
         let proyectPackages = getPackages()
-        let beforeVersion = getVersion()
+        // let beforeVersion = getVersion()
 
         const proyectGit = getGit()
         const isProyect = isProyectMode()
@@ -78,18 +79,18 @@ export function publishProyect(args) {
             publish: {
                 title: "📢 Publishing",
                 task: () => {
-                    let changelogNotes = ""
-                    const releaseTag = `v${getVersion()}`
-
-                    try {
-                        changelogNotes = getChangelogs(proyectGit, `v${beforeVersion}`)
-                    } catch (error) {
-                        // really terrible
-                    }
-
-                    console.log(changelogNotes)
-
                     return new Observable((observer) => {
+                        let changelogNotes = ""
+                        const releaseTag = `v${getVersion()}`
+    
+                        try {
+                            changelogNotes = getChangelogs(proyectGit)
+                        } catch (error) {
+                            logDump(error)
+                            verbosity.warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
+                            // really terrible
+                        }
+    
                         if (config.npm) {
                             if (!Array.isArray(proyectPackages) && isProyect) {
                                 proyectPackages = ["_Proyect"]
@@ -148,7 +149,7 @@ export function publishProyect(args) {
             delete tasks["syncVersions"]
         }
 
-        new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false }).run()
+        new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false, concurrent: true }).run()
             .then((response) => {
                 console.log(`✅ Publish done`)
                 return resolve(true)
