@@ -9,7 +9,7 @@ const isLocalMode = fs.existsSync(nodecoreLocalFile)
 const prodBin = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
 const localBin = `${process.cwd()}/packages/cli/dist`
 
-let targetBin = prodBin
+let targetBin = null
 
 process.env.LOCAL_BIN = false
 if (isLocalMode) {
