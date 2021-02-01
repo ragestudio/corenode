@@ -28,6 +28,7 @@ const defaultDecoratorOptions = Object.freeze({
     line: false,
     file: false,
     method: true,
+    dumpFile: false,
 })
 const defaultDecoratorData = Object.freeze({
     prefix: null,
@@ -140,13 +141,35 @@ class verbosify {
 export default {
     _options: {},
     _colors: {},
-    output: function (t, o, c, ...context) {
-        let response = new verbosify({ log: { ...context } }, o, c)
-        console[t](...response)
+    output: function (type, options, colors, ...context) {
+        if (options.dumpFile) {
+            try {
+                let dumpLogger = require("@nodecorejs/verbosity-dump-plugin").default
+                dumpLogger({level: type, stack: getStack}).info(...context)
+            } catch (error) {
+                console.log(error)
+                // terrible
+            }
+        }
+
+        if (!options?.dumpFile || options?.dumpFile !== "only") {
+            let response = new verbosify({ log: { ...context } }, options, colors)
+            console[type](...response)
+        }
+
         // force to flush
         this._options = {}
         this._colors = {}
 
+        return this
+    },
+    dump: function (...context) {
+        // only dump (info level), not display to console
+        try {
+            this.output('info', { ...this._options, dumpFile: "only" }, this._colors, ...context)
+        } catch (error) {
+            // woupssi
+        }
         return this
     },
     log: function (...context) {
@@ -179,7 +202,7 @@ export default {
     },
     warn: function (...context) {
         try {
-            this.output('error', {
+            this.output('warn', {
                 ...this._options,
                 prefix: "⚠️  WARN"
             }, {

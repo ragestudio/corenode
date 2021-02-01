@@ -6,8 +6,9 @@ import { existsSync } from 'fs'
 import { mergeConfig } from '@nodecorejs/utils'
 import createDefaultConfig from './createDefaultConfig/createDefaultConfig'
 
-import { verbosity } from '@nodecorejs/utils'
-import dump from '@nodecorejs/log'
+let { verbosity } = require('@nodecorejs/utils')
+verbosity.options({ method: "[TEST]", dumpFile: true })
+
 export * from './utils'
 
 export default async function (args) {

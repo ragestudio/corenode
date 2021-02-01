@@ -17,7 +17,6 @@
   "license": "MIT",
   "dependencies": {
     "@nodecorejs/dot-runtime": "0.16.9",
-    "@nodecorejs/log": "0.16.9",
     "@nodecorejs/utils": "0.16.9",
     "rimraf": "^3.0.2"
   }

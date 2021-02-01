@@ -1,7 +1,6 @@
 import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
 import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
-import { verbosity } from '@nodecorejs/utils'
 
 import buildProyect from '@nodecorejs/builder'
 import cliRuntime from './cliRuntime'
@@ -26,7 +25,7 @@ let commandMap = [
             switch (argv.action) {
                 case ("install"): {
                     const { installModule } = require("./scripts/installModule")
-                    installModule({ pkg: argv.module })
+                    installModule({ pkg: argv.module, ...argv })
                     break
                 }
                 case ("remove"): {

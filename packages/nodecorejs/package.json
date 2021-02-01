@@ -26,6 +26,7 @@
     "@nodecorejs/builder": "0.16.9",
     "@nodecorejs/cli": "0.16.9",
     "@nodecorejs/dot-runtime": "0.16.9",
+    "@nodecorejs/verbosity-dump-plugin": "0.16.9",
     "@nodecorejs/utils": "0.16.9"
   }
 }

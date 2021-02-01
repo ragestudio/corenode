@@ -5,7 +5,12 @@
     "originGit": "https://github.com/ragestudio/nodecore",
     "babel": {
       "retainLines": true,
-      "sourceMap": "both"
+      "sourceMap": true,
+      "inputSourceMap": true,
+      "sourceFileName": "[name].js.map",
+      "ast": true,
+      "minified": true,
+      "compact": true
     },
     "docs": [
       "dot-runtime",

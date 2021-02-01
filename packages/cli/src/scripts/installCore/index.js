@@ -11,8 +11,7 @@ import { Observable } from 'rxjs'
 import execa from 'execa'
 
 import { getRuntimeEnv, addDependency } from '@nodecorejs/dot-runtime'
-import { objectToArrayMap } from '@nodecorejs/utils'
-import logDump from '@nodecorejs/log'
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
 import temporalDir from '../temporalDir'
@@ -86,7 +85,7 @@ function handleInstallCore(params) {
                         observer.next(`Processing paths`)
 
                         if (!fs.existsSync(installPath)) {
-                            logDump(`Creating [installPath] "${installPath}"`)
+                            verbosity.dump(`Creating [installPath] "${installPath}"`)
                             fs.mkdir(installPath, { recursive: true }, e => {
                                 if (e) return rej(console.error(e))
                             })
@@ -120,25 +119,25 @@ function handleInstallCore(params) {
                                 let printStr = `Extracting ${progress.filename ?? 'file ...'}`
 
                                 observer.next(printStr)
-                                logDump(printStr)
+                                verbosity.dump(printStr)
                             })
 
                             unpackStream.on('end', () => {
                                 const perf_extract1 = performance.now()
                                 setTimeout(() => {
-                                    logDump(`Extracted ${fileCount} files in ${(perf_extract1 - perf_extract0).toFixed(2)} ms`)
+                                    verbosity.dump(`Extracted ${fileCount} files in ${(perf_extract1 - perf_extract0).toFixed(2)} ms`)
                                     return observer.complete()
                                 }, 300)
                             })
 
                             unpackStream.on('error', (err) => {
-                                logDump(err)
+                                verbosity.options({ dumpFile: 'only' }).error(err)
                                 return observer.error(err)
                             })
 
                         } else {
                             const err = `File is not available. Failed download?`
-                            logDump(err)
+                            verbosity.options({ dumpFile: 'only' }).warn(err)
                             return observer.error(err)
                         }
                     })
@@ -155,7 +154,7 @@ function handleInstallCore(params) {
                 return resolve(pkgManifest[pkg])
             })
             .catch((err) => {
-                logDump(`error cathed on ${pkg} installation > ${err}`)
+                verbosity.options({ dumpFile: 'only' }).error(`error cathed on ${pkg} installation > ${err}`)
                 spinner.fail(`Error installing pkg (${pkg}) > ${err}`)
                 return reject(err)
             })
@@ -167,20 +166,20 @@ async function handleInstallPackageComponents(manifest) {
         const requires = manifest.require
 
         if (!requires) {
-            logDump(`No required components [${manifest.id}]`)
+            verbosity.options({ dumpFile: 'only' }).log(`No required components [${manifest.id}]`)
             return res()
         }
 
         if (requires.components) {
             asyncDoArray(requires.components, (key, value) => { //lgtm [js/call-to-non-callable]
-                logDump(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
+                verbosity.options({ dumpFile: 'only' }).log(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
                 installCore({ pkg: key })
             })
                 .then(() => {
                     return res()
                 })
                 .catch((err) => {
-                    logDump(err)
+                    verbosity.options({ dumpFile: 'only' }).error(err)
                     return rej(err)
                 })
         }

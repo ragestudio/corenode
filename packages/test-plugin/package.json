@@ -27,7 +27,6 @@
     "@babel/core": "7.12.10",
     "@nodecorejs/dot-runtime": "0.16.9",
     "@nodecorejs/utils": "0.16.9",
-    "@nodecorejs/log": "0.16.9",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^25.4.0",
     "core-js": "3.8.2",

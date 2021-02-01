@@ -1,5 +1,5 @@
 {
-  "name": "@nodecorejs/log",
+  "name": "@nodecorejs/verbosity-dump-plugin",
   "version": "0.16.9",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,6 +17,6 @@
   "license": "MIT",
   "dependencies": {
     "@nodecorejs/dot-runtime": "0.16.9",
-    "log4js": "^6.3.0"
+    "winston": "^3.3.3"
   }
 }

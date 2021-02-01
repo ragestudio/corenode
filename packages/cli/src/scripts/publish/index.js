@@ -13,7 +13,6 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import { getChangelogs } from '../utils/getChangelogs'
 import buildProyect from '@nodecorejs/builder'
-import logDump from '@nodecorejs/log'
 
 export function publishProyect(args) {
     return new Promise((resolve, reject) => {
@@ -86,8 +85,7 @@ export function publishProyect(args) {
                         try {
                             changelogNotes = getChangelogs(proyectGit)
                         } catch (error) {
-                            logDump(error)
-                            verbosity.warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
+                            verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
                             // really terrible
                         }
     

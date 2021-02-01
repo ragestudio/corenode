@@ -1,8 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
-import logDump from '@nodecorejs/log'
-import { isDependencyInstalled, addDependency, getPackages, getInstalledNodecoreDependencies } from '@nodecorejs/dot-runtime'
+import { getPackages, getInstalledNodecoreDependencies } from '@nodecorejs/dot-runtime'
 
 let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
@@ -44,8 +43,7 @@ export function readRegistry(params) {
             })
         }
     } catch (error) {
-        logDump(error)
-        verbosity.error(`Failed to read registry >`, error.message)
+        verbosity.options({ dumpFile: true }).error(`Failed to read registry >`, error.message)
     }
 
     return registry
@@ -77,8 +75,7 @@ export function readAutoLoadPlugins() {
                     return false
                 }
             } catch (error) {
-                logDump(error)
-                verbosity.error(`Failed to load custom package module > [${pkg}] >`, error.message)
+                verbosity.options({ dumpFile: true }).error(`Failed to load custom package module > [${pkg}] >`, error.message)
             }
         })
     }
@@ -140,8 +137,7 @@ export function loadRegistry(options) {
             }
         })
     } catch (error) {
-        logDump(error)
-        verbosity.error(`Failed at registry initialization >`, error.message)
+        verbosity.options({ dumpFile: true }).error(`Failed at registry initialization >`, error.message)
     }
 }
 
@@ -171,7 +167,7 @@ export function writeModule(name, filename, _module) {
             resolve(moduleDir)
             return moduleDir
         } catch (error) {
-            logDump(error)
+            verbosity.dump(error)
             return reject(error)
         }
     })
@@ -180,16 +176,7 @@ export function writeModule(name, filename, _module) {
 export function linkModule(_module, options) {
     try {
         let registry = readRegistry()
-        const { _lib, dir, firstOrder, node_modules } = _module
-
-        if (node_modules && !Boolean(options?.ignoreLinkDependencies)) {
-            objectToArrayMap(node_modules).forEach((dep) => {
-                const isInstalled = isDependencyInstalled(dep.key) ? true : false
-                if (!isInstalled) {
-                    addDependency(dep, true)
-                }
-            })
-        }
+        const { _lib, dir, firstOrder } = _module
 
         registry[_module.pkg] = {
             _lib, dir, firstOrder
@@ -199,8 +186,7 @@ export function linkModule(_module, options) {
         }
         return registry
     } catch (error) {
-        logDump(error)
-        verbosity.error(`Failed at writting registry >`, error.message)
+        verbosity.options({ dumpFile: true }).error(`Failed at writting registry >`, error.message)
     }
 }
 
@@ -212,7 +198,7 @@ export function unlinkModule(name, options) {
         }
         delete registry[name]
     } catch (error) {
-        logDump(error)
+        verbosity.dump(error)
         throw new Error(error)
     }
     if (Boolean(options?.write)) {
@@ -230,8 +216,7 @@ export function linkAllModules(options) {
                 linkModule(readModule(moduleName), options)
             }
         } catch (error) {
-            logDump(error)
-            verbosity.error(`Failed at linking module > [${moduleName}] >`, error.message)
+            verbosity.options({ dumpFile: true }).error(`Failed at linking module > [${moduleName}] >`, error.message)
         }
     })
 }
@@ -296,14 +281,12 @@ export function initModules(params) {
 
                 _loaded.push(moduleName)
             } catch (error) {
-                logDump(error)
-                verbosity.error(`Failed at module initialization > [${moduleName}] >`, error.message)
+                verbosity.options({ dumpFile: true }).error(`Failed at module initialization > [${moduleName}] >`, error.message)
             }
         })
 
     } catch (error) {
-        logDump(error)
-        verbosity.error(`Fatal error at initialization > `, error.message)
+        verbosity.options({ dumpFile: true }).error(`Fatal error at initialization > `, error.message)
     }
 }
 

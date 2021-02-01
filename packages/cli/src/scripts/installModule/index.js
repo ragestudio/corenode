@@ -6,9 +6,8 @@ import path from 'path'
 import fetch from 'node-fetch'
 
 import { loadRegistry, writeModule } from '@nodecorejs/modules'
-import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getRuntimeEnv, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
 import { verbosity } from '@nodecorejs/utils'
-import logDump from '@nodecorejs/log'
 
 import temporalDir from '../temporalDir'
 import outputResume from '../outputResume'
@@ -71,13 +70,12 @@ export async function installModule(params) {
                     writeModule(_module.pkg, null, fs.readFileSync(moduleFile, moduleCodec)).then(async (modulePath) => {
                         if (_module.requireCore) {
                             try {
-                                await installCore({pkg: _module.requireCore, dir: modulePath})
-                                logDump(`Installed core!!`)
+                                await installCore({ pkg: _module.requireCore, dir: modulePath })
                             } catch (error) {
-                                verbosity.error(`Error installing required core >`, error.message)
+                                verbosity.options({ dumpFile: true }).error(`Error installing required core >`, error.message)
                             }
                         }
-                   
+
                         if (_module.runtimeTemplate) {
                             const templateFile = path.resolve(modulePath, `.template.nodecore`)
                             try {
@@ -86,11 +84,23 @@ export async function installModule(params) {
                                     // TODO: Apply template to .nodecore
                                 }
                             } catch (error) {
-                                const errStr = `Error processing runtime template >`
-                                verbosity.error(errStr)
-                                logDump(errStr, error)
+                                verbosity.options({ dumpFile: true }).error(`Error processing runtime template >`, error)
                             }
                         }
+
+                        if (_module.node_modules) {
+                            if (Boolean(params?.ignoreDeps)) {
+                                verbosity.options({ dumpFile: true }).warn(`Ignoring dependencies installation`)
+                            }else {
+                                objectToArrayMap(_module.node_modules).forEach((dep) => {
+                                    const isInstalled = isDependencyInstalled(dep.key) ? true : false
+                                    if (!isInstalled) {
+                                        addDependency(dep, true)
+                                    }
+                                })
+                            }   
+                        }
+
                         loadRegistry({ force: true })
                         resolve()
                     }).catch((err) => {
@@ -110,10 +120,7 @@ export async function installModule(params) {
             outputResume({ downloadPath, pkg })
         })
         .catch((err) => {
-            const errStr = `Failed installation Task >`
-
-            verbosity.error(errStr, err)
-            logDump(errStr, err)
+            verbosity.options({ dumpFile: true }).error(`Failed installation Task >`, err)
         })
 }
 
