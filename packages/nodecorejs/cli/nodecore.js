@@ -13,9 +13,9 @@ let targetBin = prodBin
 
 process.env.LOCAL_BIN = false
 if (isLocalMode) {
-    if (!fs.existsSync(localBin)) {
+    if (fs.existsSync(localBin)) {
         process.env.LOCAL_BIN = true
-        return false
+        return true
     }
     targetBin = localBin
 } else {

@@ -33,10 +33,10 @@ let commandMap = [
                     const { unlinkModule } = require("@nodecorejs/modules")
                     // TODO: purge files & data, env templates, registry...etc
                     try {
-                        unlinkModule(argv.module, true, true)
-                        console.log(`✅  Removed ${argv.module}`)
+                        unlinkModule(argv.module, { purge: true, write: true })
+                        console.log(`✅  Successfuly module removed [${argv.module}]`)
                     } catch (error) {
-                        console.log(`❌  Failed to remove ${argv.module}`)
+                        console.log(`❌  Failed to remove module [${argv.module}] >`, error.message)
                     }
                     break
                 }

@@ -112,7 +112,7 @@ export function readModule(moduleName, builtIn = false) {
     }
 }
 
-export function loadRegistry(forceWriteLink) {
+export function loadRegistry(options) {
     try {
         let registry = readRegistry()
         
@@ -120,7 +120,7 @@ export function loadRegistry(forceWriteLink) {
             fs.mkdirSync(modulesPath, { recursive: true })
         }
 
-        linkAllModules(forceWriteLink ?? false)
+        linkAllModules(options)
 
         if (fs.existsSync(builtInLibraries)) {
             fs.readdirSync(builtInLibraries).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
@@ -177,12 +177,12 @@ export function writeModule(name, filename, _module) {
     })
 }
 
-export function linkModule(_module, write = false) {
+export function linkModule(_module, options) {
     try {
         let registry = readRegistry()
         const { _lib, dir, firstOrder, node_modules } = _module
 
-        if (node_modules) {
+        if (node_modules && !Boolean(options?.ignoreLinkDependencies)) {
             objectToArrayMap(node_modules).forEach((dep) => {
                 const isInstalled = isDependencyInstalled(dep.key) ? true : false
                 if (!isInstalled) {
@@ -194,7 +194,7 @@ export function linkModule(_module, write = false) {
         registry[_module.pkg] = {
             _lib, dir, firstOrder
         }
-        if (write) {
+        if (Boolean(options?.write)) {
             overwriteRegistry(registry)
         }
         return registry
@@ -204,30 +204,30 @@ export function linkModule(_module, write = false) {
     }
 }
 
-export function unlinkModule(name, write = false, purge = false) {
+export function unlinkModule(name, options) {
     let registry = readRegistry()
     try {
-        if (purge && fs.existsSync(registry[name].dir)) {
+        if (Boolean(options?.purge) && fs.existsSync(registry[name].dir)) {
             rimraf.sync(registry[name].dir)
         }
         delete registry[name]
     } catch (error) {
         logDump(error)
-        // who cares
+        throw new Error(error)
     }
-    if (write) {
+    if (Boolean(options?.write)) {
         overwriteRegistry(registry)
     }
     return registry
 }
 
-export function linkAllModules(force = false) {
+export function linkAllModules(options) {
     let registry = readRegistry()
 
     listModulesNames().forEach((moduleName) => {
         try {
-            if (!registry[moduleName] || force) {
-                linkModule(readModule(moduleName), true)
+            if (!registry[moduleName] || Boolean(options?.force)) {
+                linkModule(readModule(moduleName), options)
             }
         } catch (error) {
             logDump(error)

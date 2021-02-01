@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
 
-import { initRegistry, writeModule } from '@nodecorejs/modules'
+import { loadRegistry, writeModule } from '@nodecorejs/modules'
 import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
 import { verbosity } from '@nodecorejs/utils'
 import logDump from '@nodecorejs/log'
@@ -91,7 +91,7 @@ export async function installModule(params) {
                                 logDump(errStr, error)
                             }
                         }
-                        initRegistry(true)
+                        loadRegistry({ force: true })
                         resolve()
                     }).catch((err) => {
                         reject(err)
