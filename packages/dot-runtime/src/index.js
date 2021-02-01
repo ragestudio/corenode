@@ -71,6 +71,10 @@ function _initRuntime() {
             verbosity.error("🆘 Failed to load current version >", error.message)
         }
     }
+
+    if (process.env.LOCAL_BIN && !isLocalMode()) {
+        verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the '.local' flag file has not been found, it will be considered that this runtime is not running in local runtime!`)
+    }
 }
 
 //  Nodecore Libraries

@@ -7,7 +7,7 @@
   "scripts": {
     "postinstall": "npm run initBuilder",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
-    "local": "node ./packages/cli/dist",
+    "local": "LOCAL_BIN=true node ./packages/cli/dist",
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "build": "nodecore build",
