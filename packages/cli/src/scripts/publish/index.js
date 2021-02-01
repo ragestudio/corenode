@@ -41,6 +41,7 @@ export function publishProyect(args) {
         let tasks = {
             checkGit: {
                 title: "📝 Checking git status",
+                skip: () => config.skipStatus === true,
                 task: () => {
                     return new Promise((resolve, reject) => {
                         const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout
@@ -53,20 +54,22 @@ export function publishProyect(args) {
             },
             buildProyect: {
                 title: "📦 Building proyect",
+                skip: () => config.skipBuild === true,
                 task: () => {
                     return new Promise((resolve, reject) => {
                         buildProyect({ silent: true })
-                        .then((done) => {
-                            return resolve(true)
-                        })
-                        .catch((error) => {
-                            return reject(new Error(`Failed build! > ${error.message}`))
-                        })
+                            .then((done) => {
+                                return resolve(true)
+                            })
+                            .catch((error) => {
+                                return reject(new Error(`Failed build! > ${error.message}`))
+                            })
                     })
                 }
             },
             syncVersions: {
                 title: "🔄 Syncing versions",
+                skip: () => config.skipSyncVersion === true,
                 task: () => {
                     bumpVersion(["patch"], true, { silent: true })
                     if (config.minor) {
@@ -78,73 +81,73 @@ export function publishProyect(args) {
             publish: {
                 title: "📢 Publishing",
                 task: () => {
-                    return new Observable((observer) => {
-                        let changelogNotes = ""
-                        const releaseTag = `v${getVersion()}`
-    
-                        try {
-                            changelogNotes = getChangelogs(proyectGit)
-                        } catch (error) {
-                            verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
-                            // really terrible
-                        }
-    
-                        if (config.npm) {
-                            if (!Array.isArray(proyectPackages) && isProyect) {
-                                proyectPackages = ["_Proyect"]
-                            }
+                    return new Listr([
+                        {
+                            title: "Publish on NPM",
+                            enabled: () => config.npm === true,
+                            task: () => {
+                                return new Observable((observer) => {
+                                    if (!Array.isArray(proyectPackages) && isProyect) {
+                                        proyectPackages = ["_Proyect"]
+                                    }
 
-                            proyectPackages.forEach((pkg, index) => {
-                                const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
-                                const { name } = require(path.join(packagePath, 'package.json'))
+                                    proyectPackages.forEach((pkg, index) => {
+                                        const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
+                                        const { name } = require(path.join(packagePath, 'package.json'))
 
-                                observer.next(`[${index + 1}/${proyectPackages.length}] Publish package ${name}`)
+                                        observer.next(`[${index + 1}/${proyectPackages.length}] Publish package ${name}`)
 
-                                const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-                                try {
-                                    const { stdout } = execa.sync('npm', cliArgs, {
-                                        cwd: packagePath,
+                                        const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
+                                        try {
+                                            const { stdout } = execa.sync('npm', cliArgs, {
+                                                cwd: packagePath,
+                                            })
+                                            console.log(stdout)
+                                        } catch (error) {
+                                            observer.next(`❌ Failed to publish > ${name} >`, error.message)
+                                        }
                                     })
-                                    console.log(stdout)
-                                } catch (error) {
-                                    observer.next(`❌ Failed to publish > ${name} >`, error.message)
-                                }
-                            })
-                        }
-
-                        if (config.github) {
-                            execa.sync('git', ['commit', '--all', '--message', releaseTag])
-                            execa.sync('git', ['tag', releaseTag])
-                            execa.sync('git', ['push', 'origin', 'master', '--tags'])
-
-                            const githubReleaseUrl = newGithubReleaseUrl({
-                                repoUrl: proyectGit,
-                                tag: releaseTag,
-                                body: changelogNotes,
-                                isPrerelease: config.preRelease,
-                            })
-                            try {
-                                open(githubReleaseUrl)
-                            } catch (error) {
-                                // terrible
+                                })
                             }
-                            observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
-                        }
+                        },
+                        {
+                            title: 'Publish on Github',
+                            enabled: () => config.github === true,
+                            task: () => {
+                                return new Observable((observer) => {
+                                    let changelogNotes = ""
+                                    const releaseTag = `v${getVersion()}`
 
-                        observer.complete()
-                    })
+                                    try {
+                                        changelogNotes = getChangelogs(proyectGit)
+                                    } catch (error) {
+                                        verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
+                                        // really terrible
+                                    }
+
+                                    execa.sync('git', ['commit', '--all', '--message', releaseTag])
+                                    execa.sync('git', ['tag', releaseTag])
+                                    execa.sync('git', ['push', 'origin', 'master', '--tags'])
+
+                                    const githubReleaseUrl = newGithubReleaseUrl({
+                                        repoUrl: proyectGit,
+                                        tag: releaseTag,
+                                        body: changelogNotes,
+                                        isPrerelease: config.preRelease,
+                                    })
+                                    try {
+                                        open(githubReleaseUrl)
+                                    } catch (error) {
+                                        // terrible
+                                    }
+                                    observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
+                                })
+                            }
+
+                        }
+                    ], { concurrent: false })
                 }
             },
-        }
-
-        if (config.skipStatus) {
-            delete tasks["checkGit"]
-        }
-        if (config.skipBuild) {
-            delete tasks["buildProyect"]
-        }
-        if (config.skipSyncVersion) {
-            delete tasks["syncVersions"]
         }
 
         new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false, concurrent: false }).run()
