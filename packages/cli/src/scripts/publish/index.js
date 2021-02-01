@@ -99,12 +99,12 @@ export function publishProyect(args) {
 
                                         const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
                                         try {
-                                            const { stdout } = execa.sync('npm', cliArgs, {
+                                            execa.sync('npm', cliArgs, {
                                                 cwd: packagePath,
                                             })
-                                            console.log(stdout)
+                                            observer.next(`✅ Published > ${name}`)
                                         } catch (error) {
-                                            observer.next(`❌ Failed to publish > ${name} >`, error.message)
+                                            observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
                                         }
                                     })
                                 })
