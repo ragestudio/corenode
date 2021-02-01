@@ -161,7 +161,7 @@ export default {
         try {
             this.output('error', {
                 ...this._options,
-                prefix: "❌ ERROR"
+                prefix: "❌  ERROR"
             }, {
                 decorator: {
                     text: "black",
@@ -169,6 +169,26 @@ export default {
                 },
                 log: {
                     text: "red",
+                    bg: false
+                }
+            }, ...context)
+        } catch (error) {
+            // woupssi
+        }
+        return this
+    },
+    warn: function (...context) {
+        try {
+            this.output('error', {
+                ...this._options,
+                prefix: "⚠️  WARN"
+            }, {
+                decorator: {
+                    text: "black",
+                    bg: "bgYellowBright"
+                },
+                log: {
+                    text: "inverse",
                     bg: false
                 }
             }, ...context)
