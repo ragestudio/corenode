@@ -102,7 +102,7 @@ export function publishProyect(args) {
                                 const { stdout } = execa.sync('npm', cliArgs, {
                                     cwd: packagePath,
                                 })
-                                verbosity.options({ dumpFile: true }).log(stdout)
+                                verbosity.options({ dumpFile: true, method: "[publish]" }).log(stdout)
                                 if ((index + 1) == proyectPackages.length) {
                                     verbosity.dump(`NPM Release successfuly finished with [${proyectPackages.length}] packages > ${proyectPackages}`)
                                     observer.complete()
