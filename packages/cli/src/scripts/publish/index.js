@@ -78,7 +78,7 @@ export function publishProyect(args) {
             {
                 title: '📢 Publish on Github',
                 enabled: () => config.github === true,
-                task: () => {
+                task: (ctx, task) => {
                     return new Observable((observer) => {
                         let changelogNotes = ""
                         const releaseTag = `v${getVersion()}`
@@ -105,7 +105,7 @@ export function publishProyect(args) {
                             observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
                         } catch (error) {
                             verbosity.dump(error)
-                            observer.error(`❌ Failed github publish`)
+                            task.skip(`❌ Failed github publish`)
                         }
                     })
                 }
