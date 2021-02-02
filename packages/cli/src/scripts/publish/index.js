@@ -48,35 +48,25 @@ export function publishProyect(args) {
                             proyectPackages = ["_Proyect"]
                         }
 
-                        proyectPackages.forEach(async (pkg, index) => {
+                        proyectPackages.forEach((pkg, index) => {
                             const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
                             const { name } = require(path.join(packagePath, 'package.json'))
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-
-                            function release() {
-                                return new Promise((resolve, reject) => {
-                                    const { stdout, stderr } = execa.sync('npm', cliArgs, {
-                                        cwd: packagePath,
-                                    })
-                                    if (stdout) {
-                                        resolve()
-                                    }
-                                    if (stderr) {
-                                        reject()
-                                    }
-                                })
-                            }
-
+            
                             try {
                                 const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing package ${name}`
                                 verbosity.dump(logOutput)
                                 observer.next(logOutput)
-                                await release()
+
+                                execa.sync('npm', cliArgs, {
+                                    cwd: packagePath,
+                                })
                             } catch (error) {
                                 observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
                             }
                         })
+
                         observer.complete()
                     })
                 }
