@@ -44,12 +44,12 @@ export function publishProyect(args) {
                 title: "📝 Checking git status",
                 skip: () => config.skipStatus === true,
                 task: () => {
-                    return new Promise((resolve, reject) => {
+                    return new Promise((res, rej) => {
                         const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout
                         if (gitStatus.length) {
-                            return reject(new Error("⛔️ Your git status is not clean"))
+                            return rej(new Error("⛔️ Your git status is not clean"))
                         }
-                        return resolve(gitStatus)
+                        return res(gitStatus)
                     })
                 }
             },
@@ -57,13 +57,13 @@ export function publishProyect(args) {
                 title: "📦 Building proyect",
                 skip: () => config.skipBuild === true,
                 task: () => {
-                    return new Promise((resolve, reject) => {
+                    return new Promise((res, rej) => {
                         buildProyect({ silent: true })
                             .then((done) => {
-                                return resolve(true)
+                                return res(true)
                             })
                             .catch((error) => {
-                                return reject(new Error(`Failed build! > ${error.message}`))
+                                return rej(new Error(`Failed build! > ${error.message}`))
                             })
                     })
                 }
@@ -118,7 +118,7 @@ export function publishProyect(args) {
                 title: '📢 Publish on Github',
                 enabled: () => config.github === true,
                 task: (ctx, task) => {
-                    return new Promise((resolve, reject) => {
+                    return new Promise((res, rej) => {
                         let changelogNotes = ""
                         const releaseTag = `v${getVersion()}`
 
@@ -141,11 +141,12 @@ export function publishProyect(args) {
                                 isPrerelease: config.preRelease,
                             })
                             open(githubReleaseUrl)
-                            resolve(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
+                            console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
+                            res()
                         } catch (error) {
                             verbosity.dump(error)
                             task.skip(`❌ Failed github publish`)
-                            reject()
+                            rej()
                         }
                     })
                 },
@@ -153,7 +154,7 @@ export function publishProyect(args) {
         }
 
         new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false }).run()
-            .then((response) => {
+            .then(response => {
                 console.log(`✅ Publish done`)
                 return resolve(true)
             }).catch((error) => {
