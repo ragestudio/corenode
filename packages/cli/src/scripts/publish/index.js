@@ -56,7 +56,7 @@ export function publishProyect(args) {
 
                             function release() {
                                 return new Promise((resolve, reject) => {
-                                    const { stdout, stderr } = execa('npm', cliArgs, {
+                                    const { stdout, stderr } = execa.sync('npm', cliArgs, {
                                         cwd: packagePath,
                                     })
                                     if (stdout) {
@@ -69,12 +69,15 @@ export function publishProyect(args) {
                             }
 
                             try {
-                                observer.next(`[${index + 1}/${proyectPackages.length}] Publishing package ${name}`)
+                                const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing package ${name}`
+                                verbosity.dump(logOutput)
+                                observer.next(logOutput)
                                 await release()
                             } catch (error) {
                                 observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
                             }
                         })
+                        observer.complete()
                     })
                 }
             },
