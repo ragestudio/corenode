@@ -8,10 +8,11 @@ import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
 import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProyectMode } from '@nodecorejs/dot-runtime'
-let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
+let { verbosity, objectToArrayMap, lockAsync, delay } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import { getChangelogs } from '../utils/getChangelogs'
+
 import buildProyect from '@nodecorejs/builder'
 
 export function publishProyect(args) {
@@ -37,81 +38,6 @@ export function publishProyect(args) {
         if (typeof (args) !== "undefined") {
             config = { ...config, ...args }
         }
-
-        let publishTasks = [
-            {
-                title: "📢  Publish on NPM",
-                enabled: () => config.npm === true,
-                task: () => {
-                    return new Observable((observer) => {
-                        if (!Array.isArray(proyectPackages) && !isProyect) {
-                            proyectPackages = ["_Proyect"]
-                        }
-
-                        proyectPackages.forEach((pkg, index) => {
-                            const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
-                            const { name } = require(path.join(packagePath, 'package.json'))
-
-                            const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-
-                            try {
-                                const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing package ${name}`
-                                verbosity.dump(logOutput)
-                                observer.next(logOutput)
-
-                                setTimeout(() => {
-                                    const { stdout } = execa.sync('npm', cliArgs, {
-                                        cwd: packagePath,
-                                    })
-                                    verbosity.dump(stdout)
-                                }, 150)
-
-                            } catch (error) {
-                                observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
-                            }
-                        })
-
-                        observer.complete()
-                    })
-                }
-            },
-            {
-                title: '📢 Publish on Github',
-                enabled: () => config.github === true,
-                task: (ctx, task) => {
-                    return new Observable((observer) => {
-                        let changelogNotes = ""
-                        const releaseTag = `v${getVersion()}`
-
-                        try {
-                            changelogNotes = getChangelogs(proyectGit)
-                        } catch (error) {
-                            verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
-                            // really terrible
-                        }
-
-                        try {
-                            execa.sync('git', ['commit', '--all', '--message', releaseTag])
-                            execa.sync('git', ['tag', releaseTag])
-                            execa.sync('git', ['push', 'origin', 'master', '--tags'])
-
-                            const githubReleaseUrl = newGithubReleaseUrl({
-                                repoUrl: proyectGit,
-                                tag: releaseTag,
-                                body: changelogNotes,
-                                isPrerelease: config.preRelease,
-                            })
-                            open(githubReleaseUrl)
-                            observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
-                        } catch (error) {
-                            verbosity.dump(error)
-                            task.skip(`❌ Failed github publish`)
-                        }
-                    })
-                }
-
-            }
-        ]
 
         let tasks = {
             checkGit: {
@@ -153,23 +79,80 @@ export function publishProyect(args) {
                     syncAllPackagesVersions()
                 }
             },
-            publish: {
-                title: "📢 Publishing",
+            npmRelease: {
+                title: "📢  Publish on NPM",
+                enabled: () => config.npm === true,
                 task: () => {
-                    return new Promise((resolve, reject) => {
-                        new Listr(publishTasks, { collapse: false, concurrent: false }).run()
-                            .then((done) => {
-                                resolve(true)
-                            })
-                            .catch((err) => {
-                                reject(err)
-                            })
+                    return new Observable((observer) => {
+                        if (!Array.isArray(proyectPackages) && !isProyect) {
+                            proyectPackages = ["_Proyect"]
+                        }
+
+                        proyectPackages.forEach((pkg, index) => {
+                            const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
+                            const { name } = require(path.join(packagePath, 'package.json'))
+
+                            const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
+                            const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing package ${name}`
+
+                            try {
+                                verbosity.dump(logOutput)
+                                observer.next(logOutput)
+
+                                const { stdout } = execa.sync('npm', cliArgs, {
+                                    cwd: packagePath,
+                                })
+                                verbosity.options({ dumpFile: true }).log(stdout)
+                                if ((index + 1) == proyectPackages.length) {
+                                    verbosity.dump("completed release")
+                                    observer.complete()
+                                }
+                            } catch (error) {
+                                observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
+                            }
+                        })
                     })
                 }
             },
+            githubPublish: {
+                title: '📢 Publish on Github',
+                enabled: () => config.github === true,
+                task: (ctx, task) => {
+                    return new Observable((observer) => {
+                        let changelogNotes = ""
+                        const releaseTag = `v${getVersion()}`
+
+                        try {
+                            changelogNotes = getChangelogs(proyectGit)
+                        } catch (error) {
+                            verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
+                            // really terrible
+                        }
+
+                        try {
+                            execa.sync('git', ['commit', '--all', '--message', releaseTag])
+                            execa.sync('git', ['tag', releaseTag])
+                            execa.sync('git', ['push', 'origin', 'master', '--tags'])
+
+                            const githubReleaseUrl = newGithubReleaseUrl({
+                                repoUrl: proyectGit,
+                                tag: releaseTag,
+                                body: changelogNotes,
+                                isPrerelease: config.preRelease,
+                            })
+                            open(githubReleaseUrl)
+                            observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
+                        } catch (error) {
+                            verbosity.dump(error)
+                            task.skip(`❌ Failed github publish`)
+                        }
+                    })
+                }
+
+            },
         }
 
-        new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false, concurrent: false }).run()
+        new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false }).run()
             .then((response) => {
                 console.log(`✅ Publish done`)
                 return resolve(true)
