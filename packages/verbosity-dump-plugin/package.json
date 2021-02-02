@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/verbosity-dump-plugin",
-  "version": "0.16.13",
+  "version": "0.16.9",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nodecorejs/dot-runtime": "0.16.13",
+    "@nodecorejs/dot-runtime": "0.16.9",
     "winston": "^3.3.3"
   }
 }

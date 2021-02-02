@@ -10,10 +10,11 @@
     "local": "LOCAL_BIN=true node ./packages/cli/dist",
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
+    "release": "nodecore publish --npm --github",
     "build": "nodecore build",
-    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
     "link:main": "cd packages/nodecorejs && yarn link && cd -",
-    "update:deps": "yarn upgrade-interactive --latest"
+    "update:deps": "yarn upgrade-interactive --latest",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
   "lint-staged": {
     "*.{js,jsx,less,md,json}": [

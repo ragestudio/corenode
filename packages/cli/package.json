@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/cli",
-  "version": "0.16.13",
+  "version": "0.16.9",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -21,11 +21,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/modules": "0.16.13",
-    "@nodecorejs/builder": "0.16.13",
-    "@nodecorejs/dot-runtime": "0.16.13",
-    "@nodecorejs/verbosity-dump-plugin": "0.16.13",
-    "@nodecorejs/utils": "0.16.13",
+    "@nodecorejs/modules": "0.16.9",
+    "@nodecorejs/builder": "0.16.9",
+    "@nodecorejs/dot-runtime": "0.16.9",
+    "@nodecorejs/verbosity-dump-plugin": "0.16.9",
+    "@nodecorejs/utils": "0.16.9",
     "7zip-bin": "^5.0.3",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
