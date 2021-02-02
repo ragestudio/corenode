@@ -1,5 +1,5 @@
 {
-  "version": "0.16.13",
+  "version": "0.16.14",
   "devRuntime": {
     "headPackage": "nodecorejs",
     "originGit": "https://github.com/ragestudio/nodecore",
