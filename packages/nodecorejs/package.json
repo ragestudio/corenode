@@ -1,6 +1,6 @@
 {
   "name": "@ragestudio/nodecorejs",
-  "version": "0.16.10",
+  "version": "0.16.11",
   "main": "./cli/nodecore.js",
   "types": "types.d.ts",
   "files": [
@@ -22,11 +22,11 @@
     "nodecore": "./cli/nodecore.js"
   },
   "dependencies": {
-    "@nodecorejs/modules": "0.16.10",
-    "@nodecorejs/builder": "0.16.10",
-    "@nodecorejs/cli": "0.16.10",
-    "@nodecorejs/dot-runtime": "0.16.10",
-    "@nodecorejs/verbosity-dump-plugin": "0.16.10",
-    "@nodecorejs/utils": "0.16.10"
+    "@nodecorejs/modules": "0.16.11",
+    "@nodecorejs/builder": "0.16.11",
+    "@nodecorejs/cli": "0.16.11",
+    "@nodecorejs/dot-runtime": "0.16.11",
+    "@nodecorejs/verbosity-dump-plugin": "0.16.11",
+    "@nodecorejs/utils": "0.16.11"
   }
 }
