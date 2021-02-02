@@ -105,7 +105,7 @@ export function publishProyect(args) {
                             observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
                         } catch (error) {
                             verbosity.dump(error)
-                            observer.error(`❌ Failed github publish > ${error.message}`)
+                            observer.error(`❌ Failed github publish`)
                         }
                     })
                 }
