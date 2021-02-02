@@ -80,7 +80,7 @@ export function publishProyect(args) {
                 }
             },
             npmRelease: {
-                title: "📢  Publish on NPM",
+                title: "📢 Publish on NPM",
                 enabled: () => config.npm === true,
                 task: () => {
                     return new Observable((observer) => {
@@ -93,7 +93,7 @@ export function publishProyect(args) {
                             const { name } = require(path.join(packagePath, 'package.json'))
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-                            const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing package ${name}`
+                            const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing npm package ${name}`
 
                             try {
                                 verbosity.dump(logOutput)
@@ -104,7 +104,7 @@ export function publishProyect(args) {
                                 })
                                 verbosity.options({ dumpFile: true }).log(stdout)
                                 if ((index + 1) == proyectPackages.length) {
-                                    verbosity.dump("completed release")
+                                    verbosity.dump(`NPM Release successfuly finished with [${proyectPackages.length}] packages > ${proyectPackages}`)
                                     observer.complete()
                                 }
                             } catch (error) {
@@ -118,7 +118,7 @@ export function publishProyect(args) {
                 title: '📢 Publish on Github',
                 enabled: () => config.github === true,
                 task: (ctx, task) => {
-                    return new Observable((observer) => {
+                    return new Promise((resolve, reject) => {
                         let changelogNotes = ""
                         const releaseTag = `v${getVersion()}`
 
@@ -141,14 +141,14 @@ export function publishProyect(args) {
                                 isPrerelease: config.preRelease,
                             })
                             open(githubReleaseUrl)
-                            observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
+                            resolve(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
                         } catch (error) {
                             verbosity.dump(error)
                             task.skip(`❌ Failed github publish`)
+                            reject()
                         }
                     })
-                }
-
+                },
             },
         }
 
