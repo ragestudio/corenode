@@ -44,7 +44,7 @@ export function publishProyect(args) {
                 enabled: () => config.npm === true,
                 task: () => {
                     return new Observable((observer) => {
-                        if (!Array.isArray(proyectPackages) && isProyect) {
+                        if (!Array.isArray(proyectPackages) && !isProyect) {
                             proyectPackages = ["_Proyect"]
                         }
 
