@@ -90,22 +90,23 @@ export function publishProyect(args) {
                             // really terrible
                         }
 
-                        execa.sync('git', ['commit', '--all', '--message', releaseTag])
-                        execa.sync('git', ['tag', releaseTag])
-                        execa.sync('git', ['push', 'origin', 'master', '--tags'])
-
-                        const githubReleaseUrl = newGithubReleaseUrl({
-                            repoUrl: proyectGit,
-                            tag: releaseTag,
-                            body: changelogNotes,
-                            isPrerelease: config.preRelease,
-                        })
                         try {
+                            execa.sync('git', ['commit', '--all', '--message', releaseTag])
+                            execa.sync('git', ['tag', releaseTag])
+                            execa.sync('git', ['push', 'origin', 'master', '--tags'])
+
+                            const githubReleaseUrl = newGithubReleaseUrl({
+                                repoUrl: proyectGit,
+                                tag: releaseTag,
+                                body: changelogNotes,
+                                isPrerelease: config.preRelease,
+                            })
                             open(githubReleaseUrl)
+                            observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
                         } catch (error) {
-                            // terrible
+                            verbosity.dump(error)
+                            observer.error(`❌ Failed github publish > ${error.message}`)
                         }
-                        observer.complete(`⚠️ Continue github release manualy > ${githubReleaseUrl}`)
                     })
                 }
 
