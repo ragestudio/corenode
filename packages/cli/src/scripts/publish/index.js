@@ -53,15 +53,19 @@ export function publishProyect(args) {
                             const { name } = require(path.join(packagePath, 'package.json'))
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-            
+
                             try {
                                 const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing package ${name}`
                                 verbosity.dump(logOutput)
                                 observer.next(logOutput)
 
-                                execa.sync('npm', cliArgs, {
-                                    cwd: packagePath,
-                                })
+                                setTimeout(() => {
+                                    const { stdout } = execa.sync('npm', cliArgs, {
+                                        cwd: packagePath,
+                                    })
+                                    verbosity.dump(stdout)
+                                }, 150)
+
                             } catch (error) {
                                 observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
                             }
