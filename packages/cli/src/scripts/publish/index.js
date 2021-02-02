@@ -48,17 +48,30 @@ export function publishProyect(args) {
                             proyectPackages = ["_Proyect"]
                         }
 
-                        proyectPackages.forEach((pkg, index) => {
+                        proyectPackages.forEach(async (pkg, index) => {
                             const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
                             const { name } = require(path.join(packagePath, 'package.json'))
 
                             observer.next(`[${index + 1}/${proyectPackages.length}] Publish package ${name}`)
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-                            try {
-                                const { stdout } = execa('npm', cliArgs, {
-                                    cwd: packagePath,
+
+                            function release() {
+                                return new Promise((resolve, reject) => {
+                                    const { stdout, stderr } = execa('npm', cliArgs, {
+                                        cwd: packagePath,
+                                    })
+                                    if (stdout) {
+                                        resolve()
+                                    }
+                                    if (stderr) {
+                                        reject()
+                                    }
                                 })
+                            }
+
+                            try {
+                                await release()
                                 observer.next(`✅ Published > ${name}`)
                             } catch (error) {
                                 observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
