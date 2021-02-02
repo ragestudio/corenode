@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/dot-runtime",
-  "version": "0.16.14",
+  "version": "0.16.15",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -20,6 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.16.14"
+    "@nodecorejs/utils": "0.16.15"
   }
 }
