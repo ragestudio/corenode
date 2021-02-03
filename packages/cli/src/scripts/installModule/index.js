@@ -7,7 +7,7 @@ import fetch from 'node-fetch'
 
 import { loadRegistry, writeModule } from '@nodecorejs/modules'
 import { getRuntimeEnv, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
-import { verbosity } from '@nodecorejs/utils'
+import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
 
 import temporalDir from '../temporalDir'
 import outputResume from '../outputResume'
