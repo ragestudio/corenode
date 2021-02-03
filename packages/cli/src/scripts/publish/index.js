@@ -58,7 +58,7 @@ export function publishProyect(args) {
                 skip: () => config.skipBuild === true,
                 task: () => {
                     return new Promise((res, rej) => {
-                        buildProyect({ silent: true })
+                        buildProyect({ silent: true, buildBuilder: true })
                             .then((done) => {
                                 return res(true)
                             })

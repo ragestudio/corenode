@@ -129,11 +129,11 @@ export function buildProyect(opts) {
     const packagesPath = join(cwd, 'packages')
     const isProyectMode = existsSync(packagesPath)
 
-    let dirs = readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.')
+    let dirs = isProyectMode ? readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
     let count = 0
 
     dirs.forEach((pkg) => {
-      const packageDir = isProyectMode ? `./` : `./packages/${pkg}`
+      const packageDir = isProyectMode ? `./packages/${pkg}` : `${pkg}`
       build(packageDir, { cwd, ...opts }, (done) => {
         count++
         if (dirs.length == (count + 1)) {
