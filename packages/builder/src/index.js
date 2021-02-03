@@ -127,11 +127,13 @@ export function build(dir, opts, callback) {
 export function buildProyect(opts) {
   return new Promise((resolve, reject) => {
     const packagesPath = join(cwd, 'packages')
-    let dirs = existsSync(packagesPath) ? readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ['./']
+    const isProyectMode = existsSync(packagesPath)
+
+    let dirs = readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.')
     let count = 0
 
     dirs.forEach((pkg) => {
-      const packageDir = `./packages/${pkg}`
+      const packageDir = isProyectMode ? `./` : `./packages/${pkg}`
       build(packageDir, { cwd, ...opts }, (done) => {
         count++
         if (dirs.length == (count + 1)) {
