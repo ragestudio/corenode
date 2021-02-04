@@ -60,10 +60,10 @@ export function publishProyect(args) {
                     return new Promise((res, rej) => {
                         buildProyect({ silent: true, buildBuilder: true })
                             .then((done) => {
-                                return res(true)
+                                res(true)
                             })
                             .catch((error) => {
-                                return rej(new Error(`Failed build! > ${error.message}`))
+                                rej(new Error(`Failed build! > ${error.message}`))
                             })
                     })
                 }
