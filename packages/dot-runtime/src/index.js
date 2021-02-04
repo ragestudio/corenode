@@ -16,6 +16,7 @@ let currentVersion = {}
 export let RuntimeGlobals = new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 let proyectRuntime = {}
 let _envLoad = false
+let _inited = false
 
 const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionsTypes = Object.keys(versionOrderScheme)
@@ -26,6 +27,8 @@ export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
 //  INIT RUNTIME FUNTIONS
 function _initRuntime() {
+    if (_inited) return false
+
     runtimeEnviromentFiles.forEach(runtime => {
         if (!_envLoad) {
             const fromPath = path.resolve(process.cwd(), `./${runtime}`)
@@ -75,6 +78,8 @@ function _initRuntime() {
     if (process.env.LOCAL_BIN && !isLocalMode()) {
         verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the '.local' flag file has not been found, it will be considered that this runtime is not running in local runtime!`)
     }
+
+    _inited = true
 }
 
 //  Nodecore Libraries
