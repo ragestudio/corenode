@@ -105,7 +105,7 @@ export function installModule(params) {
                             }
                         }
 
-                        loadRegistry({ force: true })
+                        loadRegistry({ write: true })
                         resolve()
                     }).catch((err) => {
                         reject(err)

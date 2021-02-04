@@ -111,14 +111,15 @@ export function readModule(moduleName, builtIn = false) {
 
 export function loadRegistry(options) {
     try {
-        let registry = readRegistry()
-        
         if (!fs.existsSync(modulesRegistry)) {
             fs.mkdirSync(modulesPath, { recursive: true })
         }
 
         linkAllModules(options)
 
+        let registry = readRegistry()
+        verbosity.dump(`Loaded registry with > ${JSON.stringify(registry)}`)
+       
         if (fs.existsSync(builtInLibraries)) {
             fs.readdirSync(builtInLibraries).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
                 _libraries[_module] = {
@@ -181,9 +182,8 @@ export function linkModule(_module, options) {
         registry[_module.pkg] = {
             _lib, dir, firstOrder
         }
-        if (Boolean(options?.write)) {
-            overwriteRegistry(registry)
-        }
+
+        overwriteRegistry(registry)
         return registry
     } catch (error) {
         verbosity.options({ dumpFile: true }).error(`Failed at writting registry >`, error.message)
@@ -212,7 +212,8 @@ export function linkAllModules(options) {
 
     listModulesNames().forEach((moduleName) => {
         try {
-            if (!registry[moduleName] || Boolean(options?.force)) {
+            if (!registry[moduleName] || Boolean(options?.write)) {
+                verbosity.dump(`Forced to write link of [${moduleName}]`)
                 linkModule(readModule(moduleName), options)
             }
         } catch (error) {
@@ -224,7 +225,7 @@ export function linkAllModules(options) {
 // initialize Modules & Libraries
 export function initModules(params) {
     try {
-        loadRegistry(params?.force ?? false)
+        loadRegistry({ write: (params?.write ?? false) })
 
         const autoLoadPlugins = readAutoLoadPlugins()
         if (autoLoadPlugins) {
