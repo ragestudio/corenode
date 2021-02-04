@@ -343,10 +343,10 @@ export function syncPackageVersionFromName(name, write) {
         let pkg = require(pkgJSON)
         if (pkg) {
             pkg.version = currentVersion
-            if (typeof (pkg["dependencies"]) !== "undefined") {
+            if (typeof (pkg["dependencies"]) !== "undefined" && typeof (proyectRuntime.devRuntime?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
                     // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
-                    if (name.startsWith(`@${proyectRuntime.devRuntime.headPackage}`)) {
+                    if (name.startsWith(`@${proyectRuntime.devRuntime?.headPackage}`)) {
                         pkg["dependencies"][name] = currentVersion
                     }
                 })
@@ -370,15 +370,15 @@ export function syncAllPackagesVersions() {
     pkgs.forEach((pkg) => {
         try {
             syncPackageVersionFromName(pkg, true)
-            // dumpLog verbosity.log(`[${pkg}] ✅ New version synchronized`)
+            verbosity.options({ dumpFile: true }).log(`[${pkg}] ✅ New version synchronized`)
         } catch (error) {
-            // dumpLog verbosity.log(`[${pkg}] ❌ Error syncing ! > ${error}`)
+            verbosity.options({ dumpFile: true }).log(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
     })
 }
 
 function rewriteRuntimeEnv() {
-    // dumpLog verbosity.log(`Rewrited runtime env > ${proyectRuntimePath}`)
+    verbosity.dump(`Rewrited runtime env > ${proyectRuntimePath}`)
     return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
 }
 
