@@ -222,7 +222,6 @@ export function isProyectMode(dir) {
     return false
 }
 
-
 /**
  * Check if an dependecy is installed on current proyect
  * @function isDependencyInstalled 
@@ -337,10 +336,10 @@ export function bumpVersion(params, save, options) {
 export function syncPackageVersionFromName(name, write) {
     const currentVersion = getVersion()
     const packageDir = path.resolve(process.cwd(), `./packages/${name}`)
-    const pkgJSON = path.resolve(packageDir, './package.json')
+    const pkgJSONPath = path.resolve(packageDir, './package.json')
 
-    if (fs.existsSync(packageDir) && fs.existsSync(pkgJSON)) {
-        let pkg = require(pkgJSON)
+    if (fs.existsSync(packageDir) && fs.existsSync(pkgJSONPath)) {
+        let pkg = require(pkgJSONPath)
         if (pkg) {
             pkg.version = currentVersion
             if (typeof (pkg["dependencies"]) !== "undefined" && typeof (proyectRuntime.devRuntime?.headPackage) !== "undefined") {
@@ -350,8 +349,10 @@ export function syncPackageVersionFromName(name, write) {
                         pkg["dependencies"][name] = currentVersion
                     }
                 })
+
                 if (write) {
-                    fs.writeFileSync(pkgJSON, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+                    verbosity.dump(`writting update version on package [${name}] > ${pkgJSONPath} > ${JSON.stringify(pkg)}`)
+                    fs.writeFileSync(pkgJSONPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
                 }
 
                 return pkg
