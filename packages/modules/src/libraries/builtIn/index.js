@@ -1,7 +1,9 @@
 import { Aliaser, Globals } from "@nodecorejs/dot-runtime/dist/classes"
+import * as DotRuntime from "@nodecorejs/dot-runtime"
 
 module.exports = {
     load: {
+        DotRuntime,
         Aliaser,
         Globals,
         cli: {
