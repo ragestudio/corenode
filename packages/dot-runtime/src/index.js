@@ -347,6 +347,7 @@ export function syncPackageVersionFromName(name, write) {
         let pkg = require(pkgJSONPath)
         if (pkg) {
             pkg.version = currentVersion
+            
             if (typeof (pkg["dependencies"]) !== "undefined" && typeof (proyectRuntime.devRuntime?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
                     // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
@@ -354,14 +355,14 @@ export function syncPackageVersionFromName(name, write) {
                         pkg["dependencies"][name] = currentVersion
                     }
                 })
-
-                if (write) {
-                    verbosity.dump(`writting update version on package [${name}] > ${pkgJSONPath} > ${JSON.stringify(pkg)}`)
-                    fs.writeFileSync(pkgJSONPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-                }
-
-                return pkg
             }
+
+            if (write) {
+                verbosity.dump(`writting update version on package [${name}] > ${pkgJSONPath} > ${JSON.stringify(pkg)}`)
+                fs.writeFileSync(pkgJSONPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+            }
+
+            return pkg
         }
 
     }
