@@ -21,7 +21,7 @@ let optionsMap = [
 let commandMap = [
     {
         command: 'modules [action] [module]',
-        description: "Manage nodecore modules & plugins",
+        description: "Manage modules & plugins",
         exec: (argv) => {
             switch (argv.action) {
                 case ("install"): {
@@ -52,7 +52,7 @@ let commandMap = [
     },
     {
         command: 'add [package] [dir]',
-        description: "Install an nodecore package",
+        description: "Install an package",
         args: (yargs) => {
             yargs.positional('package', {
                 describe: 'Package to install'
@@ -79,7 +79,7 @@ let commandMap = [
     },
     {
         command: 'version',
-        description: "Manage global proyect version",
+        description: "Manage proyect version",
         exec: (argv) => {
             let bumps = []
             const discriminators = ["bump-mayor", "bump-minor", "bump-patch"]
@@ -120,7 +120,7 @@ let commandMap = [
     },
     {
         command: 'build',
-        description: "Build proyect with built in builder",
+        description: "Build proyect with builtin builder",
         exec: (argv) => {
             console.log(`🔄 Building...`)
             buildProyect({
@@ -131,7 +131,7 @@ let commandMap = [
     },
     {
         command: 'bootstrap',
-        description: "Bootstrap all packages for this proyect (proyectMode)",
+        description: "Bootstrap all packages",
         exec: (argv) => {
             bootstrapProyect(argv).then((res) => {
                 console.log(`\n✅ DONE\nAll packages bootstraped > ${res}\n`)
@@ -151,7 +151,7 @@ let commandMap = [
     },
     {
         command: 'changelogs',
-        description: "Show the changelogs notes of this proyect",
+        description: "Show the changelogs of this proyect from last tag",
         exec: async (argv) => {
             const changes = await getChangelogs(getGit(), argv.to, argv.from)
             console.log(changes)

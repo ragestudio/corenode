@@ -58,15 +58,16 @@ function cliRuntime({ commands, options }) {
                 console.log(`🆘 Error executing command! >`)
                 console.error(`\n\t`, error)
             }
-        } : (() => console.log(`Invalid CMD`))
+        } : (() => console.log(`This command not contains an executable script`))
 
         argumentParser.command(command, description, args, exec)
     })
 
     argumentParser
         .showHelpOnFail(true)
-        .demandCommand(1, '')
-        .help()
+        .demandCommand(1)
+        .strict()
+        .help
         .argv
 }
 
