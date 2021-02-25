@@ -3,6 +3,8 @@
  * @module @nodecorejs/utils
  */
 
+export { default as prettyTable } from './prettyTable'
+
 /**
 * Read all directories from root path
 * @param {string} [dir = ""]

@@ -2,6 +2,7 @@ import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPac
 import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
+import { prettyTable } from '@nodecorejs/utils'
 import buildProyect from '@nodecorejs/builder'
 import cliRuntime from './cliRuntime'
 
@@ -96,11 +97,19 @@ let commandMap = [
                 bumpVersion(bumps, argv.save)
             } else {
                 const fetchedVersion = getVersion(argv.engine)
-                if (argv.engine) {
-                    return console.log(`⚙️  NodecoreJS™️  v${fetchedVersion}${isLocalMode() ? "@local" : ""}`)
-                }
                 const proyectPkg = getRootPackage()
-                fetchedVersion ? console.log(`🏷  ${proyectPkg.name ?? ""} v${fetchedVersion}`) : console.log("🏷  Version not available")
+                const pt = new prettyTable()
+
+                let headers = ["", "🏷  Version", "🏠  Directory"]
+                let rows = []  
+
+                if (argv.engine) {
+                    rows.push(["⌬ NodecoreJS™", `v${fetchedVersion}${isLocalMode() ? "@local" : ""}`, __dirname])
+                }
+
+                fetchedVersion ? rows.push([`📦  ${proyectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]): console.log("🏷  Version not available")
+                pt.create(headers, rows)
+                pt.print()
             }
         }
     },

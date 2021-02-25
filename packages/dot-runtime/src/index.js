@@ -6,14 +6,15 @@
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
+
 let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
+
 import { Globals } from './classes'
 
 let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
 let currentVersion = {}
 
-export let RuntimeGlobals = new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 let proyectRuntime = {}
 let _envLoad = false
 let _inited = false
@@ -29,6 +30,8 @@ export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 function _initRuntime() {
     if (_inited) return false
 
+    new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
+
     runtimeEnviromentFiles.forEach(runtime => {
         if (!_envLoad) {
             const fromPath = path.resolve(process.cwd(), `./${runtime}`)
@@ -39,7 +42,7 @@ function _initRuntime() {
                     proyectRuntime = parsed
                     _envLoad = true
                 } catch (error) {
-                    console.log(error)
+                    verbosity.error(error)
                 }
             }
         }
@@ -49,7 +52,7 @@ function _initRuntime() {
         try {
             const parsedVersion = getVersion()
             if (typeof (parsedVersion) !== "string") {
-                throw new Error(`Invalid version type > recived > ${typeof (parsedVersion)}`)
+                throw new Error(`Invalid version data type, recived > ${typeof (parsedVersion)}`)
             }
 
             versionsTypes.forEach((type) => {
@@ -238,9 +241,8 @@ export function isDependencyInstalled(name) {
     return currentPackages[name] ?? false
 }
 
-// TODO: modifyRuntimeEnv
 export function modifyRuntimeEnv(mutation) {
-
+// TODO: modifyRuntimeEnv
 }
 
 /**
@@ -251,6 +253,8 @@ export function modifyRuntimeEnv(mutation) {
  * @param [write = false] Write to package.json
  * @returns {object} Updated package.json
  */
+
+// TODO: Support append to devDependencies
 export function addDependency(dependency, write = false) {
     let packageJSON = getRootPackage() ?? {}
     packageJSON.dependencies[dependency.key] = dependency.value
@@ -347,7 +351,7 @@ export function syncPackageVersionFromName(name, write) {
         let pkg = require(pkgJSONPath)
         if (pkg) {
             pkg.version = currentVersion
-            
+
             if (typeof (pkg["dependencies"]) !== "undefined" && typeof (proyectRuntime.devRuntime?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
                     // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
@@ -389,5 +393,8 @@ function rewriteRuntimeEnv() {
     return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
 }
 
-_initRuntime()
+if (!_inited) {
+    _initRuntime()
+}
+
 export default proyectRuntime

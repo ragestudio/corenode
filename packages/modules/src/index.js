@@ -89,15 +89,15 @@ export function readModule(moduleName, builtIn = false) {
     if (!fs.existsSync(initializator)) {
         throw new Error(`Module file is missing!`)
     }
- 
+
     const _module = require(initializator)
 
-    if (typeof(_module) !== "object") {
+    if (typeof (_module) !== "object") {
         throw new Error(`Invalid data type`)
     }
-   
+
     let { type, libs } = _module
-    
+
     const firstOrder = !libs ? true : false // if module doesnt requires libraries is considered first level
     const isLib = type === "lib" ?? false
 
@@ -115,11 +115,11 @@ export function loadRegistry(options) {
             fs.mkdirSync(modulesPath, { recursive: true })
         }
 
-        linkAllModules(options)
+        linkModules(options)
 
         let registry = readRegistry()
         verbosity.dump(`Loaded registry with > ${JSON.stringify(registry)}`)
-       
+
         if (fs.existsSync(builtInLibraries)) {
             fs.readdirSync(builtInLibraries).filter((pkg) => pkg.charAt(0) !== '.').forEach((_module) => {
                 _libraries[_module] = {
@@ -174,7 +174,7 @@ export function writeModule(name, filename, _module) {
     })
 }
 
-export function linkModule(_module, options) {
+export function linkModule(_module) {
     try {
         let registry = readRegistry()
         const { _lib, dir, firstOrder } = _module
@@ -190,12 +190,14 @@ export function linkModule(_module, options) {
     }
 }
 
-export function unlinkModule(name, options) {
-    let registry = readRegistry()
+export function unlinkModule(name, options) {    
     try {
+        let registry = readRegistry()
+
         if (Boolean(options?.purge) && fs.existsSync(registry[name].dir)) {
             rimraf.sync(registry[name].dir)
         }
+        
         delete registry[name]
     } catch (error) {
         verbosity.dump(error)
@@ -207,7 +209,7 @@ export function unlinkModule(name, options) {
     return registry
 }
 
-export function linkAllModules(options) {
+export function linkModules(options) {
     let registry = readRegistry()
 
     listModulesNames().forEach((moduleName) => {
@@ -231,7 +233,7 @@ export function initModules(params) {
         if (autoLoadPlugins) {
             _modules = { ..._modules, ...autoLoadPlugins }
         }
-        
+
         objectToArrayMap(_modules).forEach((entry) => {
             const moduleName = entry.key
             const moduleRegistry = entry.value
