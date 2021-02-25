@@ -67,7 +67,7 @@ function cliRuntime({ commands, options }) {
         .showHelpOnFail(true)
         .demandCommand(1)
         .strict()
-        .help
+        .help()
         .argv
 }
 
