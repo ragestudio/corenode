@@ -28,6 +28,10 @@ export function listModulesNames() {
     return readRootDirectorySync(modulesPath)
 }
 
+export function getLoadedModules() {
+    return _modules
+}
+
 export function readRegistry(params) {
     let registry = {}
     try {
@@ -216,7 +220,7 @@ export function linkModules(options) {
         try {
             if (!registry[moduleName] || Boolean(options?.write)) {
                 verbosity.dump(`Forced to write link of [${moduleName}]`)
-                linkModule(readModule(moduleName), options)
+                linkModule(readModule(moduleName))
             }
         } catch (error) {
             verbosity.options({ dumpFile: true }).error(`Failed at linking module > [${moduleName}] >`, error.message)

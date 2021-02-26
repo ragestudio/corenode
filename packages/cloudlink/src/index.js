@@ -4,7 +4,7 @@
  */
 
 import axios from 'axios'
-import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getProyectEnv } from '@nodecorejs/dot-runtime'
 import { verbosity as veb } from '@nodecorejs/utils'
 import { Mutex } from 'async-mutex'
 
@@ -29,7 +29,7 @@ try {
         }
     }
 
-    const fromRuntime = getRuntimeEnv().cloudlink
+    const fromRuntime = getProyectEnv().cloudlink
     if (fromRuntime) {
         global.cloudlink = { ...global.cloudlink, ...fromRuntime }
     }

@@ -1,9 +1,9 @@
 import ora from 'ora'
 import fs from 'fs'
 import path from 'path'
-import { getRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getProyectEnv } from '@nodecorejs/dot-runtime'
 
-const temporalPath = getRuntimeEnv().temporalsDirectory ?? path.resolve(`${__dirname}/.nodecore_tmp`)
+const temporalPath = getProyectEnv().temporalsDirectory ?? path.resolve(`${__dirname}/.nodecore_tmp`)
 const spinner = ora({
     spinner: "dots",
     text: "Initalizing..."

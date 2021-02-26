@@ -6,7 +6,7 @@ import path from 'path'
 import fetch from 'node-fetch'
 
 import { loadRegistry, writeModule } from '@nodecorejs/modules'
-import { getRuntimeEnv, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
+import { getProyectEnv, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
 import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
 
 import temporalDir from '../temporalDir'
@@ -15,7 +15,7 @@ import * as timing from '../performance'
 import installCore from '../installCore'
 import { downloadWithPipe } from '../utils'
 
-const runtimeEnv = getRuntimeEnv()
+const runtimeEnv = getProyectEnv()
 const remoteModulesSource = runtimeEnv.remoteModulesSource ?? fallbackRemoteModulesSource
 
 export function installModule(params) {

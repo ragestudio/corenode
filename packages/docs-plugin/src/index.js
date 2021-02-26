@@ -1,5 +1,5 @@
 
-import { getPackages, getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getPackages, getProyectEnv } from '@nodecorejs/dot-runtime'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'
@@ -120,7 +120,7 @@ export function generateDocs(params) {
     if (buildFromProyect) {
         let includes = []
 
-        const pkgsFromRuntime = getDevRuntimeEnv().docs
+        const pkgsFromRuntime = getProyectEnv().devRuntime?.docs
         const allPackages = getPackages()
 
         if (typeof (pkgsFromRuntime) !== "undefined") {

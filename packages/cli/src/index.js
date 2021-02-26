@@ -2,7 +2,7 @@ import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPac
 import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
-import { prettyTable } from '@nodecorejs/utils'
+import { prettyTable, objectToArrayMap } from '@nodecorejs/utils'
 import buildProyect from '@nodecorejs/builder'
 import cliRuntime from './cliRuntime'
 
@@ -41,10 +41,24 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const { readRegistry } = require("@nodecorejs/modules")
-                    const registry = readRegistry({ onlyNames: true })
+                    const { getLoadedModules } = require("@nodecorejs/modules")
+                    const registry = getLoadedModules()
+                    const pt = new prettyTable()
 
-                    console.table(registry.map((name) => { return { "module": name } }))
+                    let headers = ["module", "_runtimed", "directory"]
+                    let rows = []
+
+                    console.log(`\n🔗  All modules loaded :`)
+                    objectToArrayMap(registry).forEach((_module) => {
+                        const isRuntimed = _module.value._autoLoaded ?? false
+                        const key = _module.key
+                        const cwd = _module.value.dir
+
+                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, `${isRuntimed}`, cwd])
+                    })
+
+                    pt.create(headers, rows)
+                    pt.print()
                     break
                 }
             }
@@ -101,13 +115,13 @@ let commandMap = [
                 const pt = new prettyTable()
 
                 let headers = ["", "🏷  Version", "🏠  Directory"]
-                let rows = []  
+                let rows = []
 
                 if (argv.engine) {
                     rows.push(["⌬ NodecoreJS™", `v${fetchedVersion}${isLocalMode() ? "@local" : ""}`, __dirname])
                 }
 
-                fetchedVersion ? rows.push([`📦  ${proyectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]): console.log("🏷  Version not available")
+                fetchedVersion ? rows.push([`📦  ${proyectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
                 pt.create(headers, rows)
                 pt.print()
             }

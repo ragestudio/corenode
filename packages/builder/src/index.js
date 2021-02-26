@@ -7,7 +7,7 @@ import vfs from 'vinyl-fs'
 import through from 'through2'
 
 import { verbosity } from '@nodecorejs/utils'
-import { getDevRuntimeEnv } from '@nodecorejs/dot-runtime'
+import { getProyectEnv } from '@nodecorejs/dot-runtime'
 
 const cwd = process.cwd()
 
@@ -34,7 +34,7 @@ function getBabelConfig() {
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
   }
-  const { babel } = getDevRuntimeEnv()
+  const { babel } = getProyectEnv().devRuntime
   if (babel) {
     config = { ...config, ...babel }
   }

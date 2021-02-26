@@ -79,7 +79,9 @@ function _initRuntime() {
     }
 
     if (process.env.LOCAL_BIN && !isLocalMode()) {
-        verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the '.local' flag file has not been found, it will be considered that this runtime is not running in local runtime!`)
+        verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the 'local' flag is returning false, ignoring running in local runtime!`)
+    } else if(isLocalMode()){
+        verbosity.warn(`🚧  LOCAL MODE`)
     }
 
     _inited = true
@@ -118,23 +120,11 @@ export function getVersion(engine) {
 
 /**
  * Get the entire runtime enviroment 
- * @function getRuntimeEnv 
+ * @function getProyectEnv 
  * @returns {object} proyectRuntime
  */
-export function getRuntimeEnv() {
+export function getProyectEnv() {
     return proyectRuntime
-}
-
-/**
- * Get development runtime enviroment 
- * @function getDevRuntimeEnv 
- * @returns {object} devRuntime
- */
-export function getDevRuntimeEnv() {
-    if (!proyectRuntime || typeof (proyectRuntime.devRuntime) == "undefined") {
-        return false
-    }
-    return proyectRuntime.devRuntime
 }
 
 /**
@@ -143,7 +133,7 @@ export function getDevRuntimeEnv() {
  * @returns {string} originGit
  */
 export function getGit() {
-    const envs = getDevRuntimeEnv()
+    const envs = getProyectEnv().devRuntime
     if (!envs || typeof (envs.originGit) == "undefined") {
         return false
     }
@@ -198,12 +188,12 @@ export function getRootPackage() {
  * @returns {boolean}
  */
 export function isLocalMode() {
-    return fs.existsSync(path.resolve(process.cwd(), './.local')) && process.env.LOCAL_BIN
+    return getRootPackage().name === "nodecorejs" && process.env.LOCAL_BIN
 }
 
 /**
  * Check if the current proyect is on development mode
- * @function isLocalMode 
+ * @function isDevMode 
  * @returns {boolean}
  */
 export function isDevMode() {
