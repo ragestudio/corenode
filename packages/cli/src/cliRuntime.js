@@ -4,6 +4,8 @@ const _Global = global.nodecore_cli
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 
+let cmdKeys = []
+
 function cliRuntime({ commands, options }) {
     const custom = _Global?.custom ?? []
 
@@ -60,13 +62,25 @@ function cliRuntime({ commands, options }) {
             }
         } : (() => console.log(`This command not contains an executable script`))
 
+        cmdKeys.push(command)
         argumentParser.command(command, description, args, exec)
     })
+
+    if (Array.isArray(cmdKeys)) {
+        let _hop = false
+        cmdKeys.forEach((key, index) => {
+            if (key.includes(process.argv[2])) {
+                _hop = true
+            }
+            if (!_hop && index == (cmdKeys.length - 1)) {
+                argumentParser.showHelp()
+            }
+        })
+    }
 
     argumentParser
         .showHelpOnFail(true)
         .demandCommand(1)
-        .strict()
         .help()
         .argv
 }
