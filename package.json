@@ -8,7 +8,7 @@
   "scripts": {
     "postinstall": "npm run initBuilder",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
-    "local": "LOCAL_BIN=true node ./packages/cli/dist",
+    "local": "cross-env LOCAL_BIN=true node ./packages/cli/dist",
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "release": "nodecore publish --npm --github",
@@ -44,6 +44,7 @@
     "@types/babel__traverse": "7.11.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.31",
+    "cross-env": "^7.0.3",
     "rimraf": "^3.0.2"
   }
 }

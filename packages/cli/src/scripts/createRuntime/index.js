@@ -6,7 +6,7 @@ import inquirer from 'inquirer'
 
 const saveRuntimeFile = path.resolve(process.cwd(), '.nodecore')
 
-import { getProyectEnv, getRootPackage } from '@nodecorejs/dot-runtime'
+import { getProyectEnv, getRootPackage } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
 
 let runtimeEnv = getProyectEnv()
 let pkgjson = getRootPackage() ?? {}

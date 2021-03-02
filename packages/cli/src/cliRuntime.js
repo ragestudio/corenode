@@ -1,4 +1,4 @@
-import { objectToArrayMap } from '@nodecorejs/utils'
+import { objectToArrayMap } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 
 const _Global = global.nodecore_cli
 const yargs = require('yargs/yargs')

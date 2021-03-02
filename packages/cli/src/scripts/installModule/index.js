@@ -6,8 +6,8 @@ import path from 'path'
 import fetch from 'node-fetch'
 
 import { loadRegistry, writeModule } from '@nodecorejs/modules'
-import { getProyectEnv, isDependencyInstalled, addDependency } from '@nodecorejs/dot-runtime'
-import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
+import { getProyectEnv, isDependencyInstalled, addDependency } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
+import { verbosity, objectToArrayMap } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 
 import temporalDir from '../temporalDir'
 import outputResume from '../outputResume'

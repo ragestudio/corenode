@@ -7,85 +7,77 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@nodecorejs/utils')
+let { objectToArrayMap, verbosity, readRootDirectorySync } = require('../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
-import { Globals } from './classes'
+import { Globals } from '../../builtin-lib/src/classes'
 
 let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
 let currentVersion = {}
 
 let proyectRuntime = {}
 let _envLoad = false
-let _inited = false
 
 const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionsTypes = Object.keys(versionOrderScheme)
 
 let proyectRuntimePath = path.resolve(process.cwd(), '.nodecore')
 const enginePkgPath = path.resolve(__filename, '../../package.json')
-export const proyectPkgPath = path.resolve(process.cwd(), './package.json')
+const proyectPkgPath = path.resolve(process.cwd(), './package.json')
 
-//  INIT RUNTIME FUNTIONS
-function _initRuntime() {
-    if (_inited) return false
 
-    new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
-
-    runtimeEnviromentFiles.forEach(runtime => {
-        if (!_envLoad) {
-            const fromPath = path.resolve(process.cwd(), `./${runtime}`)
-            if (fs.existsSync(fromPath)) {
-                proyectRuntimePath = fromPath
-                try {
-                    const parsed = JSON.parse(fs.readFileSync(fromPath))
-                    proyectRuntime = parsed
-                    _envLoad = true
-                } catch (error) {
-                    verbosity.error(error)
-                }
+runtimeEnviromentFiles.forEach(runtime => {
+    if (!_envLoad) {
+        const fromPath = path.resolve(process.cwd(), `./${runtime}`)
+        if (fs.existsSync(fromPath)) {
+            proyectRuntimePath = fromPath
+            try {
+                const parsed = JSON.parse(fs.readFileSync(fromPath))
+                proyectRuntime = parsed
+                _envLoad = true
+            } catch (error) {
+                verbosity.error(error)
             }
         }
-    })
+    }
+})
 
-    if (proyectRuntime["version"]) {
-        try {
-            const parsedVersion = getVersion()
-            if (typeof (parsedVersion) !== "string") {
-                throw new Error(`Invalid version data type, recived > ${typeof (parsedVersion)}`)
+if (proyectRuntime["version"]) {
+    try {
+        const parsedVersion = getVersion()
+        if (typeof (parsedVersion) !== "string") {
+            throw new Error(`Invalid version data type, recived > ${typeof (parsedVersion)}`)
+        }
+
+        versionsTypes.forEach((type) => {
+            currentVersion[type] = null
+        })
+
+        objectToArrayMap(parsedVersion.split('.')).forEach((entry) => {
+            let entryValue = null
+
+            if (isNaN(Number(entry.value))) {
+                entryValue = entry.value
+            } else {
+                entryValue = Number(entry.value)
             }
 
-            versionsTypes.forEach((type) => {
-                currentVersion[type] = null
-            })
+            if (entryValue != null) {
+                currentVersion[versionsTypes[entry.key]] = entryValue
+            }
+        })
 
-            objectToArrayMap(parsedVersion.split('.')).forEach((entry) => {
-                let entryValue = null
-
-                if (isNaN(Number(entry.value))) {
-                    entryValue = entry.value
-                } else {
-                    entryValue = Number(entry.value)
-                }
-
-                if (entryValue != null) {
-                    currentVersion[versionsTypes[entry.key]] = entryValue
-                }
-            })
-
-        } catch (error) {
-            verbosity.error("🆘 Failed to load current version >", error.message)
-        }
+    } catch (error) {
+        verbosity.error("🆘 Failed to load current version >", error.message)
     }
-
-    if (process.env.LOCAL_BIN && !isLocalMode()) {
-        verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the 'local' flag is returning false, ignoring running in local runtime!`)
-    } else if(isLocalMode()){
-        verbosity.warn(`🚧  LOCAL MODE`)
-    }
-
-    _inited = true
 }
+
+if (process.env.LOCAL_BIN && !isLocalMode()) {
+    verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the 'local' flag is returning false, ignoring running in local runtime!`)
+} else if (isLocalMode()) {
+    verbosity.warn(`🚧  LOCAL MODE`)
+}
+
 
 //  Nodecore Libraries
 
@@ -188,7 +180,7 @@ export function getRootPackage() {
  * @returns {boolean}
  */
 export function isLocalMode() {
-    return getRootPackage().name === "nodecorejs" && process.env.LOCAL_BIN
+    return getRootPackage().name === "nodecorejs"
 }
 
 /**
@@ -232,7 +224,7 @@ export function isDependencyInstalled(name) {
 }
 
 export function modifyRuntimeEnv(mutation) {
-// TODO: modifyRuntimeEnv
+    // TODO: modifyRuntimeEnv
 }
 
 /**
@@ -381,10 +373,6 @@ export function syncAllPackagesVersions() {
 function rewriteRuntimeEnv() {
     verbosity.dump(`Rewrited runtime env > ${proyectRuntimePath}`)
     return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
-}
-
-if (!_inited) {
-    _initRuntime()
 }
 
 export default proyectRuntime

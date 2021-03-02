@@ -4,8 +4,8 @@
  */
 
 import axios from 'axios'
-import { getProyectEnv } from '@nodecorejs/dot-runtime'
-import { verbosity as veb } from '@nodecorejs/utils'
+import { getProyectEnv } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
+import { verbosity as veb } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 import { Mutex } from 'async-mutex'
 
 import http from 'http'

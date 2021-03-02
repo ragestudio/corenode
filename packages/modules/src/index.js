@@ -1,9 +1,9 @@
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
-import { getPackages, getInstalledNodecoreDependencies } from '@nodecorejs/dot-runtime'
+import { getPackages, getInstalledNodecoreDependencies } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
 
-let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
+let { verbosity, objectToArrayMap, readRootDirectorySync } = require('../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
 
 let _modules = {}

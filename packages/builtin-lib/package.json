@@ -1,0 +1,27 @@
+{
+  "name": "@nodecorejs/builtin-lib",
+  "version": "0.16.25",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "load.module.js"
+  ],
+  "scripts": {
+    "start": "npx babel-node ./src",
+    "build": "rimraf dist && npm run babelOut",
+    "babelOut": "babel src --out-dir dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ragestudio/nodecore"
+  },
+  "dependencies": {
+    "@nodecorejs/utils": "0.16.25",
+    "@nodecorejs/dot-runtime": "0.16.25"
+  },
+  "license": "MIT"
+}

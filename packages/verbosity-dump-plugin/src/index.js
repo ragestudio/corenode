@@ -1,4 +1,4 @@
-import { getProyectEnv } from '@nodecorejs/dot-runtime'
+import { getProyectEnv } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
 import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf } = format

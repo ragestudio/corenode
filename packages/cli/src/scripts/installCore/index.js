@@ -10,8 +10,8 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import execa from 'execa'
 
-import { getProyectEnv, addDependency } from '@nodecorejs/dot-runtime'
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { getProyectEnv, addDependency } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
+import { objectToArrayMap, verbosity } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
 import temporalDir from '../temporalDir'

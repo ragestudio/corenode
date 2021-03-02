@@ -1,9 +1,9 @@
 
-import { getPackages, getProyectEnv } from '@nodecorejs/dot-runtime'
+import { getPackages, getProyectEnv } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'
-import { verbosity } from '@nodecorejs/utils'
+import { verbosity } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 
 const engines = {
     Docma: async (params) => {

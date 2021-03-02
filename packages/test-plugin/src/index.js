@@ -3,10 +3,10 @@ import { options as CliOptions } from 'jest-cli/build/cli/args'
 import assert from 'assert'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { mergeConfig } from '@nodecorejs/utils'
+import { mergeConfig } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 import createDefaultConfig from './createDefaultConfig/createDefaultConfig'
 
-let { verbosity } = require('@nodecorejs/utils')
+let { verbosity } = require('../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils')
 verbosity.options({ method: "[TEST]", dumpFile: true })
 
 export * from './utils'

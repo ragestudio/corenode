@@ -1,8 +1,8 @@
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
 import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
-import { prettyTable, objectToArrayMap } from '@nodecorejs/utils'
+import { prettyTable, objectToArrayMap } from '../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
 import buildProyect from '@nodecorejs/builder'
 import cliRuntime from './cliRuntime'
 
