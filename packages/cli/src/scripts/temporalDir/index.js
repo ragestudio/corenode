@@ -1,7 +1,7 @@
 import ora from 'ora'
 import fs from 'fs'
 import path from 'path'
-import { getProyectEnv } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
+import { getProyectEnv } from '@nodecorejs/dot-runtime'
 
 const temporalPath = getProyectEnv().temporalsDirectory ?? path.resolve(`${__dirname}/.nodecore_tmp`)
 const spinner = ora({

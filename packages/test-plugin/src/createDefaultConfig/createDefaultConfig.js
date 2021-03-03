@@ -1,4 +1,4 @@
-import { isProyectMode } from '../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
+import { isProyectMode } from '@nodecorejs/dot-runtime'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import assert from 'assert'

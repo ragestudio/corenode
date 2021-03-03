@@ -1,6 +1,6 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getProyectEnv, getVersion, getPackages } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
+import { getGit, getProyectEnv, getVersion, getPackages } from '@nodecorejs/dot-runtime'
 import process from 'process'
 
 export default async (params) => {

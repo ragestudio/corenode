@@ -7,8 +7,8 @@ import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
-import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProyectMode } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
-let { verbosity, objectToArrayMap } = require('../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils')
+import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProyectMode } from '@nodecorejs/dot-runtime'
+let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import { getChangelogs } from '../utils/getChangelogs'

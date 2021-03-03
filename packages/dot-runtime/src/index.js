@@ -7,10 +7,8 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-let { objectToArrayMap, verbosity, readRootDirectorySync } = require('../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils')
+let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
-
-import { Globals } from '../../builtin-lib/src/classes'
 
 let versionOrderScheme = { mayor: 0, minor: 1, patch: 2 }
 let currentVersion = {}

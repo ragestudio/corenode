@@ -1,7 +1,7 @@
 import child_process from 'child_process'
 
-import { getRootPackage } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/dot-runtime'
-import { verbosity } from '../../../../builtin-lib/src/classes/Aliaser/node_modules/@nodecorejs/utils'
+import { getRootPackage } from '@nodecorejs/dot-runtime'
+import { verbosity } from '@nodecorejs/utils'
 
 export async function installDependency({params, caller}) {
     // to do: check version & auto update if not match
