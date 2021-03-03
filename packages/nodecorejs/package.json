@@ -1,7 +1,6 @@
 {
   "name": "@ragestudio/nodecorejs",
   "version": "0.16.25",
-  "main": "./cli/nodecore.js",
   "types": "types.d.ts",
   "files": [
     "dist",
@@ -19,7 +18,7 @@
     "babelOut": "babel src --out-dir dist"
   },
   "bin": {
-    "nodecore": "./cli/nodecore.js"
+    "nodecore": "./bin/index.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.13.7",

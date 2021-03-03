@@ -3,8 +3,6 @@ const fs = require("fs")
 const path = require("path")
 const process = require("process")
 
-const builtinClasses = require("@nodecorejs/builtin-lib/classes")
-
 const prodCliBin = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
 const localCliBin = `${process.cwd()}/packages/cli/dist`
 const localPkgJson = `${process.cwd()}/package.json`
@@ -29,11 +27,21 @@ if (isLocalMode) {
     targetBin = prodCliBin
 }
 
+// INIT
+if (process.env.LOCAL_BIN && !isLocalMode) {
+    console.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the 'local' flag is returning false, ignoring running in local runtime!`)
+} else if (isLocalMode) {
+    console.warn(`🚧  LOCAL MODE`)
+}
+
 try {
+    const { Globals } = require("@nodecorejs/builtin-lib")
+
     if (!fs.existsSync(targetBin)) {
         throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Script not exists > Should : [${targetBin}]`)
     }
-    new builtinClasses.Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
+
+    new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 
     require(targetBin)
 } catch (error) {

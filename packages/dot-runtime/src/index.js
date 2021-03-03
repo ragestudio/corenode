@@ -70,13 +70,6 @@ if (proyectRuntime["version"]) {
     }
 }
 
-if (process.env.LOCAL_BIN && !isLocalMode()) {
-    verbosity.warn(`This runtime is running with 'LOCAL_BIN=true' flag but the 'local' flag is returning false, ignoring running in local runtime!`)
-} else if (isLocalMode()) {
-    verbosity.warn(`🚧  LOCAL MODE`)
-}
-
-
 //  Nodecore Libraries
 
 /**

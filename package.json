@@ -3,12 +3,12 @@
   "git": "https://github.com/ragestudio/nodecore",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/**/*"
   ],
   "scripts": {
     "postinstall": "npm run initBuilder",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
-    "local": "cross-env LOCAL_BIN=true node ./packages/cli/dist",
+    "local": "cross-env LOCAL_BIN=true node ./packages/nodecorejs/bin",
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "release": "nodecore publish --npm --github",
