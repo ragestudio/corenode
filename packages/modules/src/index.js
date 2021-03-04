@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
-import { getPackages, getInstalledNodecoreDependencies } from '@@nodecore'
+import { getPackages, getInstalledNodecoreDependencies, getRootPackage} from '@@nodecore'
 
 let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
@@ -30,6 +30,11 @@ export function listModulesNames() {
 
 export function getLoadedModules() {
     return _modules
+}
+
+export function getModulesDependents() {
+    const deps = getRootPackage().nmodules ?? {}
+    return deps
 }
 
 export function readRegistry(params) {
@@ -115,10 +120,6 @@ export function readModule(moduleName, builtIn = false) {
 
 export function loadRegistry(options) {
     try {
-        if (!fs.existsSync(modulesRegistry)) {
-            fs.mkdirSync(modulesPath, { recursive: true })
-        }
-
         linkModules(options)
 
         let registry = readRegistry()
@@ -150,6 +151,11 @@ export function overwriteRegistry(registry) {
     if (typeof (registry) !== "object") {
         return false
     }
+
+    if (!fs.existsSync(modulesRegistry)) {
+        fs.mkdirSync(modulesPath, { recursive: true })
+    }
+
     fs.writeFileSync(modulesRegistry, JSON.stringify(registry, null, 2), {
         encoding: codecRegistry,
         recursive: true
@@ -194,14 +200,14 @@ export function linkModule(_module) {
     }
 }
 
-export function unlinkModule(name, options) {    
+export function unlinkModule(name, options) {
     try {
         let registry = readRegistry()
 
         if (Boolean(options?.purge) && fs.existsSync(registry[name].dir)) {
             rimraf.sync(registry[name].dir)
         }
-        
+
         delete registry[name]
     } catch (error) {
         verbosity.dump(error)
@@ -228,7 +234,6 @@ export function linkModules(options) {
     })
 }
 
-// initialize Modules & Libraries
 export function initModules(params) {
     try {
         loadRegistry({ write: (params?.write ?? false) })
