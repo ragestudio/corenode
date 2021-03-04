@@ -1,15 +1,15 @@
-import { isProyectMode } from '@@nodecore'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import assert from 'assert'
 
 export default function (cwd, args) {
+  const hasPackages = existsSync(join(cwd, 'packages'))
+  const hasSrc = existsSync(join(cwd, 'src'))
+
   const testMatchTypes = ['spec', 'test']
 
-  const isPM = isProyectMode(cwd) ?? false
-  const hasPackage = isPM && args.package
+  const hasPackage = hasPackages && args.package
   const testMatchPrefix = hasPackage ? `**/packages/${args.package}/` : ''
-  const hasSrc = existsSync(join(cwd, 'src'))
 
   if (hasPackage) {
     assert(
@@ -21,8 +21,8 @@ export default function (cwd, args) {
     collectCoverageFrom: [
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',
-      isPM && !args.package && 'packages/*/src/**/*.{js,jsx,ts,tsx}',
-      isPM && args.package && `packages/${args.package}/src/**/*.{js,jsx,ts,tsx}`,
+      hasPackages && !args.package && 'packages/*/src/**/*.{js,jsx,ts,tsx}',
+      hasPackages && args.package && `packages/${args.package}/src/**/*.{js,jsx,ts,tsx}`,
       '!**/typings/**',
       '!**/types/**',
       '!**/fixtures/**',
