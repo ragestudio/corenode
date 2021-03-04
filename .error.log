@@ -1,18 +1,8 @@
-Error: Cannot find module './getChangelogs'
-Require stack:
-- /Users/srgooglo/repos/nodecore/packages/cli/dist/scripts/utils/index.js
-- /Users/srgooglo/repos/nodecore/packages/cli/dist/scripts/installCore/index.js
-- /Users/srgooglo/repos/nodecore/packages/cli/dist/scripts/installModule/index.js
-- /Users/srgooglo/repos/nodecore/packages/cli/dist/scripts/index.js
-- /Users/srgooglo/repos/nodecore/packages/cli/dist/index.js
-- /Users/srgooglo/repos/nodecore/packages/nodecorejs/bin/index.js
-    at Aliaser.Module._resolveFilename [as oldResolveFilename] (internal/modules/cjs/loader.js:962:15)
-    at Aliaser.<anonymous> (/Users/srgooglo/repos/nodecore/packages/builtin-lib/dist/Aliaser/index.js:32:32)
-    at Function.Module._load (internal/modules/cjs/loader.js:838:27)
-    at Module.require (internal/modules/cjs/loader.js:1022:19)
-    at require (internal/modules/cjs/helpers.js:72:18)
-    at Object.<anonymous> (/Users/srgooglo/repos/nodecore/packages/cli/dist/scripts/utils/index.js:2:43)
+Error:  CLI Binaries is missing > Should : [/Users/srgooglo/repos/nodecore/packages/nodecorejs/node_modules/@nodecorejs/cli/dist]
+    at Object.<anonymous> (/Users/srgooglo/repos/nodecore/packages/nodecorejs/bin/index.js:41:15)
     at Module._compile (internal/modules/cjs/loader.js:1118:30)
     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1138:10)
     at Module.load (internal/modules/cjs/loader.js:982:32)
     at Function.Module._load (internal/modules/cjs/loader.js:875:14)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:71:12)
+    at internal/main/run_main_module.js:17:47

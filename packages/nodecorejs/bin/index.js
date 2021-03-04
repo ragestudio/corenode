@@ -13,7 +13,7 @@ let targetBin = null
 if (fs.existsSync(localPkgJson)) {
     try {
         const pkg = require(localPkgJson)
-        if (pkg.name === "nodecorejs") {
+        if (pkg.name === "nodecorejs" && process.env.LOCAL_BIN) {
             isLocalMode = true
         }
     } catch (error) {

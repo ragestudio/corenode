@@ -4,7 +4,7 @@ import rimraf from 'rimraf'
 import { getPackages, getInstalledNodecoreDependencies } from '@@nodecore'
 
 let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
-verbosity = verbosity.options({ method: `nodecore_modules`, time: false })
+verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
 let _modules = {}
 let _libraries = {}

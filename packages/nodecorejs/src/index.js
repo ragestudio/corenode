@@ -1,4 +1,5 @@
 /**
+ * NodecoreJS
  * @module @ragestudio/nodecorejs 
  */
 import path from 'path'

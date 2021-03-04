@@ -12,7 +12,6 @@
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "release": "nodecore publish --npm --github",
-    "build": "nodecore build",
     "link:main": "cd packages/nodecorejs && yarn link && cd -",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
