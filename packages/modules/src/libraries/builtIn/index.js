@@ -1,5 +1,5 @@
 import { Aliaser, Globals } from "@nodecorejs/builtin-lib"
-import * as DotRuntime from "@ragestudio/nodecorejs"
+import * as DotRuntime from "@@nodecore"
 
 module.exports = {
     load: {

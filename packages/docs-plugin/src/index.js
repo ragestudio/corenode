@@ -1,5 +1,5 @@
 
-import { getPackages, getProyectEnv } from '@ragestudio/nodecorejs'
+import { getPackages, getProyectEnv } from '@@nodecore'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'

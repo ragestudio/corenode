@@ -20,8 +20,7 @@
     "url": "https://github.com/ragestudio/nodecore"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.16.27",
-    "@ragestudio/nodecorejs": "0.16.25"
+    "@nodecorejs/utils": "0.16.27"
   },
   "license": "MIT"
 }

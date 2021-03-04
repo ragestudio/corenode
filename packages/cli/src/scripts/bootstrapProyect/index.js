@@ -1,6 +1,6 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getProyectEnv, getVersion, getPackages } from '@ragestudio/nodecorejs'
+import { getGit, getProyectEnv, getVersion, getPackages } from '@@nodecore'
 import process from 'process'
 
 export default async (params) => {

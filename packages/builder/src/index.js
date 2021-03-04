@@ -1,15 +1,26 @@
 const babel = require('@babel/core')
 import process from 'process'
 import { join, extname, sep, resolve } from 'path'
-import { existsSync, readdirSync } from 'fs'
+import { existsSync, readdirSync, readFileSync } from 'fs'
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
 
 import { verbosity } from '@nodecorejs/utils'
-import { getProyectEnv } from '@@nodecore'
 
 const cwd = process.cwd()
+
+function getCustomConfig() {
+  const customConfigFile = resolve(process.cwd(), '.builder')
+  if (existsSync(customConfigFile)) {
+    try {
+      return JSON.parse(readFileSync(customConfigFile, 'utf-8'))
+    } catch (error) {
+      console.log(`Error while parsing custom config > ${error}`)
+      return null
+    }
+  }
+}
 
 function getBabelConfig() {
   let config = {
@@ -34,9 +45,10 @@ function getBabelConfig() {
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
   }
-  const { babel } = getProyectEnv().devRuntime
-  if (babel) {
-    config = { ...config, ...babel }
+  const customConfig = getCustomConfig()
+
+  if (customConfig) {
+    config = { ...config, ...customConfig }
   }
 
   return config

@@ -16,7 +16,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ragestudio/nodecorejs": "0.16.25",
     "@nodecorejs/utils": "0.16.27",
     "rimraf": "^3.0.2"
   }

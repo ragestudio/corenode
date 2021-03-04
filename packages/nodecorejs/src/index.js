@@ -325,6 +325,7 @@ export function syncPackageVersionFromName(name, write) {
 
             if (typeof (pkg["dependencies"]) !== "undefined" && typeof (proyectRuntime.devRuntime?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
+                    // TODO: Support multiple packages
                     // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
                     if (name.startsWith(`@${proyectRuntime.devRuntime?.headPackage}`)) {
                         pkg["dependencies"][name] = currentVersion

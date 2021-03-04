@@ -1,11 +1,15 @@
-ReferenceError: isLocalMode is not defined
-    at Object.<anonymous> (/Users/srgooglo/repos/nodecore/packages/builder/node_modules/@ragestudio/nodecorejs/cli/nodecore.js:12:1)
+Error: Cannot find module '@@nodecore'
+Require stack:
+- /Users/srgooglo/repos/nodecore/packages/builtin-lib/dist/Aliaser/index.js
+- /Users/srgooglo/repos/nodecore/packages/builtin-lib/dist/index.js
+- /Users/srgooglo/repos/nodecore/packages/nodecorejs/bin/index.js
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:962:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:838:27)
+    at Module.require (internal/modules/cjs/loader.js:1022:19)
+    at require (internal/modules/cjs/helpers.js:72:18)
+    at Object.<anonymous> (/Users/srgooglo/repos/nodecore/packages/builtin-lib/dist/Aliaser/index.js:6:15)
     at Module._compile (internal/modules/cjs/loader.js:1118:30)
     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1138:10)
     at Module.load (internal/modules/cjs/loader.js:982:32)
     at Function.Module._load (internal/modules/cjs/loader.js:875:14)
     at Module.require (internal/modules/cjs/loader.js:1022:19)
-    at require (internal/modules/cjs/helpers.js:72:18)
-    at Object.<anonymous> (/Users/srgooglo/repos/nodecore/packages/builder/dist/index.js:29:19)
-    at Module._compile (internal/modules/cjs/loader.js:1118:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1138:10)

@@ -10,7 +10,7 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import execa from 'execa'
 
-import { getProyectEnv, addDependency } from '@ragestudio/nodecorejs'
+import { getProyectEnv, addDependency } from '@@nodecore'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
