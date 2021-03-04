@@ -7,7 +7,7 @@ import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
-import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProyectMode } from '@nodecorejs/dot-runtime'
+import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProyectMode } from '@ragestudio/nodecorejs'
 let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 

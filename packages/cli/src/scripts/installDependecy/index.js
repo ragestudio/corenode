@@ -1,6 +1,6 @@
 import child_process from 'child_process'
 
-import { getRootPackage } from '@nodecorejs/dot-runtime'
+import { getRootPackage } from '@ragestudio/nodecorejs'
 import { verbosity } from '@nodecorejs/utils'
 
 export async function installDependency({params, caller}) {

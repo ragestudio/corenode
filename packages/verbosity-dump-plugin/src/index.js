@@ -1,4 +1,4 @@
-import { getProyectEnv } from '@nodecorejs/dot-runtime'
+import { getProyectEnv } from '@ragestudio/nodecorejs'
 import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf } = format

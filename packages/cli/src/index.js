@@ -1,9 +1,8 @@
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@nodecorejs/dot-runtime'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@@nodecore'
 import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import { prettyTable, objectToArrayMap } from '@nodecorejs/utils'
-import buildProyect from '@nodecorejs/builder'
 import cliRuntime from './cliRuntime'
 
 let optionsMap = [
@@ -12,7 +11,7 @@ let optionsMap = [
         description: "Clear console before print",
         alias: ["cb"],
         type: "boolean",
-        exec: (args) => {
+        exec: () => {
             console.clear()
         }
     },
@@ -137,7 +136,7 @@ let commandMap = [
         description: "Build proyect with builtin builder",
         exec: (argv) => {
             console.log(`🔄 Building...`)
-            buildProyect({
+            require("@nodecorejs/builder").default({
                 buildBuilder: argv.buildBuilder,
                 silent: argv.silent
             })

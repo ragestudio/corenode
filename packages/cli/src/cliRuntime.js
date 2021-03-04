@@ -1,4 +1,4 @@
-import { objectToArrayMap } from '@nodecorejs/utils'
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 const _Global = global.nodecore_cli
 const yargs = require('yargs/yargs')
@@ -66,16 +66,19 @@ function cliRuntime({ commands, options }) {
         argumentParser.command(command, description, args, exec)
     })
 
-    if (Array.isArray(cmdKeys)) {
-        let _hop = false
-        cmdKeys.forEach((key, index) => {
-            if (key.includes(process.argv[2])) {
-                _hop = true
-            }
-            if (!_hop && index == (cmdKeys.length - 1)) {
-                argumentParser.showHelp()
-            }
-        })
+    if (process.argv.length > 2 && typeof(process.argv[2]) !== "undefined") {
+        if (Array.isArray(cmdKeys)) {
+            let _hop = false
+            cmdKeys.forEach((key, index) => {
+                if (key.includes(process.argv[2])) {
+                    _hop = true
+                }
+                if (!_hop && index == (cmdKeys.length - 1)) {
+                    verbosity.error("Unknown command, use a valid command! \n")
+                    argumentParser.showHelp()
+                }
+            })
+        }
     }
 
     argumentParser

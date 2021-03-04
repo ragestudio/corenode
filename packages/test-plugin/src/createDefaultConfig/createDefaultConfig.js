@@ -1,4 +1,4 @@
-import { isProyectMode } from '@nodecorejs/dot-runtime'
+import { isProyectMode } from '@ragestudio/nodecorejs'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import assert from 'assert'

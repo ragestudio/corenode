@@ -1,8 +1,8 @@
 {
   "name": "@ragestudio/nodecorejs",
   "version": "0.16.25",
-  "main": "./cli/nodecore.js",
   "types": "types.d.ts",
+  "main": "./dist/index.js",
   "files": [
     "dist",
     "cli",
@@ -19,14 +19,14 @@
     "babelOut": "babel src --out-dir dist"
   },
   "bin": {
-    "nodecore": "./cli/nodecore.js"
+    "nodecore": "./bin/index.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.13.7",
+    "@nodecorejs/builtin-lib": "0.16.25",
     "@nodecorejs/modules": "0.16.25",
     "@nodecorejs/builder": "0.16.25",
     "@nodecorejs/cli": "0.16.25",
-    "@nodecorejs/dot-runtime": "0.16.25",
     "@nodecorejs/verbosity-dump-plugin": "0.16.25",
     "@nodecorejs/utils": "0.16.25"
   }

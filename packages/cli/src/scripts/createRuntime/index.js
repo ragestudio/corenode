@@ -6,7 +6,7 @@ import inquirer from 'inquirer'
 
 const saveRuntimeFile = path.resolve(process.cwd(), '.nodecore')
 
-import { getProyectEnv, getRootPackage } from '@nodecorejs/dot-runtime'
+import { getProyectEnv, getRootPackage } from '@ragestudio/nodecorejs'
 
 let runtimeEnv = getProyectEnv()
 let pkgjson = getRootPackage() ?? {}
