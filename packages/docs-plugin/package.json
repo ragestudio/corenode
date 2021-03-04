@@ -20,7 +20,7 @@
   "dependencies": {
     "docjs": "^0.0.1",
     "docma": "^3.2.2",
-    "@nodecorejs/dot-runtime": "0.16.25",
+    "@ragestudio/nodecorejs": "0.16.25",
     "jsdoc": "^3.6.6",
     "jsdoc-plugin-typescript": "^2.0.6",
     "@nodecorejs/utils": "0.16.25"

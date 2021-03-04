@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
-import { getPackages, getInstalledNodecoreDependencies } from '@nodecorejs/dot-runtime'
+import { getPackages, getInstalledNodecoreDependencies } from '@ragestudio/nodecorejs'
 
 let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `nodecore_modules`, time: false })

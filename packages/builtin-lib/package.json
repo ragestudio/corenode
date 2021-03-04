@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@nodecorejs/utils": "0.16.25",
-    "@nodecorejs/dot-runtime": "0.16.25"
+    "@ragestudio/nodecorejs": "0.16.25"
   },
   "license": "MIT"
 }

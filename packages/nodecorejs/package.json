@@ -2,6 +2,7 @@
   "name": "@ragestudio/nodecorejs",
   "version": "0.16.25",
   "types": "types.d.ts",
+  "main": "./dist/index.js",
   "files": [
     "dist",
     "cli",
@@ -26,7 +27,6 @@
     "@nodecorejs/modules": "0.16.25",
     "@nodecorejs/builder": "0.16.25",
     "@nodecorejs/cli": "0.16.25",
-    "@nodecorejs/dot-runtime": "0.16.25",
     "@nodecorejs/verbosity-dump-plugin": "0.16.25",
     "@nodecorejs/utils": "0.16.25"
   }

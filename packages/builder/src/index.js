@@ -7,7 +7,7 @@ import vfs from 'vinyl-fs'
 import through from 'through2'
 
 import { verbosity } from '@nodecorejs/utils'
-import { getProyectEnv } from '@nodecorejs/dot-runtime'
+import { getProyectEnv } from '@@nodecore'
 
 const cwd = process.cwd()
 

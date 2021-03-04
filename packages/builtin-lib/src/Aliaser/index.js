@@ -3,7 +3,7 @@ import fs from 'fs'
 
 import BuiltinModule from 'module'
 import { objectToArrayMap } from '@nodecorejs/utils'
-import { getRootPackage } from '@nodecorejs/dot-runtime'
+import { getRootPackage } from '@ragestudio/nodecorejs'
 
 const aliaserRegistryFile = `.aliaser`
 

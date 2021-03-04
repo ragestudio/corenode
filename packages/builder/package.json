@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.13.5",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.13.7",
-    "@nodecorejs/dot-runtime": "0.16.25",
+    "@ragestudio/nodecorejs": "0.16.25",
     "@nodecorejs/utils": "0.16.25",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",

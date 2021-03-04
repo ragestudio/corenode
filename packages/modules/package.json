@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nodecorejs/dot-runtime": "0.16.25",
+    "@ragestudio/nodecorejs": "0.16.25",
     "@nodecorejs/utils": "0.16.25",
     "rimraf": "^3.0.2"
   }

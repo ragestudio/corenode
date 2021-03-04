@@ -23,7 +23,7 @@
   "dependencies": {
     "7zip-bin": "^5.1.0",
     "@nodecorejs/builder": "0.16.25",
-    "@nodecorejs/dot-runtime": "0.16.25",
+    "@ragestudio/nodecorejs": "0.16.25",
     "@nodecorejs/modules": "0.16.25",
     "@nodecorejs/utils": "0.16.25",
     "@nodecorejs/verbosity-dump-plugin": "0.16.25",
