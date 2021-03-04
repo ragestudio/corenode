@@ -16,7 +16,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@ragestudio/nodecorejs": "0.16.25",
     "winston": "^3.3.3"
   }
 }

@@ -1,4 +1,4 @@
-import { isProyectMode } from '@ragestudio/nodecorejs'
+import { isProyectMode } from '@@nodecore'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import assert from 'assert'

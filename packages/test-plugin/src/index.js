@@ -1,12 +1,12 @@
-import { runCLI } from 'jest'
-import { options as CliOptions } from 'jest-cli/build/cli/args'
-import assert from 'assert'
-import { join } from 'path'
 import { existsSync } from 'fs'
-import { mergeConfig } from '@nodecorejs/utils'
+import { runCLI } from 'jest'
+import { join } from 'path'
+import assert from 'assert'
+
+import { options as CliOptions } from 'jest-cli/build/cli/args'
 import createDefaultConfig from './createDefaultConfig/createDefaultConfig'
 
-let { verbosity } = require('@nodecorejs/utils')
+let { verbosity, mergeConfig } = require('@nodecorejs/utils')
 verbosity.options({ method: "[TEST]", dumpFile: true })
 
 export * from './utils'
