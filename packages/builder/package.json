@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builder",
-  "version": "0.16.27",
+  "version": "0.16.28",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.13.5",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.13.7",
-    "@nodecorejs/utils": "0.16.27",
+    "@nodecorejs/utils": "0.16.28",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "through2": "^4.0.2",

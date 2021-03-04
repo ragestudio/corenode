@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/docs-plugin",
-  "version": "0.16.27",
+  "version": "0.16.28",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -22,6 +22,6 @@
     "docma": "^3.2.2",
     "jsdoc": "^3.6.6",
     "jsdoc-plugin-typescript": "^2.0.6",
-    "@nodecorejs/utils": "0.16.27"
+    "@nodecorejs/utils": "0.16.28"
   }
 }

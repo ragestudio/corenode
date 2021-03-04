@@ -1,6 +1,6 @@
 {
   "name": "@nodecorejs/builtin-lib",
-  "version": "0.16.27",
+  "version": "0.16.28",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -20,7 +20,7 @@
     "url": "https://github.com/ragestudio/nodecore"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.16.27"
+    "@nodecorejs/utils": "0.16.28"
   },
   "license": "MIT"
 }
