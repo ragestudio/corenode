@@ -1,4 +1,4 @@
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@@nodecore'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@ragestudio/nodecorejs'
 import { installCore, publishProyect, bootstrapProyect } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
@@ -29,7 +29,7 @@ let commandMap = [
                     break
                 }
                 case ("remove"): {
-                    const { unlinkModule } = require("@nodecorejs/modules")
+                    const { unlinkModule } = require("@ragestudio/nodecorejs")
                     // TODO: purge files & data, env templates, registry...etc
                     try {
                         unlinkModule(argv.module, { purge: true, write: true })
@@ -40,7 +40,7 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const { getLoadedModules } = require("@nodecorejs/modules")
+                    const { getLoadedModules } = require("@ragestudio/nodecorejs")
                     const registry = getLoadedModules()
                     const pt = new prettyTable()
 

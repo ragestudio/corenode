@@ -7,8 +7,10 @@
   ],
   "scripts": {
     "postinstall": "npm run initBuilder",
+    "debug": "cross-env LOCAL_BIN=true DEBUGGER=true node ./packages/nodecorejs/bin",
     "initBuilder": "cd ./packages/builder && npm i && yarn build && cd ../../ && yarn run builder",
     "local": "cross-env LOCAL_BIN=true node ./packages/nodecorejs/bin",
+    "prod": "cross-env LOCAL_BIN=false node ./packages/nodecorejs/bin",
     "builder": "node ./packages/builder/dist/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "release": "nodecore publish --npm --github",
@@ -44,6 +46,7 @@
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.31",
     "cross-env": "^7.0.3",
+    "nodemon": "^2.0.7",
     "rimraf": "^3.0.2"
   }
 }
