@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs'
 
 import BuiltinModule from 'module'
-import { objectToArrayMap } from '@nodecorejs/utils'
+import { objectToArrayMap } from '@nodecorejs/utils/dist/objectToArray'
 
 function getRootPackage() {
     const pkg = path.resolve(process.cwd(), './package.json')

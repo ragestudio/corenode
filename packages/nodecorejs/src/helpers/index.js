@@ -5,11 +5,6 @@ import fs from 'fs'
 let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
-const versionOrderScheme = global.versionScheme
-const enginePkgPath = global._packages._engine
-const proyectPkgPath = global._packages._proyect
-const proyectRuntime = global._env
-
 /**
  * Get parsed version of package
  * @function getVersion
@@ -17,6 +12,9 @@ const proyectRuntime = global._env
  * @returns {string} proyectRuntime
  */
 export function getVersion(engine) {
+    const proyectRuntime = global._env
+    const enginePkgPath = global._packages._engine
+    const proyectPkgPath = global._packages._proyect
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
         const pkgProyect = fs.existsSync(proyectPkgPath) ? require(proyectPkgPath) : {}
@@ -45,7 +43,7 @@ export function getVersion(engine) {
  * @returns {object} proyectRuntime
  */
 export function getProyectEnv() {
-    return proyectRuntime
+    return global._env
 }
 
 /**
@@ -97,6 +95,8 @@ export function getInstalledNodecoreDependencies(params) {
  * @returns {object}
  */
 export function getRootPackage() {
+    const proyectPkgPath = global._packages._proyect
+
     if (fs.existsSync(proyectPkgPath)) {
         return require(proyectPkgPath)
     }
@@ -167,6 +167,8 @@ export function modifyRuntimeEnv(mutation) {
 
 // TODO: Support append to devDependencies
 export function addDependency(dependency, write = false) {
+    const proyectPkgPath = global._packages._proyect
+
     let packageJSON = getRootPackage() ?? {}
     packageJSON.dependencies[dependency.key] = dependency.value
 
@@ -186,7 +188,7 @@ export function versionToString(version) {
     let v = []
     objectToArrayMap(version).forEach(element => {
         if (typeof (element.value) !== "undefined" && element.value != null) {
-            v[versionOrderScheme[element.key]] = element.value
+            v[global.versionScheme[element.key]] = element.value
         }
     })
     return v.join('.')
@@ -241,7 +243,7 @@ export function bumpVersion(params, save, options) {
     options?.silent ? null : console.log(`\n🏷 New version ${before} > ${after}`)
     if (save) {
         options?.silent ? null : console.log(`✅ Version updated & saved`)
-        proyectRuntime.version = after
+        global._env.version = after
         return rewriteRuntimeEnv()
     }
 }
@@ -263,11 +265,11 @@ export function syncPackageVersionFromName(name, write) {
         if (pkg) {
             pkg.version = currentVersion
 
-            if (typeof (pkg["dependencies"]) !== "undefined" && typeof (proyectRuntime.devRuntime?.headPackage) !== "undefined") {
+            if (typeof (pkg["dependencies"]) !== "undefined" && typeof (global._env.devRuntime?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
                     // TODO: Support multiple packages
                     // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
-                    if (name.startsWith(`@${proyectRuntime.devRuntime?.headPackage}`)) {
+                    if (name.startsWith(`@${global._env.devRuntime?.headPackage}`)) {
                         pkg["dependencies"][name] = currentVersion
                     }
                 })
@@ -301,6 +303,6 @@ export function syncAllPackagesVersions() {
 }
 
 function rewriteRuntimeEnv() {
-    verbosity.dump(`Rewrited runtime env > ${proyectRuntimePath}`)
-    return fs.writeFileSync(proyectRuntimePath, JSON.stringify(proyectRuntime, null, 2) + '\n', 'utf-8')
+    verbosity.dump(`Rewrited runtime env > ${global._packages._env}`)
+    return fs.writeFileSync(global._envpath, JSON.stringify(global._env, null, 2) + '\n', 'utf-8')
 }

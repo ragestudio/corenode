@@ -6,11 +6,12 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
+import { Aliaser } from '@nodecorejs/builtin-lib'
+new Aliaser({ "@@nodecore": __dirname })
+
 const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionOrderScheme = global.versionScheme = { mayor: 0, minor: 1, patch: 2 }
 const versionsTypes = Object.keys(versionOrderScheme)
-
-console.log(global)
 
 global._version = {}
 global._env = null
@@ -24,42 +25,37 @@ global._packages = {
     }
 }
 
-Object.freeze(global._packages.set)
-Object.freeze(global._packages.del)
-
+global._packages.set = Object.seal(global._packages.set)
+global._packages.del = Object.seal(global._packages.del)
 
 const setPackage = global._packages.set
 
 setPackage("__engine", path.resolve(__dirname, '../../package.json'))
 setPackage("__proyect", path.resolve(process.cwd(), 'package.json'))
 
-
-import * as helpers from './helpers'
-import { Aliaser } from '@nodecorejs/builtin-lib'
-
-new Aliaser({ "@@nodecore": __dirname })
-
-let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
-verbosity = verbosity.options({ method: "[RUNTIME]" })
-
-
-runtimeEnviromentFiles.forEach(runtime => {
+runtimeEnviromentFiles.forEach(file => {
     if (!global._env) {
-        const fromPath = path.resolve(process.cwd(), `./${runtime}`)
+        const fromPath = path.resolve(process.cwd(), `./${file}`)
         if (fs.existsSync(fromPath)) {
             global._envpath = fromPath
             try {
-                global._env = JSON.parse(fs.readFileSync(fromPath))
+                global._env = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
             } catch (error) {
-                verbosity.error(error)
+                console.error(`\n❌🆘  Error parsing runtime env > ${error.message} \n\n`)
+                console.error(error)
             }
         }
     }
 })
 
-if (global._env["version"]) {
+
+const { getVersion } = require('./helpers')
+let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
+verbosity = verbosity.options({ method: "[RUNTIME]" })
+
+if (global._env?.version) {
     try {
-        const parsedVersion = helpers.getVersion()
+        const parsedVersion = getVersion()
         if (typeof (parsedVersion) !== "string") {
             throw new Error(`Invalid version data type, recived > ${typeof (parsedVersion)}`)
         }
@@ -87,5 +83,5 @@ if (global._env["version"]) {
     }
 }
 
-export * from './modules'
+
 export * from './helpers'
