@@ -5,7 +5,7 @@ const { combine, timestamp, label, printf } = format
 
 const filename = getProyectEnv().devRuntime?.outputLogFilename ?? "logs_dump.log"
 
-export default ({level, stack}) => createLogger({
+export default ({ level, stack }) => createLogger({
     format: combine(
         label({ label: level }),
         timestamp(),

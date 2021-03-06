@@ -145,10 +145,12 @@ export default {
         if (options.dumpFile) {
             try {
                 let dumpLogger = require("@nodecorejs/verbosity-dump-plugin").default
-                dumpLogger({level: type, stack: getStack}).info(...context)
+                dumpLogger({ level: type, stack: getStack }).info(...context)
             } catch (error) {
-                console.log(error)
-                // terrible
+                // temporaly ignoring
+                
+                // this.warn(`Failed to dump log > ${error.message}`)
+                // console.warn(error)
             }
         }
 

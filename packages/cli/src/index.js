@@ -40,8 +40,8 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const { getLoadedModules } = require("@ragestudio/nodecorejs")
-                    const registry = getLoadedModules()
+                    const { modules } = require("@ragestudio/nodecorejs")
+                    const registry = modules.getLoadedModules()
                     const pt = new prettyTable()
 
                     let headers = ["module", "_runtimed", "directory"]
