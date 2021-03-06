@@ -6,8 +6,10 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-import { Aliaser } from '@nodecorejs/builtin-lib'
+import { Aliaser, Globals } from '@nodecorejs/builtin-lib'
+
 new Aliaser({ "@@nodecore": __dirname })
+new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 
 const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
 const versionOrderScheme = global.versionScheme = { mayor: 0, minor: 1, patch: 2 }
