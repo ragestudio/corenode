@@ -1,2 +1,0 @@
-const nodecore = require(nodecore)
-

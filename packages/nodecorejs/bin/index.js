@@ -36,14 +36,9 @@ if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
 }
 
 try {
-    const { Globals, Aliaser } = require("@nodecorejs/builtin-lib")
-
     if (!fs.existsSync(targetBin)) {
         throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${targetBin}]`)
     }
-
-    new Aliaser({ "@@nodecore": path.resolve(__dirname, '../dist') })
-    new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 
     if (process.env.DEBUGGER) {
         let file = null
@@ -89,7 +84,8 @@ try {
             }
         }
     } else {
-        require(targetBin)
+        const { Runtime } = require(targetBin)
+        new Runtime({ mode: 'cli' })
     }
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })

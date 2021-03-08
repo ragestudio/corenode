@@ -301,5 +301,3 @@ export function initModules(params) {
         verbosity.options({ dumpFile: true }).error(`Fatal error at initialization > `, error.message)
     }
 }
-
-initModules()
