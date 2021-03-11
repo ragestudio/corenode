@@ -3,6 +3,7 @@ const fs = require("fs")
 const path = require("path")
 const process = require("process")
 const { fork, spawn, execFileSync } = require("child_process")
+const vm = require("vm")
 
 const prodCliBin = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
 const localCliBin = `${process.cwd()}/packages/cli/dist`
@@ -10,6 +11,8 @@ const localPkgJson = `${process.cwd()}/package.json`
 
 let isLocalMode = false
 let targetBin = null
+
+let _runtime = null
 
 if (fs.existsSync(localPkgJson)) {
     try {
@@ -84,8 +87,10 @@ try {
             }
         }
     } else {
-        const { Runtime } = require(targetBin)
-        new Runtime({ mode: 'cli' })
+        const exec = path.resolve(targetBin)
+
+        console.log(exec)
+        _runtime = new vm.Script(fs.readFileSync(exec, 'utf-8'))
     }
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })

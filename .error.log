@@ -1,16 +1,11 @@
-Error: Cannot find module '@@nodecore'
-Require stack:
-- C:\repos\nodecore\packages\cli\dist\scripts\installDependecy\index.js
-- C:\repos\nodecore\packages\cli\dist\scripts\index.js
-- C:\repos\nodecore\packages\cli\dist\index.js
-- C:\repos\nodecore\packages\nodecorejs\bin\index.js
-    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:925:15)
-    at Function.Module._load (node:internal/modules/cjs/loader:769:27)
-    at Module.require (node:internal/modules/cjs/loader:997:19)
-    at require (node:internal/modules/cjs/helpers:92:18)
-    at Object.<anonymous> (C:\repos\nodecore\packages\cli\dist\scripts\installDependecy\index.js:3:15)
+Error: EISDIR: illegal operation on a directory, read
+    at Object.readSync (node:fs:611:3)
+    at tryReadSync (node:fs:385:20)
+    at Object.readFileSync (node:fs:422:19)
+    at Object.<anonymous> (C:\repos\nodecore\packages\nodecorejs\bin\index.js:92:37)
     at Module._compile (node:internal/modules/cjs/loader:1108:14)
     at Object.Module._extensions..js (node:internal/modules/cjs/loader:1137:10)
     at Module.load (node:internal/modules/cjs/loader:973:32)
     at Function.Module._load (node:internal/modules/cjs/loader:813:14)
-    at Module.require (node:internal/modules/cjs/loader:997:19)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:76:12)
+    at node:internal/main/run_main_module:17:47
