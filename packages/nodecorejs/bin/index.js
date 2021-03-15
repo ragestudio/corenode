@@ -31,7 +31,7 @@ if (isLocalMode) {
     targetBin = prodCliBin
 }
 
-// INIT
+
 if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
     console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this proyect is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
 } else if (isLocalMode) {
@@ -42,6 +42,11 @@ try {
     if (!fs.existsSync(targetBin)) {
         throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${targetBin}]`)
     }
+
+    const { Aliaser } = require('@nodecorejs/builtin-lib')
+    const cliScript = path.resolve(__dirname, "../../cli/dist")
+
+    new Aliaser({ "@@cli": cliScript })
 
     if (process.env.DEBUGGER) {
         let file = null
@@ -87,10 +92,9 @@ try {
             }
         }
     } else {
-        const exec = path.resolve(targetBin)
+        const { Runtime } = require('../dist/index.js')
 
-        console.log(exec)
-        _runtime = new vm.Script(fs.readFileSync(exec, 'utf-8'))
+        new Runtime('../dist/cli/index.js')
     }
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })

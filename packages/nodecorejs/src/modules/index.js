@@ -242,7 +242,7 @@ export function initModules(params) {
         if (autoLoadPlugins) {
             _modules = { ..._modules, ...autoLoadPlugins }
         }
-
+        
         objectToArrayMap(_modules).forEach((entry) => {
             const moduleName = entry.key
             const moduleRegistry = entry.value
