@@ -7,6 +7,9 @@ import { generateName } from '../random'
 
 export async function moduleInstall(_pathFile) {
     return new Promise(async (resolve, reject) => {
+        if (!path.isAbsolute(_pathFile)) {
+            _pathFile = path.resolve(_pathFile)
+        }
         if (typeof (_pathFile) == "undefined") {
             const err = `_pathFile is not defined`
             return reject(err)
