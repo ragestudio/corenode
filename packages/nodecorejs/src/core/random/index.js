@@ -1,7 +1,7 @@
 import { deburr } from "lodash"
 
-import ADJECTIVES from '@@nodecore/en-adjectives.json'
-import NOUNS from '@@nodecore/en-nouns.json'
+import ADJECTIVES from './en-adjectives.json'
+import NOUNS from './en-nouns.json'
 
 export function normalizeName(name) {
     return deburr(name)
