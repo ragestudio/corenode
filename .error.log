@@ -2,7 +2,7 @@ Error: EISDIR: illegal operation on a directory, read
     at Object.readSync (node:fs:611:3)
     at tryReadSync (node:fs:385:20)
     at Object.readFileSync (node:fs:422:19)
-    at Object.<anonymous> (C:\repos\nodecore\packages\nodecorejs\bin\index.js:92:37)
+    at Object.<anonymous> (C:\repos\nodecore\packages\nodecorejs\bin\index.js:93:37)
     at Module._compile (node:internal/modules/cjs/loader:1108:14)
     at Object.Module._extensions..js (node:internal/modules/cjs/loader:1137:10)
     at Module.load (node:internal/modules/cjs/loader:973:32)
