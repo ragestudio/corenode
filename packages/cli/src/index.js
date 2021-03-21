@@ -172,8 +172,9 @@ let commandMap = [
     }
 ]
 
-
-cliRuntime({
-    options: optionsMap,
-    commands: commandMap
-})
+export function runCli() {
+    cliRuntime({
+        options: optionsMap,
+        commands: commandMap
+    })
+}
