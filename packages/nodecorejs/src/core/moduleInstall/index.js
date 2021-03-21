@@ -35,6 +35,7 @@ export async function moduleInstall(_pathFile) {
         }
 
         const manifest = fs.readFile(manifestPath, 'utf-8')
+        console.log(manifest)
     })
 }
 
