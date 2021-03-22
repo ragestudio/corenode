@@ -8,7 +8,7 @@ import fs from 'fs'
 
 import * as modules from './modules'
 import * as helpers from './helpers'
-import { Aliaser, Globals } from '@nodecorejs/builtin-lib'
+import { aliaser, globals } from '@nodecorejs/builtin-lib'
 
 let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
@@ -25,13 +25,13 @@ class Runtime {
     }
 
     initAliaser() {
-        new Aliaser({ "@@nodecore": __dirname })
+        new aliaser({ "@@nodecore": __dirname })
 
         // TODO: Autoload .setalias
     }
 
     initGlobals() {
-        new Globals(["nodecore_cli", "nodecore", "nodecore_modules"])
+        new globals(["nodecore_cli", "nodecore", "nodecore_modules"])
 
         global._version = {}
         global._packages = {}

@@ -14,7 +14,7 @@ function getRootPackage() {
 
 const aliaserRegistryFile = `.aliaser`
 
-export class Aliaser {
+export class aliaser {
     constructor(aliases) {
         this.Registry = {}
         this.RegistryPath = path.resolve(process.cwd(), aliaserRegistryFile)
@@ -50,4 +50,4 @@ export class Aliaser {
     }
 }
 
-export default Aliaser
+export default aliaser

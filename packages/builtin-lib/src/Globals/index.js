@@ -1,4 +1,4 @@
-export default class Globals {
+export default class globals {
     constructor(globals) {
         this.Allocations = globals ?? []
         this.init()

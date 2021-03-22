@@ -43,11 +43,11 @@ try {
         throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${targetBin}]`)
     }
 
-    const { Aliaser } = require('@nodecorejs/builtin-lib')
+    const { aliaser } = require('@nodecorejs/builtin-lib')
     const cliScript = path.resolve(__dirname, "../../cli/dist")
     const { Runtime } = require('../dist/index.js')
 
-    new Aliaser({ "@@cli": cliScript })
+    new aliaser({ "@@cli": cliScript })
 
     if (process.env.DEBUGGER) {
         let file = null
