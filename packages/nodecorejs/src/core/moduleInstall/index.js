@@ -12,11 +12,11 @@ export async function moduleInstall(_pathFile) {
         }
         if (typeof (_pathFile) == "undefined") {
             const err = `_pathFile is not defined`
-            return reject(err)
+            return reject(new Error(err))
         }
         if (!fs.existsSync(_pathFile)) {
             const err = `_pathFile not exists > [${_pathFile}]`
-            return reject(err)
+            return reject(new Error(err))
         }
 
         const _extractDir = temporalDir.createNew(generateName())
@@ -31,7 +31,7 @@ export async function moduleInstall(_pathFile) {
 
         if (!fs.existsSync(manifestPath)) {
             const err = `manifest.json not exists > [${manifestPath}]`
-            return reject(err)
+            return reject(new Error(err))
         }
 
         const manifest = fs.readFile(manifestPath, 'utf-8')
