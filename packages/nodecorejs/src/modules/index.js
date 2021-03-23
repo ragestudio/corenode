@@ -163,6 +163,15 @@ export function overwriteRegistry(registry) {
     return true
 }
 
+export function includeModule(pkg, _path) {
+    const moduleDir = `${modulesPath}/${pkg}`
+
+    if (!fs.existsSync(moduleDir)) {
+        fs.mkdirSync(moduleDir, { recursive: true })
+    }
+
+}
+
 export function writeModule(name, filename, _module) {
     return new Promise((resolve, reject) => {
         try {
