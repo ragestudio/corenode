@@ -16,6 +16,10 @@ yarn.lock
 /node_modules
 /nodecore_modules
 
+/tests/*/**
+/tests/*
+/tests
+
 .DS_Store
 lastTest.js
 test.js

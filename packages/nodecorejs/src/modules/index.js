@@ -37,28 +37,32 @@ export function getModulesDependents() {
     return deps
 }
 
+// Read file where modules manifest is registered and returns it
 export function readRegistry(params) {
     let registry = {}
-    try {
-        if (fs.existsSync(modulesRegistry)) {
+
+    if (fs.existsSync(modulesRegistry)) {
+        try {
             const read = fs.readFileSync(modulesRegistry, codecRegistry)
             if (read) {
                 registry = JSON.parse(read)
             }
+
+            if (params?.onlyNames ?? false) {
+                return objectToArrayMap(registry).map((entry) => {
+                    return entry.key
+                })
+            }
+        } catch (error) {
+            verbosity.options({ dumpFile: true }).error(`Failed to read registry >`, error.message)
         }
-        if (params?.onlyNames ?? false) {
-            return objectToArrayMap(registry).map((entry) => {
-                return entry.key
-            })
-        }
-    } catch (error) {
-        verbosity.options({ dumpFile: true }).error(`Failed to read registry >`, error.message)
     }
 
     return registry
 }
 
-export function readAutoLoadPlugins() {
+// scan & read all installed plugins and return an list
+export function readInstalledPlugins() {
     let registry = {}
 
     const fromProyectPackages = getPackages({ fullPath: true })
@@ -91,6 +95,8 @@ export function readAutoLoadPlugins() {
     return registry
 }
 
+// scan & read module by name
+// TODO: Load module file from manifest
 export function readModule(moduleName, builtIn = false) {
     const _moduleDir = path.resolve((builtIn ? builtInLibraries : modulesPath), `${moduleName}`)
     const initializator = path.resolve(_moduleDir, `./index.js`)
@@ -118,10 +124,34 @@ export function readModule(moduleName, builtIn = false) {
     }
 }
 
+export function readModule_R(manifest) {
+    const { pkg, _moduleFile, builtIn } = manifest
+
+    if (!fs.existsSync(_moduleFile)) {
+        throw new Error(`Module file is missing!`)
+    }
+
+    const _module = require(_moduleFile)
+
+    if (typeof (_module) !== "object") {
+        throw new Error(`Invalid data type`)
+    }
+
+    let { type, libs } = _module
+
+    const firstOrder = !libs ? true : false // if module doesnt requires libraries is considered first level
+    const isLib = type === "lib" ?? false
+
+    return {
+        ..._module,
+        _lib: isLib ?? false,
+        file: _moduleFile,
+        firstOrder,
+    }
+}
+
 export function loadRegistry(options) {
     try {
-        linkModules(options)
-
         let registry = readRegistry()
         verbosity.dump(`Loaded registry with > ${JSON.stringify(registry)}`)
 
@@ -163,7 +193,7 @@ export function overwriteRegistry(registry) {
     return true
 }
 
-export function includeModule(pkg, _path) {
+export function allocateModule(pkg, _path) {
     const moduleDir = `${modulesPath}/${pkg}`
 
     if (!fs.existsSync(moduleDir)) {
@@ -228,15 +258,11 @@ export function unlinkModule(name, options) {
     return registry
 }
 
-export function linkModules(options) {
-    let registry = readRegistry()
-
+// Itterate all modules and force to link to registry
+export function linkModules() {
     listModulesNames().forEach((moduleName) => {
         try {
-            if (!registry[moduleName] || Boolean(options?.write)) {
-                verbosity.dump(`Forced to write link of [${moduleName}]`)
-                linkModule(readModule(moduleName))
-            }
+            linkModule(readModule(moduleName))
         } catch (error) {
             verbosity.options({ dumpFile: true }).error(`Failed at linking module > [${moduleName}] >`, error.message)
         }
@@ -247,11 +273,11 @@ export function initModules(params) {
     try {
         loadRegistry({ write: (params?.write ?? false) })
 
-        const autoLoadPlugins = readAutoLoadPlugins()
+        const autoLoadPlugins = readInstalledPlugins()
         if (autoLoadPlugins) {
             _modules = { ..._modules, ...autoLoadPlugins }
         }
-        
+
         objectToArrayMap(_modules).forEach((entry) => {
             const moduleName = entry.key
             const moduleRegistry = entry.value
