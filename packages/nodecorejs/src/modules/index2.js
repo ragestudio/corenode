@@ -10,7 +10,8 @@ let _modules = global.nodecore._modules = {}
 let _libraries = global.nodecore._libraries = {}
 
 export function getRegistry() {
-    const fromPackageJSON = getRootPackage().modules
-    console.log(fromPackageJSON)
+    const fromPackageJSON = getRootPackage().modules ?? {}
+
+    return fromPackageJSON
     
 }

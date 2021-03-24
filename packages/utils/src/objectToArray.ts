@@ -24,8 +24,7 @@ export function objectToArray<obj extends Readonly<Obj>, V extends obj[keyof obj
   return arr
 }
 
-export function objectToArrayMap<obj extends Readonly<Obj>>(payload: obj) {
-  if (!payload) return false
+function objectItterance<obj extends Readonly<Obj>>(payload: obj) {
   let tmp = []
 
   const keys = Object.keys(payload)
@@ -41,5 +40,21 @@ export function objectToArrayMap<obj extends Readonly<Obj>>(payload: obj) {
     obj.value = values[i]
     tmp[i] = obj
   }
+
+  return tmp
+}
+
+export function objectToArrayMap(payload: Obj, ...restPayload: any) {
+  let tmp = []
+
+  tmp = objectItterance(payload)
+  
+  if (typeof(restPayload) !== "undefined") {
+    restPayload.forEach(item => {
+      const arr = objectItterance(item)
+      tmp = [...tmp, ...arr]
+    })
+  }
+
   return tmp
 }
