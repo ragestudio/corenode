@@ -1,4 +1,5 @@
 #!/usr/bin/env node
-import _ from './index'
-
-_()
+!async function () {
+    const buildProyect = require("./index").default
+    await buildProyect({ cliui: true })
+}()

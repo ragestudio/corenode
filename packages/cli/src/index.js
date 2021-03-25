@@ -138,7 +138,7 @@ let commandMap = [
             console.log(`🔄 Building...`)
             require("@nodecorejs/builder").default({
                 buildBuilder: argv.buildBuilder,
-                silent: argv.silent
+                cliui: true
             })
         }
     },
