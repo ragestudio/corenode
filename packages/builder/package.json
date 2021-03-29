@@ -21,8 +21,6 @@
     "access": "public"
   },
   "dependencies": {
-    "cli-progress": "^3.9.0",
-    "threads": "^1.6.3",
     "@babel/core": "^7.13.1",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-do-expressions": "^7.12.13",
@@ -32,8 +30,10 @@
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.13.7",
     "@nodecorejs/utils": "0.16.29",
+    "cli-progress": "^3.9.0",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
+    "threads": "^1.6.3",
     "through2": "^4.0.2",
     "vinyl-fs": "^3.0.3"
   }
