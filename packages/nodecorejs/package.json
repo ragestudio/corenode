@@ -4,6 +4,7 @@
   "types": "types.d.ts",
   "main": "./dist/index.js",
   "files": [
+    "internals",
     "dist",
     "cli",
     "types.d.ts"

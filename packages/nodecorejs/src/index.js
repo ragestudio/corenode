@@ -37,6 +37,7 @@ class Runtime {
         global._packages = {}
         global._env = null
         global._envpath = path.resolve(process.cwd(), '.nodecore')
+        global._runtimeSource = path.resolve(__dirname, "..")
 
         // TODO: Solve freeze function object
         global._setPackage = Object.freeze((key, path) => {
