@@ -98,7 +98,7 @@ export function buildProyect(opts) {
           format: '[{bar}] {percentage}% | {filename} | {value}/{total}'
         }, cliProgress.Presets.shades_grey)
       } catch (error) {
-        handleError(error, "UNTASKED", "CLIUI INIT")
+        handleError(error, "UNTASKED", "CLI INIT")
       }
     }
 
@@ -120,6 +120,7 @@ export function buildProyect(opts) {
       } catch (error) {
 
       }
+
       // console.log(dir, packages[index], Object.keys(tasks)[index])
       const task = pool.queue(builder =>
         builder.builderTask({ dir, opts })
