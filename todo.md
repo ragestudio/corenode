@@ -19,3 +19,8 @@
 
 - [] Cloudlink plugin
 - [] Create some first-hand plugins & modules
+
+
+- [] Improve helpers
+  - [] improve versioning
+  - [] improve bump version

@@ -15,6 +15,7 @@ export function getVersion(engine) {
     const proyectRuntime = global._env
     const enginePkgPath = global._packages._engine
     const proyectPkgPath = global._packages._proyect
+    
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
         const pkgProyect = fs.existsSync(proyectPkgPath) ? require(proyectPkgPath) : {}
@@ -202,9 +203,9 @@ export function versionToString(version) {
  * @param {boolean} [save = false] Force to save updated version to currect proyect
  */
 export function bumpVersion(params, save, options) {
-    if (!params) {
-        return false
-    }
+    if (!params) return false
+
+    const currentVersion = global._version
     const bumps = [
         {
             type: "major",

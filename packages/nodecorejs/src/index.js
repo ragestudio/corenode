@@ -6,21 +6,43 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-import * as modules from './modules'
+import modulesController from './modules'
 import * as helpers from './helpers'
 import { aliaser, globals } from '@nodecorejs/builtin-lib'
 
 let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
+const getDeep = () => Object.keys(process.runtime).length
+
 class Runtime {
     constructor(load, context, options) {
-        this.init().then(() => {
-            modules.initModules()
+        this.thread = 0 // By default
+        this.modules = null
 
+        if (typeof (process.runtime) !== "object") {
+            process.runtime = {}
+        }
+
+        this.init().then(() => {
+            // create new moduleController
+            this.modules = new modulesController()
+
+            // try to allocate thread
+            while (typeof (process.runtime[this.thread]) !== "undefined") {
+                this.thread += 1
+            }
+            if (typeof (process.runtime[this.thread]) === "undefined") {
+                process.runtime[this.thread] = this
+            }
+
+            // watch for custom script
             if (typeof (load) !== "undefined") {
                 require(load)
             }
+
+            // flag runtime as inited
+            global._inited = true
         })
     }
 
@@ -31,13 +53,21 @@ class Runtime {
     }
 
     initGlobals() {
-        new globals(["nodecore_cli", "nodecore", "nodecore_modules"])
+        // Create empty globals
+        new globals(["nodecore_cli", "nodecore"])
 
-        global._version = {}
-        global._packages = {}
-        global._env = null
+        const keywords = ["_version", "_packages", "_env", "_envpath", "_runtimeSource", "_runtimeRoot"]
+
+        keywords.forEach((key) => {
+            if (typeof (global[key]) === "undefined") {
+                global[key] = {}
+            }
+        })
+
+        global._inited = false
         global._envpath = path.resolve(process.cwd(), '.nodecore')
         global._runtimeSource = path.resolve(__dirname, "..")
+        global._runtimeRoot = path.resolve(__dirname, '../../..') // TODO: fix with process.env
 
         // TODO: Solve freeze function object
         global._setPackage = Object.freeze((key, path) => {
@@ -57,17 +87,16 @@ class Runtime {
 
     setRuntimeEnv() {
         const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
+
         runtimeEnviromentFiles.forEach(file => {
-            if (!global._env) {
-                const fromPath = path.resolve(process.cwd(), `./${file}`)
-                if (fs.existsSync(fromPath)) {
-                    global._envpath = fromPath
-                    try {
-                        global._env = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
-                    } catch (error) {
-                        console.error(`\n❌🆘  Error parsing runtime env > ${error.message} \n\n`)
-                        console.error(error)
-                    }
+            const fromPath = path.resolve(process.cwd(), `./${file}`)
+            if (fs.existsSync(fromPath)) {
+                global._envpath = fromPath
+                try {
+                    global._env = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
+                } catch (error) {
+                    console.error(`\n❌🆘  Error parsing runtime env > ${error.message} \n\n`)
+                    console.error(error)
                 }
             }
         })
@@ -113,11 +142,13 @@ class Runtime {
     init() {
         return new Promise((resolve, reject) => {
             try {
-                this.initAliaser()
-                this.initGlobals()
-                this.setGlobals()
-                this.setRuntimeEnv()
-                this.setVersions()
+                if (!global._inited) {
+                    this.initAliaser()
+                    this.initGlobals()
+                    this.setGlobals()
+                    this.setRuntimeEnv()
+                    this.setVersions()
+                }
 
                 return resolve()
             } catch (error) {
@@ -130,5 +161,4 @@ class Runtime {
 module.exports = {
     Runtime,
     ...helpers,
-    modules
 }

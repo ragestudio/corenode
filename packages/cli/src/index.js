@@ -40,18 +40,17 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const { modules } = require("@ragestudio/nodecorejs")
-                    const registry = modules.getLoadedModules()
+                    const allModules = process.runtime[0].modules.getLoadedModules()
                     const pt = new prettyTable()
 
                     let headers = ["module", "_runtimed", "directory"]
                     let rows = []
 
                     console.log(`\n🔗  All modules loaded :`)
-                    objectToArrayMap(registry).forEach((_module) => {
-                        const isRuntimed = _module.value._autoLoaded ?? false
+                    objectToArrayMap(allModules).forEach((_module) => {
+                        const isRuntimed = _module.value.internal ?? false
                         const key = _module.key
-                        const cwd = _module.value.dir
+                        const cwd = _module.value.loader
 
                         rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, `${isRuntimed}`, cwd])
                     })
@@ -121,8 +120,11 @@ let commandMap = [
                 }
 
                 fetchedVersion ? rows.push([`📦  ${proyectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
-                pt.create(headers, rows)
-                pt.print()
+                
+                if (rows.length > 0) {
+                    pt.create(headers, rows)
+                    pt.print()
+                }
             }
         }
     },
