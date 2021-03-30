@@ -144,7 +144,7 @@ export default {
     output: function (type, options, colors, ...context) {
         if (options.dumpFile) {
             try {
-                let dumpLogger = require("@nodecorejs/verbosity-dump-plugin").default
+                let dumpLogger = require("@nodecorejs/verbosity-dump-module").default
                 dumpLogger({ level: type, stack: getStack }).info(...context)
             } catch (error) {
                 // temporaly ignoring

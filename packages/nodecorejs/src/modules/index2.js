@@ -15,7 +15,7 @@ export default class modules {
         this.registryObjectName = `modules`
 
         this.externalModulesPath = path.resolve(process.cwd(), 'modules')
-        this.internalModulesPath = path.resolve(global._runtimeSource, 'node_modules')
+        this.internalModulesPath = path.resolve(global._runtimeSource, 'internals')
 
         this._modules = global.nodecore._modules = {}
         this._libraries = global.nodecore._libraries = {}
@@ -33,7 +33,7 @@ export default class modules {
     // Fetch internal modules included on nodecore source
     fetchInternals() {
         const dirs = fs.readdirSync(this.internalModulesPath)
-        console.log(dirs)
+        console.log(global._runtimeSource, dirs)
     }
 
     fetchModules() {
