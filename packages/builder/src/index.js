@@ -81,7 +81,7 @@ export function buildProyect(opts) {
     }
 
     function handleError(err, index, dir) {
-      if (typeof (multibar) != null && !!packages[index]) {
+      if (typeof (multibar) != null && !packages[index]) {
         multibar.remove(tasks[packages[index]])
       }
       builderErrors.push({ task: index, message: err, dir: dir })

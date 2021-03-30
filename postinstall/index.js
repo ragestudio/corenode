@@ -33,25 +33,6 @@ const tasks = new listr([
                     .catch(err => reject(err))
             })
         }
-    },
-    {
-        title: '🔦  Linking internals',
-        skip: () => true, // Skiped for development
-        task: () => {
-            return new Promise((resolve, reject) => {
-                let findUp = ['test-module', 'verbosity-dump-module', 'docs-module'] // TODO: autofetch
-
-                findUp.forEach((pkg) => {
-                    const linkingPath = path.resolve(internalsPath, `${pkg}`)
-                    const internalPath = path.resolve(process.cwd(), `packages/${pkg}`)
-                    if (fs.existsSync(internalPath) && !fs.existsSync(linkingPath)) {
-                        // fs.symlinkSync(internalPath, linkingPath)
-                    }
-                })
-
-                resolve()
-            })
-        }
     }
 ])
 
