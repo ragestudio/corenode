@@ -8,7 +8,7 @@
   "scripts": {
     "postinstall": "npm run initBuilder",
     "debug": "cross-env LOCAL_BIN=true DEBUGGER=true node ./packages/nodecorejs/bin",
-    "initBuilder": "node ./postinstall/index.js",
+    "initBuilder": "node --experimental-worker ./postinstall/index.js",
     "local": "cross-env LOCAL_BIN=true node ./packages/nodecorejs/bin",
     "prod": "cross-env LOCAL_BIN=false node ./packages/nodecorejs/bin",
     "builder": "node --experimental-worker ./packages/builder/dist/cli.js",
@@ -48,6 +48,7 @@
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.7",
     "rimraf": "^3.0.2",
+    "listr": "0.14.3",
     "execa": "5.0.0"
   }
 }
