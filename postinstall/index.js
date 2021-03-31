@@ -3,7 +3,6 @@ const fs = require("fs")
 const execa = require("execa")
 const listr = require("listr")
 
-const internalsPath = path.resolve(process.cwd(), `packages/nodecorejs/internals`)
 const builderPath = path.resolve(process.cwd(), `packages/builder`)
 const builderSrcPath = `${builderPath}/src`
 const builderDistPath = `${builderPath}/dist`

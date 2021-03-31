@@ -8,7 +8,8 @@ verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
 const defaults = {
     loader: `load.module.js`,
-    registryObjectName: `modules`
+    registryObjectName: `modules`,
+    localModulesPathname: `modules`
 }
 
 export default class modules {
@@ -19,8 +20,9 @@ export default class modules {
 
         this.defaultLoader = defaults.loader // maybe on an future it could be interesting to include more support for custom loaders
         this.registryObjectName = defaults.registryObjectName
+        this.localModulesPathname = defaults.localModulesPathname
 
-        this.externalModulesPath = path.resolve(process.cwd(), 'modules')
+        this.externalModulesPath = path.resolve(process.cwd(), defaults.localModulesPathname)
         this.internalModulesPath = path.resolve(global._runtimeRoot, 'packages')
 
         this._modules = {}
@@ -102,9 +104,9 @@ export default class modules {
 
         const packageJSON = getRootPackage()
         const externalModules = packageJSON[defaults.registryObjectName] ?? {}
-                
+
         objectToArrayMap(externalModules).forEach((_module) => {
-            console.log(_module)
+            registry.push(_module)
         })
 
         return registry
@@ -113,6 +115,8 @@ export default class modules {
     getLoadedModules = () => { return this._modules }
 
     getLoadedLibraries = () => { return this._libraries }
+
+    getLocalModulesPath = () => { return this. }
 
     loadModule(manifest) {
         const { loader, internal } = manifest
@@ -165,13 +169,20 @@ export default class modules {
         // load libraries
         // load modules >>> loadModules(internals) > check registry && loadModules(registry)
 
+
         const registry = this.getRegistry()
         const allModules = this.fetchModules()
 
         this._libraries["builtIn"] = require("@nodecorejs/builtin-lib") // force to push builtIn lib
 
         objectToArrayMap(allModules).forEach((manifest) => {
-            this.loadModule(manifest.value)
+            console.log(manifest)
+            console.log(registry)
+            
+             // Try to load if is not
+             if (typeof (this._modules[key]) === "undefined") {
+                this.loadModule(manifest.value)
+            }
         })
 
     }

@@ -13,7 +13,7 @@ import { aliaser, globals } from '@nodecorejs/builtin-lib'
 let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
-const getDeep = () => Object.keys(process.runtime).length
+const getRuntimeDeep = () => Object.keys(process.runtime).length
 
 class Runtime {
     constructor(load, context, options) {
@@ -21,15 +21,13 @@ class Runtime {
 
         this.thread = 0 // By default
         this.modules = null
+        this.helpers = helpers
 
         if (typeof (process.runtime) !== "object") {
             process.runtime = {}
         }
 
         this.init().then(() => {
-            // create new moduleController
-            this.modules = new modulesController()
-
             // try to allocate thread
             while (typeof (process.runtime[this.thread]) !== "undefined") {
                 this.thread += 1
@@ -37,7 +35,10 @@ class Runtime {
             if (typeof (process.runtime[this.thread]) === "undefined") {
                 process.runtime[this.thread] = this
             }
-
+            
+            // create new moduleController
+            this.modules = new modulesController()
+            
             // flag runtime as inited
             global._inited = true
 
@@ -82,8 +83,8 @@ class Runtime {
     setGlobals() {
         const { _setPackage } = global
 
-        _setPackage("__engine", path.resolve(__dirname, '../../package.json'))
-        _setPackage("__project", path.resolve(process.cwd(), 'package.json'))
+        _setPackage("_engine", path.resolve(__dirname, '../../package.json'))
+        _setPackage("_project", path.resolve(process.cwd(), 'package.json'))
     }
 
     setRuntimeEnv() {

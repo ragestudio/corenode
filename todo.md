@@ -10,7 +10,8 @@
     - [x] Reliability improvement
     - [x] API improvement
     - [~] Multithreading
-    - 
+    - [] Babel transform callback event
+
 - [] Testing module env support globals and runtime init
 
 

@@ -101,6 +101,7 @@ export function getRootPackage() {
     if (fs.existsSync(projectPkgPath)) {
         return require(projectPkgPath)
     }
+    
     return false
 }
 
