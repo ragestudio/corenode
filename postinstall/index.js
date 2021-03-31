@@ -24,11 +24,11 @@ const tasks = new listr([
         }
     },
     {
-        title: '⚙️  Building proyect',
+        title: '⚙️  Building project',
         task: () => {
             return new Promise((resolve, reject) => {
-                const buildProyect = require(`${builderDistPath}/index.js`).default;
-                buildProyect()
+                const buildProject = require(`${builderDistPath}/index.js`).default;
+                buildProject()
                     .then(done => resolve(done))
                     .catch(err => reject(err))
             })

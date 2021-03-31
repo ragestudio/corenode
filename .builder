@@ -5,5 +5,6 @@
     "sourceFileName": "[name].js.map",
     "ast": true,
     "minified": true,
-    "compact": true
+    "compact": true,
+    "comments": false
 }

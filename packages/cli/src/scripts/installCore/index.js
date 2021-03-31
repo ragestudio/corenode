@@ -10,7 +10,7 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import execa from 'execa'
 
-import { getProyectEnv, addDependency } from '@@nodecore'
+import { getProjectEnv, addDependency } from '@@nodecore'
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
@@ -18,7 +18,7 @@ import temporalDir from '../temporalDir'
 import * as timing from '../performance'
 import outputResume from '../outputResume'
 
-const runtimeEnv = getProyectEnv()
+const runtimeEnv = getProjectEnv()
 const spinner = ora({ spinner: "dots", text: "Initalizing..." })
 const remoteCoresSource = runtimeEnv.remoteCoreSource ?? fallbackRemoteCoresSource
 

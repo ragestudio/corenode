@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
 
-import { getProyectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from '@ragestudio/nodecorejs'
+import { getProjectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from '@ragestudio/nodecorejs'
 import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
 
 import temporalDir from '../temporalDir'
@@ -14,7 +14,7 @@ import * as timing from '../performance'
 import installCore from '../installCore'
 import { downloadWithPipe } from '../utils'
 
-const runtimeEnv = getProyectEnv()
+const runtimeEnv = getProjectEnv()
 const remoteModulesSource = runtimeEnv.remoteModulesSource ?? fallbackRemoteModulesSource
 
 export function installModule(params) {

@@ -6,9 +6,9 @@ import inquirer from 'inquirer'
 
 const saveRuntimeFile = path.resolve(process.cwd(), '.nodecore')
 
-import { getProyectEnv, getRootPackage } from '@@nodecore'
+import { getProjectEnv, getRootPackage } from '@@nodecore'
 
-let runtimeEnv = getProyectEnv()
+let runtimeEnv = getProjectEnv()
 let pkgjson = getRootPackage() ?? {}
 
 export function createRuntime() {
@@ -28,8 +28,8 @@ export function createRuntime() {
             default: defData.originGit ?? "https://github.com/me/awesomeApp"
         },
         {
-            name: "create_proyectScheme",
-            message: "You want to create proyect directories scheme? >",
+            name: "create_projectScheme",
+            message: "You want to create project directories scheme? >",
             type: "confirm"
         },
     ]
@@ -58,7 +58,7 @@ export function createRuntime() {
                 console.log('✳ Saved runtime file! >', saveRuntimeFile)
             })
 
-            if (answers.create_proyectScheme) {
+            if (answers.create_projectScheme) {
                 const schemePath = path.resolve(process.cwd(), `./packages/${answers.headPackage}`)
                 fs.mkdirSync(schemePath, { recursive: true })
                 execa('nodecore', ['bootstrap']).stdout.pipe(process.stdout)

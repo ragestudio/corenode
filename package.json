@@ -26,6 +26,10 @@
       "prettier --parser=typescript --write"
     ]
   },
+  "modules": {
+    "testingModule": "0.0.0",
+    "something": "idk" 
+  },
   "dependencies": {
     "@babel/cli": "^7.13.0",
     "@babel/core": "^7.13.1",

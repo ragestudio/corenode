@@ -10,6 +10,9 @@
     - [x] Reliability improvement
     - [x] API improvement
     - [~] Multithreading
+    - 
+- [] Testing module env support globals and runtime init
+
 
 - [] Support modules publishing
 - [] Support client/server polymorphism
@@ -19,7 +22,6 @@
 
 - [] Cloudlink plugin
 - [] Create some first-hand plugins & modules
-
 
 - [] Improve helpers
   - [] improve versioning

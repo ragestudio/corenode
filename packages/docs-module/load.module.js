@@ -5,7 +5,7 @@ module.exports = {
         const { cli } = builtIn
         cli.add({
             command: 'docs',
-            description: "Generate proyect documentation",
+            description: "Generate project documentation",
             exec: (argv) => require("./dist/index.js").default(argv)
         })
     }

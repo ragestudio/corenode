@@ -1,13 +1,13 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getProyectEnv, getVersion, getPackages } from '@@nodecore'
+import { getGit, getProjectEnv, getVersion, getPackages } from '@@nodecore'
 import process from 'process'
 
 export default async (params) => {
   return new Promise(async (resolve, reject) => {
     {
       const version = getVersion()
-      const devRuntime = getProyectEnv().devRuntime
+      const devRuntime = getProjectEnv().devRuntime
       const pkgs = getPackages()
 
       let opt = {

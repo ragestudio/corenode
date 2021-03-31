@@ -1,9 +1,9 @@
-import { getProyectEnv } from '@@nodecore'
+import { getProjectEnv } from '@@nodecore'
 import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf } = format
 
-const filename = getProyectEnv().devRuntime?.outputLogFilename ?? "logs_dump.log"
+const filename = getProjectEnv().devRuntime?.outputLogFilename ?? "logs_dump.log"
 
 export default ({ level, stack }) => createLogger({
     format: combine(

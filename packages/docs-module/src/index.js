@@ -1,5 +1,5 @@
 
-import { getPackages, getProyectEnv } from '@@nodecore'
+import { getPackages, getProjectEnv } from '@@nodecore'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'
@@ -77,7 +77,7 @@ const engines = {
 }
 
 export function generateDocs(params) {
-    const buildFromProyect = params.proyect ?? true
+    const buildFromProject = params.project ?? true
     let opts = {
         engine: params.engine ?? "Docma",
         source: "./src",
@@ -117,10 +117,10 @@ export function generateDocs(params) {
         pkgs.push(params.dir)
     }
 
-    if (buildFromProyect) {
+    if (buildFromProject) {
         let includes = []
 
-        const pkgsFromRuntime = getProyectEnv().devRuntime?.docs
+        const pkgsFromRuntime = getProjectEnv().devRuntime?.docs
         const allPackages = getPackages()
 
         if (typeof (pkgsFromRuntime) !== "undefined") {

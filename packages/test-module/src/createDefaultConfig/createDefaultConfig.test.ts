@@ -9,23 +9,23 @@ test('with src', () => {
   ).toContain('src/**/*.{js,jsx,ts,tsx}');
 });
 
-test('proyect mode without package', () => {
+test('project mode without package', () => {
   expect(
-    createDefaultConfig(join(fixtures, 'proyectmode'), {}).collectCoverageFrom,
+    createDefaultConfig(join(fixtures, 'projectmode'), {}).collectCoverageFrom,
   ).toContain('packages/*/src/**/*.{js,jsx,ts,tsx}');
 });
 
-test('proyect mode with package', () => {
+test('project mode with package', () => {
   expect(
-    createDefaultConfig(join(fixtures, 'proyectmode'), {
+    createDefaultConfig(join(fixtures, 'projectmode'), {
       package: 'a',
     }).collectCoverageFrom,
   ).toContain('packages/a/src/**/*.{js,jsx,ts,tsx}');
 });
 
-test('proyect mode with not exists package', () => {
+test('project mode with not exists package', () => {
   expect(() =>
-    createDefaultConfig(join(fixtures, 'proyectmode'), {
+    createDefaultConfig(join(fixtures, 'projectmode'), {
       package: 'b',
     }),
   ).toThrow(/packages\/b does not exists/);

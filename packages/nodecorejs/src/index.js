@@ -17,6 +17,8 @@ const getDeep = () => Object.keys(process.runtime).length
 
 class Runtime {
     constructor(load, context, options) {
+        global._inited = false
+
         this.thread = 0 // By default
         this.modules = null
 
@@ -36,13 +38,13 @@ class Runtime {
                 process.runtime[this.thread] = this
             }
 
+            // flag runtime as inited
+            global._inited = true
+
             // watch for custom script
             if (typeof (load) !== "undefined") {
                 require(load)
             }
-
-            // flag runtime as inited
-            global._inited = true
         })
     }
 
@@ -64,7 +66,6 @@ class Runtime {
             }
         })
 
-        global._inited = false
         global._envpath = path.resolve(process.cwd(), '.nodecore')
         global._runtimeSource = path.resolve(__dirname, "..")
         global._runtimeRoot = path.resolve(__dirname, '../../..') // TODO: fix with process.env
@@ -82,7 +83,7 @@ class Runtime {
         const { _setPackage } = global
 
         _setPackage("__engine", path.resolve(__dirname, '../../package.json'))
-        _setPackage("__proyect", path.resolve(process.cwd(), 'package.json'))
+        _setPackage("__project", path.resolve(process.cwd(), 'package.json'))
     }
 
     setRuntimeEnv() {

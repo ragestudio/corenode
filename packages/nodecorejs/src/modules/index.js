@@ -6,6 +6,10 @@ import { getPackages, getInstalledNodecoreDependencies, getRootPackage } from '.
 let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
+const defaults = {
+    loader: `load.module.js`,
+    registryObjectName: `modules`
+}
 
 export default class modules {
     constructor() {
@@ -13,8 +17,8 @@ export default class modules {
             throw new Error(`Nodecore runtime has not been initialized`)
         }
 
-        this.defaultLoader = `load.module.js` // maybe on an future it could be interesting to include more support for custom loaders
-        this.registryObjectName = `modules`
+        this.defaultLoader = defaults.loader // maybe on an future it could be interesting to include more support for custom loaders
+        this.registryObjectName = defaults.registryObjectName
 
         this.externalModulesPath = path.resolve(process.cwd(), 'modules')
         this.internalModulesPath = path.resolve(global._runtimeRoot, 'packages')
@@ -67,6 +71,7 @@ export default class modules {
     }
 
     fetchInternals = () => this.fetch(this.internalModulesPath)
+
     fetchExternals = () => this.fetch(this.externalModulesPath)
 
     fetchModules() {
@@ -96,8 +101,8 @@ export default class modules {
         let registry = []
 
         const packageJSON = getRootPackage()
-        const externalModules = packageJSON[this.registryObjectName] ?? {}
-
+        const externalModules = packageJSON[defaults.registryObjectName] ?? {}
+                
         objectToArrayMap(externalModules).forEach((_module) => {
             console.log(_module)
         })
@@ -106,10 +111,10 @@ export default class modules {
     }
 
     getLoadedModules = () => { return this._modules }
-    // getLoadedLibraries = () => { return this._libraries } // Temporarily disabled to avoid unwanted external execution
+
+    getLoadedLibraries = () => { return this._libraries }
 
     loadModule(manifest) {
-        // run loader init and load manifest to this._modules
         const { loader, internal } = manifest
 
         if (fs.existsSync(loader)) {
@@ -117,7 +122,12 @@ export default class modules {
 
             this._modules[_module.pkg] = manifest
             if (typeof (_module.init) === "function") {
-                _module.init(this._libraries)
+                try {
+                    _module.init(this._libraries)
+                } catch (error) {
+                    verbosity.dump(error)
+                    verbosity.error(`Failed at module initialization > [${_module.pkg}] >`, error.message)
+                }
             }
         }
 
@@ -159,7 +169,7 @@ export default class modules {
         const allModules = this.fetchModules()
 
         this._libraries["builtIn"] = require("@nodecorejs/builtin-lib") // force to push builtIn lib
- 
+
         objectToArrayMap(allModules).forEach((manifest) => {
             this.loadModule(manifest.value)
         })

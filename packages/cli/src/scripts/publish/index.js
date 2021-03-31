@@ -7,21 +7,21 @@ import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
-import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProyectMode } from '@@nodecore'
+import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProjectMode } from '@@nodecore'
 let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import { getChangelogs } from '../utils/getChangelogs'
 
-import buildProyect from '@nodecorejs/builder'
+import buildProject from '@nodecorejs/builder'
 
-export function publishProyect(args) {
+export function publishProject(args) {
     return new Promise((resolve, reject) => {
-        let proyectPackages = getPackages()
+        let projectPackages = getPackages()
         // let beforeVersion = getVersion()
 
-        const proyectGit = getGit()
-        const isProyect = isProyectMode()
+        const projectGit = getGit()
+        const isProject = isProjectMode()
 
         let config = {
             skipStatus: false,
@@ -53,12 +53,12 @@ export function publishProyect(args) {
                     })
                 }
             },
-            buildProyect: {
-                title: "📦 Building proyect",
+            buildProject: {
+                title: "📦 Building project",
                 skip: () => config.skipBuild === true,
                 task: () => {
                     return new Promise((res, rej) => {
-                        buildProyect({ silent: true, buildBuilder: true })
+                        buildProject({ silent: true, buildBuilder: true })
                             .then((done) => {
                                 res(true)
                             })
@@ -84,16 +84,16 @@ export function publishProyect(args) {
                 enabled: () => config.npm === true,
                 task: () => {
                     return new Observable((observer) => {
-                        if (!Array.isArray(proyectPackages) && !isProyect) {
-                            proyectPackages = ["_Proyect"]
+                        if (!Array.isArray(projectPackages) && !isProject) {
+                            projectPackages = ["_Project"]
                         }
 
-                        proyectPackages.forEach((pkg, index) => {
-                            const packagePath = isProyect ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
+                        projectPackages.forEach((pkg, index) => {
+                            const packagePath = isProject ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
                             const { name } = require(path.join(packagePath, 'package.json'))
 
                             const cliArgs = config.next ? ['publish', '--tag', 'next'] : ['publish']
-                            const logOutput = `[${index + 1}/${proyectPackages.length}] Publishing npm package ${name}`
+                            const logOutput = `[${index + 1}/${projectPackages.length}] Publishing npm package ${name}`
 
                             try {
                                 verbosity.dump(logOutput)
@@ -103,8 +103,8 @@ export function publishProyect(args) {
                                     cwd: packagePath,
                                 })
                                 verbosity.options({ dumpFile: true, method: "[publish]" }).log(stdout)
-                                if ((index + 1) == proyectPackages.length) {
-                                    verbosity.dump(`NPM Release successfuly finished with [${proyectPackages.length}] packages > ${proyectPackages}`)
+                                if ((index + 1) == projectPackages.length) {
+                                    verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                     observer.complete()
                                 }
                             } catch (error) {
@@ -123,7 +123,7 @@ export function publishProyect(args) {
                         const releaseTag = `v${getVersion()}`
 
                         try {
-                            changelogNotes = getChangelogs(proyectGit)
+                            changelogNotes = getChangelogs(projectGit)
                         } catch (error) {
                             verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
                             // really terrible
@@ -135,7 +135,7 @@ export function publishProyect(args) {
                             execa.sync('git', ['push', 'origin', 'master', '--tags'])
 
                             const githubReleaseUrl = newGithubReleaseUrl({
-                                repoUrl: proyectGit,
+                                repoUrl: projectGit,
                                 tag: releaseTag,
                                 body: changelogNotes,
                                 isPrerelease: config.preRelease,

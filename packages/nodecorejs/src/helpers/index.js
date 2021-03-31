@@ -9,27 +9,27 @@ verbosity = verbosity.options({ method: "[RUNTIME]" })
  * Get parsed version of package
  * @function getVersion
  * @param {boolean} [engine = false] Return version of nodecore
- * @returns {string} proyectRuntime
+ * @returns {string} projectRuntime
  */
 export function getVersion(engine) {
-    const proyectRuntime = global._env
+    const projectRuntime = global._env
     const enginePkgPath = global._packages._engine
-    const proyectPkgPath = global._packages._proyect
+    const projectPkgPath = global._packages._project
     
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
-        const pkgProyect = fs.existsSync(proyectPkgPath) ? require(proyectPkgPath) : {}
+        const pkgProject = fs.existsSync(projectPkgPath) ? require(projectPkgPath) : {}
 
         if (engine && typeof (pkgEngine["version"]) !== "undefined") {
             return pkgEngine["version"]
         }
 
-        if (proyectRuntime.version) {
-            return proyectRuntime.version
+        if (projectRuntime.version) {
+            return projectRuntime.version
         }
 
-        if (typeof (pkgProyect["version"]) !== "undefined") {
-            return pkgProyect["version"]
+        if (typeof (pkgProject["version"]) !== "undefined") {
+            return pkgProject["version"]
         }
     } catch (error) {
         // terrible
@@ -40,10 +40,10 @@ export function getVersion(engine) {
 
 /**
  * Get the entire runtime enviroment 
- * @function getProyectEnv 
- * @returns {object} proyectRuntime
+ * @function getProjectEnv 
+ * @returns {object} projectRuntime
  */
-export function getProyectEnv() {
+export function getProjectEnv() {
     return global._env
 }
 
@@ -53,7 +53,7 @@ export function getProyectEnv() {
  * @returns {string} originGit
  */
 export function getGit() {
-    const envs = getProyectEnv().devRuntime
+    const envs = getProjectEnv().devRuntime
     if (!envs || typeof (envs.originGit) == "undefined") {
         return false
     }
@@ -61,7 +61,7 @@ export function getGit() {
 }
 
 /**
- * Get all packages from current proyect
+ * Get all packages from current project
  * @function getPackages 
  * @param {boolean} [params.fullPath = false] Return array with full path to packages
  * @returns {array} Packages names
@@ -71,7 +71,7 @@ export function getPackages(params) {
 }
 
 /**
- * Get all dependent modules from current proyect
+ * Get all dependent modules from current project
  * @function getInstalledNodeModules 
  * @param {boolean} [params.fullPath = false] Return array with full path to packages
  * @returns {array} Packages names
@@ -91,21 +91,21 @@ export function getInstalledNodecoreDependencies(params) {
 }
 
 /**
- * Get proyect package.json
+ * Get project package.json
  * @function getRootPackage 
  * @returns {object}
  */
 export function getRootPackage() {
-    const proyectPkgPath = global._packages._proyect
+    const projectPkgPath = global._packages._project
 
-    if (fs.existsSync(proyectPkgPath)) {
-        return require(proyectPkgPath)
+    if (fs.existsSync(projectPkgPath)) {
+        return require(projectPkgPath)
     }
     return false
 }
 
 /**
- * Check if the current proyect is on local mode
+ * Check if the current project is on local mode
  * @function isLocalMode 
  * @returns {boolean}
  */
@@ -114,7 +114,7 @@ export function isLocalMode() {
 }
 
 /**
- * Check if the current proyect is on development mode
+ * Check if the current project is on development mode
  * @function isDevMode 
  * @returns {boolean}
  */
@@ -123,12 +123,12 @@ export function isDevMode() {
 }
 
 /**
- * Check if the current proyect is on proyect mode
- * @function isProyectMode 
- * @param {string} [dir = undefined] Check from custom directory instead default proyect path
+ * Check if the current project is on project mode
+ * @function isProjectMode 
+ * @param {string} [dir = undefined] Check from custom directory instead default project path
  * @returns {boolean}
  */
-export function isProyectMode(dir) {
+export function isProjectMode(dir) {
     const from = dir ?? process.cwd()
     const packagesDir = path.resolve(from, './packages')
 
@@ -143,7 +143,7 @@ export function isProyectMode(dir) {
 }
 
 /**
- * Check if an dependecy is installed on current proyect
+ * Check if an dependecy is installed on current project
  * @function isDependencyInstalled 
  * @param name Package name
  * @returns {boolean}
@@ -158,7 +158,7 @@ export function modifyRuntimeEnv(mutation) {
 }
 
 /**
- * Add an dependecy to package of the current proyect
+ * Add an dependecy to package of the current project
  * @function addDependency
  * @param dependency.key NPM Package name
  * @param dependency.value NPM Package version
@@ -168,13 +168,13 @@ export function modifyRuntimeEnv(mutation) {
 
 // TODO: Support append to devDependencies
 export function addDependency(dependency, write = false) {
-    const proyectPkgPath = global._packages._proyect
+    const projectPkgPath = global._packages._project
 
     let packageJSON = getRootPackage() ?? {}
     packageJSON.dependencies[dependency.key] = dependency.value
 
     if (write) {
-        fs.writeFileSync(proyectPkgPath, JSON.stringify(packageJSON, null, 2) + '\n', 'utf-8')
+        fs.writeFileSync(projectPkgPath, JSON.stringify(packageJSON, null, 2) + '\n', 'utf-8')
     }
     return packageJSON
 }
@@ -196,11 +196,11 @@ export function versionToString(version) {
 }
 
 /**
- * Bumps current version of the current proyect
+ * Bumps current version of the current project
  * @function bumpVersion 
  * @param {array} params "major", "minor", "patch"
  * @param {array} silent Suppres console
- * @param {boolean} [save = false] Force to save updated version to currect proyect
+ * @param {boolean} [save = false] Force to save updated version to currect project
  */
 export function bumpVersion(params, save, options) {
     if (!params) return false
@@ -250,7 +250,7 @@ export function bumpVersion(params, save, options) {
 }
 
 /**
- * Sync package version from global proyect version to one package
+ * Sync package version from global project version to one package
  * @function syncPackageVersionFromName 
  * @param {object} name Package name
  * @param {boolean} [write = false] Force to write updated to defined package
@@ -288,7 +288,7 @@ export function syncPackageVersionFromName(name, write) {
 }
 
 /**
- * Syncs all packages from current proyect with the global proyect version
+ * Syncs all packages from current project with the global project version
  * @function syncAllPackagesVersions 
  */
 export function syncAllPackagesVersions() {

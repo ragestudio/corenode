@@ -65,10 +65,10 @@ export function readRegistry(params) {
 export function readInstalledPlugins() {
     let registry = {}
 
-    const fromProyectPackages = getPackages({ fullPath: true })
+    const fromProjectPackages = getPackages({ fullPath: true })
     const fromNodeModules = listExternalPluginsNames()
 
-    const paths = [...fromNodeModules, ...fromProyectPackages]
+    const paths = [...fromNodeModules, ...fromProjectPackages]
 
     if (Array.isArray(paths)) {
         const moduleLoadFile = "load.module.js"

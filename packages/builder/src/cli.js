@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 !async function () {
-    const buildProyect = require("./index").default
-    await buildProyect({ cliui: true })
+    const buildProject = require("./index").default
+    await buildProject({ cliui: true })
 }()

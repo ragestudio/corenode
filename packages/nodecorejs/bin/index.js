@@ -33,7 +33,7 @@ if (isLocalMode) {
 
 
 if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
-    console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this proyect is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
+    console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
 } else if (isLocalMode) {
     console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
 }

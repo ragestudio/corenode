@@ -5,7 +5,7 @@ module.exports = {
         const { cli } = builtIn
         cli.add({
             command: 'test',
-            description: "Run proyect test",
+            description: "Run project test",
             exec: (argv) => require("./dist/index.js").default(argv)
         })
     }

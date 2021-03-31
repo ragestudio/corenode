@@ -28,16 +28,16 @@ function getIgnoredPackages() {
   return ignored
 }
 
-export function buildProyect(opts) {
+export function buildProject(opts) {
   return new Promise((resolve, reject) => {
     const ignoredPackages = getIgnoredPackages()
     const packagesPath = path.join(cwd, 'packages')
-    const isProyectMode = fs.existsSync(packagesPath)
+    const isProjectMode = fs.existsSync(packagesPath)
 
     let count = 0
     let multibar = null
 
-    let packages = isProyectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
+    let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
     if (Array.isArray(ignoredPackages) && ignoredPackages.length > 0) {
       ignoredPackages.forEach((pkg) => {
          packages = packages.filter(name => name !== pkg)
@@ -45,7 +45,7 @@ export function buildProyect(opts) {
     }
   
     let dirs = packages.map((name) => {
-      return isProyectMode ? `./packages/${name}` : `${name}`
+      return isProjectMode ? `./packages/${name}` : `${name}`
     })
     
     const pool = Pool(() => spawn(new Worker("./build.js")), packages.length)
@@ -131,4 +131,4 @@ export function buildProyect(opts) {
   })
 }
 
-export default buildProyect
+export default buildProject
