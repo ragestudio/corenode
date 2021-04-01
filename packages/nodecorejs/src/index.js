@@ -134,7 +134,6 @@ class Runtime {
                         global._version[versionsTypes[entry.key]] = entryValue
                     }
                 })
-
             } catch (error) {
                 verbosity.error("🆘 Failed to load current version >", error.message)
             }

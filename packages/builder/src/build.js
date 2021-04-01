@@ -54,14 +54,19 @@ function getBabelConfig() {
     return config
 }
 
-function transform(opts = {}) {
+function transform(opts = {}, callback) {
     const { content, path, } = opts
     const babelConfig = getBabelConfig()
 
+    const callbackHandler = (err, res) => {
+        if (typeof(callback) !== "undefined") {
+            callback(err, res)
+        }
+    }
     return babel.transform(content, {
         ...babelConfig,
         filename: path,
-    }).code
+    }, callbackHandler).code
 }
 
 function build({ dir, opts }) {
