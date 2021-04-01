@@ -54,19 +54,21 @@ function getBabelConfig() {
     return config
 }
 
-function transform(opts = {}, callback) {
-    const { content, path, } = opts
-    const babelConfig = getBabelConfig()
+function transform(opts = {}) {
+    return new Promise((resolve, reject) => {
+        const { content, path, } = opts
+        const babelConfig = getBabelConfig()
 
-    const callbackHandler = (err, res) => {
-        if (typeof(callback) !== "undefined") {
-            callback(err, res)
-        }
-    }
-    return babel.transform(content, {
-        ...babelConfig,
-        filename: path,
-    }, callbackHandler).code
+        babel.transform(content, {
+            ...babelConfig,
+            filename: path,
+        }, (err, res) => {
+            if (err) {
+                reject(err)
+            }
+            resolve(res)
+        })
+    })
 }
 
 function build({ dir, opts }) {
@@ -95,11 +97,6 @@ function build({ dir, opts }) {
             }
         }
 
-        // if (pkg.name) {
-
-        // }
-
-        // clean
         rimraf.sync(path.join(options.cwd, buildOut))
 
         function createStream(src) {
@@ -109,16 +106,20 @@ function build({ dir, opts }) {
             })
                 .pipe(through.obj((f, env, cb) => {
                     if (['.js', '.ts'].includes(path.extname(f.path)) && !f.path.includes(`${path.sep}templates${path.sep}`)) {
-                        f.contents = Buffer.from(
-                            transform({
-                                silent: options.silent,
-                                content: f.contents,
-                                path: f.path,
-                                pkg,
-                                root: path.join(options.cwd, dir),
-                            }),
-                        )
-                        f.path = f.path.replace(path.extname(f.path), '.js')
+                        transform({
+                            silent: options.silent,
+                            content: f.contents,
+                            path: f.path,
+                            pkg,
+                            root: path.join(options.cwd, dir),
+                        })
+                        .catch((err) => {
+                            reject(err)
+                        })
+                        .then((code) => {
+                            f.contents = Buffer.from(code)
+                            f.path = f.path.replace(path.extname(f.path), '.js')
+                        })
                     }
                     cb(null, f)
                 }))
@@ -127,7 +128,7 @@ function build({ dir, opts }) {
 
         const stream = createStream(path.join(srcDir, '**/*'))
         stream.on('end', () => {
-            return resolve(true)
+            return resolve()
         })
     })
 }

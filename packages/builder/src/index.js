@@ -8,6 +8,7 @@ import { spawn, Pool, Worker } from "threads"
 
 let builderErrors = Array()
 
+// const maximunLenghtErrorShow = Number(process.stdout.columns) - 50
 const cwd = process.cwd()
 
 function getIgnoredPackages() {
@@ -63,10 +64,13 @@ export function buildProject(opts) {
 
         if (Array.isArray(builderErrors) && builderErrors.length > 0) {
           const pt = new prettyTable()
-          const headers = ["TASK INDEX", "ERROR", "PACKAGE"]
+          const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
           const rows = []
 
           builderErrors.forEach((err) => {
+            // if (err?.message?.length > maximunLenghtErrorShow) {
+            //   err.message = String(err.message).slice(0, maximunLenghtErrorShow)
+            // }
             rows.push([err.task ?? "UNTASKED", err.message ?? "Unknown error", err.dir ?? "RUNTIME"])
           })
 
@@ -124,8 +128,9 @@ export function buildProject(opts) {
       // console.log(dir, packages[index], Object.keys(tasks)[index])
       const task = pool.queue(builder =>
         builder.builderTask({ dir, opts })
-          .catch((err) => handleError(`⚠️  [Task ${index}] Builder task catch an error > ${err}`, index, dir))
+          .catch((err) => handleError(`${err}`, index, dir))
       )
+
       task.then(() => handleThen(index))
     })
   })

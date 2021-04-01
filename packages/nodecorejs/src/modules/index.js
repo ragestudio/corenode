@@ -116,7 +116,7 @@ export default class modules {
 
     getLoadedLibraries = () => { return this._libraries }
 
-    getLocalModulesPath = () => { return this. }
+    getExternalModulesPath = () => { return this.externalModulesPath }
 
     loadModule(manifest) {
         const { loader, internal } = manifest

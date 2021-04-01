@@ -25,7 +25,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
-    "@babel/runtime": "^7.13.7",
+    "@babel/runtime": "^7.13.10",
     "@nodecorejs/builtin-lib": "0.16.29",
     "@nodecorejs/builder": "0.16.29",
     "@nodecorejs/cli": "0.16.29",
