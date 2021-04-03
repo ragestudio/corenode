@@ -4,7 +4,11 @@ import cliProgress from 'cli-progress'
 
 import { prettyTable } from '@nodecorejs/utils'
 
-import { spawn, Pool, Worker } from "threads"
+import { spawn, Worker } from "threads"
+
+import rimraf from 'rimraf'
+import vfs from 'vinyl-fs'
+import through from 'through2'
 
 let builderErrors = Array()
 
@@ -29,6 +33,75 @@ function getIgnoredPackages() {
   return ignored
 }
 
+export function transform(content, _path) {
+  return new Promise(async (resolve, reject) => {
+    const thread = await spawn(new Worker("./build.js"))
+
+    thread.transform(content, _path)
+      .then((res) => {
+        return resolve(res)
+      })
+      .catch((err) => {
+        return reject(err)
+      })
+
+  })
+}
+
+export function build({ dir, opts, ticker }) {
+  return new Promise((resolve, reject) => {
+    let fileCounter = Number(0)
+    let options = {
+      cwd: process.cwd(),
+      outDir: 'dist',
+      buildSrc: 'src'
+    }
+
+    if (typeof (opts) !== "undefined") {
+      options = { ...options, ...opts }
+    }
+
+    const buildOut = path.resolve(dir, options.outDir)
+    const srcDir = path.resolve(dir, options.buildSrc)
+
+    rimraf.sync(path.resolve(options.cwd, buildOut))
+
+    function createStream(src) {
+      return vfs.src([src, `!${path.join(srcDir, '**/*.test.js')}`, `!${path.join(srcDir, '**/*.e2e.js')}`,], {
+        allowEmpty: true,
+        base: srcDir,
+      })
+        .pipe(through.obj((f, env, cb) => {
+          if (['.js', '.ts'].includes(path.extname(f.path)) && !f.path.includes(`${path.sep}templates${path.sep}`)) {
+            transform(f.contents, f.path)
+              .then((out) => {
+                console.log(out)
+                fileCounter += 1
+                if (typeof (ticker) == "function") {
+                  ticker(fileCounter)
+                }
+
+                f.contents = Buffer.from(out.code)
+                f.path = f.path.replace(path.extname(f.path), '.js')
+              })
+              .catch((err) => {
+                return reject(err)
+              })
+
+          }
+          cb(null, f)
+        }))
+        .pipe(vfs.dest(buildOut))
+    }
+
+    const stream = createStream(path.join(srcDir, '**/*'))
+
+    stream.on('end', () => {
+      return resolve(fileCounter)
+    })
+  })
+}
+
 export function buildProject(opts) {
   return new Promise((resolve, reject) => {
     const ignoredPackages = getIgnoredPackages()
@@ -41,23 +114,24 @@ export function buildProject(opts) {
     let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
     if (Array.isArray(ignoredPackages) && ignoredPackages.length > 0) {
       ignoredPackages.forEach((pkg) => {
-         packages = packages.filter(name => name !== pkg)
+        packages = packages.filter(name => name !== pkg)
       })
     }
-  
+
     let dirs = packages.map((name) => {
       return isProjectMode ? `./packages/${name}` : `${name}`
     })
-    
-    const pool = Pool(() => spawn(new Worker("./build.js")), packages.length)
+
     const tasks = {}
+
+    function handleTicker(index, counter) {
+      if (multibar != null) {
+        tasks[packages[index]].increment(counter)
+      }
+    }
 
     function handleThen(index) {
       count += 1
-
-      if (multibar != null) {
-        tasks[packages[index]].increment(100)
-      }
 
       if (count == (packages.length - 1)) {
         pool.terminate()
@@ -125,13 +199,10 @@ export function buildProject(opts) {
 
       }
 
-      // console.log(dir, packages[index], Object.keys(tasks)[index])
-      const task = pool.queue(builder =>
-        builder.builderTask({ dir, opts })
-          .catch((err) => handleError(`${err}`, index, dir))
-      )
+      build({ dir, opts })
+        .then((done) => handleThen(done))
+        .catch((err) => handleError(`${err}`, index, dir))
 
-      task.then(() => handleThen(index))
     })
   })
 }

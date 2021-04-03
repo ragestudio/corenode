@@ -1,13 +1,7 @@
-const babel = require('@babel/core')
-import rimraf from 'rimraf'
-import vfs from 'vinyl-fs'
-import through from 'through2'
-
 import path from 'path'
 import fs from 'fs'
 import { expose } from "threads/worker"
-
-const cwd = process.cwd()
+const babel = require('@babel/core')
 
 function getCustomConfig() {
     const customConfigFile = path.resolve(process.cwd(), '.builder')
@@ -54,85 +48,16 @@ function getBabelConfig() {
     return config
 }
 
-function transform(opts = {}) {
-    return new Promise((resolve, reject) => {
-        const { content, path, } = opts
-        const babelConfig = getBabelConfig()
-
-        babel.transform(content, {
-            ...babelConfig,
-            filename: path,
-        }, (err, res) => {
-            if (err) {
-                reject(err)
-            }
-            resolve(res)
-        })
-    })
-}
-
-function build({ dir, opts }) {
-    return new Promise((resolve, reject) => {
-        let options = {
-            buildBuilder: false,
-            cwd: cwd,
-            silent: false,
-            outDir: 'dist',
-            buildSrc: 'src'
-        }
-
-        if (typeof (opts) !== "undefined") {
-            options = { ...options, ...opts }
-        }
-
-        const pkgPath = path.join(options.cwd, dir, 'package.json')
-        const pkg = require(pkgPath)
-
-        const buildOut = path.join(dir, options.outDir)
-        const srcDir = path.join(dir, options.buildSrc)
-
-        if (pkg.name == require(path.resolve(__dirname, '../package.json')).name) {
-            if (!options.buildBuilder) {
-                return reject(`Skipping build builder`)
-            }
-        }
-
-        rimraf.sync(path.join(options.cwd, buildOut))
-
-        function createStream(src) {
-            return vfs.src([src, `!${path.join(srcDir, '**/*.test.js')}`, `!${path.join(srcDir, '**/*.e2e.js')}`,], {
-                allowEmpty: true,
-                base: srcDir,
-            })
-                .pipe(through.obj((f, env, cb) => {
-                    if (['.js', '.ts'].includes(path.extname(f.path)) && !f.path.includes(`${path.sep}templates${path.sep}`)) {
-                        transform({
-                            silent: options.silent,
-                            content: f.contents,
-                            path: f.path,
-                            pkg,
-                            root: path.join(options.cwd, dir),
-                        })
-                        .catch((err) => {
-                            reject(err)
-                        })
-                        .then((code) => {
-                            f.contents = Buffer.from(code)
-                            f.path = f.path.replace(path.extname(f.path), '.js')
-                        })
-                    }
-                    cb(null, f)
-                }))
-                .pipe(vfs.dest(buildOut))
-        }
-
-        const stream = createStream(path.join(srcDir, '**/*'))
-        stream.on('end', () => {
-            return resolve()
-        })
-    })
-}
-
 expose({
-    builderTask: build
+    transform: (content, filename) => {
+        return new Promise((resolve, reject) => {
+            const babelConfig = getBabelConfig()
+            babel.transform(content, { ...babelConfig, filename: filename }, (err, res) => {
+                if (err) {
+                    return reject(err)
+                }
+                return resolve(res)
+            })
+        })
+    }
 })
