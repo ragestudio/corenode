@@ -2,20 +2,27 @@
 
 - [] Debugger UI
     - [] WebApp
-    - [] Dynamic compiler
 
 - [] Improve NRMI Modules system
+    - [] Support modules publishing
+    - [] Support dynamic load
+    - [] Thread workers
+    - [] Load balancer 
+
 - [x] Improve Builder
-    - [x] CLI UI
-    - [x] Reliability improvement
-    - [x] API improvement
-    - [~] Multithreading
     - [] Babel transform callback event
+    - [x] Reliability improvement
+    - [~] Multithreading
+    - [x] API improvement
+    - [x] CLI UI
+    - [] Dynamic compiler
+
+- [] Improve helpers
+  - [] improve versioning
+  - [] improve bump version
 
 - [] Testing module env support globals and runtime init
 
-
-- [] Support modules publishing
 - [] Support client/server polymorphism
 
 - [] Add global API documentation
@@ -23,7 +30,3 @@
 
 - [] Cloudlink plugin
 - [] Create some first-hand plugins & modules
-
-- [] Improve helpers
-  - [] improve versioning
-  - [] improve bump version
