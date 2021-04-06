@@ -169,7 +169,6 @@ export default class modules {
         // load libraries
         // load modules >>> loadModules(internals) > check registry && loadModules(registry)
 
-
         const registry = this.getRegistry()
         const allModules = this.fetchModules()
 
@@ -184,6 +183,5 @@ export default class modules {
                 this.loadModule(manifest.value)
             }
         })
-
     }
 }

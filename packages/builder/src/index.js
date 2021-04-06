@@ -4,7 +4,7 @@ import cliProgress from 'cli-progress'
 
 import { prettyTable } from '@nodecorejs/utils'
 
-import { spawn, Worker } from "threads"
+import { spawn, Worker, Thread } from "threads"
 
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
@@ -48,8 +48,8 @@ export function transform(content, _path) {
   })
 }
 
-export function build({ dir, opts, ticker }) {
-  return new Promise((resolve, reject) => {
+export async function build({ dir, opts, ticker }) {
+  return new Promise(async (resolve, reject) => {
     let fileCounter = Number(0)
     let options = {
       cwd: process.cwd(),
@@ -63,42 +63,22 @@ export function build({ dir, opts, ticker }) {
 
     const buildOut = path.resolve(dir, options.outDir)
     const srcDir = path.resolve(dir, options.buildSrc)
+    const thread = await spawn(new Worker(`./build.js`))
 
     rimraf.sync(path.resolve(options.cwd, buildOut))
 
-    function createStream(src) {
-      return vfs.src([src, `!${path.join(srcDir, '**/*.test.js')}`, `!${path.join(srcDir, '**/*.e2e.js')}`,], {
-        allowEmpty: true,
-        base: srcDir,
+
+    // Thread.events(thread).subscribe(event => console.log("Thread event:", event))
+    // Thread.errors(thread).subscribe(error => console.log("Thread error:", error))
+
+    thread.transform(srcDir, buildOut)
+      .then((done) => {
+        fileCounter += 1
+        return resolve(fileCounter)
       })
-        .pipe(through.obj((f, env, cb) => {
-          if (['.js', '.ts'].includes(path.extname(f.path)) && !f.path.includes(`${path.sep}templates${path.sep}`)) {
-            transform(f.contents, f.path)
-              .then((out) => {
-                console.log(out)
-                fileCounter += 1
-                if (typeof (ticker) == "function") {
-                  ticker(fileCounter)
-                }
-
-                f.contents = Buffer.from(out.code)
-                f.path = f.path.replace(path.extname(f.path), '.js')
-              })
-              .catch((err) => {
-                return reject(err)
-              })
-
-          }
-          cb(null, f)
-        }))
-        .pipe(vfs.dest(buildOut))
-    }
-
-    const stream = createStream(path.join(srcDir, '**/*'))
-
-    stream.on('end', () => {
-      return resolve(fileCounter)
-    })
+      .catch((bruh) => {
+        return reject(bruh)
+      })
   })
 }
 
@@ -108,7 +88,7 @@ export function buildProject(opts) {
     const packagesPath = path.join(cwd, 'packages')
     const isProjectMode = fs.existsSync(packagesPath)
 
-    let count = 0
+    let count = Number(0)
     let multibar = null
 
     let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
@@ -134,8 +114,6 @@ export function buildProject(opts) {
       count += 1
 
       if (count == (packages.length - 1)) {
-        pool.terminate()
-
         if (Array.isArray(builderErrors) && builderErrors.length > 0) {
           const pt = new prettyTable()
           const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
@@ -202,7 +180,6 @@ export function buildProject(opts) {
       build({ dir, opts })
         .then((done) => handleThen(done))
         .catch((err) => handleError(`${err}`, index, dir))
-
     })
   })
 }

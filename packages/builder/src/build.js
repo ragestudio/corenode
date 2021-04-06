@@ -1,7 +1,14 @@
 import path from 'path'
 import fs from 'fs'
 import { expose } from "threads/worker"
+import { Observable } from "observable-fns"
+
+import vfs from 'vinyl-fs'
+import through from 'through2'
 const babel = require('@babel/core')
+
+const fileExtWatch = [`.js`, `.ts`]
+const babelConfig = getBabelConfig() // global config
 
 function getCustomConfig() {
     const customConfigFile = path.resolve(process.cwd(), '.builder')
@@ -48,16 +55,39 @@ function getBabelConfig() {
     return config
 }
 
+function createStream(src, out, observer) {
+    const source = [path.join(src, '**/*'), `!${path.join(src, '**/*.test.js')}`, `!${path.join(src, '**/*.e2e.js')}`]
+    
+    return vfs.src(source, {
+        allowEmpty: true,
+        base: srcDir,
+    })
+        .pipe(through.obj((obj, env, cb) => {
+            if (fileExtWatch.includes(path.extname(obj.path)) && !obj.path.includes(`${path.sep}templates${path.sep}`)) {
+                babel.transform(obj.content, { ...babelConfig, filename: obj.path }, (err, out) => {
+                    if (err) {
+                        return observer.error(err)
+                    }
+                    obj.contents = Buffer.from(out.code)
+                    obj.path = obj.path.replace(path.extname(obj.path), '.js')
+
+                    return observer.next()
+                })
+            }
+            cb(null, obj)
+        }))
+        .pipe(vfs.dest(out))
+}
+
 expose({
-    transform: (content, filename) => {
-        return new Promise((resolve, reject) => {
-            const babelConfig = getBabelConfig()
-            babel.transform(content, { ...babelConfig, filename: filename }, (err, res) => {
-                if (err) {
-                    return reject(err)
-                }
-                return resolve(res)
+    transform: (srcDir, buildOut) => {
+        return new Observable((observer) => {
+            const stream = createStream(srcDir, buildOut, observer)
+
+            stream.on('end', () => {
+                return observer.complete()
             })
         })
     }
-})
+}
+)

@@ -27,7 +27,7 @@ const tasks = new listr([
         title: '📦  Install dependencies',
         task: () => {
             return new Promise((resolve, reject) => {
-                exec('npm install', { cwd: builderPath }, (err, stdout, stderr) => {
+                exec('npm install --silent', { cwd: builderPath }, (err, stdout, stderr) => {
                     if (stderr) return reject(stderr)
                     if (err) return reject(err)
                     if (stdout) return resolve(stdout)
@@ -54,4 +54,5 @@ tasks.run()
     })
     .catch(err => {
         console.error(err)
+        process.exit(0)
     })
