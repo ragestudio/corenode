@@ -1,3 +1,5 @@
+// [utest]
+
 const moduleInstall = require('./packages/nodecorejs/dist/core/moduleInstall').default
 const fs = require("fs")
 const path = require("path")
