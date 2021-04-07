@@ -25,6 +25,7 @@
 - (4) [nodecorejs/helpers]
   - (4.1) [] improve versioning
   - (4.2) [] improve bump version
+  - (4.3) [] Publish proyect improve performance
 
 - (5) [test-module]
   - (5.1) [] `global & env` Enviroment support Jest
