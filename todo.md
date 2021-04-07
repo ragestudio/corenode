@@ -1,36 +1,39 @@
-## Runtime TO DO:
+## TO DO:
 
-- [] Debugger UI
-    - [] WebApp
+- (1) [debuggerUI]
+    - (1.1) [] WebApp
+    - (1.2) [] Dev daemon
 
-- [] Improve NRMI Modules system
-    - [] Support modules publishing
-    - [] Support dynamic load
-    - [] Thread workers
-    - [] Load balancer 
+- (2) [nodecorejs/modules] NRMI Modules
+    - (2.1) [] Support modole cloud publishing
+    - (2.2) [] Dynamic load
+    - (2.3) [] Thread workers & load balancer
+    - (2.4) [] Module hierarchical load order from internal to external
+    - (2.5) [] Unload modules
+    - (2.6) [] Custom events & security
+      - (2.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
 
-- [x] Improve Builder
-    - [x] Reliability improvement
-    - [~] Multithreading
-    - [x] API improvement
-    - [] CLI UI MODE
-      - [] Show ignored sources
-      - [] Show more builder details
-    - [] Dynamic compiler
+- (3) [builder]
+    - (3.1) [x] Reliability improvement
+    - (3.2) [~] Multithreading
+    - (3.3) [x] API improvement
+    - (3.4) [] CLI UI MODE
+      - (3.4.1) [] Show ignored sources
+      - (3.4.2) [] Show more builder details
+    - (3.5) [] Dynamic compiler
 
-- [] Improve helpers
-  - [] improve versioning
-  - [] improve bump version
+- (4) [nodecorejs/helpers]
+  - (4.1) [] improve versioning
+  - (4.2) [] improve bump version
 
+- (5) [test-module]
+  - (5.1) [] `global & env` Enviroment support Jest
+  - (5.2) [] Merge jest runtime with nodecore runtime init support
 
-- [test-module]
-  - [] `global & env` Enviroment support Jest
-  - [] Merge jest runtime with nodecore runtime init support
+- (6) [] Support client/server polymorphism
 
-- [] Support client/server polymorphism
+- (7) [] Add global API documentation
+- (8) [] Add test units to scripts & packages
 
-- [] Add global API documentation
-- [] Add test units to scripts & packages
-
-- [] Cloudlink plugin
-- [] Create some first-hand plugins & modules
+- (9) [] Cloudlink plugin
+- (10) [] Create some first-hand plugins & modules
