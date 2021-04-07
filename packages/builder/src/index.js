@@ -1,20 +1,44 @@
-const babel = require('@babel/core')
-import process from 'process'
-import { join, extname, sep, resolve } from 'path'
-import { existsSync, readdirSync, readFileSync } from 'fs'
+const babel = require("@babel/core")
+
+import path from 'path'
+import fs from 'fs'
+import cliProgress from 'cli-progress'
+
+import { prettyTable } from '@nodecorejs/utils'
+
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
 
-import { verbosity } from '@nodecorejs/utils'
+let builderErrors = Array()
 
-const cwd = process.cwd()
+// const maximunLenghtErrorShow = Number(process.stdout.columns) - 50
+
+function getIgnoredPackages() {
+  let ignored = []
+
+  const file = path.resolve(process.cwd(), ".buildIgnore")
+  if (fs.existsSync(file)) {
+    try {
+      ignored = JSON.parse(fs.readFileSync(file, 'utf-8'))
+    } catch (error) {
+      if (!Array.isArray(builderErrors)) {
+        builderErrors = Array()
+      }
+      builderErrors.push({ message: `Error parsing .buildIgnore > ${error}` })
+    }
+  }
+
+  return ignored
+}
+
 
 function getCustomConfig() {
-  const customConfigFile = resolve(process.cwd(), '.builder')
-  if (existsSync(customConfigFile)) {
+  const customConfigFile = path.resolve(process.cwd(), '.builder')
+
+  if (fs.existsSync(customConfigFile)) {
     try {
-      return JSON.parse(readFileSync(customConfigFile, 'utf-8'))
+      return JSON.parse(fs.readFileSync(customConfigFile, 'utf-8'))
     } catch (error) {
       console.log(`Error while parsing custom config > ${error}`)
       return null
@@ -54,106 +78,208 @@ function getBabelConfig() {
   return config
 }
 
-export function transform(opts = {}) {
-  const { content, path, pkg, silent } = opts
-  const babelConfig = getBabelConfig()
+//  >> MAIN <<
 
-  if (!silent) {
-    const logStr = `${`📦 [${pkg.name}]`} => ${path}`
-    try {
-      verbosity.options({ method: `transform` }).random(logStr)
-    } catch (error) {
-      console.log(logStr)
-    }
+const outExt = '.js'
+const fileExtWatch = ['.js', '.ts']
+const babelConfig = getBabelConfig() // global config
+
+function canRead(dir) {
+  try {
+    fs.accessSync(dir)
+    return true
+  } catch (error) {
+    return false
   }
-
-  return babel.transform(content, {
-    ...babelConfig,
-    filename: path,
-  }).code
 }
 
-export function build(dir, opts, callback) {
-  let options = {
-    buildBuilder: false,
-    cwd: cwd,
-    silent: false,
-    outDir: 'dist',
-    buildSrc: 'src'
-  }
-
-  if (typeof (opts) !== "undefined") {
-    options = { ...options, ...opts }
-  }
-
-  const pkgPath = join(options.cwd, dir, 'package.json')
-  const pkg = require(pkgPath)
-
-  const buildOut = join(dir, options.outDir)
-  const srcDir = join(dir, options.buildSrc)
-
-  if (pkg.name == require(resolve(__dirname, '../package.json')).name) {
-    if (!options.buildBuilder) {
-      options.silent ? null : console.log(`⚠️ Avoiding build the builder source!`)
-      return false
-    }
-  }
-
-  // clean
-  rimraf.sync(join(options.cwd, buildOut))
-
-  function createStream(src) {
-    return vfs
-      .src([
-        src,
-        `!${join(srcDir, '**/*.test.js')}`,
-        `!${join(srcDir, '**/*.e2e.js')}`,
-      ], {
-        allowEmpty: true,
-        base: srcDir,
-      })
-      .pipe(through.obj((f, env, cb) => {
-        if (['.js', '.ts'].includes(extname(f.path)) && !f.path.includes(`${sep}templates${sep}`)) {
-          f.contents = Buffer.from(
-            transform({
-              silent: options.silent,
-              content: f.contents,
-              path: f.path,
-              pkg,
-              root: join(options.cwd, dir),
-            }),
-          )
-          f.path = f.path.replace(extname(f.path), '.js')
-        }
-        cb(null, f)
-      }))
-      .pipe(vfs.dest(buildOut))
-  }
-
-  const stream = createStream(join(srcDir, '**/*'))
-  stream.on('end', () => {
-    return callback(true)
-  })
-}
-
-export function buildProyect(opts) {
+function babelTransform(contents, filepath) {
   return new Promise((resolve, reject) => {
-    const packagesPath = join(cwd, 'packages')
-    const isProyectMode = existsSync(packagesPath)
+    babel.transform(contents, { ...babelConfig, filename: filepath }, (err, result) => {
+      if (err) {
+        return reject(err)
+      }
 
-    let dirs = isProyectMode ? readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
-    let count = 0
-
-    dirs.forEach((pkg) => {
-      const packageDir = isProyectMode ? `./packages/${pkg}` : `${pkg}`
-      build(packageDir, { cwd, ...opts }, (done) => {
-        count++
-        if (dirs.length == (count + 1)) {
-          resolve(true)
-        }
-      })
+      return resolve(result)
     })
   })
 }
 
-export default buildProyect
+export function build({ dir, opts, ticker }) {
+  return new Promise((resolve, reject) => {
+    let options = {
+      outDir: 'dist'
+    }
+
+    if (typeof (opts) !== "undefined") {
+      options = { ...options, ...opts }
+    }
+
+    const src = path.resolve(dir, `src`)
+    const out = path.resolve(dir, options.outDir)
+    const sources = [
+      path.join(src, '**/*'),
+      `!${path.join(src, '**/*.test.js')}`,
+    ]
+
+    try {
+      if (fs.existsSync(out)) {
+        rimraf.sync(out)
+      }
+
+      const stream = vfs.src(sources, {
+        allowEmpty: false
+      })
+        .pipe(through.obj((file, env, callback) => {
+          if (!path.extname(file.path)) {
+            const oldFilepath = file.path
+            file.path = `${file.path}/index${outExt}`
+
+            if (fs.existsSync(file.path) && !canRead(file.path)) {
+              file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
+            }
+          }
+
+          if (fileExtWatch.includes(path.extname(file.path))) {
+            babelTransform(file.contents, file.path)
+              .then((_output) => {
+                file.contents = Buffer.from(_output.code)
+                file.path = file.path.replace(path.extname(file.path), outExt)
+
+                try {
+                  if (typeof (ticker) == "function") ticker()
+                } catch (error) {
+                  // terrible
+                }
+                return callback(null, file)
+              })
+              .catch((err) => {
+                return reject(err)
+              })
+          }
+        }))
+        .pipe(vfs.dest(out))
+
+      stream.on('end', () => {
+        return resolve(true)
+      })
+    } catch (error) {
+      return reject(error)
+    }
+  })
+}
+
+export function buildProject(opts) {
+  return new Promise((resolve, reject) => {
+    const ignoredPackages = getIgnoredPackages()
+    const packagesPath = path.join(process.cwd(), 'packages')
+    const isProjectMode = fs.existsSync(packagesPath)
+    const tasks = {}
+
+    const cliEnabled = opts?.cliui ? true : false
+    const multibarEnabled = cliEnabled
+
+    let builderCount = Number(0)
+    let multibar = null
+
+    let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
+    if (Array.isArray(ignoredPackages) && ignoredPackages.length > 0) {
+      ignoredPackages.forEach((pkg) => {
+        packages = packages.filter(name => name !== pkg)
+      })
+    }
+
+    let dirs = packages.map((name) => {
+      return isProjectMode ? `./packages/${name}` : `${name}`
+    })
+
+    function handleTicker(index) {
+      if (multibarEnabled) {
+        tasks[packages[index]].increment(1)
+      }
+    }
+
+    function handleThen(index) {
+      if (typeof (index) == "undefined") {
+        return reject(`handleThen index not defined!`)
+      }
+
+      builderCount += 1
+
+      if (builderCount == (packages.length - 1)) {
+        if (Array.isArray(builderErrors) && builderErrors.length > 0) {
+          const pt = new prettyTable()
+          const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
+          const rows = []
+
+          builderErrors.forEach((err) => {
+            // if (err?.message?.length > maximunLenghtErrorShow) {
+            //   err.message = String(err.message).slice(0, maximunLenghtErrorShow)
+            // }
+            rows.push([err.task ?? "UNTASKED", err.message ?? "Unknown error", err.dir ?? "RUNTIME"])
+          })
+
+          pt.create(headers, rows)
+
+          console.log(`\n\n ⚠️  ERRORS / WARNINGS FOUND DURING BUILDING`)
+          pt.print()
+        }
+
+        return resolve()
+      }
+    }
+
+    function handleError(err, index, dir) {
+      if (multibar && !packages[index]) {
+        multibar.remove(tasks[packages[index]])
+      }
+      builderErrors.push({ task: index, message: err, dir: dir })
+    }
+
+    // >> MAIN <<
+    try {
+      if (cliEnabled) {
+        if (multibarEnabled) {
+          multibar = new cliProgress.MultiBar({
+            forceRedraw: false,
+            stopOnComplete: true,
+            barsize: 20,
+            clearOnComplete: false,
+            hideCursor: true,
+            format: '[{bar}] {percentage}% | {filename} | {value}/{total}'
+          }, cliProgress.Presets.shades_grey)
+        }
+
+      }
+    } catch (error) {
+      handleError(error, "UNTASKED", "CLI INIT")
+    }
+
+    dirs.forEach((dir, index) => {
+      try {
+        if (multibar && multibarEnabled) {
+          const packagePath = path.resolve(process.cwd(), `${dir}/src`)
+          const sources = fs.readdirSync(packagePath).length ?? 0
+
+          tasks[packages[index]] = multibar.create(sources, 0)
+          tasks[packages[index]].update(0, { filename: packages[index] })
+        }
+      } catch (error) {
+        // terrible
+      }
+
+      // start builder
+      build({ dir, opts, ticker: () => handleTicker(index) })
+        .then((done) => {
+          handleThen(index)
+        })
+        .catch((err) => {
+          handleError(`${err}`, index, dir)
+          handleThen(index)
+        })
+    })
+
+  })
+}
+
+export default buildProject

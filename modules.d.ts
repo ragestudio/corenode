@@ -1,4 +1,4 @@
-declare namespace NodeJS {
+declare namespace NodecoreJS {
   export interface ProcessEnv {
     NODECORE_ENV: string;
     NODECORE_VERSION: string;

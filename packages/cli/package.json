@@ -23,7 +23,6 @@
   "dependencies": {
     "7zip-bin": "^5.1.0",
     "@nodecorejs/builder": "0.16.29",
-    "@nodecorejs/modules": "0.16.29",
     "@nodecorejs/utils": "0.16.29",
     "@nodecorejs/verbosity-dump-plugin": "0.16.29",
     "axios": "^0.21.0",

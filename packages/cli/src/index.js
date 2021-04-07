@@ -1,5 +1,5 @@
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@@nodecore'
-import { installCore, publishProyect, bootstrapProyect } from './scripts'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from '@ragestudio/nodecorejs'
+import { installCore, publishProject, bootstrapProject } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
 import { prettyTable, objectToArrayMap } from '@nodecorejs/utils'
@@ -29,7 +29,7 @@ let commandMap = [
                     break
                 }
                 case ("remove"): {
-                    const { unlinkModule } = require("@nodecorejs/modules")
+                    const { unlinkModule } = require("@ragestudio/nodecorejs")
                     // TODO: purge files & data, env templates, registry...etc
                     try {
                         unlinkModule(argv.module, { purge: true, write: true })
@@ -40,18 +40,17 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const { getLoadedModules } = require("@nodecorejs/modules")
-                    const registry = getLoadedModules()
+                    const allModules = process.runtime[0].modules.getLoadedModules()
                     const pt = new prettyTable()
 
                     let headers = ["module", "_runtimed", "directory"]
                     let rows = []
 
                     console.log(`\n🔗  All modules loaded :`)
-                    objectToArrayMap(registry).forEach((_module) => {
-                        const isRuntimed = _module.value._autoLoaded ?? false
+                    objectToArrayMap(allModules).forEach((_module) => {
+                        const isRuntimed = _module.value.internal ?? false
                         const key = _module.key
-                        const cwd = _module.value.dir
+                        const cwd = _module.value.loader
 
                         rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, `${isRuntimed}`, cwd])
                     })
@@ -92,7 +91,7 @@ let commandMap = [
     },
     {
         command: 'version',
-        description: "Manage proyect version",
+        description: "Manage project version",
         exec: (argv) => {
             let bumps = []
             const discriminators = ["bump-mayor", "bump-minor", "bump-patch"]
@@ -110,7 +109,7 @@ let commandMap = [
                 bumpVersion(bumps, argv.save)
             } else {
                 const fetchedVersion = getVersion(argv.engine)
-                const proyectPkg = getRootPackage()
+                const projectPkg = getRootPackage()
                 const pt = new prettyTable()
 
                 let headers = ["", "🏷  Version", "🏠  Directory"]
@@ -120,25 +119,28 @@ let commandMap = [
                     rows.push(["⌬ NodecoreJS™", `v${fetchedVersion}${isLocalMode() ? "@local" : ""}`, __dirname])
                 }
 
-                fetchedVersion ? rows.push([`📦  ${proyectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
-                pt.create(headers, rows)
-                pt.print()
+                fetchedVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
+                
+                if (rows.length > 0) {
+                    pt.create(headers, rows)
+                    pt.print()
+                }
             }
         }
     },
     {
         command: 'publish',
-        description: "Publish this current proyect",
-        exec: (argv) => publishProyect(argv)
+        description: "Publish this current project",
+        exec: (argv) => publishProject(argv)
     },
     {
         command: 'build',
-        description: "Build proyect with builtin builder",
+        description: "Build project with builtin builder",
         exec: (argv) => {
             console.log(`🔄 Building...`)
             require("@nodecorejs/builder").default({
                 buildBuilder: argv.buildBuilder,
-                silent: argv.silent
+                cliui: true
             })
         }
     },
@@ -146,14 +148,14 @@ let commandMap = [
         command: 'bootstrap',
         description: "Bootstrap all packages",
         exec: (argv) => {
-            bootstrapProyect(argv).then((res) => {
+            bootstrapProject(argv).then((res) => {
                 console.log(`\n✅ DONE\nAll packages bootstraped > ${res}\n`)
             })
         }
     },
     {
         command: 'sync [package]',
-        description: "Sync proyect versions",
+        description: "Sync project versions",
         exec: (argv) => {
             console.log(`🔄 Syncing versions...`)
             if (!argv.package) {
@@ -164,7 +166,7 @@ let commandMap = [
     },
     {
         command: 'changelogs',
-        description: "Show the changelogs of this proyect from last tag",
+        description: "Show the changelogs of this project from last tag",
         exec: async (argv) => {
             const changes = await getChangelogs(getGit(), argv.to, argv.from)
             console.log(changes)
@@ -172,8 +174,9 @@ let commandMap = [
     }
 ]
 
-
-cliRuntime({
-    options: optionsMap,
-    commands: commandMap
-})
+export function runCli() {
+    cliRuntime({
+        options: optionsMap,
+        commands: commandMap
+    })
+}

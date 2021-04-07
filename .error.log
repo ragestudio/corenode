@@ -1,8 +1,0 @@
-Error:  CLI Binaries is missing > Should : [/Users/srgooglo/repos/nodecore/packages/nodecorejs/node_modules/@nodecorejs/cli/dist]
-    at Object.<anonymous> (/Users/srgooglo/repos/nodecore/packages/nodecorejs/bin/index.js:41:15)
-    at Module._compile (internal/modules/cjs/loader.js:1118:30)
-    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1138:10)
-    at Module.load (internal/modules/cjs/loader.js:982:32)
-    at Function.Module._load (internal/modules/cjs/loader.js:875:14)
-    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:71:12)
-    at internal/main/run_main_module.js:17:47
