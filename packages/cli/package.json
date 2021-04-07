@@ -24,7 +24,7 @@
     "7zip-bin": "^5.1.0",
     "@nodecorejs/builder": "0.18.4",
     "@nodecorejs/utils": "0.18.4",
-    "@nodecorejs/verbosity-dump-plugin": "0.18.4",
+    "@nodecorejs/verbosity-dump-module": "0.18.4",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.5.0",
