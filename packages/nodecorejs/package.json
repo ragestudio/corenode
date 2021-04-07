@@ -29,7 +29,7 @@
     "@nodecorejs/builtin-lib": "0.18.1",
     "@nodecorejs/builder": "0.18.1",
     "@nodecorejs/cli": "0.18.1",
-    "@nodecorejs/verbosity-dump-plugin": "0.18.1",
+    "@nodecorejs/verbosity-dump-module": "0.18.1",
     "@nodecorejs/utils": "0.18.1"
   }
 }
