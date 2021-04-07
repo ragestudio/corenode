@@ -8,10 +8,10 @@
   "scripts": {
     "postinstall": "npm run initBuilder",
     "debug": "cross-env LOCAL_BIN=true DEBUGGER=true node ./packages/nodecorejs/bin",
-    "initBuilder": "node --experimental-worker ./postinstall/index.js",
+    "initBuilder": "node ./postinstall/index.js",
     "local": "cross-env LOCAL_BIN=true node ./packages/nodecorejs/bin",
     "prod": "cross-env LOCAL_BIN=false node ./packages/nodecorejs/bin",
-    "builder": "node --experimental-worker ./packages/builder/dist/cli.js",
+    "builder": "node ./packages/builder/cli.js",
     "build:docs": "nodecore docs --innerFiles",
     "release": "nodecore publish --npm --github",
     "link:main": "cd packages/nodecorejs && yarn link && cd -",

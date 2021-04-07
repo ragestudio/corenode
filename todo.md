@@ -10,18 +10,22 @@
     - [] Load balancer 
 
 - [x] Improve Builder
-    - [] Babel transform callback event
     - [x] Reliability improvement
     - [~] Multithreading
     - [x] API improvement
-    - [x] CLI UI
+    - [] CLI UI MODE
+      - [] Show ignored sources
+      - [] Show more builder details
     - [] Dynamic compiler
 
 - [] Improve helpers
   - [] improve versioning
   - [] improve bump version
 
-- [] Testing module env support globals and runtime init
+
+- [test-module]
+  - [] `global & env` Enviroment support Jest
+  - [] Merge jest runtime with nodecore runtime init support
 
 - [] Support client/server polymorphism
 

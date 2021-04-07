@@ -1,5 +1,5 @@
 {
-  "name": "@nodecorejs/test-module",
+  "name": "@nodecorejs/tests-module",
   "version": "0.16.29",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

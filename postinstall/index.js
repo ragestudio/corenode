@@ -41,7 +41,7 @@ const tasks = new listr([
             return new Promise((resolve, reject) => {
                 const buildProject = require(`${builderDistPath}/index.js`).default;
                 buildProject()
-                    .then(done => resolve(done))
+                    .then(done => resolve())
                     .catch(err => reject(err))
             })
         }
