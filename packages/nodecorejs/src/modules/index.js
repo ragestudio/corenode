@@ -99,7 +99,7 @@ export default class modules {
         return modules
     }
 
-    getRegistry() {
+    getRegistry(key) {
         let registry = []
 
         const packageJSON = getRootPackage()
@@ -108,6 +108,10 @@ export default class modules {
         objectToArrayMap(externalModules).forEach((_module) => {
             registry.push(_module)
         })
+
+        if (key && externalModules[key]) {
+            return externalModules[key]
+        }
 
         return registry
     }
@@ -125,6 +129,10 @@ export default class modules {
             const _module = require(loader)
 
             this._modules[_module.pkg] = manifest
+            manifest.meta = {
+                version: _module.version
+            }
+
             if (typeof (_module.init) === "function") {
                 try {
                     _module.init(this._libraries)
@@ -136,6 +144,10 @@ export default class modules {
         }
 
         return manifest
+    }
+
+    unloadModule(key) {
+
     }
 
     writeRegistry() {
@@ -162,26 +174,50 @@ export default class modules {
         // fs create dir and write file with sources (Installation proccess)
     }
 
-    init() {
-        // fetchModules
-        // getRegistry
-
-        // load libraries
-        // load modules >>> loadModules(internals) > check registry && loadModules(registry)
+    isOnRegistry(key) {
+        let is = false
 
         const registry = this.getRegistry()
+        registry.forEach((entry) => {
+            if (entry.key === key) {
+                is = true
+            }
+        })
+
+        return is
+    }
+
+    init() {
         const allModules = this.fetchModules()
 
         this._libraries["builtIn"] = require("@nodecorejs/builtin-lib") // force to push builtIn lib
 
         objectToArrayMap(allModules).forEach((manifest) => {
-            console.log(manifest)
-            console.log(registry)
-            
-             // Try to load if is not
-             if (typeof (this._modules[key]) === "undefined") {
-                this.loadModule(manifest.value)
+            if (typeof (this._modules[manifest.key]) === "undefined") {
+                const { internal } = manifest.value
+
+                if (internal || this.isOnRegistry(manifest.key)) {
+                    const _module = this.loadModule(manifest.value)
+                    const { meta } = _module
+
+                    if (!internal) {
+                        const fromReg = this.getRegistry(manifest.key)
+
+                        if (typeof (fromReg) !== "undefined" && typeof (meta.version) !== "undefined") {
+                            if (meta.version !== fromReg) {
+                                verbosity
+                                    .options({ dumpFile: true })
+                                    .warn(`Module version conflict (${manifest.key}@${fromReg}) > Loaded (${manifest.key}@${meta.version})`)
+                            }
+                        } else {
+                            verbosity.options({ dumpFile: "only" }).warn(`Version control is not available for module (${manifest.key})`)
+                        }
+
+                    }
+
+                }
             }
+
         })
     }
 }
