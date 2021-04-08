@@ -6,7 +6,7 @@ const process = require("process")
 const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
 
-const fromArguments = process.argv[2]
+let fromArguments = process.argv[2]
 
 let targetBin = cliDist // Default load cli
 let isLocalMode = false
@@ -34,7 +34,10 @@ try {
     }
 
     if (fromArguments) {
-        if (path.isAbsolute(fromArguments) && fs.existsSync(fromArguments)) {
+        if (!path.isAbsolute(fromArguments)) {
+            fromArguments = path.resolve(fromArguments)
+        }
+        if (fs.existsSync(fromArguments)) {
             targetBin = fromArguments
         }
     }
