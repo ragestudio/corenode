@@ -24,6 +24,7 @@
 
 - (4) [nodecore/core]
   - (4.1) [] install module rewrite
+  - (4.2) [] WebAssembly support
 
 - (5) [nodecorejs/helpers]
   - (5.1) [] improve versioning
