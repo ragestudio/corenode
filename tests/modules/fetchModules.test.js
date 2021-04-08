@@ -1,4 +1,4 @@
-const modules = require('../../packages/nodecorejs/dist/modules/index.js').default
+const modules = require('../../packages/corenode/dist/modules/index.js').default
 const modulesController = new modules()
 
 test('fetchModules', () => {

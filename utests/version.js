@@ -1,6 +1,6 @@
 // [utest]
 
-const nodecore = require('../packages/nodecorejs/dist')
+const corenode = require('../packages/corenode/dist')
 
 console.log(global._version)
-console.log(nodecore.getVersion())
+console.log(corenode.getVersion())

@@ -1,1 +1,1 @@
-# @nodecorejs/builtin-lib
+# @corenode/builtin-lib

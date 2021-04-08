@@ -1,4 +1,4 @@
-const fallbackRemoteCoresSource = "https://nodecore.ragestudio.net/std/cores"
+const fallbackRemoteCoresSource = "https://corenode.ragestudio.net/std/cores"
 
 import Listr from 'listr'
 import ora from 'ora'
@@ -10,8 +10,8 @@ import { performance } from 'perf_hooks'
 import { Observable } from 'rxjs'
 import execa from 'execa'
 
-import { getProjectEnv, addDependency } from 'nodecorex'
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { getProjectEnv, addDependency } from 'corenode'
+import { objectToArrayMap, verbosity } from '@corenode/utils'
 
 import { asyncDoArray, downloadWithPipe, fetchRemotePkg } from '../utils'
 import temporalDir from '../temporalDir'
@@ -36,7 +36,7 @@ function handleInstallCore(params) {
         }
         if (!installDir || !path.resolve(process.cwd(), installDir)) {
             console.log(`\n🆘 Invalid installation path!`)
-            return console.error(`\t⁉️ Try to use [dir] argument or configure .nodecore runtime with and default "src" path.`)
+            return console.error(`\t⁉️ Try to use [dir] argument or configure .corenode runtime with and default "src" path.`)
         }
 
         let installPath = path.resolve(process.cwd(), `${installDir}`)
@@ -172,7 +172,7 @@ async function handleInstallPackageComponents(manifest) {
 
         if (requires.components) {
             asyncDoArray(requires.components, (key, value) => { //lgtm [js/call-to-non-callable]
-                verbosity.options({ dumpFile: 'only' }).log(`[nodecore] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
+                verbosity.options({ dumpFile: 'only' }).log(`[corenode] Installing > ${key} < as dependecy of ${manifest.id ?? "anon"}`)
                 installCore({ pkg: key })
             })
                 .then(() => {

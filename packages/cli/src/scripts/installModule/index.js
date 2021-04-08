@@ -1,12 +1,12 @@
-const fallbackRemoteModulesSource = "https://nodecore.ragestudio.net/std/modules"
+const fallbackRemoteModulesSource = "https://corenode.ragestudio.net/std/modules"
 
 import Listr from 'listr'
 import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
 
-import { getProjectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from 'nodecorejs'
-import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
+import { getProjectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from 'corenode'
+import { verbosity, objectToArrayMap } from '@corenode/utils'
 
 import temporalDir from '../temporalDir'
 import outputResume from '../outputResume'
@@ -80,11 +80,11 @@ export function installModule(params) {
                         }
 
                         if (_module.runtimeTemplate) {
-                            const templateFile = path.resolve(modulePath, `.template.nodecore`)
+                            const templateFile = path.resolve(modulePath, `.template.corenode`)
                             try {
                                 if (fs.existsSync(templateFile)) {
                                     //const template = fs.readFileSync(templateFile, moduleCodec)
-                                    // TODO: Apply template to .nodecore
+                                    // TODO: Apply template to .corenode
                                 }
                             } catch (error) {
                                 verbosity.options({ dumpFile: true }).error(`Error processing runtime template >`, error)

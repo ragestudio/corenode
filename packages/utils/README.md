@@ -1,1 +1,1 @@
-# @nodecorejs/utils
+# @corenode/utils

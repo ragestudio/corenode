@@ -1,9 +1,9 @@
 import ora from 'ora'
 import fs from 'fs'
 import path from 'path'
-import { getProjectEnv } from 'nodecorejs'
+import { getProjectEnv } from 'corenode'
 
-const temporalPath = getProjectEnv().temporalsDirectory ?? path.resolve(`${__dirname}/.nodecore_tmp`)
+const temporalPath = getProjectEnv().temporalsDirectory ?? path.resolve(`${__dirname}/.corenode_tmp`)
 const spinner = ora({
     spinner: "dots",
     text: "Initalizing..."

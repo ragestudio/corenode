@@ -1,5 +1,5 @@
 {
-  "name": "nodecorex",
+  "name": "corenode",
   "version": "0.18.7",
   "types": "types.d.ts",
   "main": "./dist/index.js",
@@ -22,10 +22,10 @@
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
     "@babel/runtime": "^7.13.10",
-    "@nodecorejs/builtin-lib": "0.18.7",
-    "@nodecorejs/builder": "0.18.7",
-    "@nodecorejs/cli": "0.18.7",
-    "@nodecorejs/verbosity-dump-module": "0.18.7",
-    "@nodecorejs/utils": "0.18.7"
+    "@corenode/builtin-lib": "0.18.7",
+    "@corenode/builder": "0.18.7",
+    "@corenode/cli": "0.18.7",
+    "@corenode/verbosity-dump-module": "0.18.7",
+    "@corenode/utils": "0.18.7"
   }
 }

@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "[Nodecore] Debug file",
+            "name": "[corenode] Debug file",
             "type": "node",
             "request": "launch",
             "internalConsoleOptions": "openOnSessionStart",

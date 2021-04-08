@@ -1,6 +1,6 @@
 // [utest]
 
-const { objectToArrayMap } = require('@nodecorejs/utils/dist/objectToArray')
+const { objectToArrayMap } = require('@corenode/utils/dist/objectToArray')
 
 const testMap = objectToArrayMap({ bruh: "nose", otra: "cosa" })
 

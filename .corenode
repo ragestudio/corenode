@@ -1,7 +1,7 @@
 {
   "version": "0.18.7",
   "devRuntime": {
-    "headPackage": "nodecorejs",
+    "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/nodecore",
     "babel": {
       "retainLines": true,
@@ -13,7 +13,7 @@
       "compact": true
     },
     "docs": [
-      "nodecorejs",
+      "corenode",
       "utils"
     ]
   }

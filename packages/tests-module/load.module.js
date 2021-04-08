@@ -1,5 +1,5 @@
 module.exports = {
-    pkg: "nodecore_tests",
+    pkg: "corenode_tests",
     init: (libraries) => {
         const { builtIn } = libraries
         const { cli } = builtIn

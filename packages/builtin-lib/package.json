@@ -1,5 +1,5 @@
 {
-  "name": "@nodecorejs/builtin-lib",
+  "name": "@corenode/builtin-lib",
   "version": "0.18.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
     "url": "https://github.com/ragestudio/nodecore"
   },
   "dependencies": {
-    "@nodecorejs/utils": "0.18.7"
+    "@corenode/utils": "0.18.7"
   },
   "license": "MIT"
 }

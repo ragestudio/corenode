@@ -1,6 +1,6 @@
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { objectToArrayMap, verbosity } from '@corenode/utils'
 
-const _Global = global.nodecore_cli
+const _Global = global.corenode_cli
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 

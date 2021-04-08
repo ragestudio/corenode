@@ -1,8 +1,8 @@
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isNodecoreProject, syncAllPackagesVersions } from 'nodecorejs'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, iscorenodeProject, syncAllPackagesVersions } from 'corenode'
 import { installCore, publishProject, bootstrapProject } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
-import { prettyTable, objectToArrayMap } from '@nodecorejs/utils'
+import { prettyTable, objectToArrayMap } from '@corenode/utils'
 import cliRuntime from './cliRuntime'
 
 let optionsMap = [
@@ -29,7 +29,7 @@ let commandMap = [
                     break
                 }
                 case ("remove"): {
-                    const { unlinkModule } = require("nodecorejs")
+                    const { unlinkModule } = require("corenode")
                     // TODO: purge files & data, env templates, registry...etc
                     try {
                         unlinkModule(argv.module, { purge: true, write: true })
@@ -116,7 +116,7 @@ let commandMap = [
                 let rows = []
 
                 if (argv.engine) {
-                    rows.push(["⌬ NodecoreJS™", `v${fetchedVersion}${isNodecoreProject() ? "@local" : ""}`, __dirname])
+                    rows.push(["⌬ corenode™", `v${fetchedVersion}${iscorenodeProject() ? "@local" : ""}`, __dirname])
                 }
 
                 fetchedVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
@@ -138,7 +138,7 @@ let commandMap = [
         description: "Build project with builtin builder",
         exec: (argv) => {
             console.log(`🔄 Building...`)
-            require("@nodecorejs/builder").default({
+            require("@corenode/builder").default({
                 buildBuilder: argv.buildBuilder,
                 cliui: true
             })
@@ -176,8 +176,8 @@ let commandMap = [
         command: "exec",
         description: "Run builtIn functions on cli mode",
         exec: (argv) => {
-            const helpers = require("nodecorejs/dist/helpers")
-            const { verbosity } = require("@nodecorejs/utils")
+            const helpers = require("corenode/dist/helpers")
+            const { verbosity } = require("@corenode/utils")
 
             const args = argv["_"]
             const fn = args[1]

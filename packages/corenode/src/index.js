@@ -1,6 +1,6 @@
 /**
- * NodecoreJS
- * @module nodecorejs 
+ * corenode
+ * @module corenode 
  */
 import path from 'path'
 import process from 'process'
@@ -8,9 +8,9 @@ import fs from 'fs'
 
 import modulesController from './modules'
 import * as helpers from './helpers'
-import { aliaser, globals } from '@nodecorejs/builtin-lib'
+import { aliaser, globals } from '@corenode/builtin-lib'
 
-let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
+let { objectToArrayMap, verbosity } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 // const getRuntimeDeep = () => Object.keys(process.runtime).length
@@ -59,14 +59,14 @@ class Runtime {
     }
 
     initAliaser() {
-        new aliaser({ "@@nodecore": __dirname })
+        new aliaser({ "@@corenode": __dirname })
 
         // TODO: Autoload .setalias
     }
 
     initGlobals() {
         // Create empty globals
-        new globals(["nodecore_cli", "nodecore"])
+        new globals(["corenode_cli", "corenode"])
 
         const keywords = ["_version", "_packages", "_env", "_envpath", "_runtimeSource", "_runtimeRoot"]
 
@@ -76,7 +76,7 @@ class Runtime {
             }
         })
 
-        global._envpath = path.resolve(process.cwd(), '.nodecore')
+        global._envpath = path.resolve(process.cwd(), '.corenode')
         global._runtimeSource = path.resolve(__dirname, "..")
         global._runtimeRoot = path.resolve(__dirname, '../../..') // TODO: fix with process.env
 
@@ -97,7 +97,7 @@ class Runtime {
     }
 
     setRuntimeEnv() {
-        const runtimeEnviromentFiles = ['.nodecore', '.nodecore.js', '.nodecore.ts', '.nodecore.json']
+        const runtimeEnviromentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 
         runtimeEnviromentFiles.forEach(file => {
             const fromPath = path.resolve(process.cwd(), `./${file}`)

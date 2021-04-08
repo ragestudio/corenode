@@ -1,7 +1,7 @@
-declare namespace NodecoreJS {
+declare namespace corenodeJS {
   export interface ProcessEnv {
-    NODECORE_ENV: string;
-    NODECORE_VERSION: string;
+    corenode_ENV: string;
+    corenode_VERSION: string;
     NODE_ENV: 'production' | 'development' | 'test';
     HTTPS: string;
     HOST: string;

@@ -1,5 +1,5 @@
 {
-  "name": "nodecorejs",
+  "name": "nodecore",
   "git": "https://github.com/ragestudio/nodecore",
   "private": true,
   "workspaces": [
@@ -12,9 +12,9 @@
     "local": "cross-env LOCAL_BIN=true node ./packages/cli/bin",
     "prod": "cross-env LOCAL_BIN=false node ./packages/cli/bin",
     "builder": "node ./packages/builder/cli.js",
-    "build:docs": "nodecore docs --innerFiles",
-    "release": "nodecore publish --npm --github",
-    "link:main": "cd packages/nodecorejs && yarn link && cd -",
+    "build:docs": "corenode docs --innerFiles",
+    "release": "corenode publish --npm --github",
+    "link:main": "cd packages/corenodejs && yarn link && cd -",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },

@@ -1,17 +1,17 @@
-# NodecoreJS | An runtimed framework
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ragestudio/nodecore.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/nodecore/context:javascript)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/ragestudio/nodecore.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/nodecore/alerts/)
+# corenodeJS | An runtimed framework
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ragestudio/corenode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/corenode/context:javascript)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ragestudio/corenode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/corenode/alerts/)
 
-Nodecorejs is a multiproposal framework based on NodeJS runtime, it is prepared to implement utilities for development and operation both locally and in production.
+corenodejs is a multiproposal framework based on NodeJS runtime, it is prepared to implement utilities for development and operation both locally and in production.
 
 Its most important and critical modules including core base
 | Package |  |
 |--|--|
-| @nodecorejs/builder | An compiler based on Babel, basic for the operation and development of the framework |
-| @nodecorejs/cli | Allows to use its cli utilities |
-| @nodecorejs/builtin-lib | Includes builtin libraries for NRML system |
-| @nodecorejs/utils | Includes an important library for the core of the framework |
-| nodecorejs | Manages the module system, runtime and environment |
+| @corenode/builder | An compiler based on Babel, basic for the operation and development of the framework |
+| @corenode/cli | Allows to use its cli utilities |
+| @corenode/builtin-lib | Includes builtin libraries for NRML system |
+| @corenode/utils | Includes an important library for the core of the framework |
+| corenodejs | Manages the module system, runtime and environment |
 
 > Most of these modules are still under development or have yet to be included
 

@@ -1,1 +1,1 @@
-# @nodecorejs/test
+# @corenode/test

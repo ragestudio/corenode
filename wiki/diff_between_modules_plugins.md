@@ -1,4 +1,4 @@
-## Differences between nodecore "Modules" & "Plugins"
+## Differences between corenode "Modules" & "Plugins"
 
 #### Modules 
 > - Extends the runtime

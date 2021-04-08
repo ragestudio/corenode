@@ -1,1 +1,1 @@
-# nodecorejs Contributing Guide
+# corenodejs Contributing Guide

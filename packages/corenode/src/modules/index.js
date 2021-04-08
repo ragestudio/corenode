@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { getRootPackage } from '../helpers'
 
-let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
+let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
 const defaults = {
@@ -13,8 +13,8 @@ const defaults = {
 
 export default class ModuleController {
     constructor() {
-        if (typeof (global.nodecore) === "undefined") {
-            throw new Error(`Nodecore runtime has not been initialized`)
+        if (typeof (global.corenode) === "undefined") {
+            throw new Error(`corenode runtime has not been initialized`)
         }
 
         this.defaultLoader = defaults.loader // maybe on an future it could be interesting to include more support for custom loaders
@@ -175,7 +175,7 @@ export default class ModuleController {
     init() {
         const allModules = this.fetchModules()
 
-        this._libraries["builtIn"] = require("@nodecorejs/builtin-lib") // force to push builtIn lib
+        this._libraries["builtIn"] = require("@corenode/builtin-lib") // force to push builtIn lib
 
         objectToArrayMap(allModules).forEach((manifest) => {
             if (typeof (this._modules[manifest.key]) === "undefined") {

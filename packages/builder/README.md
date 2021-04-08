@@ -1,1 +1,1 @@
-# @nodecorejs/builder
+# @corenode/builder

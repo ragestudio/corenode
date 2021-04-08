@@ -5,23 +5,23 @@ yarn.lock
 
 /packages/*/dist
 /packages/*/docs
-/packages/*/nodecore_logs
+/packages/*/corenode_logs
 /packages/*/package-lock.json
 /packages/*/.DS_Store
 /packages/*/node_modules
-/packages/*/nodecore_modules
+/packages/*/corenode_modules
 
 /dist
 /docs
 /node_modules
-/nodecore_modules
+/corenode_modules
 /modules
 
 .DS_Store
 lastTest.js
 test.js
 unitTest.js
-nodecore_logs
+corenode_logs
 logs_dump.log
 .error.log
 .aliaser

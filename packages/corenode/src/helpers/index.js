@@ -2,13 +2,13 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@nodecorejs/utils')
+let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 /**
  * Get parsed version of package
  * @function getVersion
- * @param {boolean} [engine = false] Return version of nodecore
+ * @param {boolean} [engine = false] Return version of corenode
  * @returns {string} projectRuntime
  */
 export function getVersion(engine) {
@@ -48,7 +48,7 @@ export function getProjectEnv() {
 }
 
 /**
- * Get `originGit` from `.nodecore` env 
+ * Get `originGit` from `.corenode` env 
  * @function getGit 
  * @returns {string} originGit
  */
@@ -96,12 +96,12 @@ export function getRootPackage() {
 }
 
 /**
- * Check if the current project is nodecorejs
- * @function isNodecoreProject 
+ * Check if the current project is corenode
+ * @function iscorenodeProject 
  * @returns {boolean}
  */
-export function isNodecoreProject() {
-    return getRootPackage().name === "nodecorejs"
+export function iscorenodeProject() {
+    return getRootPackage().name === "corenode"
 }
 
 /**

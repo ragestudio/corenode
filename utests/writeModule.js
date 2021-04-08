@@ -1,6 +1,6 @@
 // [utest]
 
-const moduleInstall = require('./packages/nodecorejs/dist/core/moduleInstall').default
+const moduleInstall = require('./packages/corenode/dist/core/moduleInstall').default
 const fs = require("fs")
 const path = require("path")
 const rimraf = require("rimraf")

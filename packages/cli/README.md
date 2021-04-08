@@ -1,1 +1,1 @@
-# @nodecorejs/cli
+# @corenode/cli

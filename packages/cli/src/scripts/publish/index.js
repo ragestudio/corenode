@@ -7,13 +7,13 @@ import process from 'process'
 import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
-import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProjectMode } from 'nodecorejs'
-let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
+import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProjectMode } from 'corenode'
+let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import { getChangelogs } from '../utils/getChangelogs'
 
-import buildProject from '@nodecorejs/builder'
+import buildProject from '@corenode/builder'
 
 export function publishProject(args) {
     return new Promise((resolve, reject) => {
@@ -32,7 +32,7 @@ export function publishProject(args) {
             preRelease: false,
             next: false,
             minor: false,
-            nodecoreModule: false,
+            corenodeModule: false,
         }
 
         if (typeof (args) !== "undefined") {

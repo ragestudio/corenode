@@ -5,7 +5,7 @@ import { extract } from '../extract7z'
 import temporalDir from '../temporalDir'
 import { generateName } from '../random'
 
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+import { objectToArrayMap, verbosity } from '@corenode/utils'
 
 const helpers = process.runtime[0].helpers
 const moduleController = process.runtime[0].modules

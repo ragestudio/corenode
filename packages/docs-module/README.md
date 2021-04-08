@@ -1,1 +1,1 @@
-# @nodecorejs/docs-plugin
+# @corenode/docs-plugin

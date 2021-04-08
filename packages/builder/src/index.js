@@ -4,7 +4,7 @@ import path from 'path'
 import fs from 'fs'
 import cliProgress from 'cli-progress'
 
-import { prettyTable } from '@nodecorejs/utils'
+import { prettyTable } from '@corenode/utils'
 
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'

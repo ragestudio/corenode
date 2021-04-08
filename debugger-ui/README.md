@@ -1,1 +1,1 @@
-# @nodecorejs/debugger-ui
+# @corenode/debugger-ui

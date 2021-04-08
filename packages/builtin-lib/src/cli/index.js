@@ -1,10 +1,10 @@
 export default {
     add: (command) => {
         if (typeof (command) == "object") {
-            if (typeof (global.nodecore_cli.custom) == "undefined") {
-                global.nodecore_cli.custom = []
+            if (typeof (global.corenode_cli.custom) == "undefined") {
+                global.corenode_cli.custom = []
             }
-            global.nodecore_cli.custom.push(command)
+            global.corenode_cli.custom.push(command)
         }
     },
     // TODO

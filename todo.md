@@ -13,7 +13,7 @@
       - (2.4.2) [] Show more builder details
     - (2.5) [] Dynamic compiler
 
-- (3) [nodecorejs/modules] NRML | Native Runtimed Module Loader
+- (3) [corenodejs/modules] NRML | Native Runtimed Module Loader
     - (3.1) [] Support modole cloud publishing
     - (3.2) [] Dynamic load
     - (3.3) [] Thread workers & load balancer
@@ -22,18 +22,18 @@
     - (3.6) [] Custom events & security
       - (3.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
 
-- (4) [nodecore/core]
+- (4) [corenode/core]
   - (4.1) [] Install module rewrite
   - (4.2) [] WebAssembly support
 
-- (5) [nodecorejs/helpers]
+- (5) [corenodejs/helpers]
   - (5.1) [] improve versioning
   - (5.2) [] improve bump version
   - (5.3) [] Publish proyect improve performance
 
 - (6) [test-module]
   - (6.1) [] `global & env` Enviroment support Jest
-  - (6.2) [] Merge jest runtime with nodecore runtime init support
+  - (6.2) [] Merge jest runtime with corenode runtime init support
 
 - (7) [] Support client/server polymorphism
 

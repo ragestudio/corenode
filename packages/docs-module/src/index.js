@@ -1,8 +1,8 @@
-import { getPackages, getProjectEnv } from 'nodecorejs'
+import { getPackages, getProjectEnv } from 'corenode'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'
-import { verbosity } from '@nodecorejs/utils'
+import { verbosity } from '@corenode/utils'
 
 const engines = {
     Docma: async (params) => {

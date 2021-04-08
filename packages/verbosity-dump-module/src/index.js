@@ -1,4 +1,4 @@
-import { getProjectEnv } from 'nodecorejs'
+import { getProjectEnv } from 'corenode'
 import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf } = format

@@ -1,6 +1,6 @@
 import sevenBin from '7zip-bin'
 import { extractFull } from 'node-7z'
-import { verbosity } from '@nodecorejs/utils'
+import { verbosity } from '@corenode/utils'
 
 export function extract(file, extractPath) {
     return new Promise((resolve, reject) => {

@@ -1,6 +1,6 @@
 /**
- * Nodecorejs utility library
- * @module @nodecorejs/utils
+ * corenode utility library
+ * @module @corenode/utils
  */
 
 export { default as prettyTable } from './prettyTable'

@@ -6,7 +6,7 @@ import assert from 'assert'
 import { options as CliOptions } from 'jest-cli/build/cli/args'
 import createDefaultConfig from './createDefaultConfig/createDefaultConfig'
 
-let { verbosity, mergeConfig } = require('@nodecorejs/utils')
+let { verbosity, mergeConfig } = require('@corenode/utils')
 verbosity.options({ method: "[TEST]", dumpFile: true })
 
 export * from './utils'

@@ -1,5 +1,5 @@
 {
-  "name": "@nodecorejs/debugger-ui",
+  "name": "@corenode/debugger-ui",
   "version": "0.16.29",
   "main": "index.js",
   "repository": {

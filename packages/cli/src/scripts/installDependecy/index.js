@@ -1,7 +1,7 @@
 import child_process from 'child_process'
 
-import { getRootPackage } from 'nodecorejs'
-import { verbosity } from '@nodecorejs/utils'
+import { getRootPackage } from 'corenode'
+import { verbosity } from '@corenode/utils'
 
 export async function installDependency({params, caller}) {
     // to do: check version & auto update if not match

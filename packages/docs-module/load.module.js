@@ -1,5 +1,5 @@
 module.exports = {
-    pkg: "nodecore_docs",
+    pkg: "corenode_docs",
     init: (libraries) => {
         const { builtIn } = libraries
         const { cli } = builtIn

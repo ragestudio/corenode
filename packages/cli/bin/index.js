@@ -14,7 +14,7 @@ let isLocalMode = false
 if (fs.existsSync(localPkgJson)) {
     try {
         const pkg = require(localPkgJson)
-        if (pkg.name === "nodecorejs" && process.env.LOCAL_BIN == "true") {
+        if (pkg.name === "corenode" && process.env.LOCAL_BIN == "true") {
             isLocalMode = true
         }
     } catch (error) {
@@ -43,8 +43,8 @@ try {
         targetBin = path.resolve(fromArguments)
     }
 
-    const { aliaser } = require('@nodecorejs/builtin-lib')
-    const { Runtime } = require('nodecorejs')
+    const { aliaser } = require('@corenode/builtin-lib')
+    const { Runtime } = require('corenode')
 
     new aliaser({ "@@cli": cliDist })
     new Runtime(targetBin)

@@ -1,1 +1,1 @@
-# @nodecorejs/log
+# @corenode/log
