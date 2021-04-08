@@ -1,5 +1,5 @@
 {
-  "name": "nodecorejs",
+  "name": "nodecorex",
   "version": "0.18.7",
   "types": "types.d.ts",
   "main": "./dist/index.js",

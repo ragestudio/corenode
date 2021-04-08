@@ -6,7 +6,7 @@ import inquirer from 'inquirer'
 
 const saveRuntimeFile = path.resolve(process.cwd(), '.nodecore')
 
-import { getProjectEnv, getRootPackage } from 'nodecorejs'
+import { getProjectEnv, getRootPackage } from 'nodecorex'
 
 let runtimeEnv = getProjectEnv()
 let pkgjson = getRootPackage() ?? {}
@@ -61,7 +61,7 @@ export function createRuntime() {
             if (answers.create_projectScheme) {
                 const schemePath = path.resolve(process.cwd(), `./packages/${answers.headPackage}`)
                 fs.mkdirSync(schemePath, { recursive: true })
-                execa('nodecore', ['bootstrap']).stdout.pipe(process.stdout)
+                execa('nodecorex', ['bootstrap']).stdout.pipe(process.stdout)
             }
         })
         .catch((error) => {

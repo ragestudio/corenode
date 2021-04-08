@@ -58,13 +58,9 @@ export function publishProject(args) {
                 skip: () => config.skipBuild === true,
                 task: () => {
                     return new Promise((res, rej) => {
-                        buildProject({ silent: true, buildBuilder: true })
-                            .then((done) => {
-                                res(true)
-                            })
-                            .catch((error) => {
-                                rej(new Error(`Failed build! > ${error.message}`))
-                            })
+                        buildProject({ buildBuilder: true })
+                            .then((done) => res())
+                            .catch((error) => rej(new Error(`Failed build! > ${error.message}`)))
                     })
                 }
             },
@@ -85,7 +81,7 @@ export function publishProject(args) {
                 task: () => {
                     return new Observable((observer) => {
                         if (!Array.isArray(projectPackages) && !isProject) {
-                            projectPackages = ["_Project"]
+                            projectPackages = ["_"]
                         }
 
                         projectPackages.forEach((pkg, index) => {
@@ -99,10 +95,12 @@ export function publishProject(args) {
                                 verbosity.dump(logOutput)
                                 observer.next(logOutput)
 
-                                const { stdout } = execa.sync('npm', cliArgs, {
+                                const { stdout } = execa('npm', cliArgs, {
                                     cwd: packagePath,
                                 })
+
                                 verbosity.options({ dumpFile: true, method: "[publish]" }).log(stdout)
+
                                 if ((index + 1) == projectPackages.length) {
                                     verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                     observer.complete()
