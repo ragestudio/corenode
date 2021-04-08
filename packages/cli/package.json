@@ -20,9 +20,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "bin": {
-    "corenode": "./bin/index.js"
-  },
   "dependencies": {
     "7zip-bin": "^5.1.0",
     "@corenode/builder": "0.18.11",
