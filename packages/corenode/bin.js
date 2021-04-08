@@ -1,0 +1,1 @@
+require("@corenode/cli/bin/index.js")
