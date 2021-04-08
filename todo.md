@@ -4,37 +4,40 @@
     - (1.1) [] WebApp
     - (1.2) [] Dev daemon
 
-- (2) [nodecorejs/modules] NRMI Modules
-    - (2.1) [] Support modole cloud publishing
-    - (2.2) [] Dynamic load
-    - (2.3) [] Thread workers & load balancer
-    - (2.4) [] Module hierarchical load order from internal to external
-    - (2.5) [] Unload modules
-    - (2.6) [] Custom events & security
-      - (2.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
+- (2) [builder]
+    - (2.1) [x] Reliability improvement
+    - (2.2) [~] Multithreading
+    - (2.3) [x] API improvement
+    - (2.4) [] CLI UI MODE
+      - (2.4.1) [] Show ignored sources
+      - (2.4.2) [] Show more builder details
+    - (2.5) [] Dynamic compiler
 
-- (3) [builder]
-    - (3.1) [x] Reliability improvement
-    - (3.2) [~] Multithreading
-    - (3.3) [x] API improvement
-    - (3.4) [] CLI UI MODE
-      - (3.4.1) [] Show ignored sources
-      - (3.4.2) [] Show more builder details
-    - (3.5) [] Dynamic compiler
+- (3) [nodecorejs/modules] NRMI Modules
+    - (3.1) [] Support modole cloud publishing
+    - (3.2) [] Dynamic load
+    - (3.3) [] Thread workers & load balancer
+    - (3.4) [] Module hierarchical load order from internal to external
+    - (3.5) [] Unload modules
+    - (3.6) [] Custom events & security
+      - (3.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
 
-- (4) [nodecorejs/helpers]
-  - (4.1) [] improve versioning
-  - (4.2) [] improve bump version
-  - (4.3) [] Publish proyect improve performance
+- (4) [nodecore/core]
+  - (4.1) [] install module rewrite
 
-- (5) [test-module]
-  - (5.1) [] `global & env` Enviroment support Jest
-  - (5.2) [] Merge jest runtime with nodecore runtime init support
+- (5) [nodecorejs/helpers]
+  - (5.1) [] improve versioning
+  - (5.2) [] improve bump version
+  - (5.3) [] Publish proyect improve performance
 
-- (6) [] Support client/server polymorphism
+- (6) [test-module]
+  - (6.1) [] `global & env` Enviroment support Jest
+  - (6.2) [] Merge jest runtime with nodecore runtime init support
 
-- (7) [] Add global API documentation
-- (8) [] Add test units to scripts & packages
+- (7) [] Support client/server polymorphism
 
-- (9) [] Cloudlink plugin
-- (10) [] Create some first-hand plugins & modules
+- (8) [] Add global API documentation
+- (9) [] Add test units to scripts & packages
+
+- (10) [] Cloudlink plugin
+- (11) [] Create some first-hand plugins & modules
