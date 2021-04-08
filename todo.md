@@ -1,5 +1,10 @@
 ## TO DO:
 
+- [] Binary builds
+  - [] Nodejs API
+  - [] Package manager
+  - [] OS Bindings
+
 - (1) [debuggerUI]
     - (1.1) [] WebApp
     - (1.2) [] Dev daemon
@@ -25,6 +30,8 @@
 - (4) [corenode/core]
   - (4.1) [] Install module rewrite
   - (4.2) [] WebAssembly support
+  - (4.3) [] Autoupdate
+  - (4.4) [] SignalC (SignalCore)
 
 - (5) [corenodejs/helpers]
   - (5.1) [] improve versioning
