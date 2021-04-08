@@ -1,6 +1,6 @@
-# corenodeJS | An runtimed framework
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ragestudio/corenode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/corenode/context:javascript)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/ragestudio/corenode.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/corenode/alerts/)
+# corenode (nodecorejs) | An runtimed framework
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ragestudio/nodecore.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/nodecore/context:javascript)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/ragestudio/nodecore.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/nodecore/alerts/)
 
 corenodejs is a multiproposal framework based on NodeJS runtime, it is prepared to implement utilities for development and operation both locally and in production.
 
