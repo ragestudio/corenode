@@ -20,6 +20,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "nodecore": "./bin/index.js"
+  },
   "dependencies": {
     "7zip-bin": "^5.1.0",
     "@nodecorejs/builder": "0.18.6",

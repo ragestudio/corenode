@@ -3,12 +3,10 @@ const fs = require("fs")
 const path = require("path")
 const process = require("process")
 
-const prodCliBin = path.resolve(__dirname, '../../../node_modules/@nodecorejs/cli/dist')
-const localCliBin = `${process.cwd()}/packages/cli/dist`
+const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
 
 let isLocalMode = false
-let targetBin = null
 
 if (fs.existsSync(localPkgJson)) {
     try {
@@ -21,12 +19,6 @@ if (fs.existsSync(localPkgJson)) {
     }
 }
 
-if (isLocalMode) {
-    targetBin = localCliBin
-} else {
-    targetBin = prodCliBin
-}
-
 if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
     console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
 } else if (isLocalMode) {
@@ -34,16 +26,15 @@ if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
 }
 
 try {
-    if (!fs.existsSync(targetBin)) {
-        throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${targetBin}]`)
+    if (!fs.existsSync(cliDist)) {
+        throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${cliDist}]`)
     }
 
     const { aliaser } = require('@nodecorejs/builtin-lib')
-    const cliScript = path.resolve(__dirname, "../../cli/dist")
-    const { Runtime } = require('../dist/index.js')
+    const { Runtime } = require('nodecorejs')
 
-    new aliaser({ "@@cli": cliScript })
-
+    new aliaser({ "@@cli": cliDist })
+    
     if (process.env.DEBUGGER) {
         let file = null
 
@@ -65,7 +56,7 @@ try {
             new Runtime(file)
         }
     } else {
-        new Runtime('../dist/cli/index.js')
+        new Runtime(cliDist)
     }
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })

@@ -1,5 +1,5 @@
 {
-  "name": "@ragestudio/nodecorejs",
+  "name": "nodecorejs",
   "version": "0.18.6",
   "types": "types.d.ts",
   "main": "./dist/index.js",
@@ -18,9 +18,6 @@
     "start": "npx babel-node ./src",
     "build": "rimraf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
-  },
-  "bin": {
-    "nodecore": "./bin/index.js"
   },
   "dependencies": {
     "lodash": "^4.17.21",

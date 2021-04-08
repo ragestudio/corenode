@@ -1,6 +1,6 @@
 /**
  * NodecoreJS
- * @module @ragestudio/nodecorejs 
+ * @module nodecorejs 
  */
 import path from 'path'
 import process from 'process'
@@ -13,7 +13,7 @@ import { aliaser, globals } from '@nodecorejs/builtin-lib'
 let { objectToArrayMap, verbosity } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
-const getRuntimeDeep = () => Object.keys(process.runtime).length
+// const getRuntimeDeep = () => Object.keys(process.runtime).length
 
 class Runtime {
     constructor(load, context, options) {
@@ -42,9 +42,18 @@ class Runtime {
             // flag runtime as inited
             global._inited = true
 
-            // watch for custom script
+            // watch for load script
             if (typeof (load) !== "undefined") {
-                require(load)
+                try {
+                    if (!fs.existsSync(load)) {
+                        throw new Error(`Cannot read loader script [${load}]`)
+                    } 
+                    require(load)
+                } catch (error) {
+                    verbosity.dump(error)
+                    verbosity.error(`Runtime loader catch error > ${error.message}`)
+                }
+        
             }
         })
     }
