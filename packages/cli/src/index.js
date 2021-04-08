@@ -1,4 +1,4 @@
-import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isLocalMode, syncAllPackagesVersions } from 'nodecorejs'
+import { getVersion, bumpVersion, syncPackageVersionFromName, getGit, getRootPackage, isNodecoreProject, syncAllPackagesVersions } from 'nodecorejs'
 import { installCore, publishProject, bootstrapProject } from './scripts'
 import { getChangelogs } from './scripts/utils'
 
@@ -116,11 +116,11 @@ let commandMap = [
                 let rows = []
 
                 if (argv.engine) {
-                    rows.push(["⌬ NodecoreJS™", `v${fetchedVersion}${isLocalMode() ? "@local" : ""}`, __dirname])
+                    rows.push(["⌬ NodecoreJS™", `v${fetchedVersion}${isNodecoreProject() ? "@local" : ""}`, __dirname])
                 }
 
                 fetchedVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
-                
+
                 if (rows.length > 0) {
                     pt.create(headers, rows)
                     pt.print()
@@ -170,6 +170,36 @@ let commandMap = [
         exec: async (argv) => {
             const changes = await getChangelogs(getGit(), argv.to, argv.from)
             console.log(changes)
+        }
+    },
+    {
+        command: "exec",
+        description: "Run builtIn functions on cli mode",
+        exec: (argv) => {
+            const helpers = require("nodecorejs/dist/helpers")
+            const { verbosity } = require("@nodecorejs/utils")
+
+            const args = argv["_"]
+            const fn = args[1]
+            const context = args.slice(1, args.length)
+            
+            try {
+                if (typeof (helpers[fn]) == "function") {
+                    const _fn = helpers[fn](...context)
+                    verbosity.options({ method: `CLI > [${fn}()]` }).log(`>> ${JSON.stringify(_fn)}`)
+                }else {
+                    console.error(`${fn}() is not an function`)
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        }
+    },
+    {
+        command: "env",
+        description: "Show current runtime enviroment",
+        exec: () => {
+            console.log(global._env)
         }
     }
 ]

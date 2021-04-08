@@ -51,18 +51,18 @@ export async function moduleInstall(_pathFile) {
             return reject(new Error(`Undefined [file]`))
         }
 
-        let _module = {
+        let _manifestSetup = {
             pkg: pkg,
             codec: codec ?? 'utf-8',
-            file: file ?? path.resolve(_pathFile, ".module.js"),
+            file: file ?? path.resolve(_pathFile, "_module.js"),
             dependencies: dependencies,
         }
 
-        if (_module.dependencies) {
+        if (_manifestSetup.dependencies) {
             if (Boolean(params?.ignoreDeps)) {
                 verbosity.options({ dumpFile: true }).warn(`Ignoring dependencies installation`)
             } else {
-                objectToArrayMap(_module.dependencies).forEach((dep) => {
+                objectToArrayMap(_manifestSetup.dependencies).forEach((dep) => {
                     const isInstalled = isDependencyInstalled(dep.key) ? true : false
                     if (!isInstalled) {
                         addDependency(dep, true)
@@ -77,7 +77,7 @@ export async function moduleInstall(_pathFile) {
         
         loadRegistry({ write: true })
 
-        return resolve(_module)
+        return resolve(_manifestSetup)
     })
 }
 

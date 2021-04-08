@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { getProjectEnv } from '../../index'
 
-const temporalPath = getProjectEnv()?.temporalsDirectory ?? path.resolve(`${__dirname}/.nodecore_tmp`)
+const temporalPath = getProjectEnv()?.temporalsDirectory ?? path.resolve(`${process.cwd()}/.nodecore_tmp`)
 const spinner = ora({
 
     spinner: "dots",

@@ -106,11 +106,11 @@ export function getRootPackage() {
 }
 
 /**
- * Check if the current project is on local mode
- * @function isLocalMode 
+ * Check if the current project is nodecorejs
+ * @function isNodecoreProject 
  * @returns {boolean}
  */
-export function isLocalMode() {
+export function isNodecoreProject() {
     return getRootPackage().name === "nodecorejs"
 }
 

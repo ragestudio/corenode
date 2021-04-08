@@ -32,12 +32,14 @@ try {
     if (!fs.existsSync(cliDist)) {
         throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${cliDist}]`)
     }
-  
-    if (path.isAbsolute(fromArguments) && fs.existsSync(fromArguments)) {
-        targetBin = fromArguments
+
+    if (fromArguments) {
+        if (path.isAbsolute(fromArguments) && fs.existsSync(fromArguments)) {
+            targetBin = fromArguments
+        }
     }
     
-    if (process.env.DEBUG) {
+    if (process.env.DEBUG == "true") {
         targetBin = path.resolve(fromArguments)
     }
 
@@ -46,6 +48,7 @@ try {
 
     new aliaser({ "@@cli": cliDist })
     new Runtime(targetBin)
+    console.log(`\n`) // leaving some space between lines
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })
     console.log(`❌ Critical error > ${error.message}`)
