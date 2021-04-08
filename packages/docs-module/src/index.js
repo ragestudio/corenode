@@ -1,4 +1,3 @@
-
 import { getPackages, getProjectEnv } from 'nodecorejs'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
