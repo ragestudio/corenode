@@ -3,7 +3,7 @@ import path from 'path'
 
 import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
 
-import { writeModule } from '../../modules'
+// import { writeModule } from '../../modules'
 import { isDependencyInstalled, addDependency, loadRegistry } from '../../helpers'
 
 import { extract } from '../extract7z'

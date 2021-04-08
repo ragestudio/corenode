@@ -6,7 +6,6 @@
   "files": [
     "internals",
     "dist",
-    "cli",
     "types.d.ts"
   ],
   "sideEffects": false,

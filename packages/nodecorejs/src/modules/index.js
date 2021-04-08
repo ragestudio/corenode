@@ -1,9 +1,8 @@
 import fs from 'fs'
 import path from 'path'
-import rimraf from 'rimraf'
-import { getPackages, getInstalledNodecoreDependencies, getRootPackage } from '../helpers'
+import { getRootPackage } from '../helpers'
 
-let { verbosity, objectToArrayMap, readRootDirectorySync } = require('@nodecorejs/utils')
+let { verbosity, objectToArrayMap } = require('@nodecorejs/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
 const defaults = {
