@@ -13,6 +13,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "corenode": "../cli/bin"
+  },
   "scripts": {
     "start": "npx babel-node ./src",
     "build": "rimraf dist && npm run babelOut",
