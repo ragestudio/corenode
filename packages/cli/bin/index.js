@@ -6,6 +6,9 @@ const process = require("process")
 const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
 
+const fromArguments = process.argv[2]
+
+let targetBin = cliDist // Default load cli
 let isLocalMode = false
 
 if (fs.existsSync(localPkgJson)) {
@@ -29,35 +32,20 @@ try {
     if (!fs.existsSync(cliDist)) {
         throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${cliDist}]`)
     }
+  
+    if (path.isAbsolute(fromArguments) && fs.existsSync(fromArguments)) {
+        targetBin = fromArguments
+    }
+    
+    if (process.env.DEBUG) {
+        targetBin = path.resolve(fromArguments)
+    }
 
     const { aliaser } = require('@nodecorejs/builtin-lib')
     const { Runtime } = require('nodecorejs')
 
     new aliaser({ "@@cli": cliDist })
-    
-    if (process.env.DEBUGGER) {
-        let file = null
-
-        const fromArguments = process.argv[2]
-        const fromCWD = process.cwd()
-
-        try {
-            const from = fromArguments || fromCWD
-            if (!fs.existsSync(from)) {
-                throw new Error(`File not exists [${from}]`)
-            } else {
-                file = path.resolve(from)
-            }
-        } catch (error) {
-            console.error(`Error catching file > ${error}`)
-        }
-
-        if (file) {
-            new Runtime(file)
-        }
-    } else {
-        new Runtime(cliDist)
-    }
+    new Runtime(targetBin)
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })
     console.log(`❌ Critical error > ${error.message}`)

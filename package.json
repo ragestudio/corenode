@@ -7,8 +7,8 @@
   ],
   "scripts": {
     "postinstall": "npm run initBuilder",
-    "debug": "cross-env LOCAL_BIN=true DEBUGGER=true node ./packages/nodecorejs/bin",
     "initBuilder": "node ./postinstall/index.js",
+    "debug": "cross-env LOCAL_BIN=true DEBUG=true node ./packages/cli/bin",
     "local": "cross-env LOCAL_BIN=true node ./packages/cli/bin",
     "prod": "cross-env LOCAL_BIN=false node ./packages/cli/bin",
     "builder": "node ./packages/builder/cli.js",
