@@ -2,17 +2,13 @@
 const fs = require("fs")
 const path = require("path")
 const process = require("process")
-const { fork, spawn, execFileSync } = require("child_process")
-const vm = require("vm")
 
-const prodCliBin = path.resolve(__dirname, '../node_modules/@nodecorejs/cli/dist')
+const prodCliBin = path.resolve(__dirname, '../../../node_modules/@nodecorejs/cli/dist')
 const localCliBin = `${process.cwd()}/packages/cli/dist`
 const localPkgJson = `${process.cwd()}/package.json`
 
 let isLocalMode = false
 let targetBin = null
-
-let _runtime = null
 
 if (fs.existsSync(localPkgJson)) {
     try {
@@ -30,7 +26,6 @@ if (isLocalMode) {
 } else {
     targetBin = prodCliBin
 }
-
 
 if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
     console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
