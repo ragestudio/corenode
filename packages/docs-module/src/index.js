@@ -1,5 +1,5 @@
 
-import { getPackages, getProjectEnv } from '@@nodecore'
+import { getPackages, getProjectEnv } from 'nodecorejs'
 // import ESDoc from 'esdoc'
 import Docma from 'docma'
 import path from 'path'

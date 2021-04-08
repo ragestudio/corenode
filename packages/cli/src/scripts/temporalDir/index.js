@@ -1,7 +1,7 @@
 import ora from 'ora'
 import fs from 'fs'
 import path from 'path'
-import { getProjectEnv } from '@@nodecore'
+import { getProjectEnv } from 'nodecorejs'
 
 const temporalPath = getProjectEnv().temporalsDirectory ?? path.resolve(`${__dirname}/.nodecore_tmp`)
 const spinner = ora({

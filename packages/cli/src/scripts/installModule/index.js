@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import fetch from 'node-fetch'
 
-import { getProjectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from '@ragestudio/nodecorejs'
+import { getProjectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from 'nodecorejs'
 import { verbosity, objectToArrayMap } from '@nodecorejs/utils'
 
 import temporalDir from '../temporalDir'
