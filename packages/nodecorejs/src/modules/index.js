@@ -11,7 +11,7 @@ const defaults = {
     localModulesPathname: `modules`
 }
 
-export default class modules {
+export default class ModuleController {
     constructor() {
         if (typeof (global.nodecore) === "undefined") {
             throw new Error(`Nodecore runtime has not been initialized`)
@@ -30,9 +30,10 @@ export default class modules {
         this.init()
     }
 
+    isOnRegistry(key) { return this.getRegistry(key) ? true : false }
+
     readLoader(loader) {
-        const _module = require(loader)
-        return _module
+        return require(loader)
     }
 
     resolveLoadModule(origin) {
@@ -99,27 +100,21 @@ export default class modules {
     }
 
     getRegistry(key) {
-        let registry = []
-
         const packageJSON = getRootPackage()
-        const externalModules = packageJSON[defaults.registryObjectName] ?? {}
+        const registry = packageJSON[defaults.registryObjectName] ?? {}
 
-        objectToArrayMap(externalModules).forEach((_module) => {
-            registry.push(_module)
-        })
-
-        if (key && externalModules[key]) {
-            return externalModules[key]
+        if (key) {
+            return registry[key]
         }
 
         return registry
     }
 
-    getLoadedModules = () => { return this._modules }
+    getLoadedModules() { return this._modules }
 
-    getLoadedLibraries = () => { return this._libraries }
+    getLoadedLibraries() { return this._libraries }
 
-    getExternalModulesPath = () => { return this.externalModulesPath }
+    getExternalModulesPath() { return this.externalModulesPath }
 
     loadModule(manifest) {
         const { loader, internal } = manifest
@@ -149,7 +144,23 @@ export default class modules {
 
     }
 
-    writeRegistry() {
+    registryKey = {
+        add: (key, value) => {
+            let registry = this.getRegistry()
+            registry[key] = value ?? '0.0.0'
+
+            this.writeRegistry(registry)
+        },
+        remove: (key) => {
+            let registry = this.getRegistry()
+            registry = delete registry[key]
+
+            this.writeRegistry(registry)
+        }
+    }
+
+    writeRegistry(registry) {
+        if (!registry) return false
         const packageJSONPath = path.resolve(process.cwd(), 'package.json')
         let packageJSON = getRootPackage()
 
@@ -157,33 +168,8 @@ export default class modules {
             throw new Error(`Invalid typeof >> package.json is not an object`)
         }
 
-        if (typeof (packageJSON[this.registryObjectName]) === "undefined") {
-            packageJSON[this.registryObjectName] = {
-
-            }
-        }
-
-        packageJSON[this.registryObjectName] = this.getRegistry()
+        packageJSON[this.registryObjectName] = registry
         fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, 2), { encoding: "utf8" })
-    }
-
-    allocateModules() {
-        // writeRegistry
-
-        // fs create dir and write file with sources (Installation proccess)
-    }
-
-    isOnRegistry(key) {
-        let is = false
-
-        const registry = this.getRegistry()
-        registry.forEach((entry) => {
-            if (entry.key === key) {
-                is = true
-            }
-        })
-
-        return is
     }
 
     init() {

@@ -1,14 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 
-import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
-
-// import { writeModule } from '../../modules'
-import { isDependencyInstalled, addDependency, loadRegistry } from '../../helpers'
-
 import { extract } from '../extract7z'
 import temporalDir from '../temporalDir'
 import { generateName } from '../random'
+
+import { objectToArrayMap, verbosity } from '@nodecorejs/utils'
+
+const helpers = process.runtime[0].helpers
+const moduleController = process.runtime[0].modules
 
 export async function moduleInstall(_pathFile) {
     return new Promise(async (resolve, reject) => {
@@ -42,7 +42,7 @@ export async function moduleInstall(_pathFile) {
 
         const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
         
-        const { pkg, file, codec, dependencies } = manifest
+        const { pkg, file, codec, version, dependencies, setup } = manifest
 
         if (typeof(pkg) == "undefined") {
             return reject(new Error(`Undefined [pkg]`))
@@ -53,9 +53,11 @@ export async function moduleInstall(_pathFile) {
 
         let _manifestSetup = {
             pkg: pkg,
+            version: version ?? "0.0.0",
             codec: codec ?? 'utf-8',
             file: file ?? path.resolve(_pathFile, "_module.js"),
             dependencies: dependencies,
+            setup: setup
         }
 
         if (_manifestSetup.dependencies) {
@@ -63,19 +65,19 @@ export async function moduleInstall(_pathFile) {
                 verbosity.options({ dumpFile: true }).warn(`Ignoring dependencies installation`)
             } else {
                 objectToArrayMap(_manifestSetup.dependencies).forEach((dep) => {
-                    const isInstalled = isDependencyInstalled(dep.key) ? true : false
+                    const isInstalled = helpers.isDependencyInstalled(dep.key) ? true : false
                     if (!isInstalled) {
-                        addDependency(dep, true)
+                        helpers.addDependency(dep, true)
                     }
                 })
             }
         }
 
-        if (fs.existsSync()){
-
+        if (_manifestSetup.setup) {
+            // TODO: Module template setup
         }
-        
-        loadRegistry({ write: true })
+
+        moduleController.registryKey.add(_manifestSetup.pkg, _manifestSetup.version)
 
         return resolve(_manifestSetup)
     })

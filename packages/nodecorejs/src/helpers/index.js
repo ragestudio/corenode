@@ -72,22 +72,12 @@ export function getPackages(params) {
 
 /**
  * Get all dependent modules from current project
- * @function getInstalledNodeModules 
+ * @function getInstalledDependencies 
  * @param {boolean} [params.fullPath = false] Return array with full path to packages
  * @returns {array} Packages names
  */
-export function getInstalledNodeModules(params) {
+export function getInstalledDependencies(params) {
     return readRootDirectorySync("node_modules", params)
-}
-
-/**
- * Get all nodecore dependencies installed
- * @function getInstalledNodecoreDependencies 
- * @param {boolean} [params.fullPath = false] Return array with full path to packages
- * @returns {array} Packages names
- */
-export function getInstalledNodecoreDependencies(params) {
-    return readRootDirectorySync("node_modules/@nodecorejs", params)
 }
 
 /**
@@ -143,6 +133,10 @@ export function isProjectMode(dir) {
     return false
 }
 
+export function modifyRuntimeEnv(mutation) {
+    // TODO: modifyRuntimeEnv
+}
+
 /**
  * Check if an dependecy is installed on current project
  * @function isDependencyInstalled 
@@ -152,10 +146,6 @@ export function isProjectMode(dir) {
 export function isDependencyInstalled(name) {
     const currentPackages = getRootPackage().dependencies ?? {}
     return currentPackages[name] ?? false
-}
-
-export function modifyRuntimeEnv(mutation) {
-    // TODO: modifyRuntimeEnv
 }
 
 /**
