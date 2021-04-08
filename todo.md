@@ -13,7 +13,7 @@
       - (2.4.2) [] Show more builder details
     - (2.5) [] Dynamic compiler
 
-- (3) [nodecorejs/modules] NRMI Modules
+- (3) [nodecorejs/modules] NRML | Native Runtimed Module Loader
     - (3.1) [] Support modole cloud publishing
     - (3.2) [] Dynamic load
     - (3.3) [] Thread workers & load balancer
@@ -23,7 +23,7 @@
       - (3.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
 
 - (4) [nodecore/core]
-  - (4.1) [] install module rewrite
+  - (4.1) [] Install module rewrite
   - (4.2) [] WebAssembly support
 
 - (5) [nodecorejs/helpers]

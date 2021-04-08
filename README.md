@@ -1,16 +1,17 @@
-# [Early] NodecoreJS | The framework runtimed
+# NodecoreJS | An runtimed framework
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ragestudio/nodecore.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/nodecore/context:javascript)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/ragestudio/nodecore.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ragestudio/nodecore/alerts/)
 
-Nodecorejs is a framework that has an independent runtime, it is prepared to implement utilities for development and operation both locally and in production.
+Nodecorejs is a multiproposal framework based on NodeJS runtime, it is prepared to implement utilities for development and operation both locally and in production.
 
 Its most important and critical modules including core base
 | Package |  |
 |--|--|
 | @nodecorejs/builder | An compiler based on Babel, basic for the operation and development of the framework |
 | @nodecorejs/cli | Allows to use its cli utilities |
-| @nodecorejs/dot-runtime | Manages the module system, runtime and environment |
+| @nodecorejs/builtin-lib | Includes builtin libraries for NRML system |
 | @nodecorejs/utils | Includes an important library for the core of the framework |
+| nodecorejs | Manages the module system, runtime and environment |
 
 > Most of these modules are still under development or have yet to be included
 
