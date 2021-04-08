@@ -1,10 +1,10 @@
 module.exports = {
-    pkg: "nodecore_test",
+    pkg: "nodecore_tests",
     init: (libraries) => {
         const { builtIn } = libraries
         const { cli } = builtIn
         cli.add({
-            command: 'test',
+            command: 'tests',
             description: "Run project test",
             exec: (argv) => require("./dist/index.js").default(argv)
         })
