@@ -27,3 +27,5 @@ logs_dump.log
 .aliaser
 
 debugger-ui/node_modules
+
+**/*/.tmp
