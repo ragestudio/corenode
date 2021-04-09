@@ -16,7 +16,7 @@
     - (2.4) [] CLI UI MODE
       - (2.4.1) [] Show ignored sources
       - (2.4.2) [] Show more builder details
-    - (2.5) [] Dynamic compiler
+    - (2.5) [~] Dynamic compiler
 
 - (3) [corenodejs/modules] NRML | Native Runtimed Module Loader
     - (3.1) [] Support modole cloud publishing
