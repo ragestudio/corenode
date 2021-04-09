@@ -38,7 +38,7 @@ try {
             if (!path.isAbsolute(fromArguments)) {
                 fromArguments = path.resolve(fromArguments)
             }
-            
+
             // plesss, better fs.access api ._.
             if (fs.readFileSync(fromArguments)) {
                 targetBin = fromArguments
