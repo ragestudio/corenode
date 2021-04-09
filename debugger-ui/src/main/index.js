@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron")
+const { app, BrowserWindow } = require("electron")
 const is = require("electron-is")
 const log = require("electron-log")
 const { format } = require("url")

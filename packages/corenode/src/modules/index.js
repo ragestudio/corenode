@@ -117,7 +117,7 @@ export default class ModuleController {
     getExternalModulesPath() { return this.externalModulesPath }
 
     loadModule(manifest) {
-        const { loader, internal } = manifest
+        const { loader } = manifest
 
         if (fs.existsSync(loader)) {
             const _module = require(loader)

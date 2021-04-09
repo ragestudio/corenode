@@ -34,7 +34,7 @@ export default class OSMonitor extends React.Component {
   }
 
   render() {
-    const { freemem, avgload, intervalFreq, cpuMonitor, memoryMonitor } = this.state
+    const { freemem, cpuMonitor } = this.state
 
     const totalmem = os.totalmem()
     const cpus = os.cpus()

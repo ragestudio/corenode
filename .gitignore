@@ -25,3 +25,5 @@ corenode_logs
 logs_dump.log
 .error.log
 .aliaser
+
+debugger-ui/node_modules
