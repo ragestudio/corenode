@@ -37,6 +37,7 @@
   - (5.1) [] improve versioning
   - (5.2) [] improve bump version
   - (5.3) [] Publish proyect improve performance
+  - (5.4) [] fn() access file || fileExists
 
 - (6) [test-module]
   - (6.1) [] `global & env` Enviroment support Jest

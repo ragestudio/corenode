@@ -34,14 +34,20 @@ try {
     }
 
     if (fromArguments) {
-        if (!path.isAbsolute(fromArguments)) {
-            fromArguments = path.resolve(fromArguments)
-        }
-        if (fs.existsSync(fromArguments)) {
-            targetBin = fromArguments
+        try {
+            if (!path.isAbsolute(fromArguments)) {
+                fromArguments = path.resolve(fromArguments)
+            }
+            
+            // plesss, better fs.access api ._.
+            if (fs.readFileSync(fromArguments)) {
+                targetBin = fromArguments
+            }
+        } catch (error) {
+            // terrible, no access?
         }
     }
-    
+
     if (process.env.DEBUG == "true") {
         targetBin = path.resolve(fromArguments)
     }
