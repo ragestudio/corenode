@@ -1,9 +1,9 @@
 ## TO DO:
 
 - [] Binary builds
-  - [] Nodejs API
-  - [] Package manager
-  - [] OS Bindings
+  - [] Nodejs bindings
+  - [] OS bindings
+  - [] Add packages manager
 
 - (1) [debuggerUI]
     - (1.1) [] WebApp
@@ -17,6 +17,7 @@
       - (2.4.1) [] Show ignored sources
       - (2.4.2) [] Show more builder details
     - (2.5) [~] Dynamic compiler
+    - (2.6) [] WASM Support (C, C++)
 
 - (3) [corenodejs/modules] NRML | Native Runtimed Module Loader
     - (3.1) [] Support modole cloud publishing
@@ -28,10 +29,14 @@
       - (3.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
 
 - (4) [corenode/core]
-  - (4.1) [] Install module rewrite
-  - (4.2) [] WebAssembly support
+  - (4.1) [] Module installer
+  - (4.2) [] WebAssembly support (wasi)
   - (4.3) [] Autoupdate
   - (4.4) [] SignalC (SignalCore)
+  - (4.5) [] VM Transcompiler
+  - (4.6) [] Runtime daemon
+  - (4.7) [] VM Runtime scripts loader
+  - (4.8) [] Runtime profiler
 
 - (5) [corenodejs/helpers]
   - (5.1) [] improve versioning
