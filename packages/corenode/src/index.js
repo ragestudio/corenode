@@ -6,19 +6,17 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-import { aliaser, globals } from '@corenode/builtin-lib'
-
 let helpers = {}
-let { objectToArrayMap, verbosity } = require('@corenode/utils')
+let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
-// const getRuntimeDeep = () => Object.keys(process.runtime).length
+const getRuntimeDeep = () => Object.keys(process.runtime).length
 
 class Runtime {
     constructor(load, context, options) {
         const modulesController = require("./modules").default
         helpers = require("./helpers")
-        
+
         global._inited = false
 
         this.thread = 0 // By default
@@ -37,15 +35,15 @@ class Runtime {
             if (typeof (process.runtime[this.thread]) === "undefined") {
                 process.runtime[this.thread] = this
             }
-            
+
             // create new moduleController
             this.modules = new modulesController()
-            
+
             // detect local mode
             try {
                 const rootPkg = helpers.getRootPackage()
-                
-                if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore"))  {
+
+                if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore")) {
                     global.isLocalMode = true
                 }
             } catch (error) {
@@ -61,7 +59,7 @@ class Runtime {
             } else if (global.isLocalMode) {
                 console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
             }
-            
+
             // watch for load script
             if (typeof (load) === "object") {
                 const { targetBin, isLocalMode } = load
@@ -72,7 +70,7 @@ class Runtime {
                     try {
                         if (!fs.existsSync(targetBin)) {
                             throw new Error(`Cannot read loader script [${targetBin}]`)
-                        } 
+                        }
                         require(targetBin)
                     } catch (error) {
                         verbosity.dump(error)
@@ -83,17 +81,12 @@ class Runtime {
         })
     }
 
-    initAliaser() {
-        new aliaser({ "@@corenode": __dirname })
-
-        // TODO: Autoload .setalias
-    }
 
     initGlobals() {
-        // Create empty globals
+        const { globals } = require("@corenode/builtin-lib")
+        
         new globals(["corenode_cli", "corenode"])
-
-        const keywords = ["_version", "_packages", "_env", "_envpath", "_runtimeSource", "_runtimeRoot",]
+        const keywords = ["_packages", "_env",]
 
         keywords.forEach((key) => {
             if (typeof (global[key]) === "undefined") {
@@ -102,6 +95,12 @@ class Runtime {
         })
 
         global.isLocalMode = false
+        global.runtimeDeep = getRuntimeDeep()
+
+        global._version = helpers.getVersion() ?? "0.0.0"
+        global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
+        global._parsedVersion = schemizedParse(global._version, Object.keys(global._versionScheme), '.')
+
         global._envpath = path.resolve(process.cwd(), '.corenode')
         global._runtimeSource = path.resolve(__dirname, "..")
         global._runtimeRoot = path.resolve(__dirname, '../../..') // TODO: fix with process.env
@@ -139,49 +138,15 @@ class Runtime {
         })
     }
 
-    setVersions() {
-        const versionOrderScheme = global.versionScheme = { mayor: 0, minor: 1, patch: 2 }
-        const versionsTypes = Object.keys(versionOrderScheme)
 
-        if (global._env?.version) {
-            try {
-                const parsedVersion = helpers.getVersion()
-                if (typeof (parsedVersion) !== "string") {
-                    throw new Error(`Invalid version data type, recived > ${typeof (parsedVersion)}`)
-                }
-
-                versionsTypes.forEach((type) => {
-                    global._version[type] = null
-                })
-
-                objectToArrayMap(parsedVersion.split('.')).forEach((entry) => {
-                    let entryValue = null
-
-                    if (isNaN(Number(entry.value))) {
-                        entryValue = entry.value
-                    } else {
-                        entryValue = Number(entry.value)
-                    }
-
-                    if (entryValue != null) {
-                        global._version[versionsTypes[entry.key]] = entryValue
-                    }
-                })
-            } catch (error) {
-                verbosity.error("🆘 Failed to load current version >", error.message)
-            }
-        }
-    }
 
     init() {
         return new Promise((resolve, reject) => {
             try {
                 if (!global._inited) {
-                    this.initAliaser()
                     this.initGlobals()
                     this.setGlobals()
                     this.setRuntimeEnv()
-                    this.setVersions()
                 }
 
                 return resolve()

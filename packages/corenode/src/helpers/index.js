@@ -2,40 +2,42 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-let { objectToArrayMap, verbosity, readRootDirectorySync } = require('@corenode/utils')
+let { schemizedStringify, verbosity, readRootDirectorySync } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 /**
  * Get parsed version of package
  * @function getVersion
- * @param {boolean} [engine = false] Return version of corenode
+ * @param {object} opts
+ * @param {object} opts.engine Return
  * @returns {string} projectRuntime
  */
-export function getVersion(engine) {
+export function getVersion(opts) {
+    let version = null
+
     const projectRuntime = global._env
     const enginePkgPath = global._packages._engine
     const projectPkgPath = global._packages._project
-    
+
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
         const pkgProject = fs.existsSync(projectPkgPath) ? require(projectPkgPath) : {}
 
-        if (engine && typeof (pkgEngine["version"]) !== "undefined") {
-            return pkgEngine["version"]
+        if (opts?.engine && typeof (pkgEngine["version"]) !== "undefined") {
+            return version = pkgEngine["version"]         
         }
 
         if (projectRuntime.version) {
-            return projectRuntime.version
+            version = projectRuntime.version
+        } else if (typeof (pkgProject["version"]) !== "undefined") {
+            version = pkgProject["version"]
         }
 
-        if (typeof (pkgProject["version"]) !== "undefined") {
-            return pkgProject["version"]
-        }
     } catch (error) {
         // terrible
-        return false
+        version = "0.0.0"
     }
-    return false
+    return version
 }
 
 /**
@@ -91,16 +93,16 @@ export function getRootPackage() {
     if (projectPkgPath && fs.existsSync(projectPkgPath)) {
         return require(projectPkgPath)
     }
-    
+
     return false
 }
 
 /**
  * Check if the current project is corenode
- * @function iscorenodeProject 
+ * @function isCorenodeProject 
  * @returns {boolean}
  */
-export function iscorenodeProject() {
+export function isCorenodeProject() {
     return getRootPackage().name === "corenode"
 }
 
@@ -171,32 +173,15 @@ export function addDependency(dependency, write = false) {
 }
 
 /**
- * Stringify an parsed version to readable string
- * @function versionToString 
- * @param {object} version
- * @returns {string}
- */
-export function versionToString(version) {
-    let v = []
-    objectToArrayMap(version).forEach(element => {
-        if (typeof (element.value) !== "undefined" && element.value != null) {
-            v[global.versionScheme[element.key]] = element.value
-        }
-    })
-    return v.join('.')
-}
-
-/**
  * Bumps current version of the current project
  * @function bumpVersion 
  * @param {array} params "major", "minor", "patch"
- * @param {array} silent Suppres console
  * @param {boolean} [save = false] Force to save updated version to currect project
  */
-export function bumpVersion(params, save, options) {
+export function bumpVersion(params, schema) {
     if (!params) return false
 
-    const currentVersion = global._version
+    const currentVersion = global._parsedVersion
     const bumps = [
         {
             type: "major",
@@ -229,15 +214,10 @@ export function bumpVersion(params, save, options) {
         }
     })
 
-    let before = getVersion()
-    let after = versionToString(currentVersion)
+    console.log(`🏷 Updated to new version ${before} > of ${global._version}`)
+    global._env.version = schemizedStringify(currentVersion, _versionScheme, '.')
 
-    options?.silent ? null : console.log(`\n🏷 New version ${before} > ${after}`)
-    if (save) {
-        options?.silent ? null : console.log(`✅ Version updated & saved`)
-        global._env.version = after
-        return rewriteRuntimeEnv()
-    }
+    return rewriteRuntimeEnv()
 }
 
 /**
@@ -295,6 +275,6 @@ export function syncAllPackagesVersions() {
 }
 
 function rewriteRuntimeEnv() {
-    verbosity.dump(`Rewrited runtime env > ${global._packages._env}`)
+    verbosity.dump(`Rewrited runtime env > ${global._envpath}`)
     return fs.writeFileSync(global._envpath, JSON.stringify(global._env, null, 2) + '\n', 'utf-8')
 }

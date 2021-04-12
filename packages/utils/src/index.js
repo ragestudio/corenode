@@ -184,3 +184,21 @@ export { default as getCircularReplacer } from './getCircularReplacer'
  * @function requireQueryFilter
  */
 export { default as requireQueryFilter } from './filterSchematizedArray'
+
+/**
+ * Stringify an parsed version to string with an schema
+ * @function versionToString 
+ * @param {object} obj
+ * @param {object} schema
+ * @returns {string}
+ */
+export { schemizedStringify } from './schemized'
+
+/**
+ * Parse an string to object with an schema
+ * @function versionToString 
+ * @param {object} str
+ * @param {object} schema
+ * @returns {string}
+ */
+export { schemizedParse } from './schemized'
