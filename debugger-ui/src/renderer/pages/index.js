@@ -6,8 +6,6 @@ export default class OSMonitor extends React.Component {
   state = {
     memoryMonitor: {},
     cpuMonitor: {},
-    freemem: 0,
-    avgload: 0,
     intervalFreq: 1000
   }
 
