@@ -156,6 +156,9 @@ export function build({ dir, opts, ticker }) {
               .catch((err) => {
                 return reject(err)
               })
+          } else {
+            // simply ignore and return callback for copy file
+            return callback(null, file)
           }
         }))
         .pipe(vfs.dest(out))
