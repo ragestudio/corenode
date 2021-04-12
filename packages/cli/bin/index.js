@@ -14,18 +14,12 @@ let isLocalMode = false
 if (fs.existsSync(localPkgJson)) {
     try {
         const pkg = require(localPkgJson)
-        if (pkg.name === "corenode" && process.env.LOCAL_BIN == "true") {
+        if (pkg.name.includes("corenode") && process.env.LOCAL_BIN == "true") {
             isLocalMode = true
         }
     } catch (error) {
         console.log(`❌ Error processing package.json > ${error.message}`)
     }
-}
-
-if (process.env.LOCAL_BIN == "true" && !isLocalMode) {
-    console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
-} else if (isLocalMode) {
-    console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
 }
 
 try {
@@ -56,7 +50,10 @@ try {
     const { Runtime } = require('corenode')
 
     new aliaser({ "@@cli": cliDist })
-    new Runtime(targetBin)
+    new Runtime({
+        targetBin,
+        isLocalMode: isLocalMode ? isLocalMode : false
+    })
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
     fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })

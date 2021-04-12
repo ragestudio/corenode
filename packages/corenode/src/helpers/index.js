@@ -86,9 +86,9 @@ export function getInstalledDependencies(params) {
  * @returns {object}
  */
 export function getRootPackage() {
-    const projectPkgPath = global._packages._project
+    const projectPkgPath = global._packages?._project
 
-    if (fs.existsSync(projectPkgPath)) {
+    if (projectPkgPath && fs.existsSync(projectPkgPath)) {
         return require(projectPkgPath)
     }
     

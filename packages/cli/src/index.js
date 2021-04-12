@@ -116,7 +116,7 @@ let commandMap = [
                 let rows = []
 
                 if (argv.engine) {
-                    rows.push(["⌬ corenode™", `v${fetchedVersion}${iscorenodeProject() ? "@local" : ""}`, __dirname])
+                    rows.push(["Corenode™", `v${fetchedVersion}${iscorenodeProject() ? "@local" : ""}`, __dirname])
                 }
 
                 fetchedVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${fetchedVersion}`, process.cwd()]) : console.log("🏷  Version not available")
@@ -137,10 +137,10 @@ let commandMap = [
         command: 'build',
         description: "Build project with builtin builder",
         exec: (argv) => {
-            console.log(`🔄 Building...`)
             require("@corenode/builder").default({
-                buildBuilder: argv.buildBuilder,
-                cliui: true
+                cliui: argv.silent? false : true ?? true
+            }).then(() => {
+                console.log(`✅  DONE`)
             })
         }
     },

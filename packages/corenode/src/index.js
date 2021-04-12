@@ -6,10 +6,9 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-import modulesController from './modules'
-import * as helpers from './helpers'
 import { aliaser, globals } from '@corenode/builtin-lib'
 
+let helpers = {}
 let { objectToArrayMap, verbosity } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
@@ -17,6 +16,9 @@ verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 class Runtime {
     constructor(load, context, options) {
+        const modulesController = require("./modules").default
+        helpers = require("./helpers")
+        
         global._inited = false
 
         this.thread = 0 // By default
@@ -39,21 +41,44 @@ class Runtime {
             // create new moduleController
             this.modules = new modulesController()
             
+            // detect local mode
+            try {
+                const rootPkg = helpers.getRootPackage()
+                
+                if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore"))  {
+                    global.isLocalMode = true
+                }
+            } catch (error) {
+                // terrible
+            }
+
             // flag runtime as inited
             global._inited = true
 
+            // warn local mode
+            if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
+                console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
+            } else if (global.isLocalMode) {
+                console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
+            }
+            
             // watch for load script
-            if (typeof (load) !== "undefined") {
-                try {
-                    if (!fs.existsSync(load)) {
-                        throw new Error(`Cannot read loader script [${load}]`)
-                    } 
-                    require(load)
-                } catch (error) {
-                    verbosity.dump(error)
-                    verbosity.error(`Runtime loader catch error > ${error.message}`)
+            if (typeof (load) === "object") {
+                const { targetBin, isLocalMode } = load
+                if (isLocalMode) {
+                    global.isLocalMode = true
                 }
-        
+                if (targetBin) {
+                    try {
+                        if (!fs.existsSync(targetBin)) {
+                            throw new Error(`Cannot read loader script [${targetBin}]`)
+                        } 
+                        require(targetBin)
+                    } catch (error) {
+                        verbosity.dump(error)
+                        verbosity.error(`Runtime loader catch error > ${error.message}`)
+                    }
+                }
             }
         })
     }
@@ -68,7 +93,7 @@ class Runtime {
         // Create empty globals
         new globals(["corenode_cli", "corenode"])
 
-        const keywords = ["_version", "_packages", "_env", "_envpath", "_runtimeSource", "_runtimeRoot"]
+        const keywords = ["_version", "_packages", "_env", "_envpath", "_runtimeSource", "_runtimeRoot",]
 
         keywords.forEach((key) => {
             if (typeof (global[key]) === "undefined") {
@@ -76,6 +101,7 @@ class Runtime {
             }
         })
 
+        global.isLocalMode = false
         global._envpath = path.resolve(process.cwd(), '.corenode')
         global._runtimeSource = path.resolve(__dirname, "..")
         global._runtimeRoot = path.resolve(__dirname, '../../..') // TODO: fix with process.env
@@ -114,14 +140,12 @@ class Runtime {
     }
 
     setVersions() {
-        const { getVersion } = require('./helpers')
-
         const versionOrderScheme = global.versionScheme = { mayor: 0, minor: 1, patch: 2 }
         const versionsTypes = Object.keys(versionOrderScheme)
 
         if (global._env?.version) {
             try {
-                const parsedVersion = getVersion()
+                const parsedVersion = helpers.getVersion()
                 if (typeof (parsedVersion) !== "string") {
                     throw new Error(`Invalid version data type, recived > ${typeof (parsedVersion)}`)
                 }
@@ -170,5 +194,5 @@ class Runtime {
 
 module.exports = {
     Runtime,
-    ...helpers,
+    ...require("./helpers"),
 }
