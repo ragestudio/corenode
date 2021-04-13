@@ -64,6 +64,7 @@ export function publishProject(args) {
                 enabled: () => config.npm === true,
                 task: () => {
                     return new Observable((observer) => {
+                        let publishCount = Number(0)
                         if (!Array.isArray(projectPackages) && !isProject) {
                             projectPackages = ["_"]
                         }
@@ -85,10 +86,11 @@ export function publishProject(args) {
                                     execa('npm', cliArgs, {
                                         cwd: packagePath,
                                     }).then((stdout) => {
+                                        publishCount += 1
                                         verbosity.dump(logOutput)
                                         observer.next(logOutput)
 
-                                        if ((index + 1) == projectPackages.length) {
+                                        if (publishCount == (projectPackages.length - 1)) {
                                             verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                             observer.complete()
                                         }
