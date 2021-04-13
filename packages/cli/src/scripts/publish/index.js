@@ -122,36 +122,20 @@ export function publishProject(args) {
                         }
 
                         try {
-                            const commit = new Promise(async () => {
-                                await execa('git', ['commit', '--all', '--message', releaseTag])
+                            execa.sync('git', ['tag', releaseTag])
+                            execa.sync('git', ['push', 'origin', 'master', '--tags'])
+
+                            const githubReleaseUrl = newGithubReleaseUrl({
+                                repoUrl: gitRemote,
+                                tag: releaseTag,
+                                body: changelogNotes,
+                                isPrerelease: config.preRelease,
                             })
 
-                            const tag = new Promise(async () => {
-                                await execa('git', ['tag', releaseTag])
-                            })
+                            console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
+                            open(githubReleaseUrl)
 
-                            const push = new Promise(async () => {
-                                await execa('git', ['push', 'origin', 'master', '--tags'])
-                            })
-
-                            Promise.allSettled([commit, tag, push])
-                                .then(() => {
-                                    const githubReleaseUrl = newGithubReleaseUrl({
-                                        repoUrl: gitRemote,
-                                        tag: releaseTag,
-                                        body: changelogNotes,
-                                        isPrerelease: config.preRelease,
-                                    })
-
-                                    console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
-                                    open(githubReleaseUrl)
-
-                                    return res()
-                                })
-                                .catch(reason => {
-                                    return rej(reason)
-                                })
-
+                            return res()
                         } catch (error) {
                             verbosity.dump(error)
                             return task.skip(`❌ Failed github publish, skipping`)
