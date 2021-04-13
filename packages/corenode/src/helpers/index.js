@@ -2,7 +2,7 @@ import path from 'path'
 import process from 'process'
 import fs from 'fs'
 
-let { schemizedStringify, verbosity, readRootDirectorySync } = require('@corenode/utils')
+let { schemizedStringify, schemizedParse, verbosity, readRootDirectorySync } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 /**
@@ -176,30 +176,32 @@ export function addDependency(dependency, write = false) {
  * @param {array} params "major", "minor", "patch"
  * @param {boolean} [save = false] Force to save updated version to currect project
  */
-export function bumpVersion(params, schema) {
+export function bumpVersion(params) {
     if (!params) return false
 
-    const currentVersion = global._parsedVersion
+    const version = getVersion()
+    const parsedVersion = schemizedParse(version, global._versionScheme, '.')
+
     const bumps = [
         {
             type: "major",
             do: () => {
-                currentVersion.major = currentVersion.major + 1
-                currentVersion.minor = 0
-                currentVersion.patch = 0
+                parsedVersion.major = parsedVersion.major + 1
+                parsedVersion.minor = 0
+                parsedVersion.patch = 0
             }
         },
         {
             type: "minor",
             do: () => {
-                currentVersion.minor = currentVersion.minor + 1
-                currentVersion.patch = 0
+                parsedVersion.minor = parsedVersion.minor + 1
+                parsedVersion.patch = 0
             }
         },
         {
             type: "patch",
             do: () => {
-                currentVersion.patch = currentVersion.patch + 1
+                parsedVersion.patch = parsedVersion.patch + 1
             }
         },
     ]
@@ -212,9 +214,9 @@ export function bumpVersion(params, schema) {
         }
     })
 
-    const after = schemizedStringify(currentVersion, _versionScheme, '.')
-    console.log(`🏷 Updated to new version ${after} > before ${global._version}`)
-    
+    const after = schemizedStringify(parsedVersion, global._versionScheme, '.')
+    console.log(`🏷 Updated to new version ${after} > before ${version}`)
+
     global._env.version = after
 
     return rewriteRuntimeEnv()
@@ -267,14 +269,14 @@ export function syncAllPackagesVersions() {
     pkgs.forEach((pkg) => {
         try {
             syncPackageVersionFromName(pkg, true)
-            verbosity.options({ dumpFile: true }).log(`[${pkg}] ✅ New version synchronized`)
+            verbosity.options({ dumpFile: true, method: false, time: false }).log(`[${pkg}] ✅ New version synchronized`)
         } catch (error) {
-            verbosity.options({ dumpFile: true }).log(`[${pkg}] ❌ Error syncing ! > ${error}`)
+            verbosity.options({ dumpFile: true, method: false, time: false }).log(`[${pkg}] ❌ Error syncing ! > ${error}`)
         }
     })
 }
 
 function rewriteRuntimeEnv() {
-    verbosity.dump(`Rewrited runtime env > ${global._envpath}`)
+    verbosity.options({ dumpFile: true, time: false, method: false }).warn(`Runtime environment rewrited > ${global._envpath}`)
     return fs.writeFileSync(global._envpath, JSON.stringify(global._env, null, 2) + '\n', 'utf-8')
 }

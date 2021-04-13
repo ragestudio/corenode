@@ -16,6 +16,10 @@ export function schemizedParse(str, schema, splitter) {
 
     const parsed = {}
 
+    if (!Array.isArray(schema)) {
+        schema = Object.keys(schema)
+    }
+    
     schema.forEach((key) => {
         parsed[key] = null
     })

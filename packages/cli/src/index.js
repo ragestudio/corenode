@@ -74,7 +74,10 @@ let commandMap = [
             })
 
             if (bumps.length > 0) {
-                helpers.bumpVersion(bumps, argv.save)
+                helpers.bumpVersion(bumps)
+                if (argv.sync) {
+                    helpers.syncAllPackagesVersions()
+                }
             } else {
                 const engineVersion = helpers.getVersion({ engine: true })
                 const proyectVersion = helpers.getVersion()

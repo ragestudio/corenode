@@ -7,9 +7,8 @@ import execa from 'execa'
 import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
-import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, isProjectMode } from 'corenode'
+import { getPackages, getGit, getVersion, isProjectMode } from 'corenode'
 import buildProject from '@corenode/builder'
-
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
@@ -19,7 +18,7 @@ export function publishProject(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
 
-        const projectGit = getGit()
+        const gitRemote = getGit()
         const isProject = isProjectMode()
 
         let config = {
@@ -118,7 +117,7 @@ export function publishProject(args) {
                         const releaseTag = `v${getVersion()}`
 
                         try {
-                            changelogNotes = getChangelogs(projectGit)
+                            changelogNotes = getChangelogs(gitRemote)
                         } catch (error) {
                             verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
                             // really terrible
@@ -130,7 +129,7 @@ export function publishProject(args) {
                             execa.sync('git', ['push', 'origin', 'master', '--tags'])
 
                             const githubReleaseUrl = newGithubReleaseUrl({
-                                repoUrl: projectGit,
+                                repoUrl: gitRemote,
                                 tag: releaseTag,
                                 body: changelogNotes,
                                 isPrerelease: config.preRelease,

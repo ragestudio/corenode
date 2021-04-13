@@ -5,29 +5,32 @@
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
+import vm from 'vm'
 
-let helpers = {}
 let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
-const getRuntimeDeep = () => Object.keys(process.runtime).length
+const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 
 class Runtime {
     constructor(load, context, options) {
-        const modulesController = require("./modules").default
-        helpers = require("./helpers")
-
-        global._inited = false
-
-        this.thread = 0 // By default
-        this.modules = null
-        this.helpers = helpers
+        if (typeof (global._inited) === "undefined") {
+            global._inited = false
+        }
 
         if (typeof (process.runtime) !== "object") {
             process.runtime = {}
         }
 
+        this.helpers = require("./helpers")
+        this.thread = 0 // By default
+        this.modules = null
+
         this.init().then(() => {
+            // set version controller
+            this.version = this.helpers.getVersion({ engine: true })
+            this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
+
             // try to allocate thread
             while (typeof (process.runtime[this.thread]) !== "undefined") {
                 this.thread += 1
@@ -35,13 +38,15 @@ class Runtime {
             if (typeof (process.runtime[this.thread]) === "undefined") {
                 process.runtime[this.thread] = this
             }
+            global.runtimeDeep = this.get.runtimeDeep()
 
             // create new moduleController
-            this.modules = new modulesController()
+            const moduleController = require("./modules").default
+            this.modules = new moduleController()
 
             // detect local mode
             try {
-                const rootPkg = helpers.getRootPackage()
+                const rootPkg = this.helpers.getRootPackage()
 
                 if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore")) {
                     global.isLocalMode = true
@@ -81,10 +86,28 @@ class Runtime {
         })
     }
 
+    get = {
+        environmentFiles: () => environmentFiles,
+        runtimeDeep: () => Object.keys(process.runtime).length,
+        paths: {
+            _env: () => path.resolve(process.cwd(), '.corenode'),
+            _src: () => path.resolve(__dirname, ".."),
+            _root: () => path.resolve(__dirname, '../../..')
+        }
+    }
 
-    initGlobals() {
+    run = {
+        call: () => {
+
+        },
+        create: () => {
+
+        },
+    }
+
+    setGlobals() {
         const { globals } = require("@corenode/builtin-lib")
-        
+
         new globals(["corenode_cli", "corenode"])
         const keywords = ["_packages", "_env",]
 
@@ -94,16 +117,12 @@ class Runtime {
             }
         })
 
-        global.isLocalMode = false
-        global.runtimeDeep = getRuntimeDeep()
-
-        global._version = helpers.getVersion() ?? "0.0.0"
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
-        global._parsedVersion = schemizedParse(global._version, Object.keys(global._versionScheme), '.')
+        global.isLocalMode = false
 
-        global._envpath = path.resolve(process.cwd(), '.corenode')
-        global._runtimeSource = path.resolve(__dirname, "..")
-        global._runtimeRoot = path.resolve(__dirname, '../../..') // TODO: fix with process.env
+        global._envpath = this.get.paths._env()
+        global._runtimeSource = this.get.paths._src()
+        global._runtimeRoot = this.get.paths._root()
 
         // TODO: Solve freeze function object
         global._setPackage = Object.freeze((key, path) => {
@@ -112,19 +131,13 @@ class Runtime {
         global._delPackage = Object.freeze((key) => {
             delete global._packages[key]
         })
+
+        global._setPackage("_engine", path.resolve(__dirname, '../../package.json'))
+        global._setPackage("_project", path.resolve(process.cwd(), 'package.json'))
     }
 
-    setGlobals() {
-        const { _setPackage } = global
-
-        _setPackage("_engine", path.resolve(__dirname, '../../package.json'))
-        _setPackage("_project", path.resolve(process.cwd(), 'package.json'))
-    }
-
-    setRuntimeEnv() {
-        const runtimeEnviromentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
-
-        runtimeEnviromentFiles.forEach(file => {
+    setEnvironment() {
+        environmentFiles.forEach(file => {
             const fromPath = path.resolve(process.cwd(), `./${file}`)
             if (fs.existsSync(fromPath)) {
                 global._envpath = fromPath
@@ -138,15 +151,12 @@ class Runtime {
         })
     }
 
-
-
     init() {
         return new Promise((resolve, reject) => {
             try {
                 if (!global._inited) {
-                    this.initGlobals()
                     this.setGlobals()
-                    this.setRuntimeEnv()
+                    this.setEnvironment()
                 }
 
                 return resolve()
