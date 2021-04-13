@@ -12,7 +12,7 @@ import buildProject from '@corenode/builder'
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
-import { getChangelogs } from '../getChangelogs'
+import getChangelogs from '../getChangelogs'
 
 export function publishProject(args) {
     return new Promise((resolve, reject) => {
@@ -85,16 +85,15 @@ export function publishProject(args) {
                                     verbosity.dump(logOutput)
                                     observer.next(logOutput)
 
-                                    const { stdout } = execa('npm', cliArgs, {
+                                    execa('npm', cliArgs, {
                                         cwd: packagePath,
+                                    }).then((stdout) => {
+                                        verbosity.dump(stdout)
+                                        if ((index + 1) == projectPackages.length) {
+                                            verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                            observer.complete()
+                                        }
                                     })
-
-                                    verbosity.dump(stdout)
-
-                                    if ((index + 1) == projectPackages.length) {
-                                        verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
-                                        observer.complete()
-                                    }
                                 } catch (error) {
                                     observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
                                 }
@@ -119,7 +118,8 @@ export function publishProject(args) {
                         try {
                             changelogNotes = getChangelogs(gitRemote)
                         } catch (error) {
-                            verbosity.options({ dumpFile: true }).warn(`⚠️  Get changelogs failed! > ${error.message} \n`)
+                            verbosity.dump(error)
+                            verbosity.warn(`⚠️  Get changelogs failed!\n`)
                             // really terrible
                         }
 
@@ -134,13 +134,15 @@ export function publishProject(args) {
                                 body: changelogNotes,
                                 isPrerelease: config.preRelease,
                             })
-                            open(githubReleaseUrl)
+
                             console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
-                            res()
+                            open(githubReleaseUrl)
+
+                            return res()
                         } catch (error) {
                             verbosity.dump(error)
                             task.skip(`❌ Failed github publish`)
-                            rej()
+                            return rej()
                         }
                     })
                 },
@@ -152,7 +154,8 @@ export function publishProject(args) {
                 console.log(`✅ Publish done`)
                 return resolve(true)
             }).catch((error) => {
-                verbosity.error(`❌ Failed publish >`, error.message)
+                verbosity.dump(error)
+                console.error(`❌ Failed publish >`, error)
                 return reject(error)
             })
     })
