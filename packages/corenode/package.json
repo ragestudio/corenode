@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.18.20",
+  "version": "0.18.21",
   "types": "types.d.ts",
   "main": "./dist/index.js",
   "files": [
@@ -25,10 +25,10 @@
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
     "@babel/runtime": "^7.13.10",
-    "@corenode/builtin-lib": "0.18.20",
-    "@corenode/builder": "0.18.20",
-    "@corenode/cli": "0.18.20",
-    "@corenode/verbosity-dump-module": "0.18.20",
-    "@corenode/utils": "0.18.20"
+    "@corenode/builtin-lib": "0.18.21",
+    "@corenode/builder": "0.18.21",
+    "@corenode/cli": "0.18.21",
+    "@corenode/verbosity-dump-module": "0.18.21",
+    "@corenode/utils": "0.18.21"
   }
 }
