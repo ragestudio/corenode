@@ -111,7 +111,7 @@ let commandMap = [
         description: "Build project with builtin builder",
         exec: (argv) => {
             require("@corenode/builder").default({
-                cliui: argv.silent ? false : true ?? true
+                cliui: argv.silent ? false : true
             })
                 .then(() => {
                     console.log(`✅  DONE`)
