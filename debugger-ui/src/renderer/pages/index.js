@@ -20,13 +20,13 @@ export default class OSMonitor extends React.Component {
       this.setState(stateUpdate)
     })
 
-    memoryMonitor.on('memUsage', (data) => {
-      const stateUpdate = { memoryMonitor: data }
-      this.setState(stateUpdate)
-    })
+    // memoryMonitor.on('memUsage', (data) => {
+    //   const stateUpdate = { memoryMonitor: data }
+    //   this.setState(stateUpdate)
+    // })
 
     setInterval(() => {
-      const stateUpdate = { freemem: os.freemem(), avgload: os.loadavg() }
+      const stateUpdate = { freemem: os.freemem() }
       this.setState(stateUpdate)
     }, this.state.intervalFreq)
   }
