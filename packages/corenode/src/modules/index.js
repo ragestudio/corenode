@@ -188,6 +188,15 @@ export default class ModuleController {
                     if (!internal) {
                         const fromReg = this.getRegistry(manifest.key)
 
+                        // try to load loader from manifest (a.k.a. is an local module)
+                        try {
+                            if (fs.existsSync(fromReg)) {
+                                
+                            }
+                        } catch (error) {
+                            
+                        }
+
                         if (typeof (fromReg) !== "undefined" && typeof (meta.version) !== "undefined") {
                             if (meta.version !== fromReg) {
                                 verbosity
