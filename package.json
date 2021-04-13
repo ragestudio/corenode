@@ -9,7 +9,7 @@
     "postinstall": "npm run initBuilder",
     "initBuilder": "node ./postinstall/index.js",
     "debug": "cross-env LOCAL_BIN=true DEBUG=true node ./packages/cli/bin",
-    "local": "cross-env LOCAL_BIN=true node ./packages/cli/bin",
+    "local": "cross-env LOCAL_BIN=true node --inspect-brk ./packages/cli/bin",
     "prod": "cross-env LOCAL_BIN=false node ./packages/cli/bin",
     "builder": "node ./packages/builder/cli.js",
     "build:docs": "corenode docs --innerFiles",

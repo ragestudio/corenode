@@ -12,7 +12,14 @@ import through from 'through2'
 
 let builderErrors = Array()
 
-// const maximunLenghtErrorShow = Number(process.stdout.columns) - 50
+function handleError(err, index, dir) {
+  // if (multibar && !packages[index]) {
+  //   multibar.remove(tasks[packages[index]])
+  // }
+  builderErrors.push({ task: index, message: err, dir: dir })
+}
+
+const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
 
 function getIgnoredPackages() {
   let ignored = []
@@ -95,13 +102,17 @@ function canRead(dir) {
 
 function babelTransform(contents, filepath) {
   return new Promise((resolve, reject) => {
-    babel.transform(contents, { ...babelConfig, filename: filepath }, (err, result) => {
-      if (err) {
-        return reject(err)
-      }
+    try {
+      babel.transform(contents, { ...babelConfig, filename: filepath }, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
 
-      return resolve(result)
-    })
+        return resolve(result)
+      })
+    } catch (error) {
+      return reject(error)
+    }
   })
 }
 
@@ -121,6 +132,14 @@ export function build({ dir, opts, ticker }) {
       path.join(src, '**/*'),
       `!${path.join(src, '**/*.test.js')}`,
     ]
+
+    function handleTicker() {
+      try {
+        if (typeof (ticker) == "function") ticker()
+      } catch (error) {
+        // terrible
+      }
+    }
 
     try {
       if (fs.existsSync(out)) {
@@ -146,15 +165,14 @@ export function build({ dir, opts, ticker }) {
                 file.contents = Buffer.from(_output.code)
                 file.path = file.path.replace(path.extname(file.path), outExt)
 
-                try {
-                  if (typeof (ticker) == "function") ticker()
-                } catch (error) {
-                  // terrible
-                }
+                handleTicker()
                 return callback(null, file)
               })
               .catch((err) => {
-                return reject(err)
+                handleError(err.message, 0, file.path)
+
+                handleTicker()
+                return callback(null, file)
               })
           } else {
             // simply ignore and return callback for copy file
@@ -216,9 +234,12 @@ export function buildProject(opts) {
           const rows = []
 
           builderErrors.forEach((err) => {
-            // if (err?.message?.length > maximunLenghtErrorShow) {
-            //   err.message = String(err.message).slice(0, maximunLenghtErrorShow)
-            // }
+            if (err?.message?.length > maximunLenghtErrorShow) {
+              err.message = (String(err.message).slice(0, (maximunLenghtErrorShow - 3)) + "...")
+            }
+            if (err?.dir?.length > maximunLenghtErrorShow) {
+              err.dir = (String(err.dir).slice(0, (maximunLenghtErrorShow - 3)) + "...")
+            }
             rows.push([err.task ?? "UNTASKED", err.message ?? "Unknown error", err.dir ?? "RUNTIME"])
           })
 
@@ -230,13 +251,6 @@ export function buildProject(opts) {
 
         return resolve()
       }
-    }
-
-    function handleError(err, index, dir) {
-      if (multibar && !packages[index]) {
-        multibar.remove(tasks[packages[index]])
-      }
-      builderErrors.push({ task: index, message: err, dir: dir })
     }
 
     // >> MAIN <<
@@ -277,8 +291,14 @@ export function buildProject(opts) {
           handleThen(index)
         })
         .catch((err) => {
-          handleError(`${err}`, index, dir)
-          handleThen(index)
+          if (Array.isArray(err)) {
+            err.forEach((error) => {
+              handleError(error.message, index, dir)
+            })
+          } else {
+            handleError(`${err}`, index, dir)
+          }
+
         })
     })
 
