@@ -13,7 +13,7 @@ verbosity = verbosity.options({ method: "[RUNTIME]" })
  * @returns {string} projectRuntime
  */
 export function getVersion(opts) {
-    let version = null
+    let version = "0.0.0"
 
     const projectRuntime = global._env
     const enginePkgPath = global._packages._engine
@@ -24,18 +24,16 @@ export function getVersion(opts) {
         const pkgProject = fs.existsSync(projectPkgPath) ? require(projectPkgPath) : {}
 
         if (opts?.engine && typeof (pkgEngine["version"]) !== "undefined") {
-            return version = pkgEngine["version"]         
+            version = pkgEngine["version"]
+        } else {
+            if (projectRuntime.version) {
+                version = projectRuntime.version
+            } else if (typeof (pkgProject["version"]) !== "undefined") {
+                version = pkgProject["version"]
+            }
         }
-
-        if (projectRuntime.version) {
-            version = projectRuntime.version
-        } else if (typeof (pkgProject["version"]) !== "undefined") {
-            version = pkgProject["version"]
-        }
-
     } catch (error) {
         // terrible
-        version = "0.0.0"
     }
     return version
 }

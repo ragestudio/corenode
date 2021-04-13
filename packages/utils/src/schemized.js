@@ -21,7 +21,7 @@ export function schemizedParse(str, schema, splitter) {
     })
 
     objectToArrayMap(str.split(splitter)).forEach((key) => {
-        let value = key.value
+        let value = null
 
         if (isNaN(Number(key.value))) {
             value = key.value
