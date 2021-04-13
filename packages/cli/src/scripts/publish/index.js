@@ -9,7 +9,7 @@ import { Observable } from 'rxjs'
 
 import { getPackages, getGit, getVersion, isProjectMode } from 'corenode'
 import buildProject from '@corenode/builder'
-let { verbosity, objectToArrayMap } = require('@corenode/utils')
+let { verbosity, objectToArrayMap, doArray } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import getChangelogs from '../getChangelogs'
@@ -80,22 +80,21 @@ export function publishProject(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     const { name } = require(pkgJSON)
-                                    const logOutput = `[${index + 1}/${projectPackages.length}] Publishing npm package ${name}`
-
-                                    verbosity.dump(logOutput)
-                                    observer.next(logOutput)
+                                    const logOutput = `[${index + 1}/${projectPackages.length}] Published npm package ${name}`
 
                                     execa('npm', cliArgs, {
                                         cwd: packagePath,
                                     }).then((stdout) => {
-                                        verbosity.dump(stdout)
+                                        verbosity.dump(logOutput)
+                                        observer.next(logOutput)
+
                                         if ((index + 1) == projectPackages.length) {
                                             verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                             observer.complete()
                                         }
                                     })
                                 } catch (error) {
-                                    observer.next(`❌ Failed to publish > ${name} > ${error.message}`)
+                                    observer.next(`❌ Failed to publish > ${name} > ${error}`)
                                 }
                             } else {
                                 const errstr = `❌ ${pkg} has no valid package.json`
@@ -118,31 +117,44 @@ export function publishProject(args) {
                         try {
                             changelogNotes = getChangelogs(gitRemote)
                         } catch (error) {
-                            verbosity.dump(error)
-                            verbosity.warn(`⚠️  Get changelogs failed!\n`)
+                            verbosity.options({ dumpFile: true, method: false }).warn(`⚠️  Get changelogs failed!\n`)
                             // really terrible
                         }
 
                         try {
-                            execa.sync('git', ['commit', '--all', '--message', releaseTag])
-                            execa.sync('git', ['tag', releaseTag])
-                            execa.sync('git', ['push', 'origin', 'master', '--tags'])
-
-                            const githubReleaseUrl = newGithubReleaseUrl({
-                                repoUrl: gitRemote,
-                                tag: releaseTag,
-                                body: changelogNotes,
-                                isPrerelease: config.preRelease,
+                            const commit = new Promise(async () => {
+                                await execa('git', ['commit', '--all', '--message', releaseTag])
                             })
 
-                            console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
-                            open(githubReleaseUrl)
+                            const tag = new Promise(async () => {
+                                await execa('git', ['tag', releaseTag])
+                            })
 
-                            return res()
+                            const push = new Promise(async () => {
+                                await execa('git', ['push', 'origin', 'master', '--tags'])
+                            })
+
+                            Promise.allSettled([commit, tag, push])
+                                .then(() => {
+                                    const githubReleaseUrl = newGithubReleaseUrl({
+                                        repoUrl: gitRemote,
+                                        tag: releaseTag,
+                                        body: changelogNotes,
+                                        isPrerelease: config.preRelease,
+                                    })
+
+                                    console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
+                                    open(githubReleaseUrl)
+
+                                    return res()
+                                })
+                                .catch(reason => {
+                                    return rej(reason)
+                                })
+
                         } catch (error) {
                             verbosity.dump(error)
-                            task.skip(`❌ Failed github publish`)
-                            return rej()
+                            return task.skip(`❌ Failed github publish, skipping`)
                         }
                     })
                 },
@@ -154,8 +166,7 @@ export function publishProject(args) {
                 console.log(`✅ Publish done`)
                 return resolve(true)
             }).catch((error) => {
-                verbosity.dump(error)
-                console.error(`❌ Failed publish >`, error)
+                verbosity.options({ dumpFile: true, method: false }).error(`❌ Failed publish >`, error)
                 return reject(error)
             })
     })
