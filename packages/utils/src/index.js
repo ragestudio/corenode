@@ -205,6 +205,8 @@ export { schemizedParse } from './schemized'
 
 export { default as doArray } from './doArray'
 
+export { default as doWithMap } from './doWithMap'
+
 export { default as addressFileStream } from './addressFileStream'
 
 export * as git from './git'

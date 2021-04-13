@@ -1,34 +1,14 @@
-export default async (array, exec, callback) => {
+export default async (array) => {
     return new Promise(async (resolve, reject) => {
-        if (!array) {
-            return reject("array is not provided")
-        }
-        if (!exec && typeof (exec) == "function") {
-            return reject("exec is not provided/valid")
-        }
-        try {
-            const keys = Object.keys(array)
-            const values = Object.values(array)
-
-            for (let index = 0; index < keys.length; index++) {
-                const key = keys[index]
-                const value = values[index]
-
-                await exec(key, value)
-
-                if (index == (keys.length - 1)) {
-                    if (typeof (callback) !== "undefined") {
-                        callback(false, true)
-                    }
+        if (Array.isArray(array)) {
+            array.forEach(async (loop) => {
+                try {
+                    await loop()
                     return resolve()
+                } catch (error) {
+                    return reject(error)
                 }
-
-            }
-        } catch (error) {
-            if (typeof (callback) !== "undefined") {
-                callback(error, false)
-            }
-            return reject(error)
+            })
         }
     })
 }
