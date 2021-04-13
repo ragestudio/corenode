@@ -6,7 +6,7 @@ const { hideBin } = require('yargs/helpers')
 
 let cmdKeys = []
 
-function cliRuntime({ commands, options }) {
+export default ({ commands, options }) => {
     const custom = _Global?.custom ?? []
 
     const argumentParser = yargs(hideBin(process.argv))
@@ -87,5 +87,3 @@ function cliRuntime({ commands, options }) {
         .help()
         .argv
 }
-
-export default cliRuntime

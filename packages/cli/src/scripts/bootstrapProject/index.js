@@ -1,7 +1,6 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
 import { getGit, getProjectEnv, getVersion, getPackages } from 'corenode'
-import process from 'process'
 
 export default async (params) => {
   return new Promise(async (resolve, reject) => {

@@ -1,10 +1,8 @@
 const helpers = process.runtime[0].helpers
 
-import { publishProject, bootstrapProject } from './scripts'
-import { getChangelogs } from './scripts/utils'
-
+import { publishProject, bootstrapProject, getChangelogs } from './scripts'
 import { prettyTable, objectToArrayMap } from '@corenode/utils'
-import cliRuntime from './cliRuntime'
+import generateCli from './genCli'
 
 let optionsMap = [
     {
@@ -182,7 +180,7 @@ let commandMap = [
 ]
 
 export function runCli() {
-    cliRuntime({
+    generateCli({
         options: optionsMap,
         commands: commandMap
     })

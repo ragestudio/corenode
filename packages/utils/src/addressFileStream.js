@@ -1,7 +1,7 @@
 import axios from 'axios'
 import fs from 'fs'
 
-export function downloadWithPipe(address, filename, downloadPath) {
+export default (address, filename, downloadPath) => {
     return new Promise((resolve, reject) => {
         if (address && filename) {
             axios({

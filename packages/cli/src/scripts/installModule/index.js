@@ -6,16 +6,21 @@ import path from 'path'
 import fetch from 'node-fetch'
 
 import { getProjectEnv, isDependencyInstalled, addDependency, writeModule, loadRegistry } from 'corenode'
-import { verbosity, objectToArrayMap } from '@corenode/utils'
+import { verbosity, objectToArrayMap, addressFileStream } from '@corenode/utils'
 
-import temporalDir from '../temporalDir'
-import outputResume from '../outputResume'
-import * as timing from '../performance'
-import installCore from '../installCore'
-import { downloadWithPipe } from '../utils'
+import temporalDir from 'corenode/dist/libs/temporalDir'
+import * as timing from 'corenode/dist/libs/performance'
 
 const runtimeEnv = getProjectEnv()
 const remoteModulesSource = runtimeEnv.remoteModulesSource ?? fallbackRemoteModulesSource
+
+function outputResume(payload) {
+    const { installPath, pkg } = payload || null
+    console.group()
+    console.log(`\n📦  Installed package (${pkg}) ${installPath ? `on > ${installPath}` : ""}`)
+    timing.performances[pkg] ? console.log(`⏱  Operation tooks ${timing.stop(pkg)}ms \n`) : null
+    console.groupEnd()
+}
 
 export function installModule(params) {
     const { pkg, version = "lastest" } = params
@@ -55,7 +60,7 @@ export function installModule(params) {
                 // TODO: 404 handle & uri pre check status
                 verbosity.dump("Fetching module")
                 return new Promise((resolve, reject) => {
-                    downloadWithPipe(moduleURI, moduleFilename, downloadPath).then(done => {
+                    addressFileStream(moduleURI, moduleFilename, downloadPath).then(done => {
                         return resolve()
                     }).catch((err) => {
                         verbosity.options({ dumpFile: 'only' }).error(err)
@@ -71,14 +76,6 @@ export function installModule(params) {
                 return new Promise((resolve, reject) => {
                     const _module = require(moduleFile)
                     writeModule(_module.pkg, null, fs.readFileSync(moduleFile, moduleCodec)).then(async (modulePath) => {
-                        if (_module.requireCore) {
-                            try {
-                                await installCore({ pkg: _module.requireCore, dir: modulePath })
-                            } catch (error) {
-                                verbosity.options({ dumpFile: true }).error(`Error installing required core >`, error.message)
-                            }
-                        }
-
                         if (_module.runtimeTemplate) {
                             const templateFile = path.resolve(modulePath, `.template.corenode`)
                             try {

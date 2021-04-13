@@ -19,6 +19,8 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "execa": "^5.0.0",
+    "axios": "^0.21.1",
     "chalk": "^4.1.0",
     "color": "^3.1.3",
     "csv-parse": "^4.15.3",

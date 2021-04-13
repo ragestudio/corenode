@@ -202,3 +202,9 @@ export { schemizedStringify } from './schemized'
  * @returns {string}
  */
 export { schemizedParse } from './schemized'
+
+export { default as doArray } from './doArray'
+
+export { default as addressFileStream } from './addressFileStream'
+
+export * as git from './git'

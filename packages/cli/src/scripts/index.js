@@ -1,6 +1,6 @@
 export * from './installDependecy'
 export * from './installModule'
-export * from './installCore'
 export * from './publish'
-export * from './createRuntime'
+
+export { default as getChangelogs } from './getChangelogs'
 export { default as bootstrapProject } from './bootstrapProject'

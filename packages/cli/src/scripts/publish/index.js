@@ -2,7 +2,6 @@ import path from 'path'
 import open from 'open'
 import Listr from 'listr'
 import execa from 'execa'
-import process from 'process'
 
 import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
@@ -11,7 +10,7 @@ import { getPackages, getGit, bumpVersion, syncAllPackagesVersions, getVersion, 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
-import { getChangelogs } from '../utils/getChangelogs'
+import { getChangelogs } from '../getChangelogs'
 
 import buildProject from '@corenode/builder'
 
