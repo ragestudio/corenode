@@ -61,7 +61,6 @@ let commandMap = [
         command: 'version',
         description: "Manage project version",
         exec: (argv) => {
-
             let bumps = []
             const types = ["bump-mayor", "bump-minor", "bump-patch"]
             types.forEach((bump) => {

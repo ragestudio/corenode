@@ -212,8 +212,10 @@ export function bumpVersion(params, schema) {
         }
     })
 
-    console.log(`🏷 Updated to new version ${before} > of ${global._version}`)
-    global._env.version = schemizedStringify(currentVersion, _versionScheme, '.')
+    const after = schemizedStringify(currentVersion, _versionScheme, '.')
+    console.log(`🏷 Updated to new version ${after} > before ${global._version}`)
+    
+    global._env.version = after
 
     return rewriteRuntimeEnv()
 }
