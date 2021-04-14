@@ -5,7 +5,6 @@
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
-import vm from 'vm'
 
 let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })

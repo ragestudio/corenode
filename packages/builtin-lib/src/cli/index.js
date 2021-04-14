@@ -1,4 +1,5 @@
 export default {
+    argv: process.argv,
     add: (command) => {
         if (typeof (command) == "object") {
             if (typeof (global.corenode_cli.custom) == "undefined") {
@@ -7,8 +8,4 @@ export default {
             global.corenode_cli.custom.push(command)
         }
     },
-    // TODO
-    call: (command) => {
-        return false
-    }
 }
