@@ -22,6 +22,7 @@ class Runtime {
             process.runtime = {}
         }
 
+        this.controllers = {}
         this.helpers = require("./helpers")
         this.thread = 0 // By default
         this.modules = null
@@ -104,7 +105,7 @@ class Runtime {
 
         },
     }
-
+    
     setGlobals() {
         const { globals } = require("@corenode/builtin-lib")
 

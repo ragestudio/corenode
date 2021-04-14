@@ -1,6 +1,6 @@
 {
   "name": "@corenode/cli",
-  "version": "0.18.21",
+  "version": "0.19.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -22,9 +22,9 @@
   },
   "dependencies": {
     "7zip-bin": "^5.1.0",
-    "@corenode/builder": "0.18.21",
-    "@corenode/utils": "0.18.21",
-    "@corenode/verbosity-dump-module": "0.18.21",
+    "@corenode/builder": "0.19.0",
+    "@corenode/utils": "0.19.0",
+    "@corenode/verbosity-dump-module": "0.19.0",
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.5.0",
