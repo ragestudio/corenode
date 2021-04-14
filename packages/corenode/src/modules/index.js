@@ -57,6 +57,10 @@ export default class ModuleController {
         return loaders
     }
 
+    resolveLoaderNet(manifest) {
+        const { key, value } = manifest
+    }
+    
     fetch(origin) {
         const modules = []
 
