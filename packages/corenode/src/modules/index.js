@@ -36,7 +36,7 @@ export default class ModuleController {
         return require(loader)
     }
 
-    resolveLoadModule(origin) {
+    resolveLoader(origin) {
         let loaders = []
         let dirs = []
 
@@ -69,7 +69,7 @@ export default class ModuleController {
             })
         }
 
-        return this.resolveLoadModule(modules)
+        return this.resolveLoader(modules)
     }
 
     fetchInternals = () => this.fetch(this.internalModulesPath)
@@ -116,26 +116,36 @@ export default class ModuleController {
 
     getExternalModulesPath() { return this.externalModulesPath }
 
-    loadModule(manifest) {
-        const { loader } = manifest
+    loadModule(loader) {
+        if (typeof (loader) === "string") {
+            if (fs.existsSync(loader)) {
+                const loaderFile = loader
 
-        if (fs.existsSync(loader)) {
-            const _module = require(loader)
-
-            this._modules[_module.pkg] = manifest
-            manifest.meta = {
-                version: _module.version
-            }
-
-            if (typeof (_module.init) === "function") {
-                try {
-                    _module.init(this._libraries)
-                } catch (error) {
-                    verbosity.dump(error)
-                    verbosity.error(`Failed at module initialization > [${_module.pkg}] >`, error.message)
-                }
+                loader = this.readLoader(loader)
+                loader.file = loaderFile
             }
         }
+
+        loader.meta = {
+            version: loader.version
+        }
+
+        if (typeof (loader.init) === "function") {
+            try {
+                loader.init(this._libraries)
+            } catch (error) {
+                verbosity.dump(error)
+                verbosity.error(`Failed at module initialization > [${loader.pkg}] >`, error.message)
+            }
+        }
+
+        const manifest = {
+            loader: loader.file,
+            meta: loader.meta,
+            internal: loader.internal ?? false,
+        }
+
+        this._modules[loader.pkg] = manifest
 
         return manifest
     }
@@ -174,6 +184,7 @@ export default class ModuleController {
 
     init() {
         const allModules = this.fetchModules()
+        const registry = this.getRegistry()
 
         this._libraries["builtIn"] = require("@corenode/builtin-lib") // force to push builtIn lib
 
@@ -182,21 +193,12 @@ export default class ModuleController {
                 const { internal } = manifest.value
 
                 if (internal || this.isOnRegistry(manifest.key)) {
-                    const _module = this.loadModule(manifest.value)
+                    const loader = this.readLoader(manifest.value.loader)
+                    const _module = this.loadModule({ ...loader, internal: internal, file: manifest.value.loader })
                     const { meta } = _module
 
                     if (!internal) {
                         const fromReg = this.getRegistry(manifest.key)
-
-                        // try to load loader from manifest (a.k.a. is an local module)
-                        try {
-                            if (fs.existsSync(fromReg)) {
-                                
-                            }
-                        } catch (error) {
-                            
-                        }
-
                         if (typeof (fromReg) !== "undefined" && typeof (meta.version) !== "undefined") {
                             if (meta.version !== fromReg) {
                                 verbosity
@@ -206,12 +208,22 @@ export default class ModuleController {
                         } else {
                             verbosity.options({ dumpFile: "only" }).warn(`Version control is not available for module (${manifest.key})`)
                         }
-
                     }
 
                 }
-            }
 
+            }
         })
+
+        // read all registry
+        objectToArrayMap(registry).forEach((entry) => {
+            // try to load as an loader
+            if (fs.existsSync(entry.value)) {
+                this.loadModule(entry.value)
+            } else {
+
+            }
+        })
+
     }
 }

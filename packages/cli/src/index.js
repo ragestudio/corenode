@@ -34,7 +34,7 @@ let commandMap = [
 
                     let headers = ["module", "_runtimed", "directory"]
                     let rows = []
-
+                    
                     objectToArrayMap(allModules).forEach((_module) => {
                         const isRuntimed = _module.value.internal ?? false
                         const key = _module.key

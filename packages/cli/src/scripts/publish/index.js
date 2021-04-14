@@ -9,7 +9,7 @@ import { Observable } from 'rxjs'
 
 import { getPackages, getGit, getVersion, isProjectMode } from 'corenode'
 import buildProject from '@corenode/builder'
-let { verbosity, objectToArrayMap, doArray } = require('@corenode/utils')
+let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 import getChangelogs from '../getChangelogs'
