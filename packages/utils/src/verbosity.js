@@ -1,15 +1,23 @@
 import path from 'path'
-import stackTrace from 'stack-trace'
+import StackTrace from 'stacktrace-js'
 import chalk from 'chalk'
 import { objectToArrayMap } from './objectToArray'
 import chalkRandomColor from './chalkRandomColor'
 
-const stack = stackTrace.get()[1]
+const getStack = async () => {
+    const stack = await StackTrace.get()
+    return stack
+}
+getStack().then((data) => {
+    console.log(data)
+})
 
-const getStack = {
-    line: `(:${stack.getLineNumber()})`,
-    file: path.basename(stack.getFileName()),
-    method: `[${stack.getFunctionName()}]`
+const stack = {}
+
+const stackData = {
+    line: `(:${stack.lineNumber})`,
+    file: stack.fileName,
+    method: `[${stack.functionName}]`
 }
 
 const defaultColors = Object.freeze({
@@ -33,9 +41,9 @@ const defaultDecoratorOptions = Object.freeze({
 const defaultDecoratorData = Object.freeze({
     prefix: null,
     time: new Date().toLocaleTimeString(),
-    line: getStack.line,
-    file: getStack.file,
-    method: getStack.method
+    line: stackData.line,
+    file: stackData.file,
+    method: stackData.method
 })
 
 class verbosify {
@@ -142,6 +150,7 @@ export default {
     _options: {},
     _colors: {},
     output: function (type, options, colors, ...context) {
+        
         if (options.dumpFile) {
             try {
                 let dumpLogger = require("@corenode/verbosity-dump-module").default
@@ -175,6 +184,7 @@ export default {
         return this
     },
     log: function (...context) {
+
         try {
             this.output('log', this._options, this._colors, ...context)
         } catch (error) {
