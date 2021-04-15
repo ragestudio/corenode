@@ -10,47 +10,26 @@ import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
 import through from 'through2'
 
+import * as lib from './lib'
+
+let env = {}
 let builderErrors = Array()
+
+try {
+  env = lib.getBuilderEnv()
+} catch (error) {
+  handleError(error.message)
+}
+
+const ignoredSources = env.ignore
+const skipedSources = env.skip
+const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
 
 function handleError(err, index, dir) {
   // if (multibar && !packages[index]) {
   //   multibar.remove(tasks[packages[index]])
   // }
   builderErrors.push({ task: index, message: err, dir: dir })
-}
-
-const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
-
-function getIgnoredPackages() {
-  let ignored = []
-
-  const file = path.resolve(process.cwd(), ".buildIgnore")
-  if (fs.existsSync(file)) {
-    try {
-      ignored = JSON.parse(fs.readFileSync(file, 'utf-8'))
-    } catch (error) {
-      if (!Array.isArray(builderErrors)) {
-        builderErrors = Array()
-      }
-      builderErrors.push({ message: `Error parsing .buildIgnore > ${error}` })
-    }
-  }
-
-  return ignored
-}
-
-
-function getCustomConfig() {
-  const customConfigFile = path.resolve(process.cwd(), '.builder')
-
-  if (fs.existsSync(customConfigFile)) {
-    try {
-      return JSON.parse(fs.readFileSync(customConfigFile, 'utf-8'))
-    } catch (error) {
-      console.log(`Error while parsing custom config > ${error}`)
-      return null
-    }
-  }
 }
 
 function getBabelConfig() {
@@ -76,17 +55,15 @@ function getBabelConfig() {
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
   }
-  const customConfig = getCustomConfig()
 
-  if (customConfig) {
-    config = { ...config, ...customConfig }
+  if (env) {
+    config = { ...config, ...env }
   }
 
   return config
 }
 
 //  >> MAIN <<
-
 const outExt = '.js'
 const fileExtWatch = ['.js', '.ts']
 const babelConfig = getBabelConfig() // global config
@@ -128,10 +105,17 @@ export function build({ dir, opts, ticker }) {
 
     const src = path.resolve(dir, `src`)
     const out = path.resolve(dir, options.outDir)
+
     const sources = [
       path.join(src, '**/*'),
       `!${path.join(src, '**/*.test.js')}`,
     ]
+
+    if (ignoredSources.length > 0) {
+      ignoredSources.forEach((source) => {
+        sources.push(`!${path.resolve(source)}`)
+      })
+    }
 
     function handleTicker() {
       try {
@@ -149,7 +133,14 @@ export function build({ dir, opts, ticker }) {
       const stream = vfs.src(sources, {
         allowEmpty: false
       })
-        .pipe(through.obj((file, env, callback) => {
+        .pipe(through.obj((file, codec, callback) => {
+
+          if (ignoredSources.includes(path.resolve(file.path))) {
+            handleTicker()
+            console.log(file.path)
+            return callback(null, file)
+          }
+
           if (!path.extname(file.path)) {
             const oldFilepath = file.path
             file.path = `${file.path}/index${outExt}`
@@ -192,7 +183,6 @@ export function build({ dir, opts, ticker }) {
 
 export function buildProject(opts) {
   return new Promise((resolve, reject) => {
-    const ignoredPackages = getIgnoredPackages()
     const packagesPath = path.join(process.cwd(), 'packages')
     const isProjectMode = fs.existsSync(packagesPath)
     const tasks = {}
@@ -204,11 +194,6 @@ export function buildProject(opts) {
     let multibar = null
 
     let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
-    if (Array.isArray(ignoredPackages) && ignoredPackages.length > 0) {
-      ignoredPackages.forEach((pkg) => {
-        packages = packages.filter(name => name !== pkg)
-      })
-    }
 
     let dirs = packages.map((name) => {
       return isProjectMode ? `./packages/${name}` : `${name}`
@@ -227,7 +212,21 @@ export function buildProject(opts) {
 
       builderCount += 1
 
+      if (multibarEnabled) {
+        const task = tasks[packages[index]]
+        const currentValue = task.value
+        const totalValue = task.total
+
+        if (currentValue != totalValue) {
+          task.setTotal(currentValue)
+        }
+      }
+
       if (builderCount == (packages.length - 1)) {
+        if (multibarEnabled) {
+          multibar.stop()
+        }
+
         if (Array.isArray(builderErrors) && builderErrors.length > 0) {
           const pt = new prettyTable()
           const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
@@ -248,7 +247,6 @@ export function buildProject(opts) {
           console.log(`\n\n ⚠️  ERRORS / WARNINGS FOUND DURING BUILDING`)
           pt.print()
         }
-
         return resolve()
       }
     }
@@ -276,12 +274,13 @@ export function buildProject(opts) {
       try {
         if (multibar && multibarEnabled) {
           const packagePath = path.resolve(process.cwd(), `${dir}/src`)
-          const sources = fs.readdirSync(packagePath).length ?? 0
+          const sources = lib.listAllFiles(packagePath).length
 
           tasks[packages[index]] = multibar.create(sources, 0)
           tasks[packages[index]].update(0, { filename: packages[index] })
         }
       } catch (error) {
+        console.log(error)
         // terrible
       }
 

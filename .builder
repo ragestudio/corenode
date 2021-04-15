@@ -6,5 +6,8 @@
     "ast": true,
     "minified": true,
     "compact": true,
-    "comments": false
+    "comments": false,
+    "skip": [
+        "packages/utils/src/verbosity.js"
+    ]
 }

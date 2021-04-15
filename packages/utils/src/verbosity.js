@@ -4,11 +4,8 @@ import chalk from 'chalk'
 import { objectToArrayMap } from './objectToArray'
 import chalkRandomColor from './chalkRandomColor'
 
-const getStack = async () => {
-    const stack = await StackTrace.get()
-    return stack
-}
-getStack().then((data) => {
+
+StackTrace.get().then((data) => {
     console.log(data)
 })
 
