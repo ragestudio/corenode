@@ -7,6 +7,9 @@
     "minified": true,
     "compact": true,
     "comments": false,
+    "ignore": [
+        "builder"
+    ],
     "skip": [
         "packages/utils/src/verbosity.js"
     ]

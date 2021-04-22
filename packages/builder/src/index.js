@@ -21,9 +21,12 @@ try {
   handleError(error.message)
 }
 
-const ignoredSources = env.ignore
-const skipedSources = env.skip
+let ignoredSources = env.ignore ?? []
+let skipedSources = env.skip ?? []
+
 const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
+const packagesPath = path.join(process.cwd(), 'packages')
+const isProjectMode = fs.existsSync(packagesPath)
 
 function handleError(err, index, dir) {
   // if (multibar && !packages[index]) {
@@ -111,12 +114,6 @@ export function build({ dir, opts, ticker }) {
       `!${path.join(src, '**/*.test.js')}`,
     ]
 
-    if (ignoredSources.length > 0) {
-      ignoredSources.forEach((source) => {
-        sources.push(`!${path.resolve(source)}`)
-      })
-    }
-
     function handleTicker() {
       try {
         if (typeof (ticker) == "function") ticker()
@@ -125,23 +122,18 @@ export function build({ dir, opts, ticker }) {
       }
     }
 
-    try {
-      if (fs.existsSync(out)) {
-        rimraf.sync(out)
-      }
+    if (fs.existsSync(out)) {
+      rimraf.sync(out)
+    }
 
+    try {
       const stream = vfs.src(sources, {
         allowEmpty: false
       })
         .pipe(through.obj((file, codec, callback) => {
-
-          if (ignoredSources.includes(path.resolve(file.path))) {
-            handleTicker()
-            console.log(file.path)
-            return callback(null, file)
-          }
-
+          // this fix filename stream
           if (!path.extname(file.path)) {
+            console.log
             const oldFilepath = file.path
             file.path = `${file.path}/index${outExt}`
 
@@ -149,6 +141,12 @@ export function build({ dir, opts, ticker }) {
               file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
             }
           }
+
+          // if (skipedSources.includes(path.resolve(file.path))) {
+          //   handleTicker()
+          //   console.log(file.path)
+          //   return callback(null, file) 
+          // }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
             babelTransform(file.contents, file.path)
@@ -166,7 +164,8 @@ export function build({ dir, opts, ticker }) {
                 return callback(null, file)
               })
           } else {
-            // simply ignore and return callback for copy file
+            // ignore and return callback for stream file
+            handleError(`Ignoring file`, 0, file.path)
             return callback(null, file)
           }
         }))
@@ -175,6 +174,11 @@ export function build({ dir, opts, ticker }) {
       stream.on('end', () => {
         return resolve(true)
       })
+
+      stream.on('error', (err) => {
+        return reject(err)
+      })
+
     } catch (error) {
       return reject(error)
     }
@@ -183,8 +187,6 @@ export function build({ dir, opts, ticker }) {
 
 export function buildProject(opts) {
   return new Promise((resolve, reject) => {
-    const packagesPath = path.join(process.cwd(), 'packages')
-    const isProjectMode = fs.existsSync(packagesPath)
     const tasks = {}
 
     const cliEnabled = opts?.cliui ? true : false
@@ -194,6 +196,18 @@ export function buildProject(opts) {
     let multibar = null
 
     let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
+
+    if (skipedSources.length > 0) {
+      skipedSources = skipedSources.map((source) => {
+        return path.resolve(source)
+      })
+    }
+
+    if (ignoredSources.length > 0) {
+      ignoredSources.forEach((source) => {
+        packages = packages.filter(pkg => pkg !== source)
+      })
+    }
 
     let dirs = packages.map((name) => {
       return isProjectMode ? `./packages/${name}` : `${name}`

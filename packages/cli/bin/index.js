@@ -2,9 +2,11 @@
 const fs = require("fs")
 const path = require("path")
 const process = require("process")
+const open = require("open")
 
 const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
+const fatalCrashLogFile = path.resolve(process.cwd(), '.error.log')
 
 let fromArguments = process.argv[2]
 
@@ -56,6 +58,22 @@ try {
     })
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
-    fs.writeFileSync(path.resolve(process.cwd(), '.error.log'), error.stack, { encoding: "utf-8" })
+    const now = new Date()
+    const er = `
+    --------------------
+    \n
+    🆘 >> [${now.toLocaleDateString()} ${now.toLocaleTimeString()}]
+    \n\t ${error.stack}
+    \n
+    --------------------\n
+    `
+
+    fs.appendFileSync(fatalCrashLogFile, er, { encoding: "utf-8" })
     console.log(`❌ Critical error > ${error.message}`)
+    console.log(`🗒  See '.error.log' for more details >> ${fatalCrashLogFile}`)
+    try {
+        open(fatalCrashLogFile)
+    } catch (error) {
+        // fatality, something is really broken ._.
+    }
 }

@@ -1,8 +1,8 @@
-import path from 'path'
-import StackTrace from 'stacktrace-js'
-import chalk from 'chalk'
-import { objectToArrayMap } from './objectToArray'
-import chalkRandomColor from './chalkRandomColor'
+const path = require("path")
+const StackTrace = require("stacktrace-js")
+const chalk = require("chalk")
+const { objectToArrayMap } = require("./objectToArray")
+const chalkRandomColor = require("./chalkRandomColor")
 
 
 StackTrace.get().then((data) => {
@@ -143,7 +143,7 @@ class verbosify {
     }
 }
 
-export default {
+module.exports = {
     _options: {},
     _colors: {},
     output: function (type, options, colors, ...context) {

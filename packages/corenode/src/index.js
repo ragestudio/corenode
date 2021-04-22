@@ -27,6 +27,9 @@ class Runtime {
         this.modules = null
 
         this.init().then(() => {
+            // TODO: fix argument lenght
+            process.argv = process.argv.slice(1)
+
             // set version controller
             this.version = this.helpers.getVersion({ engine: true })
             this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
@@ -79,7 +82,8 @@ class Runtime {
                         require(targetBin)
                     } catch (error) {
                         verbosity.dump(error)
-                        verbosity.error(`Runtime loader catch error > ${error.message}`)
+                        verbosity.options({ method: "[RUNTIME]" }).error(`Loader script error > ${error.message}`)
+                        console.log("This error has been exported, check the log file for more details")
                     }
                 }
             }
