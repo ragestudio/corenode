@@ -38,19 +38,14 @@ const tasks = new listr([
     {
         title: '⚙️  Building project',
         task: () => {
-            return new Promise((resolve, reject) => {
-                const buildProject = require(`${builderDistPath}/index.js`).default;
-                buildProject()
-                    .then(done => resolve())
-                    .catch(err => reject(err))
-            })
+            return true
         }
     }
 ])
 
 tasks.run()
     .then(done => {
-        process.exit(0)
+       require(`${builderDistPath}/index.js`).default({ cliui: true })
     })
     .catch(err => {
         console.error(err)

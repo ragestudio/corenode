@@ -1,4 +1,3 @@
-const babel = require("@babel/core")
 
 import path from 'path'
 import fs from 'fs'
@@ -35,41 +34,9 @@ function handleError(err, index, dir) {
   builderErrors.push({ task: index, message: err, dir: dir })
 }
 
-function getBabelConfig() {
-  let config = {
-    presets: [
-      [
-        require.resolve('@babel/preset-typescript'),
-        {},
-      ],
-      [
-        require.resolve('@babel/preset-env'),
-        {
-          targets: {
-            node: 6
-          }
-        },
-      ],
-    ],
-    plugins: [
-      require.resolve('@babel/plugin-transform-runtime'),
-      require.resolve('@babel/plugin-proposal-export-default-from'),
-      require.resolve('@babel/plugin-proposal-do-expressions'),
-      require.resolve('@babel/plugin-proposal-class-properties'),
-    ],
-  }
-
-  if (env) {
-    config = { ...config, ...env }
-  }
-
-  return config
-}
-
 //  >> MAIN <<
 const outExt = '.js'
 const fileExtWatch = ['.js', '.ts']
-const babelConfig = getBabelConfig() // global config
 
 function canRead(dir) {
   try {
@@ -80,26 +47,11 @@ function canRead(dir) {
   }
 }
 
-function babelTransform(contents, filepath) {
-  return new Promise((resolve, reject) => {
-    try {
-      babel.transform(contents, { ...babelConfig, filename: filepath }, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return resolve(result)
-      })
-    } catch (error) {
-      return reject(error)
-    }
-  })
-}
-
 export function build({ dir, opts, ticker }) {
   return new Promise((resolve, reject) => {
     let options = {
-      outDir: 'dist'
+      outDir: 'dist',
+      agent: 'babel' // default
     }
 
     if (typeof (opts) !== "undefined") {
@@ -128,19 +80,20 @@ export function build({ dir, opts, ticker }) {
 
     try {
       const stream = vfs.src(sources, {
-        allowEmpty: false
+        allowEmpty: true
       })
         .pipe(through.obj((file, codec, callback) => {
           // this fix filename stream
-          if (!path.extname(file.path)) {
-            console.log
-            const oldFilepath = file.path
-            file.path = `${file.path}/index${outExt}`
+          // if (!path.extname(file.path)) {
+          //   const oldFilepath = file.path
+          //   file.path = `${file.path}/index${outExt}`
+          //   console.log(`${file.path} >> Exists[${fs.existsSync(file.path)}] FileRead[${canRead(file.path)}]\n`)
+          //   //console.log(`| ${oldFilepath}[${canRead(oldFilepath)}] to ${file.path}[${canRead(file.path)}] |`)
 
-            if (fs.existsSync(file.path) && !canRead(file.path)) {
-              file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
-            }
-          }
+          //   if (fs.existsSync(file.path) && !canRead(file.path)) {
+          //     file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
+          //   }
+          // }
 
           // if (skipedSources.includes(path.resolve(file.path))) {
           //   handleTicker()
@@ -149,7 +102,7 @@ export function build({ dir, opts, ticker }) {
           // }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
-            babelTransform(file.contents, file.path)
+            lib.agents[options.agent](file.contents, file.path, env)
               .then((_output) => {
                 file.contents = Buffer.from(_output.code)
                 file.path = file.path.replace(path.extname(file.path), outExt)
@@ -187,6 +140,7 @@ export function build({ dir, opts, ticker }) {
 
 export function buildProject(opts) {
   return new Promise((resolve, reject) => {
+    const argv = process.argv
     const tasks = {}
 
     const cliEnabled = opts?.cliui ? true : false
@@ -242,6 +196,8 @@ export function buildProject(opts) {
         }
 
         if (Array.isArray(builderErrors) && builderErrors.length > 0) {
+         
+
           const pt = new prettyTable()
           const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
           const rows = []
@@ -258,6 +214,12 @@ export function buildProject(opts) {
 
           pt.create(headers, rows)
 
+          try {
+            const dumpLogger = require('@corenode/verbosity-dump-module').default
+            dumpLogger({ level: "warn", stack: "builder" }).info(pt.toString())
+          } catch (error) {
+            // terrible            
+          }
           console.log(`\n\n ⚠️  ERRORS / WARNINGS FOUND DURING BUILDING`)
           pt.print()
         }

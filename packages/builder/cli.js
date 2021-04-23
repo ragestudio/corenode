@@ -1,4 +1,2 @@
 #!/usr/bin/env node
-
-const buildProject = require("./dist/index").default
-buildProject({ cliui: true })
+require("./dist/index").default({ cliui: true })

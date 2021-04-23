@@ -3,7 +3,6 @@ import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf } = format
 
-const filename = getProjectEnv().devRuntime?.outputLogFilename ?? "logs_dump.log"
 
 export default ({ level, stack }) => createLogger({
     format: combine(
@@ -14,6 +13,6 @@ export default ({ level, stack }) => createLogger({
         })
     ),
     transports: [
-        new transports.File({ filename }),
+        new transports.File({ filename: getProjectEnv()?.devRuntime?.outputLogFilename ?? "logs_dump.log" }),
     ],
 })
