@@ -23,6 +23,7 @@ test.js
 unitTest.js
 corenode_logs
 logs_dump.log
+dumps.log
 .error.log
 .aliaser
 

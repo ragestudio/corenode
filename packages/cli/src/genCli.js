@@ -1,14 +1,14 @@
 import { objectToArrayMap, verbosity } from '@corenode/utils'
 
-const _Global = global.corenode_cli
+const _cli = global.corenode_cli
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 
 let cmdKeys = []
 
 export default ({ commands, options }) => {
-    const custom = _Global?.custom ?? []
-
+    const custom = _cli?.custom ?? []
+    
     const argumentParser = yargs(hideBin(process.argv))
     let optionsMap = options ?? []
     let commandMap = commands ?? []

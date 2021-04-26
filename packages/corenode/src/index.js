@@ -13,6 +13,8 @@ const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenod
 
 class Runtime {
     constructor(load, context, options) {
+        this.runParams = { load, context, options }
+
         if (typeof (global._inited) === "undefined") {
             global._inited = false
         }
@@ -26,68 +28,7 @@ class Runtime {
         this.thread = 0 // By default
         this.modules = null
 
-        this.init().then(() => {
-            // TODO: fix argument lenght
-            process.argv = process.argv.slice(1)
-
-            // set version controller
-            this.version = this.helpers.getVersion({ engine: true })
-            this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
-
-            // try to allocate thread
-            while (typeof (process.runtime[this.thread]) !== "undefined") {
-                this.thread += 1
-            }
-            if (typeof (process.runtime[this.thread]) === "undefined") {
-                process.runtime[this.thread] = this
-            }
-            global.runtimeDeep = this.get.runtimeDeep()
-
-            // create new moduleController
-            const moduleController = require("./modules").default
-            this.modules = new moduleController()
-
-            // detect local mode
-            try {
-                const rootPkg = this.helpers.getRootPackage()
-
-                if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore")) {
-                    global.isLocalMode = true
-                }
-            } catch (error) {
-                // terrible
-            }
-
-            // flag runtime as inited
-            global._inited = true
-
-            // warn local mode
-            if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
-                console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
-            } else if (global.isLocalMode) {
-                console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
-            }
-
-            // watch for load script
-            if (typeof (load) === "object") {
-                const { targetBin, isLocalMode } = load
-                if (isLocalMode) {
-                    global.isLocalMode = true
-                }
-                if (targetBin) {
-                    try {
-                        if (!fs.existsSync(targetBin)) {
-                            throw new Error(`Cannot read loader script [${targetBin}]`)
-                        }
-                        require(targetBin)
-                    } catch (error) {
-                        verbosity.dump(error)
-                        verbosity.options({ method: "[RUNTIME]" }).error(`Loader script error > ${error.message}`)
-                        console.log("This error has been exported, check the log file for more details")
-                    }
-                }
-            }
-        })
+        this.init()
     }
 
     get = {
@@ -100,15 +41,6 @@ class Runtime {
         }
     }
 
-    run = {
-        call: () => {
-
-        },
-        create: () => {
-
-        },
-    }
-    
     setGlobals() {
         const { globals } = require("@corenode/builtin-lib")
 
@@ -158,9 +90,69 @@ class Runtime {
     init() {
         return new Promise((resolve, reject) => {
             try {
+                // try to allocate thread
+                while (typeof (process.runtime[this.thread]) !== "undefined") {
+                    this.thread += 1
+                }
+                if (typeof (process.runtime[this.thread]) === "undefined") {
+                    process.runtime[this.thread] = this
+                }
+
+                global.runtimeDeep = this.get.runtimeDeep()
+                process.argvf = process.argv.slice(1)
+
                 if (!global._inited) {
                     this.setGlobals()
                     this.setEnvironment()
+                }
+
+                // set version controller
+                this.version = this.helpers.getVersion({ engine: true })
+                this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
+
+                // create new moduleController
+                const moduleController = require("./modules").default
+                this.modules = new moduleController()
+
+                // detect local mode
+                try {
+                    const rootPkg = this.helpers.getRootPackage()
+
+                    if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore")) {
+                        global.isLocalMode = true
+                    }
+                } catch (error) {
+                    // terrible
+                }
+
+                // flag runtime as inited
+                global._inited = true
+
+                // warn local mode
+                if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
+                    console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
+                } else if (global.isLocalMode) {
+                    console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
+                }
+
+                // watch for load script
+                if (typeof (this.runParams.load) === "object") {
+                    const { targetBin, isLocalMode } = this.runParams.load
+                    if (isLocalMode) {
+                        global.isLocalMode = true
+                    }
+                    if (targetBin) {
+                        try {
+                            if (!fs.existsSync(targetBin)) {
+                                throw new Error(`Cannot read loader script [${targetBin}]`)
+                            }
+                            require(targetBin)
+                        } catch (error) {
+                            verbosity.dump(error)
+                            verbosity.options({ method: "[RUNTIME]" }).error(`Loader script error > ${error.message}`)
+                            console.log("This error has been exported, check the log file for more details")
+                        }
+                    }
                 }
 
                 return resolve()

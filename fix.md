@@ -1,2 +1,0 @@
-- [x] Postinstall rimraf >> builder dist
-- [] Fix file count increment on multibar mode

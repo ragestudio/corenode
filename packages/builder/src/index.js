@@ -83,23 +83,21 @@ export function build({ dir, opts, ticker }) {
         allowEmpty: true
       })
         .pipe(through.obj((file, codec, callback) => {
-          // this fix filename stream
-          // if (!path.extname(file.path)) {
-          //   const oldFilepath = file.path
-          //   file.path = `${file.path}/index${outExt}`
-          //   console.log(`${file.path} >> Exists[${fs.existsSync(file.path)}] FileRead[${canRead(file.path)}]\n`)
-          //   //console.log(`| ${oldFilepath}[${canRead(oldFilepath)}] to ${file.path}[${canRead(file.path)}] |`)
 
-          //   if (fs.existsSync(file.path) && !canRead(file.path)) {
-          //     file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
-          //   }
-          // }
+          if (!path.extname(file.path)) {
+            const oldFilepath = file.path
+            file.path = `${file.path}/index${outExt}`
 
-          // if (skipedSources.includes(path.resolve(file.path))) {
-          //   handleTicker()
-          //   console.log(file.path)
-          //   return callback(null, file) 
-          // }
+            if (fs.existsSync(file.path) && !canRead(file.path)) {
+              file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
+            }
+          }
+
+          if (skipedSources.includes(path.resolve(file.path))) {
+            handleTicker()
+            console.log(file.path)
+            return callback(null, file)
+          }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
             lib.agents[options.agent](file.contents, file.path, env)
@@ -118,7 +116,7 @@ export function build({ dir, opts, ticker }) {
               })
           } else {
             // ignore and return callback for stream file
-            handleError(`Ignoring file`, 0, file.path)
+            handleError(`[${path.extname(file.path)}] File extension is not included, ignoring`, 0, path.basename(file.path))
             return callback(null, file)
           }
         }))
@@ -140,7 +138,6 @@ export function build({ dir, opts, ticker }) {
 
 export function buildProject(opts) {
   return new Promise((resolve, reject) => {
-    const argv = process.argv
     const tasks = {}
 
     const cliEnabled = opts?.cliui ? true : false
@@ -167,6 +164,44 @@ export function buildProject(opts) {
       return isProjectMode ? `./packages/${name}` : `${name}`
     })
 
+    function handleFinish() {
+      if (multibarEnabled) {
+        multibar.stop()
+      }
+
+      if (Array.isArray(builderErrors) && builderErrors.length > 0) {
+        const pt = new prettyTable()
+        const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
+        const rows = []
+
+        builderErrors.forEach((err) => {
+          let obj = { ...err }
+
+          if (obj?.message?.length > maximunLenghtErrorShow) {
+            obj.message = (String(obj.message).slice(0, (maximunLenghtErrorShow - 3)) + "...")
+          }
+          if (obj?.dir?.length > maximunLenghtErrorShow) {
+            obj.dir = (String(obj.dir).slice(0, (maximunLenghtErrorShow - 3)) + "...")
+          }
+          rows.push([obj.task ?? "UNTASKED", obj.message ?? "Unknown error", obj.dir ?? "RUNTIME"])
+        })
+
+        pt.create(headers, rows)
+
+        try {
+          const dumpLogger = require('@corenode/verbosity-dump-module').default
+          dumpLogger({ level: "warn", stack: "builder" }).info(`⚠️ BUILDER ERRORS\n ${JSON.stringify(builderErrors, null, 2)}`)
+        } catch (error) {
+          // ironically terrible
+          console.log(`⚠️🆘  Error dumping errors >> ${error}`)
+        }
+
+        console.log(`\n⚠️  ERRORS / WARNINGS DURING BUILDING`)
+        pt.print()
+      }
+      return resolve()
+    }
+
     function handleTicker(index) {
       if (multibarEnabled) {
         tasks[packages[index]].increment(1)
@@ -191,39 +226,7 @@ export function buildProject(opts) {
       }
 
       if (builderCount == (packages.length - 1)) {
-        if (multibarEnabled) {
-          multibar.stop()
-        }
-
-        if (Array.isArray(builderErrors) && builderErrors.length > 0) {
-         
-
-          const pt = new prettyTable()
-          const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
-          const rows = []
-
-          builderErrors.forEach((err) => {
-            if (err?.message?.length > maximunLenghtErrorShow) {
-              err.message = (String(err.message).slice(0, (maximunLenghtErrorShow - 3)) + "...")
-            }
-            if (err?.dir?.length > maximunLenghtErrorShow) {
-              err.dir = (String(err.dir).slice(0, (maximunLenghtErrorShow - 3)) + "...")
-            }
-            rows.push([err.task ?? "UNTASKED", err.message ?? "Unknown error", err.dir ?? "RUNTIME"])
-          })
-
-          pt.create(headers, rows)
-
-          try {
-            const dumpLogger = require('@corenode/verbosity-dump-module').default
-            dumpLogger({ level: "warn", stack: "builder" }).info(pt.toString())
-          } catch (error) {
-            // terrible            
-          }
-          console.log(`\n\n ⚠️  ERRORS / WARNINGS FOUND DURING BUILDING`)
-          pt.print()
-        }
-        return resolve()
+        handleFinish()
       }
     }
 
