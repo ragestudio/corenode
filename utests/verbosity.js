@@ -1,6 +1,9 @@
-const { verbosity } = require("@corenode/utils")
+const { verbosity } = require("../packages/utils/dist")
+
+verbosity.log("normal bruh")
 
 function bruhTest(params) {
-    verbosity.log("bruh")
+    verbosity.options({ line: true, file: true }).log("bruh")
 }
+
 bruhTest()

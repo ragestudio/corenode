@@ -1,8 +1,6 @@
-import { getProjectEnv } from 'corenode'
 import { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf } = format
-
 
 export default ({ level, stack }) => createLogger({
     format: combine(
@@ -13,6 +11,6 @@ export default ({ level, stack }) => createLogger({
         })
     ),
     transports: [
-        new transports.File({ filename: getProjectEnv()?.devRuntime?.outputLogFilename ?? "logs_dump.log" }),
+        new transports.File({ filename: "dumps.log" }),
     ],
 })

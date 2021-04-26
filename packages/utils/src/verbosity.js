@@ -1,21 +1,7 @@
-const path = require("path")
 const StackTrace = require("stacktrace-js")
 const chalk = require("chalk")
 const { objectToArrayMap } = require("./objectToArray")
 const chalkRandomColor = require("./chalkRandomColor")
-
-
-StackTrace.get().then((data) => {
-    console.log(data)
-})
-
-const stack = {}
-
-const stackData = {
-    line: `(:${stack.lineNumber})`,
-    file: stack.fileName,
-    method: `[${stack.functionName}]`
-}
 
 const defaultColors = Object.freeze({
     decorator: {
@@ -36,21 +22,20 @@ const defaultDecoratorOptions = Object.freeze({
     dumpFile: false,
 })
 const defaultDecoratorData = Object.freeze({
-    prefix: null,
     time: new Date().toLocaleTimeString(),
-    line: stackData.line,
-    file: stackData.file,
-    method: stackData.method
 })
 
-class verbosify {
-    constructor(data, options, colors) {
-        this.options = { ...defaultDecoratorOptions }
+class verbosity {
+    constructor() {
+        this._options = { ...defaultDecoratorOptions }
+        this._colors = { ...defaultColors }
 
-        this.colors = { ...defaultColors }
-        this.decoratorData = { ...defaultDecoratorData }
+        return this
+    }
 
+    transform(data, options, colors, decoratorData) {
         try {
+            decoratorData = { ...decoratorData, ...defaultDecoratorData }
             let generationInstance = []
 
             if (!data) {
@@ -58,15 +43,14 @@ class verbosify {
             }
 
             if (colors) {
-                this.colors = { ...this.colors, ...colors }
+                this._colors = { ...this._colors, ...colors }
             }
             if (options) {
-                this.options = { ...this.options, ...options }
+                this._options = { ...this._options, ...options }
             }
 
-            objectToArrayMap(this.options).forEach((element) => {
-                let fromData = this.decoratorData[element.key]
-
+            objectToArrayMap(this._options).forEach((element) => {
+                let fromData = decoratorData[element.key]
                 const isElementString = typeof (element.value) === "string"
                 const isElementNumber = typeof (element.value) === "number"
 
@@ -82,8 +66,8 @@ class verbosify {
                 }
             })
 
-            const decoratorString = this.generateDecorator(generationInstance, this.colors)
-            const logString = this.generateLogString(data.log, this.colors)
+            const decoratorString = this.generateDecorator(generationInstance, this._colors)
+            const logString = this.generateLogString(data.log, this._colors)
 
             return [decoratorString, ...logString]
         } catch (error) {
@@ -92,7 +76,7 @@ class verbosify {
         }
     }
 
-    generateDecorator = (input, colors) => {
+    generateDecorator(input, colors) {
         let output = ''
         for (let index = 0; index < input.length; index++) {
             const element = input[index]
@@ -103,7 +87,7 @@ class verbosify {
         return this.paint('decorator', output, colors)
     }
 
-    generateLogString = (input, colors) => {
+    generateLogString(input, colors) {
         let output = []
         const logMap = objectToArrayMap(input)
         for (let index = 0; index < logMap.length; index++) {
@@ -113,7 +97,7 @@ class verbosify {
         return output
     }
 
-    paint = (type, data, colors) => {
+    paint(type, data, colors) {
         if (!colors) {
             return data
         }
@@ -141,125 +125,90 @@ class verbosify {
 
         return target(data)
     }
-}
 
-module.exports = {
-    _options: {},
-    _colors: {},
-    output: function (type, options, colors, ...context) {
-        
+    async output(type, options, colors, ...context) {
+        let stack = await StackTrace.get()
+        stack = stack[2]
+
         if (options.dumpFile) {
             try {
                 let dumpLogger = require("@corenode/verbosity-dump-module").default
                 dumpLogger({ level: type, stack: getStack }).info(...context)
             } catch (error) {
                 // temporaly ignoring
-                
-                // this.warn(`Failed to dump log > ${error.message}`)
-                // console.warn(error)
             }
         }
 
-        if (!options?.dumpFile || options?.dumpFile !== "only") {
-            let response = new verbosify({ log: { ...context } }, options, colors)
+        if (!options.dumpFile || options.dumpFile !== "only") {
+            let response = this.transform({ log: { ...context } }, options, colors, { method: `[${stack.functionName}()]`, line: `(:${stack.lineNumber})`, file: stack.fileName })
             console[type](...response)
         }
 
-        // force to flush
-        this._options = {}
-        this._colors = {}
+        return this
+    }
 
+    dump(...context) {
+        this.output('info', { ...this._options, dumpFile: "only" }, this._colors, ...context)
         return this
-    },
-    dump: function (...context) {
-        // only dump (info level), not display to console
-        try {
-            this.output('info', { ...this._options, dumpFile: "only" }, this._colors, ...context)
-        } catch (error) {
-            // woupssi
-        }
+    }
+    log(...context) {
+        this.output('log', this._options, this._colors, ...context)
         return this
-    },
-    log: function (...context) {
+    }
+    error(...context) {
+        this.output('error', {
+            ...this._options,
+            prefix: "❌  ERROR"
+        }, {
+            decorator: {
+                text: "black",
+                bg: "bgYellow"
+            },
+            log: {
+                text: "red",
+                bg: false
+            }
+        }, ...context)
+        return this
+    }
+    warn(...context) {
+        this.output('warn', {
+            ...this._options,
+            prefix: "⚠️  WARN"
+        }, {
+            decorator: {
+                text: "black",
+                bg: "bgYellowBright"
+            },
+            log: {
+                text: "inverse",
+                bg: false
+            }
+        }, ...context)
+        return this
+    }
+    random(...context) {
+        this.output('log', this._options, null, chalkRandomColor(...context))
+        return this
+    }
 
-        try {
-            this.output('log', this._options, this._colors, ...context)
-        } catch (error) {
-            // woupssi
+    // set configs
+    options(params) {
+        if (typeof (params) !== "undefined") {
+            this._options = { ...this._options, ...params }
         }
         return this
-    },
-    error: function (...context) {
-        try {
-            this.output('error', {
-                ...this._options,
-                prefix: "❌  ERROR"
-            }, {
-                decorator: {
-                    text: "black",
-                    bg: "bgYellow"
-                },
-                log: {
-                    text: "red",
-                    bg: false
+    }
+    colors(params) {
+        if (typeof (params) !== "undefined") {
+            objectToArrayMap(params).forEach((param) => {
+                if (this._colors[param.key]) {
+                    this._colors[param.key] = { ...this.colors[param.key], ...param.value }
                 }
-            }, ...context)
-        } catch (error) {
-            // woupssi
-        }
-        return this
-    },
-    warn: function (...context) {
-        try {
-            this.output('warn', {
-                ...this._options,
-                prefix: "⚠️  WARN"
-            }, {
-                decorator: {
-                    text: "black",
-                    bg: "bgYellowBright"
-                },
-                log: {
-                    text: "inverse",
-                    bg: false
-                }
-            }, ...context)
-        } catch (error) {
-            // woupssi
-        }
-        return this
-    },
-    random: function (...context) {
-        try {
-            this.output('log', this._options, null, chalkRandomColor(...context))
-        } catch (error) {
-            // woupssi
-        }
-        return this
-    },
-    options: function (params) {
-        // TODO: Options validation
-        try {
-            if (typeof (params) !== "undefined" && params != null) {
-                this._options = { ...this._options, ...params }
-            }
-        } catch (error) {
-            // terrible
-        }
-        return this
-    },
-    colors: function (params) {
-        if (typeof (params) !== "undefined" && params != null) {
-            try {
-                objectToArrayMap(params).forEach((param) => {
-                    if (this._colors[param.key]) {
-                        this._colors[param.key] = { ...this._colors[param.key], ...param.value }
-                    }
-                })
-            } catch (error) {
-                // terrible
-            }
+            })
         }
         return this
     }
 }
+
+module.exports = new verbosity()
