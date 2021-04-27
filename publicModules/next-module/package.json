@@ -1,0 +1,17 @@
+{
+    "name": "next-module",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "modules": {
+        "next-module": "./dist/load.module.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "corenode": "^0.20.1"
+    }
+}
