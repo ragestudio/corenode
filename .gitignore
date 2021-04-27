@@ -30,3 +30,5 @@ dumps.log
 debugger-ui/node_modules
 
 **/*/.tmp
+**/*/node_modules
+**/*/dist

@@ -226,7 +226,7 @@ export function buildProject(opts) {
       }
 
       if (builderCount == (packages.length - 1)) {
-        handleFinish()
+        return handleFinish()
       }
     }
 

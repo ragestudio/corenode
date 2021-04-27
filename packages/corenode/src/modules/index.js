@@ -117,13 +117,18 @@ export default class ModuleController {
     getExternalModulesPath() { return this.externalModulesPath }
 
     loadModule(loader) {
-        if (typeof (loader) === "string") {
-            if (fs.existsSync(loader)) {
-                const loaderFile = loader
+        try {
+            if (typeof (loader) === "string") {
+                if (fs.existsSync(loader)) {
+                    const loaderFile = loader
 
-                loader = this.readLoader(loader)
-                loader.file = loaderFile
+                    loader = this.readLoader(loader)
+                    loader.file = loaderFile
+                }
             }
+        } catch (error) {
+            verbosity.dump(error)
+            verbosity.error(`Failed to load external module > [${loader}] >`, error.message)
         }
 
         loader.meta = {
@@ -220,10 +225,9 @@ export default class ModuleController {
             // try to load as an loader
             if (fs.existsSync(entry.value)) {
                 this.loadModule(entry.value)
-            } else {
+            } else {
 
             }
         })
-
     }
 }

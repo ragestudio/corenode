@@ -3,12 +3,14 @@ const fs = require("fs")
 const path = require("path")
 const process = require("process")
 const open = require("open")
+const yparser = require("yargs-parser")
 
 const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
 const fatalCrashLogFile = path.resolve(process.cwd(), '.error.log')
+const args = yparser(process.argv.splice(2))
 
-let fromArguments = process.argv[2]
+let fromArguments = args["_"][0]
 
 let targetBin = cliDist // Default load cli
 let isLocalMode = false
@@ -51,11 +53,24 @@ try {
     const { aliaser } = require('@corenode/builtin-lib')
     const { Runtime } = require('corenode')
 
+    if (args.cwd) {
+        if (!path.isAbsolute(args.cwd)) {
+            args.cwd = path.resolve(args.cwd)
+        }
+    }
+
+    let context = {
+
+    }
+    let options = {
+        cwd: args.cwd ? args.cwd : process.cwd()
+    }
+    
     new aliaser({ "@@cli": cliDist })
     new Runtime({
         targetBin,
         isLocalMode: isLocalMode ? isLocalMode : false
-    })
+    }, context, options)
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
     const now = new Date()

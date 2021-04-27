@@ -10,6 +10,8 @@ export default ({ commands, options }) => {
     const custom = _cli?.custom ?? []
     
     const argumentParser = yargs(hideBin(process.argv))
+    console.log(process.argv)
+
     let optionsMap = options ?? []
     let commandMap = commands ?? []
 

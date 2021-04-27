@@ -14,6 +14,11 @@ const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenod
 class Runtime {
     constructor(load, context, options) {
         this.runParams = { load, context, options }
+        this.opts = this.runParams.options
+
+        if (this.opts.cwd) {
+            process.chdir(this.opts.cwd)
+        }
 
         if (typeof (global._inited) === "undefined") {
             global._inited = false
