@@ -81,20 +81,19 @@ export function publishProject(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     const { name } = require(pkgJSON)
-                                    const logOutput = `[${index + 1}/${projectPackages.length}] Published npm package ${name}`
+                                    const logOutput = `[${publishCount}/${projectPackages.length}] Published npm package ${name}[${index}]`
 
-                                    execa('npm', cliArgs, {
-                                        cwd: packagePath,
-                                    }).then((stdout) => {
-                                        publishCount += 1
-                                        verbosity.dump(logOutput)
-                                        observer.next(logOutput)
+                                    execa('npm', cliArgs, { cwd: packagePath })
+                                        .then((stdout) => {
+                                            publishCount += 1
+                                            verbosity.dump(logOutput)
+                                            observer.next(logOutput)
 
-                                        if (publishCount == (projectPackages.length - 1)) {
-                                            verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
-                                            observer.complete()
-                                        }
-                                    })
+                                            if (publishCount == (projectPackages.length - 1)) {
+                                                verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                                observer.complete()
+                                            }
+                                        })
                                 } catch (error) {
                                     observer.next(`❌ Failed to publish > ${name} > ${error}`)
                                 }
