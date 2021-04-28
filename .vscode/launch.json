@@ -5,12 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "[corenode] Debug file",
             "type": "node",
             "request": "launch",
             "internalConsoleOptions": "openOnSessionStart",
             "console": "integratedTerminal",
-            "program": "${workspaceFolder}/debug.js",
+            "program": "${workspaceFolder}/packages/corenode/bin.js",
             "args": [
                 "${file}",
             ],
