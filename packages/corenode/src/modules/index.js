@@ -1,5 +1,7 @@
 import fs from 'fs'
 import path from 'path'
+import vm from 'vm'
+
 import { getRootPackage } from '../helpers'
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
@@ -129,6 +131,7 @@ export default class ModuleController {
         } catch (error) {
             verbosity.dump(error)
             verbosity.error(`Failed to load external module > [${loader}] >`, error.message)
+            return false
         }
 
         loader.meta = {
@@ -137,6 +140,8 @@ export default class ModuleController {
 
         if (typeof (loader.init) === "function") {
             try {
+                // let vm = 
+
                 loader.init(this._libraries)
             } catch (error) {
                 verbosity.dump(error)
@@ -200,6 +205,11 @@ export default class ModuleController {
                 if (internal || this.isOnRegistry(manifest.key)) {
                     const loader = this.readLoader(manifest.value.loader)
                     const _module = this.loadModule({ ...loader, internal: internal, file: manifest.value.loader })
+
+                    if (!_module) {
+                        return
+                    }
+
                     const { meta } = _module
 
                     if (!internal) {
