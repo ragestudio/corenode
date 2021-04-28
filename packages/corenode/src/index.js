@@ -127,7 +127,7 @@ class Runtime {
 
     startREPL() {
         const repl = require('repl')
-
+        console.log(`|  REPL Console | v${this.version}_${process.versions.node} | `)
         repl.start({
             prompt: `#>`,
             useColors: true

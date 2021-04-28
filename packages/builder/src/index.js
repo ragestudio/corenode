@@ -199,7 +199,8 @@ export function buildProject(opts) {
         console.log(`\n⚠️  ERRORS / WARNINGS DURING BUILDING`)
         pt.print()
       }
-      return resolve()
+      
+      resolve()
     }
 
     function handleTicker(index) {
@@ -226,7 +227,7 @@ export function buildProject(opts) {
       }
 
       if (builderCount == (packages.length - 1)) {
-        return handleFinish()
+        handleFinish()
       }
     }
 
