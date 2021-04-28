@@ -1,6 +1,6 @@
 {
   "name": "@corenode/verbosity-dump-module",
-  "version": "0.20.3",
+  "version": "0.20.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
