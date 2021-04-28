@@ -1,4 +1,5 @@
-import { objectToArrayMap, verbosity } from '@corenode/utils'
+let { verbosity, objectToArrayMap } = require("@corenode/utils")
+verbosity = verbosity.options({ method: "[CLI]" })
 
 const _cli = global.corenode_cli
 const yargs = require('yargs/yargs')
@@ -8,9 +9,8 @@ let cmdKeys = []
 
 export default ({ commands, options }) => {
     const custom = _cli?.custom ?? []
-    
-    const argumentParser = yargs(hideBin(process.argv))
-    console.log(process.argv)
+    const argvf = process.args["_"].splice(2) ?? hideBin(process.argv)
+    const cli = yargs(hideBin(process.argv))
 
     let optionsMap = options ?? []
     let commandMap = commands ?? []
@@ -40,7 +40,7 @@ export default ({ commands, options }) => {
             optionsTrigger[alias] = exec
         }
 
-        argumentParser.option(option, { alias, type, description })
+        cli.option(option, { alias, type, description })
     })
 
     commandMap.forEach((cmd) => {
@@ -65,27 +65,34 @@ export default ({ commands, options }) => {
         } : (() => console.log(`This command not contains an executable script`))
 
         cmdKeys.push(command)
-        argumentParser.command(command, description, args, exec)
+        cli.command(command, description, args, exec)
     })
 
-    if (process.argv.length > 2 && typeof(process.argv[2]) !== "undefined") {
+    if (argvf.length > 0) {
         if (Array.isArray(cmdKeys)) {
-            let _hop = false
-            cmdKeys.forEach((key, index) => {
-                if (key.includes(process.argv[2])) {
-                    _hop = true
-                }
-                if (!_hop && index == (cmdKeys.length - 1)) {
-                    verbosity.error("Unknown command, use a valid command! \n")
-                    argumentParser.showHelp()
+            let exists = false
+
+            cmdKeys.forEach((key) => {
+                if (key.includes(argvf[0])) {
+                    return exists = true
                 }
             })
+
+            if(!exists){
+                cli.showHelp()
+                verbosity.error("Unknown command, use a valid command! \n")
+            }
+        }
+    } else {
+        try {
+            global.corenode.events.emit("cli_noCommand")
+        } catch (error) {
+            // so sorry
         }
     }
 
-    argumentParser
+    cli
         .showHelpOnFail(true)
-        .demandCommand(1)
         .help()
         .argv
 }

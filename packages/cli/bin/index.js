@@ -8,9 +8,11 @@ const yparser = require("yargs-parser")
 const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
 const fatalCrashLogFile = path.resolve(process.cwd(), '.error.log')
-const args = yparser(process.argv.splice(2))
 
-let fromArguments = args["_"][0]
+const argv = process.argv
+const args = yparser(argv)
+
+let fromArguments = args["_"][2]
 
 let targetBin = cliDist // Default load cli
 let isLocalMode = false
@@ -63,7 +65,9 @@ try {
 
     }
     let options = {
-        cwd: args.cwd ? args.cwd : process.cwd()
+        cwd: args.cwd ? args.cwd : process.cwd(),
+        args: args,
+        argv: argv
     }
     
     new aliaser({ "@@cli": cliDist })

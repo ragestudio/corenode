@@ -5,11 +5,26 @@
 import path from 'path'
 import process from 'process'
 import fs from 'fs'
+import { EventEmitter, captureRejectionSymbol } from 'events'
 
 let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
+class CoreEvents extends EventEmitter {
+    constructor() {
+        super({ captureRejections: true })
+    }
+
+    [captureRejectionSymbol](err, event, ...args) {
+        console.log('rejection happened for', event, 'with', err, ...args)
+        this.destroy(err)
+    }
+
+    destroy(err) {
+
+    }
+}
 
 class Runtime {
     constructor(load, context, options) {
@@ -19,6 +34,13 @@ class Runtime {
         if (this.opts.cwd) {
             process.chdir(this.opts.cwd)
         }
+        if (this.opts.args) {
+            process.args = this.opts.args
+        }
+        if (this.opts.argv) {
+            process.argv = this.opts.argv
+        }
+
 
         if (typeof (global._inited) === "undefined") {
             global._inited = false
@@ -33,6 +55,8 @@ class Runtime {
         this.thread = 0 // By default
         this.modules = null
 
+        this.events = new CoreEvents()
+        this.setEvents()
         this.init()
     }
 
@@ -65,16 +89,25 @@ class Runtime {
         global._runtimeSource = this.get.paths._src()
         global._runtimeRoot = this.get.paths._root()
 
-        // TODO: Solve freeze function object
-        global._setPackage = Object.freeze((key, path) => {
-            global._packages[key] = path
+        Object.defineProperty(global, '_setPackage', {
+            configurable: false,
+            enumerable: true,
+            value: Object.freeze((key, path) => {
+                global._packages[key] = path
+            })
         })
-        global._delPackage = Object.freeze((key) => {
-            delete global._packages[key]
+        Object.defineProperty(global, '_delPackage', {
+            configurable: false,
+            enumerable: true,
+            value: Object.freeze((key) => {
+                delete global._packages[key]
+            })
         })
 
-        global._setPackage("_engine", path.resolve(__dirname, '../../package.json'))
+        global._setPackage("_engine", path.resolve(__dirname, '../package.json'))
         global._setPackage("_project", path.resolve(process.cwd(), 'package.json'))
+
+        global.corenode = process.runtime[0]
     }
 
     setEnvironment() {
@@ -89,6 +122,21 @@ class Runtime {
                     console.error(error)
                 }
             }
+        })
+    }
+
+    startREPL() {
+        const repl = require('repl')
+
+        repl.start({
+            prompt: `#>`,
+            useColors: true
+        })
+    }
+
+    setEvents() {
+        this.events.addListener("cli_noCommand", () => {
+            this.startREPL()
         })
     }
 
@@ -140,23 +188,22 @@ class Runtime {
                     console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
                 }
 
+                const { targetBin, isLocalMode } = this.runParams.load
+                if (isLocalMode) {
+                    global.isLocalMode = true
+                }
+
                 // watch for load script
-                if (typeof (this.runParams.load) === "object") {
-                    const { targetBin, isLocalMode } = this.runParams.load
-                    if (isLocalMode) {
-                        global.isLocalMode = true
-                    }
-                    if (targetBin) {
-                        try {
-                            if (!fs.existsSync(targetBin)) {
-                                throw new Error(`Cannot read loader script [${targetBin}]`)
-                            }
-                            require(targetBin)
-                        } catch (error) {
-                            verbosity.dump(error)
-                            verbosity.options({ method: "[RUNTIME]" }).error(`Loader script error > ${error.message}`)
-                            console.log("This error has been exported, check the log file for more details")
+                if (targetBin) {
+                    try {
+                        if (!fs.existsSync(targetBin)) {
+                            throw new Error(`Cannot read loader script [${targetBin}]`)
                         }
+                        require(targetBin)
+                    } catch (error) {
+                        verbosity.dump(error)
+                        verbosity.options({ method: "[RUNTIME]" }).error(`Loader script error > ${error.message}`)
+                        console.log("This error has been exported, check the log file for more details")
                     }
                 }
 
