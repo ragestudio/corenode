@@ -22,9 +22,9 @@ export function getVersion(opts) {
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
         const pkgProject = fs.existsSync(projectPkgPath) ? require(projectPkgPath) : {}
-
-        if (opts?.engine && typeof (pkgEngine["version"]) !== "undefined") {
-            version = pkgEngine["version"]
+        
+        if (opts?.engine) {
+            version = pkgEngine["version"] ?? "0.0.0"
         } else {
             if (projectRuntime.version) {
                 version = projectRuntime.version
