@@ -162,6 +162,9 @@ class Runtime {
                 // set version controller
                 this.version = this.helpers.getVersion({ engine: true })
                 this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
+                
+                // set libraries
+                this.lib = require("@corenode/builtin-lib")
 
                 // create new moduleController
                 const moduleController = require("./modules").default

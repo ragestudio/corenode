@@ -1,11 +1,12 @@
 import fs from 'fs'
 import path from 'path'
-import vm from 'vm'
+import ivm from 'isolated-vm'
 
 import { getRootPackage } from '../helpers'
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
+const builtInLibs = require("@corenode/builtin-lib")
 
 const defaults = {
     loader: `load.module.js`,
@@ -118,7 +119,7 @@ export default class ModuleController {
 
     getExternalModulesPath() { return this.externalModulesPath }
 
-    loadModule(loader) {
+    async loadModule(loader) {
         try {
             if (typeof (loader) === "string") {
                 if (fs.existsSync(loader)) {
@@ -138,11 +139,49 @@ export default class ModuleController {
             version: loader.version
         }
 
+        if (loader.script) {
+            try {
+                const isolate = new ivm.Isolate({ memoryLimit: 1024 })
+                const context = isolate.createContextSync()
+
+                const jail = context.global
+
+                let injection = {}
+
+                jail.setSync('global', jail.derefInto())
+                jail.setSync('log', (...args) => {
+                    const v = verbosity.options({ method: `[${loader.pkg}]`})
+                    v.log(...args)
+                })
+                jail.setSync('require', () => {
+                    const modulereq = require('module')
+                    console.log(import.meta.url)
+                    const require = modulereq.createRequire(import.meta.url)
+
+                })
+
+                // objectToArrayMap(builtInLibs).forEach((entry, index) => {
+                //     injection[entry.key] = entry.value
+                //     if (typeof(entry.value) == "function") {
+                //         jail.setSync(entry.key, entry.value)
+                //     }  
+                // })
+
+                const script = `
+                    var corenode = ${JSON.stringify(process.runtime[0])};
+                    ${fs.readFileSync(path.resolve(loader.script))}
+                `
+                console.log(script)
+                context.evalSync(script)
+            } catch (error) {
+                verbosity.dump(error)
+                verbosity.error(`Failed at run script > [${loader.pkg}] >`, error.message)
+            }
+        }
+
         if (typeof (loader.init) === "function") {
             try {
-                // let vm = 
-
-                loader.init(this._libraries)
+                loader.init(builtInLibs)
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.error(`Failed at module initialization > [${loader.pkg}] >`, error.message)
@@ -156,7 +195,6 @@ export default class ModuleController {
         }
 
         this._modules[loader.pkg] = manifest
-
         return manifest
     }
 
