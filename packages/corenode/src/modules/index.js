@@ -143,29 +143,20 @@ export default class ModuleController {
             try {
                 const isolate = new ivm.Isolate({ memoryLimit: 1024 })
                 const context = isolate.createContextSync()
-
                 const jail = context.global
 
-                let injection = {}
-
+                const modulereq = require('module')
+                const require = modulereq.createRequire(import.meta.url)
+                
                 jail.setSync('global', jail.derefInto())
                 jail.setSync('log', (...args) => {
                     const v = verbosity.options({ method: `[${loader.pkg}]`})
                     v.log(...args)
                 })
                 jail.setSync('require', () => {
-                    const modulereq = require('module')
-                    console.log(import.meta.url)
-                    const require = modulereq.createRequire(import.meta.url)
+                   
 
                 })
-
-                // objectToArrayMap(builtInLibs).forEach((entry, index) => {
-                //     injection[entry.key] = entry.value
-                //     if (typeof(entry.value) == "function") {
-                //         jail.setSync(entry.key, entry.value)
-                //     }  
-                // })
 
                 const script = `
                     var corenode = ${JSON.stringify(process.runtime[0])};
