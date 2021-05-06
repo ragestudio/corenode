@@ -8,7 +8,7 @@ let { verbosity, safeStringify } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[VM]`, time: false })
 
 const builtInModules = {
-    "testModule": "/Users/srgooglo/repos/nodecore/packages/corenode/internals/testModuleController.js"
+    
 }
 const r0 = process.runtime[0]
 
