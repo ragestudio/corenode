@@ -1,12 +1,14 @@
 import fs from 'fs'
 import path from 'path'
-import ivm from 'isolated-vm'
 
 import { getRootPackage } from '../helpers'
 
-let { verbosity, objectToArrayMap } = require('@corenode/utils')
+let { verbosity, objectToArrayMap, safeStringify } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
-const builtInLibs = require("@corenode/builtin-lib")
+
+const BuiltInLib = require("@corenode/builtin-lib")
+const RequireController = require("../require")
+const { EvalMachine } = require("../vm")
 
 const defaults = {
     loader: `load.module.js`,
@@ -141,38 +143,23 @@ export default class ModuleController {
 
         if (loader.script) {
             try {
-                const isolate = new ivm.Isolate({ memoryLimit: 1024 })
-                const context = isolate.createContextSync()
-                const jail = context.global
+                const loaderScriptPath = path.resolve(loader.script)
+                if (!fs.existsSync(loaderScriptPath)) {
+                    return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
+                }
 
-                const modulereq = require('module')
-                const require = modulereq.createRequire(import.meta.url)
-                
-                jail.setSync('global', jail.derefInto())
-                jail.setSync('log', (...args) => {
-                    const v = verbosity.options({ method: `[${loader.pkg}]`})
-                    v.log(...args)
+                new EvalMachine({
+                    eval: loaderScriptPath
                 })
-                jail.setSync('require', () => {
-                   
-
-                })
-
-                const script = `
-                    var corenode = ${JSON.stringify(process.runtime[0])};
-                    ${fs.readFileSync(path.resolve(loader.script))}
-                `
-                console.log(script)
-                context.evalSync(script)
             } catch (error) {
-                verbosity.dump(error)
-                verbosity.error(`Failed at run script > [${loader.pkg}] >`, error.message)
+                console.error(error)
+                verbosity.error(`[${loader.pkg}] Failed at run script >`, error.message)
             }
         }
 
         if (typeof (loader.init) === "function") {
             try {
-                loader.init(builtInLibs)
+                loader.init(BuiltInLib)
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.error(`Failed at module initialization > [${loader.pkg}] >`, error.message)
