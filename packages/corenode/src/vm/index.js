@@ -3,8 +3,9 @@ import path from 'path'
 import vm from 'vm'
 
 const RequireController = require("../require")
+const objects = require("./objects")
 
-let { verbosity, safeStringify } = require('@corenode/utils')
+let { verbosity, safeStringify, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[VM]`, time: false })
 
 const builtInModules = {
@@ -39,8 +40,7 @@ export class EvalMachine {
         // set globals to jail
         this.jail.set('cwd', process.cwd())
         this.jail.set('_getProcess', () => safeStringify(process))
-        this.jail.set('_getRuntimeGlobal', (deep) => safeStringify(process.runtime[deep ?? 0]))
-
+        this.jail.set('_getRuntime', (deep) => process.runtime[deep ?? 0])
         this.jail.set('_createModuleController', () => {
             return new RequireController.CustomNodeModuleController({ ...builtInModules, ...params.aliaser })
         })
@@ -49,10 +49,17 @@ export class EvalMachine {
             v.log(...args)
         })
 
+        if (typeof(objects) === "object") {
+            objectToArrayMap(objects).forEach((obj) => {
+                this.jail.set(obj.key, obj.value)
+            })
+        }
+        
         // create script and moduleController
         this.script = `
             var process = JSON.parse(_getProcess());
-            var runtime0 = JSON.parse(_getRuntimeGlobal(0));
+            var runtime = _getRuntime(0);
+            var controller = runtime.controller;
 
             var module = _createModuleController();
             var require = module._require;

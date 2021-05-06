@@ -3,11 +3,9 @@ import path from 'path'
 
 import { getRootPackage } from '../helpers'
 
-let { verbosity, objectToArrayMap, safeStringify } = require('@corenode/utils')
+let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
-const BuiltInLib = require("@corenode/builtin-lib")
-const RequireController = require("../require")
 const { EvalMachine } = require("../vm")
 
 const defaults = {
@@ -152,14 +150,14 @@ export default class ModuleController {
                     eval: loaderScriptPath
                 })
             } catch (error) {
-                console.error(error)
-                verbosity.error(`[${loader.pkg}] Failed at run script >`, error.message)
+                verbosity.dump(error)
+                verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at run script >`, error)
             }
         }
 
         if (typeof (loader.init) === "function") {
             try {
-                loader.init(BuiltInLib)
+                loader.init(this._libraries)
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.error(`Failed at module initialization > [${loader.pkg}] >`, error.message)

@@ -41,7 +41,6 @@ class Runtime {
             process.argv = this.opts.argv
         }
 
-
         if (typeof (global._inited) === "undefined") {
             global._inited = false
         }
@@ -50,7 +49,8 @@ class Runtime {
             process.runtime = {}
         }
 
-        this.controllers = {}
+        // Create controllers
+        this.controller = {}
         this.helpers = require("./helpers")
         this.thread = 0 // By default
         this.modules = null
@@ -68,6 +68,22 @@ class Runtime {
             _src: () => path.resolve(__dirname, ".."),
             _root: () => path.resolve(__dirname, '../../..')
         }
+    }
+
+    appendToController(key, value, options) {
+        let properties = {
+            configurable: options?.configurable ?? false,
+            enumerable: options?.enumerable ?? true,
+            value: value
+        }
+
+        if (options?._proto_)
+            properties.__proto__ = options.__proto__
+
+        if (options?.writable)
+            properties.writable = options.writable
+
+        Object.defineProperty(this.controller, key, properties)
     }
 
     setGlobals() {
@@ -92,6 +108,7 @@ class Runtime {
         Object.defineProperty(global, '_setPackage', {
             configurable: false,
             enumerable: true,
+            writable: false,
             value: Object.freeze((key, path) => {
                 global._packages[key] = path
             })
@@ -99,6 +116,7 @@ class Runtime {
         Object.defineProperty(global, '_delPackage', {
             configurable: false,
             enumerable: true,
+            writable: false,
             value: Object.freeze((key) => {
                 delete global._packages[key]
             })
@@ -162,9 +180,6 @@ class Runtime {
                 // set version controller
                 this.version = this.helpers.getVersion({ engine: true })
                 this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
-                
-                // set libraries
-                this.lib = require("@corenode/builtin-lib")
 
                 // create new moduleController
                 const moduleController = require("./modules").default
