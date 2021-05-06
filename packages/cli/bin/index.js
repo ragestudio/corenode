@@ -52,7 +52,6 @@ try {
         targetBin = path.resolve(fromArguments)
     }
 
-    const { aliaser } = require('@corenode/builtin-lib')
     const { Runtime } = require('corenode')
 
     if (args.cwd) {
@@ -70,7 +69,6 @@ try {
         argv: argv
     }
     
-    new aliaser({ "@@cli": cliDist })
     new Runtime({
         targetBin,
         isLocalMode: isLocalMode ? isLocalMode : false
