@@ -22,6 +22,7 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "vm2": "^3.9.3",
     "import-from": "^3.0.0",
     "isolated-vm": "^4.1.0",
     "lodash": "^4.17.21",

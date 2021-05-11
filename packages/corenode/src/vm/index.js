@@ -9,14 +9,14 @@ let { verbosity, safeStringify, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[VM]`, time: false })
 
 const builtInModules = {
-    
+
 }
 const r0 = process.runtime[0]
 
 export class EvalMachine {
     constructor(params) {
-        if (typeof params.eval !== "string") {
-            throw new Error(`Eval must be a string`)
+        if (typeof params === "undefined") {
+            params = {}
         }
         if (typeof params.cwd === "undefined") {
             params.cwd = process.cwd()
@@ -26,8 +26,10 @@ export class EvalMachine {
 
         // maybe checking with fs is a terrible idea...
         try {
-            if (fs.existsSync(this.params.eval)) {
-                this.params.eval = fs.readFileSync(path.resolve(this.params.eval))
+            if (this.params.eval) {
+                if (fs.existsSync(this.params.eval)) {
+                    this.params.eval = fs.readFileSync(path.resolve(this.params.eval))
+                }
             }
         } catch (error) {
             verbosity.dump(error)
@@ -42,6 +44,10 @@ export class EvalMachine {
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
 
+        if (typeof this.params.context !== "undefined") {
+            this.context = { ...this.context, ...this.params.context }
+        }
+        
         // reload cwd node_modules
         const localNodeModules = this.getNodeModules()
         this._modulesRegistry = { ...localNodeModules, ...builtInModules, ...this.params.aliaser }
@@ -49,12 +55,12 @@ export class EvalMachine {
         // set globals to jail
         this.jail.set('_modulesRegistry', this._modulesRegistry)
         this.jail.set('cwd', this.params.cwd)
-        this.jail.set('_getProcess', () => safeStringify(process))
+        this.jail.set('_getProcess', () => process)
         this.jail.set('_getRuntime', (deep) => process.runtime[deep ?? 0])
         this.jail.set('global', global)
         this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module))
         this.jail.set('_createModuleController', () => {
-            return new RequireController.CustomNodeModuleController({...this._modulesRegistry})
+            return new RequireController.CustomNodeModuleController({ ...this._modulesRegistry })
         })
         this.jail.set('log', (...args) => {
             const v = verbosity.options({ method: `[${this.id}]` })
@@ -69,7 +75,7 @@ export class EvalMachine {
 
         // create script and moduleController
         this.script = `
-            var process = JSON.parse(_getProcess());
+            var process = _getProcess();
             var runtime = _getRuntime(0);
             var controller = runtime.controller;
 
@@ -79,8 +85,9 @@ export class EvalMachine {
             ${this.params.eval}
         `
 
-        // run the script
-        this.run()
+        // create context && init
+        vm.createContext(this.context)
+        this.run(this.script)
     }
 
     getNodeModules() {
@@ -137,24 +144,21 @@ export class EvalMachine {
 
         r0.vms.deep = Object.keys(r0.vms.pool).length
     }
-
-    run() {
-        const vmscript = new vm.Script(this.script)
-
-        // RUN SCRIPT
-        vm.createContext(this.context)
+    
+    run(exec, { log }) {
+        const vmscript = new vm.Script(exec)
         vmscript.runInContext(this.context)
     }
 
     jail = {
-        get: () => {
-
+        get: (key) => {
+            return this.context[key]
         },
         set: (key, value) => {
             this.context[key] = value
         },
-        del: () => {
-
+        del: (key) => {
+            delete this.context[key]
         },
     }
 }

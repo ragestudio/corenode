@@ -144,12 +144,31 @@ class Runtime {
     }
 
     startREPL() {
-        const repl = require('repl')
-        console.log(`|  REPL Console | v${this.version}_${process.versions.node} | `)
-        repl.start({
-            prompt: `#>`,
-            useColors: true
-        })
+        try {
+            const util = require('util')
+            const repl = require('repl')
+            const { EvalMachine } = require('./vm/index.js')
+
+            const machine = new EvalMachine()
+
+            function machineEV(cmd, context, filename, callback) {
+                const out = machine.run(cmd)
+                console.log(out)
+                callback(null, out)
+            }
+
+            console.log(`|  REPL Console | v${this.version}_${process.versions.node} | `)
+            repl.start({
+                prompt: `#>`,
+                useColors: true,
+                eval: machineEV
+            })
+
+        } catch (error) {
+
+            console.error(error)
+            console.error(`Error starting eval machine >> ${error}`)
+        }
     }
 
     setEvents() {

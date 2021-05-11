@@ -7,6 +7,7 @@ let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
 const { EvalMachine } = require("../vm")
+const r0 = process.runtime[0]
 
 const defaults = {
     loader: `load.module.js`,
@@ -26,7 +27,8 @@ export default class ModuleController {
 
         this.externalModulesPath = path.resolve(process.cwd(), defaults.localModulesPathname)
         this.internalModulesPath = path.resolve(global._runtimeRoot, 'packages')
-
+        
+        this.pool = {}
         this._modules = {}
         this._libraries = {}
 
@@ -139,16 +141,20 @@ export default class ModuleController {
             version: loader.version
         }
 
-        if (loader.script) {
+        if (typeof loader.script !== "undefined") {
             try {
                 const loaderScriptPath = path.resolve(loader.script)
                 if (!fs.existsSync(loaderScriptPath)) {
                     return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
                 }
 
-                new EvalMachine({
+                this.pool[loader.pkg] = new EvalMachine({
                     eval: loaderScriptPath,
                     cwd: process.cwd(),
+                })
+
+                r0.appendToController(`${loader.pkg}`, () => {
+                    this.pool[loader.pkg]
                 })
             } catch (error) {
                 verbosity.dump(error)
@@ -156,7 +162,19 @@ export default class ModuleController {
             }
         }
 
-        if (typeof (loader.init) === "function") {
+        if (typeof loader.appendCli !== "undefined") {
+            if (Array.isArray(loader.appendCli)) {
+                loader.appendCli.forEach((entry) => {
+                    const { command, exec } = entry
+                    
+                    if (typeof exec === "function") {
+                        
+                    }
+                })
+            }
+        }
+
+        if (typeof loader.init === "function") {
             try {
                 loader.init(this._libraries)
             } catch (error) {
