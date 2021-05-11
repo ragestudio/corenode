@@ -27,7 +27,7 @@ export default class ModuleController {
 
         this.externalModulesPath = path.resolve(process.cwd(), defaults.localModulesPathname)
         this.internalModulesPath = path.resolve(global._runtimeRoot, 'packages')
-        
+
         this.pool = {}
         this._modules = {}
         this._libraries = {}
@@ -122,6 +122,8 @@ export default class ModuleController {
     getExternalModulesPath() { return this.externalModulesPath }
 
     async loadModule(loader) {
+        let context = {}
+
         try {
             if (typeof (loader) === "string") {
                 if (fs.existsSync(loader)) {
@@ -148,17 +150,16 @@ export default class ModuleController {
                     return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
                 }
 
-                this.pool[loader.pkg] = new EvalMachine({
+                const machine = this.pool[loader.pkg] = new EvalMachine({
                     eval: loaderScriptPath,
                     cwd: process.cwd(),
                 })
 
-                r0.appendToController(`${loader.pkg}`, () => {
-                    this.pool[loader.pkg]
-                })
+                context["script"] = machine
+                r0.appendToController(`${loader.pkg}`, (...context) => machine.run(...context))
             } catch (error) {
                 verbosity.dump(error)
-                verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at run script >`, error)
+                verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at vm initalization >`, error)
             }
         }
 
@@ -166,9 +167,15 @@ export default class ModuleController {
             if (Array.isArray(loader.appendCli)) {
                 loader.appendCli.forEach((entry) => {
                     const { command, exec } = entry
-                    
+
                     if (typeof exec === "function") {
-                        
+                        try {
+                            exec(context)
+                        } catch (error) {
+                            console.error(error)
+                            verbosity.dump(error)
+                            verbosity.error(`Error executing [appendCli] > ${error.message}`)
+                        }
                     }
                 })
             }
@@ -257,20 +264,23 @@ export default class ModuleController {
                             verbosity.options({ dumpFile: "only" }).warn(`Version control is not available for module (${manifest.key})`)
                         }
                     }
-
                 }
-
             }
         })
 
         // read all registry
         objectToArrayMap(registry).forEach((entry) => {
-            // try to load as an loader
-            if (fs.existsSync(entry.value)) {
-                this.loadModule(entry.value)
-            } else {
+            let loader = null
 
+            const asPath = path.resolve(entry.value)
+            if (fs.existsSync(asPath)) {
+                loader = asPath
+            }else {
+                // import from cloud registry
             }
+            
+            // load module
+            this.loadModule(loader)
         })
     }
 }

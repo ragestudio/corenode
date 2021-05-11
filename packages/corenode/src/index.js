@@ -3,7 +3,6 @@
  * @module corenode 
  */
 import path from 'path'
-import process from 'process'
 import fs from 'fs'
 import { EventEmitter, captureRejectionSymbol } from 'events'
 
@@ -27,8 +26,8 @@ class CoreEvents extends EventEmitter {
 }
 
 class Runtime {
-    constructor(load, context, options) {
-        this.runParams = { load, context, options }
+    constructor(load, options) {
+        this.runParams = { load, options }
         this.opts = this.runParams.options
 
         if (this.opts.cwd) {
@@ -84,6 +83,7 @@ class Runtime {
             properties.writable = options.writable
 
         Object.defineProperty(this.controller, key, properties)
+        return this.controller[key]
     }
 
     setGlobals() {
@@ -145,29 +145,31 @@ class Runtime {
 
     startREPL() {
         try {
-            const util = require('util')
             const repl = require('repl')
             const { EvalMachine } = require('./vm/index.js')
 
             const machine = new EvalMachine()
 
-            function machineEV(cmd, context, filename, callback) {
-                const out = machine.run(cmd)
-                console.log(out)
-                callback(null, out)
+            function fnEv(cmd, context, filename, callback) {
+                try {
+                    const out = machine.run(cmd)
+                    callback(null, out)
+                } catch (error) {
+                    return callback(error.message)
+                }
             }
 
-            console.log(`|  REPL Console | v${this.version}_${process.versions.node} | `)
+            console.log(`|  REPL Console | v${this.version}_${process.versions.node} |`)
+
             repl.start({
-                prompt: `#>`,
+                prompt: `#> `,
                 useColors: true,
-                eval: machineEV
+                eval: fnEv
             })
 
         } catch (error) {
-
             console.error(error)
-            console.error(`Error starting eval machine >> ${error}`)
+            verbosity.error(`Error starting eval machine > ${error}`)
         }
     }
 

@@ -4,8 +4,11 @@ module.exports = {
     appendCli: [
         {
             command: "next-dev",
-            exec: () => {
+            exec: (context) => {
+                const script = context.script.dispatcher()
+
                 console.log("Starting Next.JS development server...")
+                script.initApp()
             }
         }
     ]

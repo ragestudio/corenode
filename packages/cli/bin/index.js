@@ -60,9 +60,6 @@ try {
         }
     }
 
-    let context = {
-
-    }
     let options = {
         cwd: args.cwd ? args.cwd : process.cwd(),
         args: args,
@@ -72,7 +69,7 @@ try {
     new Runtime({
         targetBin,
         isLocalMode: isLocalMode ? isLocalMode : false
-    }, context, options)
+    }, options)
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
     const now = new Date()

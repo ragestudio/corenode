@@ -47,7 +47,7 @@ export class EvalMachine {
         if (typeof this.params.context !== "undefined") {
             this.context = { ...this.context, ...this.params.context }
         }
-        
+
         // reload cwd node_modules
         const localNodeModules = this.getNodeModules()
         this._modulesRegistry = { ...localNodeModules, ...builtInModules, ...this.params.aliaser }
@@ -59,6 +59,7 @@ export class EvalMachine {
         this.jail.set('_getRuntime', (deep) => process.runtime[deep ?? 0])
         this.jail.set('global', global)
         this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module))
+        this.jail.set('expose', {})
         this.jail.set('_createModuleController', () => {
             return new RequireController.CustomNodeModuleController({ ...this._modulesRegistry })
         })
@@ -88,6 +89,31 @@ export class EvalMachine {
         // create context && init
         vm.createContext(this.context)
         this.run(this.script)
+    }
+
+    dispatcher() {
+        let obj = {}
+        const exposers = this.context.expose
+        const keys = Object.keys(exposers)
+
+        keys.forEach((key) => {
+            switch (typeof exposers[key]) {
+                case "function": {
+                    obj[key] = (...context) => {
+                        let args = [...context]
+                        this.run(`expose.${key}(${args.join()})`)
+                    }
+                    break
+                }
+
+                default: {
+                    obj[key] = this.run(`expose.${key}`)
+                    break
+                }
+            }
+        })
+
+        return obj
     }
 
     getNodeModules() {
@@ -144,10 +170,10 @@ export class EvalMachine {
 
         r0.vms.deep = Object.keys(r0.vms.pool).length
     }
-    
+
     run(exec) {
         const vmscript = new vm.Script(exec)
-        vmscript.runInContext(this.context)
+        return vmscript.runInContext(this.context)
     }
 
     jail = {
