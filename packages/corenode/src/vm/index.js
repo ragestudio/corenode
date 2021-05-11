@@ -145,7 +145,7 @@ export class EvalMachine {
         r0.vms.deep = Object.keys(r0.vms.pool).length
     }
     
-    run(exec, { log }) {
+    run(exec) {
         const vmscript = new vm.Script(exec)
         vmscript.runInContext(this.context)
     }
