@@ -37,7 +37,6 @@ let vmObjects = {
             }
 
             if (index == (rows / 2)) {
-                
                 console.log(`${blackFGScape}${centerLine}${whiteFGScape}`)
             } else {
                 console.log(`${emptyLine}`)
