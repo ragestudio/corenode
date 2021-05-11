@@ -147,7 +147,8 @@ export default class ModuleController {
                 }
 
                 new EvalMachine({
-                    eval: loaderScriptPath
+                    eval: loaderScriptPath,
+                    cwd: process.cwd(),
                 })
             } catch (error) {
                 verbosity.dump(error)
