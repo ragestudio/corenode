@@ -8,10 +8,14 @@ const { hideBin } = require('yargs/helpers')
 let cmdKeys = []
 
 export default ({ commands, options }) => {
-    const custom = _cli?.custom ?? []
+    let custom = _cli?.custom ?? []
     const argvf = process.args["_"].splice(2) ?? hideBin(process.argv)
     const cli = yargs(hideBin(process.argv))
 
+    process.runtime[0].appendToController("appendCli", (entry) => {
+        custom.push({ ...entry })
+    })
+    
     let optionsMap = options ?? []
     let commandMap = commands ?? []
 
@@ -78,7 +82,7 @@ export default ({ commands, options }) => {
                 }
             })
 
-            if(!exists){
+            if (!exists) {
                 cli.showHelp()
                 verbosity.error("Unknown command, use a valid command! \n")
             }

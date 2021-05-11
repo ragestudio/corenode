@@ -157,6 +157,7 @@ export default class ModuleController {
 
                 context["script"] = machine
                 r0.appendToController(`${loader.pkg}`, (...context) => machine.run(...context))
+
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at vm initalization >`, error)
@@ -166,17 +167,10 @@ export default class ModuleController {
         if (typeof loader.appendCli !== "undefined") {
             if (Array.isArray(loader.appendCli)) {
                 loader.appendCli.forEach((entry) => {
-                    const { command, exec } = entry
-
-                    if (typeof exec === "function") {
-                        try {
-                            exec(context)
-                        } catch (error) {
-                            console.error(error)
-                            verbosity.dump(error)
-                            verbosity.error(`Error executing [appendCli] > ${error.message}`)
-                        }
+                    if (typeof (global.corenode_cli.custom) == "undefined") {
+                        global.corenode_cli.custom = []
                     }
+                    global.corenode_cli.custom.push({ ...entry, exec: (...args) => entry.exec(context, ...args) })
                 })
             }
         }
