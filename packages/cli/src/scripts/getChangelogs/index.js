@@ -1,5 +1,5 @@
 import { htmlEscape } from 'escape-goat'
-import { git } from '@corenode/utils'
+import * as git from '@corenode/git-lib'
 
 export default (url, to, from) => {
     if (!url) {

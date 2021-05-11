@@ -89,7 +89,6 @@ export class EvalMachine {
 
         r0.vms.deep = Object.keys(r0.vms.pool).length
     }
-  
 
     run() {
         const vmscript = new vm.Script(this.script)

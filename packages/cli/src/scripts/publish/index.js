@@ -8,6 +8,7 @@ import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
 import { getPackages, getGit, getVersion, isProjectMode } from 'corenode'
+
 import buildProject from '@corenode/builder'
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })

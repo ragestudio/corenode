@@ -209,8 +209,6 @@ export { default as doWithMap } from './doWithMap'
 
 export { default as addressFileStream } from './addressFileStream'
 
-export * as git from './git'
-
 export { default as listAllFiles } from './listAllFiles'
 
 export { default as safeStringify } from './safeStringify'
