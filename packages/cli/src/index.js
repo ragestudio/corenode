@@ -1,4 +1,4 @@
-const helpers = process.runtime[0].helpers
+const helpers = process.runtime.helpers
 
 import { publishProject, bootstrapProject, getChangelogs } from './scripts'
 import { prettyTable, objectToArrayMap } from '@corenode/utils'
@@ -29,7 +29,7 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const allModules = process.runtime[0].modules.getLoadedModules()
+                    const allModules = process.runtime.modules.getLoadedModules()
                     const pt = new prettyTable()
 
                     let headers = ["module", "_runtimed", "directory"]

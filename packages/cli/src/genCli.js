@@ -12,7 +12,7 @@ export default ({ commands, options }) => {
     const argvf = process.args["_"].splice(2) ?? hideBin(process.argv)
     const cli = yargs(hideBin(process.argv))
 
-    process.runtime[0].appendToController("appendCli", (entry) => {
+    process.runtime.appendToController("appendCli", (entry) => {
         custom.push({ ...entry })
     })
     

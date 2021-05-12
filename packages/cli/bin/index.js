@@ -68,7 +68,7 @@ try {
     
     new Runtime({
         targetBin,
-        isLocalMode: isLocalMode ? isLocalMode : false
+        isLocalMode,
     }, options)
     console.log(`\n`) // leaving some space between lines
 } catch (error) {

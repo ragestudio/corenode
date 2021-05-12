@@ -1,2 +1,2 @@
-const runtimeZero = process.runtime[0] ?? {}
+const runtimeZero = process.runtime ?? {}
 

@@ -7,8 +7,8 @@ import { generateName } from '../random'
 
 import { objectToArrayMap, verbosity } from '@corenode/utils'
 
-const helpers = process.runtime[0].helpers
-const moduleController = process.runtime[0].modules
+const helpers = process.runtime.helpers
+const moduleController = process.runtime.modules
 
 export async function moduleInstall(_pathFile) {
     return new Promise(async (resolve, reject) => {

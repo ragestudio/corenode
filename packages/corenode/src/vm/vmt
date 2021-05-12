@@ -1,5 +1,5 @@
 var process = _getProcess();
-var runtime = _getRuntime(0);
+var runtime = _getRuntime();
 var controller = runtime.controller;
 
 var module = _createModuleController();

@@ -7,7 +7,6 @@ let { verbosity, objectToArrayMap } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[MODULES]`, time: false })
 
 const { EvalMachine } = require("../vm")
-const r0 = process.runtime[0]
 
 const defaults = {
     loader: `load.module.js`,
@@ -155,7 +154,7 @@ export default class ModuleController {
                 })
 
                 context["script"] = machine
-                r0.appendToController(`${loader.pkg}`, (...context) => machine.run(...context))
+                process.runtime.appendToController(`${loader.pkg}`, (...context) => machine.run(...context))
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at vm initalization >`, error)

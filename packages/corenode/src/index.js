@@ -6,6 +6,7 @@ import path from 'path'
 import fs from 'fs'
 import { EventEmitter, captureRejectionSymbol } from 'events'
 
+const { EvalMachine } = require('./vm/index.js')
 let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
@@ -61,7 +62,6 @@ class Runtime {
 
     get = {
         environmentFiles: () => environmentFiles,
-        runtimeDeep: () => Object.keys(process.runtime).length,
         paths: {
             _env: () => path.resolve(process.cwd(), '.corenode'),
             _src: () => path.resolve(__dirname, ".."),
@@ -125,7 +125,7 @@ class Runtime {
         global._setPackage("_engine", path.resolve(__dirname, '../package.json'))
         global._setPackage("_project", path.resolve(process.cwd(), 'package.json'))
 
-        global.corenode = process.runtime[0]
+        global.corenode = process.runtime
     }
 
     setEnvironment() {
@@ -146,9 +146,12 @@ class Runtime {
     startREPL() {
         try {
             const repl = require('repl')
-            const { EvalMachine } = require('./vm/index.js')
-
             const machine = new EvalMachine()
+
+            machine.onDestroy((address) => {
+                console.error(`🛑 VM[${address}] Has been destroyed`)
+                process.exit()
+            })
 
             function fnEv(cmd, context, filename, callback) {
                 try {
@@ -159,7 +162,7 @@ class Runtime {
                 }
             }
 
-            console.log(`|  REPL Console | v${this.version}_${process.versions.node} |`)
+            console.log(`|  REPL Console | v${this.version}_${process.versions.node} |\n\t`)
 
             repl.start({
                 prompt: `#> `,
@@ -182,15 +185,7 @@ class Runtime {
     init() {
         return new Promise((resolve, reject) => {
             try {
-                // try to allocate thread
-                while (typeof (process.runtime[this.thread]) !== "undefined") {
-                    this.thread += 1
-                }
-                if (typeof (process.runtime[this.thread]) === "undefined") {
-                    process.runtime[this.thread] = this
-                }
-
-                global.runtimeDeep = this.get.runtimeDeep()
+                process.runtime = this
                 process.argvf = process.argv.slice(1)
 
                 if (!global._inited) {
@@ -238,6 +233,7 @@ class Runtime {
                         if (!fs.existsSync(targetBin)) {
                             throw new Error(`Cannot read loader script [${targetBin}]`)
                         }
+
                         require(targetBin)
                     } catch (error) {
                         verbosity.dump(error)
