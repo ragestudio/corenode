@@ -22,7 +22,7 @@ function end() {
 
     showProcessMem()
     console.log(`\n`)
-    console.log(`| Created [${deep}] machines | 🕗  Tooks ${tooks}ms |`)
+    console.log(`| Allocated [${deep}] EvalMachines | 🕗  Tooks ${tooks}ms |`)
 }
 
 function init() {
