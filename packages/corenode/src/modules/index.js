@@ -28,7 +28,6 @@ export default class ModuleController {
         this.externalModulesPath = path.resolve(process.cwd(), defaults.localModulesPathname)
         this.internalModulesPath = path.resolve(global._runtimeRoot, 'packages')
 
-        this.pool = {}
         this._modules = {}
         this._libraries = {}
 
@@ -150,14 +149,13 @@ export default class ModuleController {
                     return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
                 }
 
-                const machine = this.pool[loader.pkg] = new EvalMachine({
+                const machine = new EvalMachine({
                     eval: loaderScriptPath,
                     cwd: process.cwd(),
                 })
 
                 context["script"] = machine
                 r0.appendToController(`${loader.pkg}`, (...context) => machine.run(...context))
-
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at vm initalization >`, error)
@@ -195,7 +193,12 @@ export default class ModuleController {
     }
 
     unloadModule(key) {
+        // emit event to runtime `beforeUnloadModule`
+        // emit event to runtime `afterUnloadModule`
 
+        // emit event to module `onUnload`
+        delete this.pool[key]
+        delete this._modules[key]
     }
 
     registryKey = {
