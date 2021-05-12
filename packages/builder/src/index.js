@@ -83,8 +83,16 @@ export function build({ dir, opts, ticker }) {
         allowEmpty: true
       })
         .pipe(through.obj((file, codec, callback) => {
+          function passThrough() {
+            handleTicker()
+            return callback(null, file)
+          }
 
           if (!path.extname(file.path)) {
+            if (canRead(file.path)) {
+              return passThrough()
+            }
+
             const oldFilepath = file.path
             file.path = `${file.path}/index${outExt}`
 
@@ -94,9 +102,7 @@ export function build({ dir, opts, ticker }) {
           }
 
           if (skipedSources.includes(path.resolve(file.path))) {
-            handleTicker()
-            console.log(file.path)
-            return callback(null, file)
+            return passThrough()
           }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
@@ -105,19 +111,17 @@ export function build({ dir, opts, ticker }) {
                 file.contents = Buffer.from(_output.code)
                 file.path = file.path.replace(path.extname(file.path), outExt)
 
-                handleTicker()
-                return callback(null, file)
+                return passThrough()
               })
               .catch((err) => {
                 handleError(err.message, 0, file.path)
 
-                handleTicker()
-                return callback(null, file)
+                return passThrough()
               })
           } else {
             // ignore and return callback for stream file
-            handleError(`[${path.extname(file.path)}] File extension is not included, ignoring`, 0, path.basename(file.path))
-            return callback(null, file)
+            handleError(`[${path.extname(file.path)}] type extension not included, ignoring...`, 0, path.basename(file.path))
+            return passThrough()
           }
         }))
         .pipe(vfs.dest(out))
