@@ -74,21 +74,26 @@ export class EvalMachine {
             })
         }
 
-        // create script and moduleController
-        this.script = `
-            var process = _getProcess();
-            var runtime = _getRuntime(0);
-            var controller = runtime.controller;
+        try {
+            // read vm script template
+            const vmtFile = path.resolve(__dirname, 'vmt')
+            const vmt = fs.readFileSync(vmtFile, 'utf8')
 
-            var module = _createModuleController();
-            var require = module._require;
+            // create script and moduleController
+            this.script = String(vmt)
+            if (typeof this.params.eval !== "undefined") {
+                this.script = this.script + this.params.eval
+            }
 
-            ${this.params.eval}
-        `
-
-        // create context && init
-        vm.createContext(this.context)
-        this.run(this.script)
+            // create context
+            vm.createContext(this.context)
+            
+            // run template
+            this.run(this.script)
+        } catch (error) {
+            verbosity.dump(error)
+            throw new Error(`Cannot load VMT file >> ${error.message}`)
+        }
     }
 
     dispatcher() {
@@ -174,6 +179,10 @@ export class EvalMachine {
     run(exec) {
         const vmscript = new vm.Script(exec)
         return vmscript.runInContext(this.context)
+    }
+
+    destroy() {
+
     }
 
     jail = {
