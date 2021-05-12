@@ -26,6 +26,6 @@ async function initApp() {
     verbosity.log(`> Ready on http://localhost:${port}`)
 }
 
-module.exports = { 
+expose = { 
     initApp
 }
