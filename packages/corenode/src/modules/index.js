@@ -119,7 +119,7 @@ export default class ModuleController {
 
     getExternalModulesPath() { return this.externalModulesPath }
 
-    async loadModule(loader) {
+    loadModule(loader) {
         let context = {}
 
         try {
@@ -243,7 +243,7 @@ export default class ModuleController {
                     const _module = this.loadModule({ ...loader, internal: internal, file: manifest.value.loader })
 
                     if (!_module) {
-                        return
+                        return false
                     }
 
                     const { meta } = _module

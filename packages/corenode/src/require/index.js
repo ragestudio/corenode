@@ -1,5 +1,4 @@
 import path from 'path'
-import fs from 'fs'
 import _ from 'lodash'
 
 import { objectToArrayMap } from '@corenode/utils'
@@ -61,11 +60,12 @@ export function overrideNodeModulesPath(instance, to = []) {
 
     const oldNodeModulePaths = instance._origin_nodeModulePaths = instance._nodeModulePaths
     instance._nodeModulePaths = function (from) {
-        var paths = oldNodeModulePaths.call(this, from)
+        let paths = oldNodeModulePaths.call(this, from)
 
         if (from.indexOf('node_modules') === -1) {
             paths = to.concat(paths)
         }
+        return paths
     }
 
     return instance

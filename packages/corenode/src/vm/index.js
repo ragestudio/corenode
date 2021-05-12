@@ -6,7 +6,7 @@ import { EventEmitter } from 'events'
 const RequireController = require("../require")
 const objects = require("./objects")
 
-let { verbosity, safeStringify, objectToArrayMap } = require('@corenode/utils')
+let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
 
 const builtInModules = {}
