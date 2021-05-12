@@ -1,6 +1,6 @@
 const { EvalMachine } = require('../packages/corenode/dist/vm')
 const filesize = require('filesize')
-const { PerformanceObserver, performance } = require('perf_hooks')
+const { performance } = require('perf_hooks')
 
 let deep = 1500
 
