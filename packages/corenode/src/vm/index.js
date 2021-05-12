@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import filesize from 'filesize'
 import { EventEmitter } from 'events'
+import resolvePackagePath from 'resolve-package-path'
 
 const RequireController = require("../require")
 const objects = require("./objects")
@@ -9,7 +10,9 @@ const objects = require("./objects")
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
 
-const builtInModules = {}
+const builtInModules = {
+    "@babel/runtime": resolvePackagePath("@babel/runtime")
+}
 
 export class EvalMachine {
     constructor(params) {
@@ -56,9 +59,10 @@ export class EvalMachine {
         })
 
         // reload cwd node_modules
-        const localNodeModules = this.getNodeModules()
-        this._modulesRegistry = { ...localNodeModules, ...builtInModules, ...this.params.aliaser }
-
+        const globalNodeModules = this.getNodeModules(process.cwd())
+        const localNodeModules = this.getNodeModules(this.params.cwd)
+        this._modulesRegistry = { ...localNodeModules, ...globalNodeModules, ...builtInModules, ...this.params.aliaser }
+        
         // set globals to jail
         this.jail.set('self', this)
         this.jail.set('_modulesRegistry', this._modulesRegistry)
@@ -129,7 +133,7 @@ export class EvalMachine {
         return obj
     }
 
-    getNodeModules() {
+    getNodeModules(origin) {
         let obj = {}
 
         function readDir(from, resolvePath) {
@@ -151,8 +155,8 @@ export class EvalMachine {
             })
         }
 
-        const node_modules = readDir(this.params.cwd, `node_modules`)
-
+        const node_modules = readDir(origin, `node_modules`)
+        
         if (Array.isArray(node_modules)) {
             node_modules.forEach((entry) => {
                 const pkg = path.resolve(entry._path, 'package.json')

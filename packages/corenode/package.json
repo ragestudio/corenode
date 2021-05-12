@@ -22,6 +22,7 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "resolve-package-path": "^4.0.0",
     "filesize": "^6.3.0",
     "import-from": "^3.0.0",
     "lodash": "^4.17.21",

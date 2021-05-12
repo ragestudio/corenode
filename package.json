@@ -26,6 +26,9 @@
       "prettier --parser=typescript --write"
     ]
   },
+  "modules": {
+    "docs-module": "./publicModules/docs-module"
+  },
   "dependencies": {
     "@babel/cli": "^7.13.0",
     "@babel/core": "^7.13.1",

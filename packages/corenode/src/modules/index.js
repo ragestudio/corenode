@@ -125,6 +125,9 @@ export default class ModuleController {
         try {
             if (typeof (loader) === "string") {
                 if (fs.existsSync(loader)) {
+                    if (!loader.includes(`load.module.js`)) {
+                        loader = path.resolve(loader, `load.module.js`)
+                    }
                     const loaderFile = loader
 
                     loader = this.readLoader(loader)
@@ -140,17 +143,22 @@ export default class ModuleController {
         loader.meta = {
             version: loader.version
         }
+        loader.dirname = path.dirname(loader.file)
+
+        if (typeof loader.pkg === "undefined") {
+            throw new Error(`Invalid module, missing [pkg]`)    
+        }
 
         if (typeof loader.script !== "undefined") {
             try {
-                const loaderScriptPath = path.resolve(loader.script)
+                const loaderScriptPath = path.resolve(loader.dirname, loader.script)
                 if (!fs.existsSync(loaderScriptPath)) {
                     return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
                 }
 
                 const machine = new EvalMachine({
                     eval: loaderScriptPath,
-                    cwd: process.cwd(),
+                    cwd: loader.dirname,
                 })
 
                 context["script"] = machine
@@ -174,7 +182,8 @@ export default class ModuleController {
 
         if (typeof loader.init === "function") {
             try {
-                loader.init(this._libraries)
+                // push libraries
+                loader.init({})
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.error(`Failed at module initialization > [${loader.pkg}] >`, error.message)
@@ -232,10 +241,8 @@ export default class ModuleController {
         const allModules = this.fetchModules()
         const registry = this.getRegistry()
 
-        this._libraries["builtIn"] = require("@corenode/builtin-lib") // force to push builtIn lib
-
         objectToArrayMap(allModules).forEach((manifest) => {
-            if (typeof (this._modules[manifest.key]) === "undefined") {
+            if (typeof this._modules[manifest.key] === "undefined") {
                 const { internal } = manifest.value
 
                 if (internal || this.isOnRegistry(manifest.key)) {
