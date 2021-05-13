@@ -254,7 +254,7 @@ class Runtime {
                                 verbosity.options({ method: "[RUNTIME]" }).error(`Main loader > ${error.message}`)
                             }
                         } else {
-                            return require('../internals/packages/cli/dist')
+                            return require('../internals/cli/dist')
                         }
                     } else {
                         this.startREPL()

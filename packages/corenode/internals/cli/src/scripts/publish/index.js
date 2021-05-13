@@ -4,16 +4,14 @@ import open from 'open'
 import Listr from 'listr'
 import execa from 'execa'
 
-import newGithubReleaseUrl from 'new-github-release-url'
 import { Observable } from 'rxjs'
 
 import { getPackages, getGit, getVersion, isProjectMode } from 'corenode'
-
 import buildProject from '@corenode/builder'
-let { verbosity, objectToArrayMap } = require('@corenode/utils')
-verbosity = verbosity.options({ method: "[PUBLISH]" })
-
 import getChangelogs from '../getChangelogs'
+
+let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
+verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 export function publishProject(args) {
     return new Promise((resolve, reject) => {
@@ -127,15 +125,15 @@ export function publishProject(args) {
                             execa.sync('git', ['tag', releaseTag])
                             execa.sync('git', ['push', 'origin', 'master', '--tags'])
 
-                            const githubReleaseUrl = newGithubReleaseUrl({
+                            const newGithubReleaseUrl = githubReleaseUrl({
                                 repoUrl: gitRemote,
                                 tag: releaseTag,
                                 body: changelogNotes,
                                 isPrerelease: config.preRelease,
                             })
 
-                            console.log(`\n ⚠️  Continue github release manualy > ${githubReleaseUrl}`)
-                            open(githubReleaseUrl)
+                            console.log(`\n ⚠️  Continue github release manualy > ${newGithubReleaseUrl}`)
+                            open(newGithubReleaseUrl)
 
                             return res()
                         } catch (error) {

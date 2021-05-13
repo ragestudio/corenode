@@ -4,7 +4,7 @@
   "types": "types.d.ts",
   "main": "./dist/index.js",
   "files": [
-    "internals",
+    "internals/*/**/dist",
     "dist",
     "types.d.ts"
   ],
@@ -22,6 +22,10 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "listr": "0.14.3",
+    "execa": "5.0.0",
+    "escape-goat": "^3.0.0",
+    "yargs": "^17.0.1",
     "yargs-parser": "^20.2.7",
     "open": "^8.0.8",
     "stacktrace-js": "^2.0.2",
@@ -32,6 +36,7 @@
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
     "@babel/runtime": "^7.13.10",
+    "@corenode/git-lib": "^0.21.2",
     "@corenode/builtin-lib": "0.21.2",
     "@corenode/builder": "0.21.2",
     "@corenode/utils": "0.21.2"
