@@ -167,14 +167,12 @@ class Runtime {
                 }
             }
 
-            console.log(`|  REPL Console | v${this.version}_${process.versions.node} |\n\t`)
-
+            console.log(`|  REPL Console | v${this.version}_${process.versions.node} |\n`)
             repl.start({
                 prompt: `#> `,
                 useColors: true,
                 eval: fnEv
             })
-
         } catch (error) {
             console.error(error)
             verbosity.error(`Error starting eval machine > ${error}`)
@@ -227,26 +225,39 @@ class Runtime {
                     console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
                 }
 
-                const { targetBin, isLocalMode } = this.runParams.load
+                let { targetBin, isLocalMode } = this.runParams.load
                 if (isLocalMode) {
                     global.isLocalMode = true
                 }
 
-                // watch for load script
                 if (this.runParams.load.runCli) {
-                    return require('../internals/packages/cli/dist')
-                } else {
-                    try {
-                        if (!fs.existsSync(targetBin)) {
-                            throw new Error(`Cannot read loader script [${targetBin}]`)
-                        }
+                    const yparser = require("yargs-parser")
+                    const argv = process.argv
+                    const args = yparser(argv)
 
-                        const machine = new EvalMachine()
-                        machine.run(targetBin)
-                    } catch (error) {
-                        this.logger.dump("error", error)
-                        console.log("This error has been exported, check the log file for more details")
-                        verbosity.options({ method: "[RUNTIME]" }).error(`Main loader > ${error.message}`)
+                    if (typeof args["_"][2] !== "undefined") {
+                        const fileFromArgs = path.resolve(args["_"][2])
+                        if (!targetBin && fs.existsSync(fileFromArgs)) {
+                            targetBin = fileFromArgs
+                        }
+                        if (targetBin) {
+                            try {
+                                if (!fs.existsSync(targetBin)) {
+                                    throw new Error(`Cannot read loader script [${targetBin}]`)
+                                }
+
+                                const machine = new EvalMachine()
+                                machine.run(targetBin)
+                            } catch (error) {
+                                this.logger.dump("error", error)
+                                console.log("This error has been exported, check the log file for more details")
+                                verbosity.options({ method: "[RUNTIME]" }).error(`Main loader > ${error.message}`)
+                            }
+                        } else {
+                            return require('../internals/packages/cli/dist')
+                        }
+                    } else {
+                        this.startREPL()
                     }
                 }
 

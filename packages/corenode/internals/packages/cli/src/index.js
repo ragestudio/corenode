@@ -112,8 +112,9 @@ let commandMap = [
         command: 'build',
         description: "Build project with builtin builder",
         exec: (argv) => {
-            require("@corenode/builder").default({
-                cliui: argv.silent ? false : true
+            require("@corenode/builder").buildProject({
+                cliui: argv.silent ? false : true,
+                from: argv.from
             })
                 .then(() => {
                     console.log(`✅  DONE`)
@@ -147,29 +148,6 @@ let commandMap = [
         exec: async (argv) => {
             const changes = await getChangelogs(helpers.getGit(), argv.to, argv.from)
             console.log(changes)
-        }
-    },
-    {
-        command: "exec",
-        description: "Run builtIn functions on cli mode",
-        exec: (argv) => {
-            const helpers = require("corenode/dist/helpers")
-            const { verbosity } = require("@corenode/utils")
-
-            const args = argv["_"]
-            const fn = args[1]
-            const context = args.slice(1, args.length)
-
-            try {
-                if (typeof (helpers[fn]) == "function") {
-                    const _fn = helpers[fn](...context)
-                    verbosity.options({ method: `CLI > [${fn}()]` }).log(`>> ${JSON.stringify(_fn)}`)
-                } else {
-                    console.error(`${fn}() is not an function`)
-                }
-            } catch (error) {
-                console.error(error)
-            }
         }
     },
     {
