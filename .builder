@@ -14,5 +14,8 @@
     ],
     "skip": [
         "packages/utils/src/verbosity.js"
+    ],
+    "include": [
+        "packages/corenode/internals/*"
     ]
 }

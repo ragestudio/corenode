@@ -53,8 +53,8 @@ export function listAllFiles(dir) {
   }, [])
 }
 
-export function getBuilderEnv() {
-  const envFile = path.resolve(process.cwd(), '.builder')
+export function getBuilderEnv(from) {
+  const envFile = path.resolve(from ?? process.cwd(), '.builder')
 
   return JSON.parse(fs.readFileSync(envFile, 'utf-8'))
 }

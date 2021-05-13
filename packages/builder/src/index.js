@@ -14,14 +14,8 @@ import * as lib from './lib'
 let env = {}
 let builderErrors = Array()
 
-try {
-  env = lib.getBuilderEnv()
-} catch (error) {
-  handleError(error.message)
-}
-
-let ignoredSources = env.ignore ?? []
-let skipedSources = env.skip ?? []
+let includedSources = null
+let skipedSources = null
 
 const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
 
@@ -59,7 +53,7 @@ export function build(payload) {
 
     const src = path.resolve(options.from, `${dir}/src`)
     const out = path.resolve(options.from, `${dir}/${options.outDir}`)
-    
+
     const sources = [
       path.join(src, '**/*'),
       `!${path.join(src, '**/*.test.js')}`,
@@ -139,6 +133,10 @@ export function build(payload) {
   })
 }
 
+function readDir(_path) {
+  return fs.readdirSync(_path).filter((dir) => dir.charAt(0) !== '.')
+}
+
 export function buildProject(opts) {
   return new Promise((resolve, reject) => {
     const tasks = {}
@@ -149,27 +147,62 @@ export function buildProject(opts) {
     const from = opts.from = opts?.from ?? process.cwd()
     const packagesPath = path.resolve(from, 'packages')
     const isProjectMode = fs.existsSync(packagesPath)
-    
+
     let builderCount = Number(0)
     let multibar = null
 
-    let packages = isProjectMode ? fs.readdirSync(packagesPath).filter((dir) => dir.charAt(0) !== '.') : ["./"]
+    let packages = isProjectMode ? readDir(packagesPath) : ["./"]
 
-    if (skipedSources.length > 0) {
-      skipedSources = skipedSources.map((source) => {
-        return path.resolve(source)
-      })
+    try {
+      env = lib.getBuilderEnv(from)
+    } catch (error) {
+      handleError(error.message)
     }
 
-    if (ignoredSources.length > 0) {
-      ignoredSources.forEach((source) => {
-        packages = packages.filter(pkg => pkg !== source)
-      })
+    // parse options from ".builder" config file
+    const { skip, ignore, include } = env
+
+    if (skip && Array.isArray(skip)) {
+      if (skip.length > 0) {
+        skipedSources = env.skip.map((source) => {
+          return path.resolve(source)
+        })
+      }
     }
 
+    if (ignore) {
+      if (ignore.length > 0) {
+        ignore.forEach((source) => {
+          packages = packages.filter(pkg => pkg !== source)
+        })
+      }
+    }
+
+    // list all packages dirs inside project
     let dirs = packages.map((name) => {
       return isProjectMode ? `./packages/${name}` : `${name}`
     })
+
+    if (dirs) {
+      includedSources = include
+      const regex = /[*]/
+
+      if (Array.isArray(include)) {
+        include.forEach((source) => {
+          let absoluteDir = path.resolve(from, source)
+
+          const res = regex.exec(absoluteDir)
+          if (res) {
+            absoluteDir = path.resolve(absoluteDir.slice(0, res.index))
+            readDir(absoluteDir).forEach((entry) => {
+              dirs.push(path.resolve(absoluteDir, entry))
+            })
+          } else {
+            dirs.push(absoluteDir)
+          }
+        })
+      }
+    }
 
     function handleFinish() {
       if (multibarEnabled) {
@@ -202,21 +235,21 @@ export function buildProject(opts) {
       resolve()
     }
 
-    function handleTicker(index) {
+    function handleTicker(job) {
       if (multibarEnabled) {
-        tasks[packages[index]].increment(1)
+        tasks[job].increment(1)
       }
     }
 
-    function handleThen(index) {
-      if (typeof (index) == "undefined") {
-        return reject(`handleThen index not defined!`)
+    function handleThen(job) {
+      if (typeof job === "undefined") {
+        return reject(`handleThen job not defined!`)
       }
 
       builderCount += 1
 
       if (multibarEnabled) {
-        const task = tasks[packages[index]]
+        const task = tasks[job]
         const currentValue = task.value
         const totalValue = task.total
 
@@ -249,37 +282,42 @@ export function buildProject(opts) {
       handleError(error, "UNTASKED", "CLI INIT")
     }
 
-    dirs.forEach((dir, index) => {
-      try {
-        if (multibar && multibarEnabled) {
-          const packagePath = path.resolve(opts?.from ?? process.cwd(), `${dir}/src`)
-          const sources = lib.listAllFiles(packagePath).length
+    dirs.forEach((dir) => {
+      const job = path.basename(dir)
+      let sources = null
 
-          tasks[packages[index]] = multibar.create(sources, 0)
-          tasks[packages[index]].update(0, { filename: packages[index] })
+      try {
+        const packagePath = path.resolve(opts?.from ?? process.cwd(), `${dir}/src`)
+        sources = lib.listAllFiles(packagePath)
+
+        if (multibar && multibarEnabled) {
+          tasks[job] = multibar.create(sources.length, 0)
+          tasks[job].update(0, { filename: job })
         }
       } catch (error) {
-        console.log(error)
-        // terrible
+        handleError(error, job, dir)
+      }
+
+      if (!sources) {
+        return false
       }
 
       // start builder
-      build({ dir, opts, ticker: () => handleTicker(index) })
+      build({ dir, opts, ticker: () => handleTicker(job) })
         .then((done) => {
-          handleThen(index)
+          handleThen(job)
         })
         .catch((err) => {
           if (Array.isArray(err)) {
             err.forEach((error) => {
-              handleError(error.message, index, dir)
+              handleError(error, job, dir)
             })
           } else {
-            handleError(`${err}`, index, dir)
+            handleError(`${err}`, job, dir)
           }
-
         })
-    })
 
+    })
   })
 }
 
