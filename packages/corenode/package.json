@@ -14,7 +14,7 @@
     "access": "public"
   },
   "bin": {
-    "corenode": "./bin.js"
+    "corenode": "./bin/index.js"
   },
   "scripts": {
     "start": "npx babel-node ./src",
@@ -22,6 +22,10 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "yargs-parser": "^20.2.7",
+    "open": "^8.0.8",
+    "stacktrace-js": "^2.0.2",
+    "winston": "^3.3.3",
     "resolve-package-path": "^4.0.0",
     "filesize": "^6.3.0",
     "import-from": "^3.0.0",
@@ -30,8 +34,6 @@
     "@babel/runtime": "^7.13.10",
     "@corenode/builtin-lib": "0.21.1",
     "@corenode/builder": "0.21.1",
-    "@corenode/cli": "0.21.1",
-    "@corenode/verbosity-dump-module": "0.21.1",
     "@corenode/utils": "0.21.1"
   }
 }

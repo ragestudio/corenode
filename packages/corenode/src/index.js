@@ -7,6 +7,8 @@ import fs from 'fs'
 import { EventEmitter, captureRejectionSymbol } from 'events'
 
 const { EvalMachine } = require('./vm/index.js')
+const { Logger } = require('./logger')
+
 let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
@@ -28,6 +30,7 @@ class CoreEvents extends EventEmitter {
 
 class Runtime {
     constructor(load, options) {
+        this.isMain = require.main === module
         this.runParams = { load, options }
         this.opts = this.runParams.options
 
@@ -56,6 +59,8 @@ class Runtime {
         this.modules = null
 
         this.events = new CoreEvents()
+        this.logger = new Logger()
+
         this.setEvents()
         this.init()
     }
@@ -228,17 +233,20 @@ class Runtime {
                 }
 
                 // watch for load script
-                if (targetBin) {
+                if (this.runParams.load.runCli) {
+                    return require('../internals/packages/cli/dist')
+                } else {
                     try {
                         if (!fs.existsSync(targetBin)) {
                             throw new Error(`Cannot read loader script [${targetBin}]`)
                         }
 
-                        require(targetBin)
+                        const machine = new EvalMachine()
+                        machine.run(targetBin)
                     } catch (error) {
-                        verbosity.dump(error)
-                        verbosity.options({ method: "[RUNTIME]" }).error(`Loader script error > ${error.message}`)
+                        this.logger.dump("error", error)
                         console.log("This error has been exported, check the log file for more details")
+                        verbosity.options({ method: "[RUNTIME]" }).error(`Main loader > ${error.message}`)
                     }
                 }
 

@@ -5,16 +5,13 @@ const process = require("process")
 const open = require("open")
 const yparser = require("yargs-parser")
 
-const cliDist = path.resolve(__dirname, '../dist')
 const localPkgJson = `${process.cwd()}/package.json`
 const fatalCrashLogFile = path.resolve(process.cwd(), '.error.log')
 
 const argv = process.argv
 const args = yparser(argv)
 
-let fromArguments = args["_"][2]
-
-let targetBin = cliDist // Default load cli
+let targetBin = null
 let isLocalMode = false
 
 if (fs.existsSync(localPkgJson)) {
@@ -29,30 +26,7 @@ if (fs.existsSync(localPkgJson)) {
 }
 
 try {
-    if (!fs.existsSync(cliDist)) {
-        throw new Error(`${isLocalMode ? "[LOCALBIN]" : ""} CLI Binaries is missing > Should : [${cliDist}]`)
-    }
-
-    if (fromArguments) {
-        try {
-            if (!path.isAbsolute(fromArguments)) {
-                fromArguments = path.resolve(fromArguments)
-            }
-
-            // plesss, better fs.access api ._.
-            if (fs.readFileSync(fromArguments)) {
-                targetBin = fromArguments
-            }
-        } catch (error) {
-            // terrible, no access?
-        }
-    }
-
-    if (process.env.DEBUG == "true") {
-        targetBin = path.resolve(fromArguments)
-    }
-
-    const { Runtime } = require('corenode')
+    const { Runtime } = require('../dist/index.js')
 
     if (args.cwd) {
         if (!path.isAbsolute(args.cwd)) {
@@ -67,13 +41,13 @@ try {
     }
     
     new Runtime({
-        targetBin,
+        runCli: true,
         isLocalMode,
     }, options)
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
     const now = new Date()
-    const er = `
+    const err = `
     --------------------
     \n
     🆘 >> [${now.toLocaleDateString()} ${now.toLocaleTimeString()}]
@@ -82,7 +56,7 @@ try {
     --------------------\n
     `
 
-    fs.appendFileSync(fatalCrashLogFile, er, { encoding: "utf-8" })
+    fs.appendFileSync(fatalCrashLogFile, err, { encoding: "utf-8" })
     console.log(`❌ Critical error > ${error.message}`)
     console.log(`🗒  See '.error.log' for more details >> ${fatalCrashLogFile}`)
     try {

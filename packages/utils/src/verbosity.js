@@ -130,19 +130,8 @@ class verbosity {
         let stack = await StackTrace.get()
         stack = stack[2]
 
-        if (options.dumpFile) {
-            try {
-                let dumpLogger = require("@corenode/verbosity-dump-module").default
-                dumpLogger({ level: type, stack: getStack }).info(...context)
-            } catch (error) {
-                // temporaly ignoring
-            }
-        }
-
-        if (!options.dumpFile || options.dumpFile !== "only") {
-            let response = this.transform({ log: { ...context } }, options, colors, { method: `[${stack.functionName}()]`, line: `(:${stack.lineNumber})`, file: stack.fileName })
-            console[type](...response)
-        }
+        let response = this.transform({ log: { ...context } }, options, colors, { method: `[${stack.functionName}()]`, line: `(:${stack.lineNumber})`, file: stack.fileName })
+        console[type](...response)
 
         return this
     }

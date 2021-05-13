@@ -24,8 +24,6 @@ let ignoredSources = env.ignore ?? []
 let skipedSources = env.skip ?? []
 
 const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
-const packagesPath = path.join(process.cwd(), 'packages')
-const isProjectMode = fs.existsSync(packagesPath)
 
 function handleError(err, index, dir) {
   // if (multibar && !packages[index]) {
@@ -47,8 +45,9 @@ function canRead(dir) {
   }
 }
 
-export function build({ dir, opts, ticker }) {
+export function build(payload) {
   return new Promise((resolve, reject) => {
+    let { dir, opts, ticker } = payload
     let options = {
       outDir: 'dist',
       agent: 'babel' // default
@@ -58,9 +57,9 @@ export function build({ dir, opts, ticker }) {
       options = { ...options, ...opts }
     }
 
-    const src = path.resolve(dir, `src`)
-    const out = path.resolve(dir, options.outDir)
-
+    const src = path.resolve(options.from, `${dir}/src`)
+    const out = path.resolve(options.from, `${dir}/${options.outDir}`)
+    
     const sources = [
       path.join(src, '**/*'),
       `!${path.join(src, '**/*.test.js')}`,
@@ -114,7 +113,7 @@ export function build({ dir, opts, ticker }) {
                 return passThrough()
               })
               .catch((err) => {
-                handleError(err.message, 0, file.path)
+                handleError(err.message, 0, path.basename(file.path))
 
                 return passThrough()
               })
@@ -147,6 +146,10 @@ export function buildProject(opts) {
     const cliEnabled = opts?.cliui ? true : false
     const multibarEnabled = cliEnabled
 
+    const from = opts.from = opts?.from ?? process.cwd()
+    const packagesPath = path.resolve(from, 'packages')
+    const isProjectMode = fs.existsSync(packagesPath)
+    
     let builderCount = Number(0)
     let multibar = null
 
@@ -192,18 +195,10 @@ export function buildProject(opts) {
 
         pt.create(headers, rows)
 
-        try {
-          const dumpLogger = require('@corenode/verbosity-dump-module').default
-          dumpLogger({ level: "warn", stack: "builder" }).info(`⚠️ BUILDER ERRORS\n ${JSON.stringify(builderErrors, null, 2)}`)
-        } catch (error) {
-          // ironically terrible
-          console.log(`⚠️🆘  Error dumping errors >> ${error}`)
-        }
-
         console.log(`\n⚠️  ERRORS / WARNINGS DURING BUILDING`)
         pt.print()
       }
-      
+
       resolve()
     }
 
@@ -257,7 +252,7 @@ export function buildProject(opts) {
     dirs.forEach((dir, index) => {
       try {
         if (multibar && multibarEnabled) {
-          const packagePath = path.resolve(process.cwd(), `${dir}/src`)
+          const packagePath = path.resolve(opts?.from ?? process.cwd(), `${dir}/src`)
           const sources = lib.listAllFiles(packagePath).length
 
           tasks[packages[index]] = multibar.create(sources, 0)

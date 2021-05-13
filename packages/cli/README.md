@@ -1,1 +1,0 @@
-# @corenode/cli
