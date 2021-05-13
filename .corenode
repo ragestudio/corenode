@@ -2,7 +2,7 @@
   "version": "0.21.1",
   "devRuntime": {
     "headPackage": "corenode",
-    "originGit": "https://github.com/ragestudio/nodecore",
+    "originGit": "https://github.com/ragestudio/corenode",
     "docs": [
       "corenode",
       "utils"

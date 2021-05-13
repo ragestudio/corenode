@@ -1,6 +1,6 @@
 {
-  "name": "nodecore",
-  "git": "https://github.com/ragestudio/nodecore",
+  "name": "corenode",
+  "git": "https://github.com/ragestudio/corenode",
   "private": true,
   "workspaces": [
     "packages/**/*"
