@@ -212,3 +212,5 @@ export { default as addressFileStream } from './addressFileStream'
 export { default as listAllFiles } from './listAllFiles'
 
 export { default as safeStringify } from './safeStringify'
+
+export { default as githubReleaseUrl } from './githubReleaseUrl'
