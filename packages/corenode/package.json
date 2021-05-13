@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "types": "types.d.ts",
   "main": "./dist/index.js",
   "files": [
@@ -32,8 +32,8 @@
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
     "@babel/runtime": "^7.13.10",
-    "@corenode/builtin-lib": "0.21.1",
-    "@corenode/builder": "0.21.1",
-    "@corenode/utils": "0.21.1"
+    "@corenode/builtin-lib": "0.21.2",
+    "@corenode/builder": "0.21.2",
+    "@corenode/utils": "0.21.2"
   }
 }
