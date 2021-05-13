@@ -14,8 +14,9 @@
     "prod": "cross-env LOCAL_BIN=false node ./packages/corenode/bin/index.js",
     "builder": "node ./packages/builder/cli.js",
     "build:docs": "corenode docs --innerFiles",
-    "release": "corenode publish --npm --github --skipBuild",
-    "link:main": "cd packages/corenode && yarn link && cd -",
+    "prerelease": "cross-env npm run builder && node ./packages/corenode/bin/index.js publish --preRelease --next --npm --github --skipBuild",
+    "release": "cross-env npm run builder &&node ./packages/corenode/bin/index.js publish --npm --github --skipBuild",
+    "link:main": "cross-env cd packages/corenode && yarn link && cd -",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
