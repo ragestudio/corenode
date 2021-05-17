@@ -92,9 +92,9 @@ class Runtime {
     }
 
     setGlobals() {
-        const { globals } = require("@corenode/builtin-lib")
+        global.corenode_cli = {}
+        gloal.corenode = {}
 
-        new globals(["corenode_cli", "corenode"])
         const keywords = ["_packages", "_env",]
 
         keywords.forEach((key) => {
@@ -208,7 +208,7 @@ class Runtime {
                 try {
                     const rootPkg = this.helpers.getRootPackage()
 
-                    if (rootPkg.name.includes("corenode") || rootPkg.name.includes("nodecore")) {
+                    if (rootPkg.name.includes("corenode")) {
                         global.isLocalMode = true
                     }
                 } catch (error) {

@@ -8,10 +8,8 @@ Its most important and critical modules including core base
 | Package |  |
 |--|--|
 | @corenode/builder | An compiler based on Babel, basic for the operation and development of the framework |
-| @corenode/cli | Allows to use its cli utilities |
-| @corenode/builtin-lib | Includes builtin libraries for NRML system |
 | @corenode/utils | Includes an important library for the core of the framework |
-| corenodejs | Manages the module system, runtime and environment |
+| corenode | Manages the module system, runtime and environment |
 
 > Most of these modules are still under development or have yet to be included
 
