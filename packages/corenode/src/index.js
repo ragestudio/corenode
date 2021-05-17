@@ -4,7 +4,7 @@
  */
 import path from 'path'
 import fs from 'fs'
-import { EventEmitter, captureRejectionSymbol } from 'events'
+import { EventEmitter } from 'events'
 
 const { EvalMachine } = require('./vm/index.js')
 const { Logger } = require('./logger')
@@ -13,21 +13,6 @@ let { verbosity, schemizedParse } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
-class CoreEvents extends EventEmitter {
-    constructor() {
-        super({ captureRejections: true })
-    }
-
-    [captureRejectionSymbol](err, event, ...args) {
-        console.log('rejection happened for', event, 'with', err, ...args)
-        this.destroy(err)
-    }
-
-    destroy(err) {
-
-    }
-}
-
 class Runtime {
     constructor(load, options) {
         this.isMain = require.main === module
@@ -58,7 +43,7 @@ class Runtime {
         this.thread = 0 // By default
         this.modules = null
 
-        this.events = new CoreEvents()
+        this.events = new EventEmitter()
         this.logger = new Logger()
 
         this.setEvents()
