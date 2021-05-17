@@ -115,11 +115,18 @@ export class EvalMachine {
         const keys = Object.keys(exposers)
 
         keys.forEach((key) => {
-            console.log(typeof exposers[key])
             switch (typeof exposers[key]) {
                 case "function": {
                     obj[key] = (...context) => {
+                        let argsObj = {}
                         let args = [...context]
+
+                        args.forEach((entry) => {
+                            argsObj[entry] = String(entry)
+                        })
+
+                        console.log(args.join())
+
                         this.run(`expose.${key}(${args.join()})`)
                     }
                     break
