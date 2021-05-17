@@ -78,7 +78,7 @@ class Runtime {
 
     setGlobals() {
         global.corenode_cli = {}
-        gloal.corenode = {}
+        global.corenode = {}
 
         const keywords = ["_packages", "_env",]
 
@@ -230,9 +230,9 @@ class Runtime {
                                 if (!fs.existsSync(targetBin)) {
                                     throw new Error(`Cannot read loader script [${targetBin}]`)
                                 }
-
-                                const machine = new EvalMachine()
-                                machine.run(targetBin)
+                                new EvalMachine({
+                                    eval: targetBin
+                                })
                             } catch (error) {
                                 this.logger.dump("error", error)
                                 console.log("This error has been exported, check the log file for more details")

@@ -114,6 +114,7 @@ export class EvalMachine {
         const keys = Object.keys(exposers)
 
         keys.forEach((key) => {
+            console.log(typeof exposers[key])
             switch (typeof exposers[key]) {
                 case "function": {
                     obj[key] = (...context) => {
@@ -122,7 +123,10 @@ export class EvalMachine {
                     }
                     break
                 }
-
+                case "object": {
+                    obj[key] = this.run(`expose.${key}`)
+                    break
+                }
                 default: {
                     obj[key] = this.run(`expose.${key}`)
                     break
