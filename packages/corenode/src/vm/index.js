@@ -65,6 +65,7 @@ export class EvalMachine {
         
         // set globals to jail
         this.jail.set('self', this)
+        this.jail.set('console', console)
         this.jail.set('_modulesRegistry', this._modulesRegistry)
         this.jail.set('cwd', this.params.cwd)
         this.jail.set('_getProcess', () => process)
