@@ -222,6 +222,7 @@ class Runtime {
                     const argv = process.argv
                     const args = yparser(argv)
 
+                    // TODO: overrides cli commands over file loader
                     if (typeof args["_"][2] !== "undefined") {
                         const fileFromArgs = path.resolve(args["_"][2])
                         if (!targetBin && fs.existsSync(fileFromArgs)) {

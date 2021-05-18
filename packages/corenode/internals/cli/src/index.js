@@ -18,7 +18,7 @@ let optionsMap = [
 
 let commandMap = [
     {
-        command: 'addons [action] [addons]',
+        command: 'addons [action] [addon]',
         description: "Manage runtime addons",
         exec: (argv) => {
             switch (argv.action) {
@@ -48,13 +48,6 @@ let commandMap = [
                     break
                 }
             }
-        }
-    },
-    {
-        command: 'add [package] [dir]',
-        description: "Install an package",
-        exec: (argv) => {
-            console.log(`⛔️ Nothing to install!`)
         }
     },
     {
