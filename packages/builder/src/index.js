@@ -20,9 +20,6 @@ let skipedSources = null
 const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
 
 function handleError(err, index, dir) {
-  // if (multibar && !packages[index]) {
-  //   multibar.remove(tasks[packages[index]])
-  // }
   builderErrors.push({ task: index, message: err, dir: dir })
 }
 
@@ -183,23 +180,26 @@ export function buildProject(opts) {
       return isProjectMode ? `./packages/${name}` : `${name}`
     })
 
-    if (dirs) {
+    if (include) {
       includedSources = include
       const regex = /[*]/
 
       if (Array.isArray(include)) {
         include.forEach((source) => {
           let absoluteDir = path.resolve(from, source)
-
           const res = regex.exec(absoluteDir)
+
           if (res) {
             absoluteDir = path.resolve(absoluteDir.slice(0, res.index))
-            readDir(absoluteDir).forEach((entry) => {
-              dirs.push(path.resolve(absoluteDir, entry))
-            })
+            if (fs.existsSync(absoluteDir)) {
+              readDir(absoluteDir).forEach((entry) => {
+                dirs.push(path.resolve(absoluteDir, entry))
+              })
+            }
           } else {
             dirs.push(absoluteDir)
           }
+
         })
       }
     }
@@ -258,7 +258,7 @@ export function buildProject(opts) {
         }
       }
 
-      if (builderCount == (packages.length - 1)) {
+      if (builderCount == dirs.length) {
         handleFinish()
       }
     }
@@ -282,12 +282,12 @@ export function buildProject(opts) {
       handleError(error, "UNTASKED", "CLI INIT")
     }
 
-    dirs.forEach((dir) => {
+    dirs.forEach((dir) => {      
       const job = path.basename(dir)
       let sources = null
 
       try {
-        const packagePath = path.resolve(opts?.from ?? process.cwd(), `${dir}/src`)
+        const packagePath = path.resolve(from, `${dir}/src`)        
         sources = lib.listAllFiles(packagePath)
 
         if (multibar && multibarEnabled) {
