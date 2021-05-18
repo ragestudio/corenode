@@ -8,9 +8,9 @@ import { generateName } from '../random'
 import { objectToArrayMap, verbosity } from '@corenode/utils'
 
 const helpers = process.runtime.helpers
-const moduleController = process.runtime.modules
+const addonController = process.runtime.addons
 
-export async function moduleInstall(_pathFile) {
+export async function addonInstall(_pathFile) {
     return new Promise(async (resolve, reject) => {
         if (typeof (_pathFile) == "undefined") {
             const err = `_pathFile is not defined`
@@ -55,7 +55,7 @@ export async function moduleInstall(_pathFile) {
             pkg: pkg,
             version: version ?? "0.0.0",
             codec: codec ?? 'utf-8',
-            file: file ?? path.resolve(_pathFile, "_module.js"),
+            file: file ?? path.resolve(_pathFile, "_addon.js"),
             dependencies: dependencies,
             setup: setup
         }
@@ -74,13 +74,13 @@ export async function moduleInstall(_pathFile) {
         }
 
         if (_manifestSetup.setup) {
-            // TODO: Module template setup
+            // TODO: Addon template setup
         }
 
-        moduleController.registryKey.add(_manifestSetup.pkg, _manifestSetup.version)
+        addonController.registryKey.add(_manifestSetup.pkg, _manifestSetup.version)
 
         return resolve(_manifestSetup)
     })
 }
 
-export default moduleInstall
+export default addonInstall

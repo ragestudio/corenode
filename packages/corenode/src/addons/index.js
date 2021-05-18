@@ -4,17 +4,17 @@ import path from 'path'
 import { getRootPackage } from '../helpers'
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
-verbosity = verbosity.options({ method: `[MODULES]`, time: false })
+verbosity = verbosity.options({ method: `[ADDONS]`, time: false })
 
 const { EvalMachine } = require("../vm")
 
 const defaults = {
-    loader: `load.module.js`,
-    registryObjectName: `modules`,
-    localModulesPathname: `modules`
+    loader: `load.addon.js`,
+    registryObjectName: `addons`,
+    localAddonsPathname: `addons`
 }
 
-export default class ModuleController {
+export default class AddonsController {
     constructor() {
         if (typeof (global.corenode) === "undefined") {
             throw new Error(`corenode runtime has not been initialized`)
@@ -22,12 +22,12 @@ export default class ModuleController {
 
         this.defaultLoader = defaults.loader // maybe on an future it could be interesting to include more support for custom loaders
         this.registryObjectName = defaults.registryObjectName
-        this.localModulesPathname = defaults.localModulesPathname
+        this.localAddonsPathname = defaults.localAddonsPathname
 
-        this.externalModulesPath = path.resolve(process.cwd(), defaults.localModulesPathname)
-        this.internalModulesPath = path.resolve(global._runtimeRoot, 'packages')
+        this.externalAddonsPath = path.resolve(process.cwd(), defaults.localAddonsPathname)
+        this.internalAddonsPath = path.resolve(global._runtimeRoot, 'packages')
 
-        this._modules = {}
+        this._addons = {}
         this._libraries = {}
 
         this.init()
@@ -61,45 +61,45 @@ export default class ModuleController {
     }
 
     fetch(origin) {
-        const modules = []
+        const addons = []
 
         if (fs.existsSync(origin)) {
             fs.readdirSync(origin).forEach((dir) => {
-                const modulesPath = path.resolve(origin, dir)
-                if (fs.existsSync(modulesPath)) {
-                    modules.push(modulesPath)
+                const addonsPath = path.resolve(origin, dir)
+                if (fs.existsSync(addonsPath)) {
+                    addons.push(addonsPath)
                 }
             })
         }
 
-        return this.resolveLoader(modules)
+        return this.resolveLoader(addons)
     }
 
-    fetchInternals = () => this.fetch(this.internalModulesPath)
+    fetchInternals = () => this.fetch(this.internalAddonsPath)
 
-    fetchExternals = () => this.fetch(this.externalModulesPath)
+    fetchExternals = () => this.fetch(this.externalAddonsPath)
 
-    fetchModules() {
-        const modules = {}
-        const allModules = []
+    fetchAddons() {
+        const addons = {}
+        const allAddons = []
 
         const internals = this.fetchInternals()
         const externals = this.fetchExternals()
 
-        if (internals.length > 0) allModules.push(...internals)
-        if (externals.length > 0) allModules.push(...externals)
+        if (internals.length > 0) allAddons.push(...internals)
+        if (externals.length > 0) allAddons.push(...externals)
 
-        allModules.forEach((loader) => {
-            const _module = this.readLoader(loader)
-            const { pkg } = _module
+        allAddons.forEach((loader) => {
+            const _addon = this.readLoader(loader)
+            const { pkg } = _addon
 
-            modules[pkg] = {
+            addons[pkg] = {
                 internal: internals.includes(loader),
                 loader
             }
         })
 
-        return modules
+        return addons
     }
 
     getRegistry(key) {
@@ -113,20 +113,20 @@ export default class ModuleController {
         return registry
     }
 
-    getLoadedModules() { return this._modules }
+    getLoadedAddons() { return this._addons }
 
     getLoadedLibraries() { return this._libraries }
 
-    getExternalModulesPath() { return this.externalModulesPath }
+    getExternalAddonsPath() { return this.externalAddonsPath }
 
-    loadModule(loader) {
+    loadAddon(loader) {
         let context = {}
 
         try {
             if (typeof (loader) === "string") {
                 if (fs.existsSync(loader)) {
-                    if (!loader.includes(`load.module.js`)) {
-                        loader = path.resolve(loader, `load.module.js`)
+                    if (!loader.includes(`load.addon.js`)) {
+                        loader = path.resolve(loader, `load.addon.js`)
                     }
                     const loaderFile = loader
 
@@ -136,7 +136,7 @@ export default class ModuleController {
             }
         } catch (error) {
             verbosity.dump(error)
-            verbosity.error(`Failed to load external module > [${loader}] >`, error.message)
+            verbosity.error(`Failed to load external addon > [${loader}] >`, error.message)
             return false
         }
 
@@ -146,7 +146,7 @@ export default class ModuleController {
         loader.dirname = path.dirname(loader.file)
 
         if (typeof loader.pkg === "undefined") {
-            throw new Error(`Invalid module, missing [pkg]`)    
+            throw new Error(`Invalid addon, missing [pkg]`)    
         }
 
         if (typeof loader.script !== "undefined") {
@@ -186,7 +186,7 @@ export default class ModuleController {
                 loader.init({})
             } catch (error) {
                 verbosity.dump(error)
-                verbosity.error(`Failed at module initialization > [${loader.pkg}] >`, error.message)
+                verbosity.error(`Failed at addon initialization > [${loader.pkg}] >`, error.message)
             }
         }
 
@@ -196,17 +196,17 @@ export default class ModuleController {
             internal: loader.internal ?? false,
         }
 
-        this._modules[loader.pkg] = manifest
+        this._addons[loader.pkg] = manifest
         return manifest
     }
 
-    unloadModule(key) {
-        // emit event to runtime `beforeUnloadModule`
-        // emit event to runtime `afterUnloadModule`
+    unloadAddon(key) {
+        // emit event to runtime `beforeUnloadAddon`
+        // emit event to runtime `afterUnloadAddon`
 
-        // emit event to module `onUnload`
+        // emit event to addon `onUnload`
         delete this.pool[key]
-        delete this._modules[key]
+        delete this._addons[key]
     }
 
     registryKey = {
@@ -238,22 +238,22 @@ export default class ModuleController {
     }
 
     init() {
-        const allModules = this.fetchModules()
+        const allAddons = this.fetchAddons()
         const registry = this.getRegistry()
 
-        objectToArrayMap(allModules).forEach((manifest) => {
-            if (typeof this._modules[manifest.key] === "undefined") {
+        objectToArrayMap(allAddons).forEach((manifest) => {
+            if (typeof this._addons[manifest.key] === "undefined") {
                 const { internal } = manifest.value
 
                 if (internal || this.isOnRegistry(manifest.key)) {
                     const loader = this.readLoader(manifest.value.loader)
-                    const _module = this.loadModule({ ...loader, internal: internal, file: manifest.value.loader })
+                    const _addon = this.loadAddon({ ...loader, internal: internal, file: manifest.value.loader })
 
-                    if (!_module) {
+                    if (!_addon) {
                         return false
                     }
 
-                    const { meta } = _module
+                    const { meta } = _addon
 
                     if (!internal) {
                         const fromReg = this.getRegistry(manifest.key)
@@ -261,10 +261,10 @@ export default class ModuleController {
                             if (meta.version !== fromReg) {
                                 verbosity
                                     .options({ dumpFile: true })
-                                    .warn(`Module version conflict (${manifest.key}@${fromReg}) > Loaded (${manifest.key}@${meta.version})`)
+                                    .warn(`Addon version conflict (${manifest.key}@${fromReg}) > Loaded (${manifest.key}@${meta.version})`)
                             }
                         } else {
-                            verbosity.options({ dumpFile: "only" }).warn(`Version control is not available for module (${manifest.key})`)
+                            verbosity.options({ dumpFile: "only" }).warn(`Version control is not available for addon (${manifest.key})`)
                         }
                     }
                 }
@@ -282,8 +282,8 @@ export default class ModuleController {
                 // import from cloud registry
             }
             
-            // load module
-            this.loadModule(loader)
+            // load addon
+            this.loadAddon(loader)
         })
     }
 }

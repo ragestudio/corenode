@@ -41,7 +41,7 @@ class Runtime {
         this.controller = {}
         this.helpers = require("./helpers")
         this.thread = 0 // By default
-        this.modules = null
+        this.addons = null
 
         this.events = new EventEmitter()
         this.logger = new Logger()
@@ -185,9 +185,11 @@ class Runtime {
                 this.version = this.helpers.getVersion({ engine: true })
                 this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
 
-                // create new moduleController
-                const moduleController = require("./modules").default
-                this.modules = new moduleController()
+                // set aliasers
+
+                // create new addonController
+                const addonController = require("./addons").default
+                this.addons = new addonController()
 
                 // detect local mode
                 try {

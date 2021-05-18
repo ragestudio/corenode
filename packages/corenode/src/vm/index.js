@@ -74,7 +74,7 @@ export class EvalMachine {
         this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module))
         this.jail.set('expose', {})
         this.jail.set('_createModuleController', () => {
-            return new RequireController.CustomNodeModuleController({ ...this._modulesRegistry })
+            return new RequireController.CustomModuleController({ ...this._modulesRegistry })
         })
         this.jail.set('log', (...args) => {
             const v = verbosity.options({ method: `[${this.id}]` })

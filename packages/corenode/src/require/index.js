@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import { objectToArrayMap } from '@corenode/utils'
 
-export class CustomNodeModuleController {
+export class CustomModuleController {
     constructor(aliases, paths) {
         let Module = _.clone(require("module"))
 

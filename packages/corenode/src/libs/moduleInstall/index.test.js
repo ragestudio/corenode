@@ -1,36 +1,36 @@
-import { moduleInstall } from './index.js'
+import { addonInstall } from './index.js'
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
 
 test('install not defined file', () => {
   expect(
-    moduleInstall(undefined)
+    addonInstall(undefined)
   ).rejects.toThrow(`_pathFile is not defined`)
 })
 
 test('install not existent file', () => {
   expect(
-    moduleInstall('../notExistent/exampleFile.7z')
+    addonInstall('../notExistent/exampleFile.7z')
   ).rejects.toThrowError()
 })
 
-test('install unpackaged example testing module', () => {
-  const testingModulePath = path.resolve(process.cwd(), 'testingExampleModule')
-  if (fs.existsSync(testingModulePath)) {
-    rimraf.sync(testingModulePath)
+test('install unpackaged example testing addon', () => {
+  const testingAddonPath = path.resolve(process.cwd(), 'testingExampleAddon')
+  if (fs.existsSync(testingAddonPath)) {
+    rimraf.sync(testingAddonPath)
   }
 
   let writeData = {
-    pkg: "testingModule"
+    pkg: "testingAddon"
   }
 
-  fs.mkdirSync(testingModulePath)
-  fs.writeFileSync(`${testingModulePath}/manifest.json`, JSON.stringify(writeData, null, 2) + '\n', 'utf-8')
+  fs.mkdirSync(testingAddonPath)
+  fs.writeFileSync(`${testingAddonPath}/manifest.json`, JSON.stringify(writeData, null, 2) + '\n', 'utf-8')
 
   expect(
-    moduleInstall(testingModulePath)
+    addonInstall(testingAddonPath)
   ).resolves.toHaveProperty('pkg')
   
-  rimraf.sync(testingModulePath)
+  rimraf.sync(testingAddonPath)
 })

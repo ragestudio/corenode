@@ -42,7 +42,7 @@ export default async (params) => {
 
           if (!pkgJSONExists) {
             json.version = version
-            json.files = ['dist', 'load.module.js']
+            json.files = ['dist', 'load.addon.js']
           }
 
           if (opt.originGit) {

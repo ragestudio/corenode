@@ -18,8 +18,8 @@ let optionsMap = [
 
 let commandMap = [
     {
-        command: 'modules [action] [module]',
-        description: "Manage modules & plugins",
+        command: 'addons [action] [addons]',
+        description: "Manage runtime addons",
         exec: (argv) => {
             switch (argv.action) {
                 case ("install"): {
@@ -29,16 +29,16 @@ let commandMap = [
                     break
                 }
                 default: {
-                    const allModules = process.runtime.modules.getLoadedModules()
+                    const allAddons = process.runtime.addons.getLoadedAddons()
                     const pt = new prettyTable()
 
-                    let headers = ["module", "_runtimed", "directory"]
+                    let headers = ["addon", "_runtimed", "directory"]
                     let rows = []
                     
-                    objectToArrayMap(allModules).forEach((_module) => {
-                        const isRuntimed = _module.value.internal ?? false
-                        const key = _module.key
-                        const cwd = _module.value.loader
+                    objectToArrayMap(allAddons).forEach((_addon) => {
+                        const isRuntimed = _addon.value.internal ?? false
+                        const key = _addon.key
+                        const cwd = _addon.value.loader
 
                         rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, `${isRuntimed}`, cwd])
                     })

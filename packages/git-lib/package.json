@@ -8,7 +8,7 @@
   },
   "files": [
     "dist",
-    "load.module.js"
+    "load.addon.js"
   ],
   "dependencies": {
     "execa": "^5.0.0"
