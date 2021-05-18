@@ -4,6 +4,7 @@ import filesize from 'filesize'
 import { EventEmitter } from 'events'
 import resolvePackagePath from 'resolve-package-path'
 
+const Jail = require('../classes/Jail').default
 const RequireController = require("../require")
 const objects = require("./objects")
 
@@ -62,30 +63,33 @@ export class EvalMachine {
         const globalNodeModules = this.getNodeModules(process.cwd())
         const localNodeModules = this.getNodeModules(this.params.cwd)
         this._modulesRegistry = { ...localNodeModules, ...globalNodeModules, ...builtInModules, ...this.params.aliaser }
-        
+
         // set globals to jail
-        this.jail.set('self', this)
-        this.jail.set('console', console)
-        this.jail.set('_modulesRegistry', this._modulesRegistry)
-        this.jail.set('cwd', this.params.cwd)
-        this.jail.set('_getProcess', () => process)
-        this.jail.set('_getRuntime', () => process.runtime)
-        this.jail.set('global', global)
-        this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module))
-        this.jail.set('expose', {})
-        this.jail.set('_createModuleController', () => {
+        const jail = new Jail(this.context)
+        jail.set('self', this, { configurable: false, writable: false})
+        jail.set('console', console)
+        jail.set('cwd', this.params.cwd, { configurable: false, writable: false })
+        jail.set('_getModulesRegistry', () => this._modulesRegistry, { configurable: false, writable: false })
+        jail.set('_getProcess', () => process, { configurable: false, writable: false })
+        jail.set('_getRuntime', () => process.runtime, { configurable: false, writable: false })
+        jail.set('global', global)
+        jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module), { configurable: false, writable: false })
+        jail.set('expose', {})
+        jail.set('_createModuleController', () => {
             return new RequireController.CustomModuleController({ ...this._modulesRegistry })
-        })
-        this.jail.set('log', (...args) => {
+        }, { configurable: false, writable: false })
+        jail.set('log', (...args) => {
             const v = verbosity.options({ method: `[${this.id}]` })
             v.log(...args)
         })
 
         if (typeof (objects) === "object") {
             objectToArrayMap(objects).forEach((obj) => {
-                this.jail.set(obj.key, obj.value)
+                jail.set(obj.key, obj.value)
             })
         }
+
+        this.context = jail.get()
 
         try {
             // read vm script template
@@ -121,11 +125,10 @@ export class EvalMachine {
                         let argsObj = {}
                         let args = [...context]
 
+                        // create buffer for transform args to plain string
                         args.forEach((entry) => {
                             argsObj[entry] = String(entry)
                         })
-
-                        console.log(args.join())
 
                         this.run(`expose.${key}(${args.join()})`)
                     }
@@ -168,7 +171,7 @@ export class EvalMachine {
         }
 
         const node_modules = readDir(origin, `node_modules`)
-        
+
         if (Array.isArray(node_modules)) {
             node_modules.forEach((entry) => {
                 const pkg = path.resolve(entry._path, 'package.json')
@@ -254,17 +257,5 @@ export class EvalMachine {
         delete this.poolRef
         delete process.runtime.vms.pool[this.address]
         delete this.vmController
-    }
-
-    jail = {
-        get: (key) => {
-            return this.context[key]
-        },
-        set: (key, value) => {
-            this.context[key] = value
-        },
-        del: (key) => {
-            delete this.context[key]
-        },
     }
 }
