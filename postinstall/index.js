@@ -27,7 +27,7 @@ const tasks = new listr([
         title: '📦  Install dependencies',
         task: () => {
             return new Promise((resolve, reject) => {
-                execa('yarn', ['install'], { execPath: builderPath, cwd: builderPath })
+                execa('npm', ['install'], { execPath: builderPath, cwd: builderPath })
                     .then(done => { return resolve(done) })
                     .catch(err => { return reject(err) })
             })
