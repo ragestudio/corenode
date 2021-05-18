@@ -17,6 +17,9 @@
     "build": "rimraf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
   },
+  "bin": {
+    "corenode-builder": "./bin.js"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
