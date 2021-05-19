@@ -40,6 +40,21 @@ export class EvalMachine {
             getVerbosity().error(`Cannot check eval file/script > ${error.message}`)
         }
 
+        try {
+            // read vm script template
+            const vmtFile = path.resolve(__dirname, 'vmt')
+            const vmt = fs.readFileSync(vmtFile, 'utf8')
+
+            // create script and moduleController
+            this.vmt = String(vmt)
+            if (typeof this.params.eval !== "undefined") {
+                this.vmt = this.vmt + this.params.eval
+            }
+        } catch (error) {
+            verbosity.dump(error)
+            throw new Error(`Cannot load VMT file >> ${error.message}`)
+        }
+
         // try to allocate to pool
         this.address = 0
         this.allocateNew()
@@ -64,53 +79,114 @@ export class EvalMachine {
         const localNodeModules = this.getNodeModules(this.params.cwd)
         this._modulesRegistry = { ...localNodeModules, ...globalNodeModules, ...builtInModules, ...this.params.aliaser }
 
+        // set symbols
+        this._functionScapeSymbol = Symbol()
+
         // set globals to jail
-        const jail = new Jail(this.context)
-        jail.set('self', this, { configurable: false, writable: false})
-        jail.set('console', console)
-        jail.set('cwd', this.params.cwd, { configurable: false, writable: false })
-        jail.set('_getModulesRegistry', () => this._modulesRegistry, { configurable: false, writable: false })
-        jail.set('_getProcess', () => process, { configurable: false, writable: false })
-        jail.set('_getRuntime', () => process.runtime, { configurable: false, writable: false })
-        jail.set('global', global)
-        jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module), { configurable: false, writable: false })
-        jail.set('expose', {})
-        jail.set('_createModuleController', () => {
+        this.jail = new Jail()
+
+        this.jail.set('selfThis', this, { configurable: false, writable: false, global: false })
+        this.jail.set('self', this.jail.get(), { configurable: false, writable: false, global: true })
+        this.jail.set('console', console, { global: true })
+        this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
+
+        // set an process secure dispatcher
+        // jail.set('process', () => process, { configurable: false, writable: false, global: true})
+        this.jail.set('runtime', () => process.runtime, { configurable: false, writable: false, global: true })
+        this.jail.set('global', global, { global: true })
+
+        this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module), { configurable: false, writable: false, global: true })
+        this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
+        this.jail.set('module', () => {
             return new RequireController.CustomModuleController({ ...this._modulesRegistry })
-        }, { configurable: false, writable: false })
-        jail.set('log', (...args) => {
-            const v = verbosity.options({ method: `[${this.id}]` })
-            v.log(...args)
-        })
+        }, { configurable: false, writable: false, global: true })
+
+        this.jail.set('dispatcher', (...context) => this.dispatcher(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('destroy', (...context) => this.destroy(...context), { configurable: false, writable: false, global: true })
+
+        this.jail.set('_serialize', (...context) => this.serialize(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('_deserialize', (...context) => this.deserialize(...context), { configurable: false, writable: false, global: true })
 
         if (typeof (objects) === "object") {
             objectToArrayMap(objects).forEach((obj) => {
-                jail.set(obj.key, obj.value)
+                const objectType = typeof obj.value
+
+                switch (objectType) {
+                    case "function": {
+                        this.jail.set(obj.key, obj.value.bind(this), { global: true })
+                        break
+                    }
+
+                    default: {
+                        this.jail.set(obj.key, obj.value, { global: true })
+                        break
+                    }
+                }
             })
         }
 
-        this.context = jail.get()
-
-        try {
-            // read vm script template
-            const vmtFile = path.resolve(__dirname, 'vmt')
-            const vmt = fs.readFileSync(vmtFile, 'utf8')
-
-            // create script and moduleController
-            this.script = String(vmt)
-            if (typeof this.params.eval !== "undefined") {
-                this.script = this.script + this.params.eval
-            }
-        } catch (error) {
-            verbosity.dump(error)
-            throw new Error(`Cannot load VMT file >> ${error.message}`)
-        }
-
         // create context
+        this.context = { ...this.jail.get() }
         this.vmController.createContext(this.context)
 
-        // run template
-        this.run(this.script)
+        // run vmt
+        this.run(this.vmt)
+    }
+
+    deserialize(input) {
+        const datatype = typeof input
+
+        switch (datatype) {
+            case "object": {
+                let tmp = {}
+
+                const objectKeys = Object.keys(input)
+
+                objectKeys.forEach((key) => {
+                    tmp[key] = this.deserialize(input[key])
+                })
+
+                input = tmp
+                break
+            }
+            case "function": {
+                input = new Function(input)
+                break
+            }
+            default:
+
+                break
+        }
+
+        return input
+    }
+
+    serialize(input) {
+        const datatype = typeof input
+
+        switch (datatype) {
+            case "object": {
+                let tmp = {}
+
+                const objectKeys = Object.keys(input)
+
+                objectKeys.forEach((key) => {
+                    tmp[key] = this.serialize(input[key])
+                })
+
+                input = tmp
+                break
+            }
+            case "function": {
+                input = input.toString()
+                break
+            }
+            default:
+                break
+        }
+
+        return input
     }
 
     dispatcher() {
@@ -122,15 +198,22 @@ export class EvalMachine {
             switch (typeof exposers[key]) {
                 case "function": {
                     obj[key] = (...context) => {
-                        let argsObj = {}
                         let args = [...context]
+                        let argsObj = []
 
                         // create buffer for transform args to plain string
                         args.forEach((entry) => {
-                            argsObj[entry] = String(entry)
+                            argsObj.push(this.serialize(entry))
                         })
 
-                        this.run(`expose.${key}(${args.join()})`)
+                        const pass = JSON.stringify(argsObj)
+
+                        return this.run(`
+                        (function () {
+                            var _argsParsed = self._deserialize(${pass})
+
+                            return expose.${key}(..._argsParsed)
+                        }())`)
                     }
                     break
                 }

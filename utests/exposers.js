@@ -1,13 +1,12 @@
-const testSTR = "some"
-const test1 = (context) => {
-    return `${testSTR} | ${context}`
+const convert = (name, options) => {
+    return `☺🏀 Hello ${name}`
 }
 
 expose = {
-    test1
+    convert: convert
 }
 
+const _self = self.dispatcher()
+const transformedSTR = _self.convert("help", { bruh: function() { return "bruhhh from another side" }, bih: "ns" })
 
-const e = self.dispatcher()
-
-log(e.test1("help", { a: 1 }))
+out(`${transformedSTR}`)

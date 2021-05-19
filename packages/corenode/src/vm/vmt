@@ -1,6 +1,3 @@
-var process = _getProcess();
-var runtime = _getRuntime();
 var controller = runtime.controller;
-
-var module = _createModuleController();
 var require = module._require;
+
