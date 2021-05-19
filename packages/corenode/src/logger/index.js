@@ -24,27 +24,35 @@ export class Logger {
         })
     }
 
-    dump = (level, ...context) => {
+    dump = (level, data) => {
         StackTrace.get().then((stack) => {
             stack = stack[2]
-            this.createLogger({ level: level, stack }).info(...context)
+            this.createDump({ level: level, stack }).info(data)
         })
     }
 
-    async output(payload, ...context) {
+    output(payload, ...context) {
         const { level, stack } = payload
 
-        this.createLogger({ level, stack }).info(...context)
+        this.createDump({ level, stack }).info(...context)
         verbosity.options({ method: `[${stack.functionName}]` })[level](...context)
     }
 
-    createLogger({ level, stack }) {
+    createDump({ level, stack }) {
         return createLogger({
             format: combine(
                 label({ label: level }),
                 timestamp(),
                 printf(({ message, label, timestamp }) => {
-                    return `> ${timestamp} ${(stack?.method ?? false) ? `${stack.method}` : ''}[${label ?? "log"}] : ${message}`
+                    switch (label) {
+                        case "error":{
+                            return `> ${timestamp} (${stack?.functionName ?? "anonymous"})[error] : ${message} \n\t ${stack.toString()}`
+                        }
+
+                        default:
+                            return `> ${timestamp} (${stack?.functionName ?? "anonymous"})[${label ?? "log"}] : ${message}`
+                    }
+                   
                 })
             ),
             transports: [

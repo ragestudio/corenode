@@ -6,7 +6,7 @@ const open = require("open")
 const yparser = require("yargs-parser")
 
 const localPkgJson = `${process.cwd()}/package.json`
-const fatalCrashLogFile = path.resolve(process.cwd(), '.error.log')
+const fatalCrashLogFile = path.resolve(process.cwd(), '.crash.log')
 
 const argv = process.argv
 const args = yparser(argv)
@@ -57,8 +57,8 @@ try {
     `
 
     fs.appendFileSync(fatalCrashLogFile, err, { encoding: "utf-8" })
-    console.log(`❌ Critical error > ${error.message}`)
-    console.log(`🗒  See '.error.log' for more details >> ${fatalCrashLogFile}`)
+    console.log(`[🆘 CRASH] 🛑 Critical error > ${error.message}`)
+    console.log(`🗒  Open '${fatalCrashLogFile}' for more details >> ${fatalCrashLogFile}`)
     try {
         open(fatalCrashLogFile)
     } catch (error) {

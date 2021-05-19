@@ -237,9 +237,9 @@ class Runtime {
                                     eval: targetBin
                                 })
                             } catch (error) {
-                                this.logger.dump("error", error)
-                                console.log("This error has been exported, check the log file for more details")
+                                this.logger.dump("error", error.toString())
                                 verbosity.options({ method: "[RUNTIME]" }).error(`Main loader > ${error.message}`)
+                                console.log("This error has been exported, check the log file for more details")
                             }
                         } else {
                             return require('../internals/cli/dist')
