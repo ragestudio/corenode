@@ -1,28 +1,30 @@
 export class Jail {
-    constructor(data) {
-        this.data = {...data} ?? {}
+    constructor(context) {
+        this.data = {...context} ?? {}
+        this.global = {}
     }
 
     get(key) {
         if (typeof key === 'string') {
             return this.data[key]
         }
-        return this.data
+        return this.global
     }
 
     set(key, value, options) {
         let properties = {
-            configurable: options?.configurable ?? false,
+            writable: options?.writable ?? true,
+            configurable: options?.configurable ?? true,
             enumerable: options?.enumerable ?? true,
             value: value
         }
 
-        if (options?._proto_)
-            properties.__proto__ = options.__proto__
+        if (options?.proto)
+            properties.__proto__ = options.proto
 
-        if (options?.writable)
-            properties.writable = options.writable
-
+        if (options?.global)
+            Object.defineProperty(this.global, key, properties)
+        
         Object.defineProperty(this.data, key, properties)
         return this.data[key]
     }
