@@ -4,6 +4,7 @@ import filesize from 'filesize'
 import { EventEmitter } from 'events'
 import resolvePackagePath from 'resolve-package-path'
 
+const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
 const RequireController = require("../require")
 const objects = require("./objects")
@@ -83,6 +84,7 @@ export class EvalMachine {
         this._functionScapeSymbol = Symbol()
 
         // set globals to jail
+        this.serializer = new Serializer()
         this.jail = new Jail()
 
         this.jail.set('selfThis', this, { configurable: false, writable: false, global: false })
@@ -105,8 +107,8 @@ export class EvalMachine {
         this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
         this.jail.set('destroy', (...context) => this.destroy(...context), { configurable: false, writable: false, global: true })
 
-        this.jail.set('_serialize', (...context) => this.serialize(...context), { configurable: false, writable: false, global: true })
-        this.jail.set('_deserialize', (...context) => this.deserialize(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('_serialize', (...context) => this.serializer.serialize(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('_deserialize', (...context) => this.serializer.deserialize(...context), { configurable: false, writable: false, global: true })
 
         if (typeof (objects) === "object") {
             objectToArrayMap(objects).forEach((obj) => {
@@ -134,61 +136,6 @@ export class EvalMachine {
         this.run(this.vmt)
     }
 
-    deserialize(input) {
-        const datatype = typeof input
-
-        switch (datatype) {
-            case "object": {
-                let tmp = {}
-
-                const objectKeys = Object.keys(input)
-
-                objectKeys.forEach((key) => {
-                    tmp[key] = this.deserialize(input[key])
-                })
-
-                input = tmp
-                break
-            }
-            case "function": {
-                input = new Function(input)
-                break
-            }
-            default:
-
-                break
-        }
-
-        return input
-    }
-
-    serialize(input) {
-        const datatype = typeof input
-
-        switch (datatype) {
-            case "object": {
-                let tmp = {}
-
-                const objectKeys = Object.keys(input)
-
-                objectKeys.forEach((key) => {
-                    tmp[key] = this.serialize(input[key])
-                })
-
-                input = tmp
-                break
-            }
-            case "function": {
-                input = input.toString()
-                break
-            }
-            default:
-                break
-        }
-
-        return input
-    }
-
     dispatcher() {
         let obj = {}
         const exposers = this.context.expose
@@ -203,7 +150,7 @@ export class EvalMachine {
 
                         // create buffer for transform args to plain string
                         args.forEach((entry) => {
-                            argsObj.push(this.serialize(entry))
+                            argsObj.push(this.serializer.serialize(entry))
                         })
 
                         const pass = JSON.stringify(argsObj)

@@ -7,6 +7,6 @@ expose = {
 }
 
 const _self = self.dispatcher()
-const transformedSTR = _self.convert("help", { bruh: function() { return "bruhhh from another side" }, bih: "ns" })
+const transformedSTR = _self.convert("help")
 
 out(`${transformedSTR}`)
