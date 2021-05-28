@@ -94,7 +94,7 @@ export class EvalMachine {
         // reload cwd node_modules
         const globalNodeModules = this.getNodeModules(process.cwd())
         const localNodeModules = this.getNodeModules(this.params.cwd)
-        this._modulesRegistry = { ...localNodeModules, ...globalNodeModules, ...builtInModules, ...this.params.aliaser }
+        this._modulesPaths = { ...localNodeModules, ...globalNodeModules, ...builtInModules, ...this.params.aliaser }
 
         // set symbols
         this._functionScapeSymbol = Symbol()
@@ -114,7 +114,7 @@ export class EvalMachine {
 
         this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module), { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
-        this.jail.set('module', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
+        this.jail.set('module', new RequireController.CustomModuleController({ ...this._modulesPaths }), { configurable: false, writable: false, global: true })
         //this.jail.set('require', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
 
         this.jail.set('dispatcher', (...context) => this.dispatcher(...context), { configurable: false, writable: false, global: true })
