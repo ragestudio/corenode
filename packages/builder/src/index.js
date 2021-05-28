@@ -96,7 +96,8 @@ export function build(payload) {
           }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
-            lib.agents[options.agent](file.contents, file.path, env)
+            env.babel.filename = file.path
+            lib.agents[options.agent](file.contents, { ...env.babel, filename: file.path })
               .then((_output) => {
                 file.contents = Buffer.from(_output.code)
                 file.path = file.path.replace(path.extname(file.path), outExt)
@@ -282,12 +283,12 @@ export function buildProject(opts) {
       handleError(error, "UNTASKED", "CLI INIT")
     }
 
-    dirs.forEach((dir) => {      
+    dirs.forEach((dir) => {
       const job = path.basename(dir)
       let sources = null
 
       try {
-        const packagePath = path.resolve(from, `${dir}/src`)        
+        const packagePath = path.resolve(from, `${dir}/src`)
         sources = lib.listAllFiles(packagePath)
 
         if (multibar && multibarEnabled) {

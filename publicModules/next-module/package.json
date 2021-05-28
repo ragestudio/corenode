@@ -6,8 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "modules": {
-        "next-module": "./load.module.js"
+    "addons": {
+        "next-module": "./load.addon.js"
     },
     "author": "",
     "license": "ISC",

@@ -2,7 +2,7 @@ const { verbosity } = require('@corenode/utils')
 const express = require('express')
 const next = require('next')
 
-const moduleEnv = global._env.nextModule 
+const moduleEnv = _env.nextModule 
 
 const port = moduleEnv?.port ?? 8050;
 const app = next({ dev: process.env.NODE_ENV !== 'production' });

@@ -77,17 +77,14 @@ class Runtime {
     }
 
     setGlobals() {
-        global.corenode_cli = {}
-        global.corenode = {}
-
-        const keywords = ["_packages", "_env",]
+        const keywords = ["_packages", "_env", "_cli"]
 
         keywords.forEach((key) => {
             if (typeof (global[key]) === "undefined") {
                 global[key] = {}
             }
         })
-
+        
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
         global.isLocalMode = false
 
@@ -114,8 +111,6 @@ class Runtime {
 
         global._setPackage("_engine", path.resolve(__dirname, '../package.json'))
         global._setPackage("_project", path.resolve(process.cwd(), 'package.json'))
-
-        global.corenode = process.runtime
     }
 
     setEnvironment() {

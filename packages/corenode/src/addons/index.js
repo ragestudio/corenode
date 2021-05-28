@@ -16,10 +16,6 @@ const defaults = {
 
 export default class AddonsController {
     constructor() {
-        if (typeof (global.corenode) === "undefined") {
-            throw new Error(`corenode runtime has not been initialized`)
-        }
-
         this.defaultLoader = defaults.loader // maybe on an future it could be interesting to include more support for custom loaders
         this.registryObjectName = defaults.registryObjectName
         this.localAddonsPathname = defaults.localAddonsPathname
@@ -172,10 +168,10 @@ export default class AddonsController {
         if (typeof loader.appendCli !== "undefined") {
             if (Array.isArray(loader.appendCli)) {
                 loader.appendCli.forEach((entry) => {
-                    if (typeof (global.corenode_cli.custom) == "undefined") {
-                        global.corenode_cli.custom = []
+                    if (typeof (global._cli.custom) == "undefined") {
+                        global._cli.custom = []
                     }
-                    global.corenode_cli.custom.push({ ...entry, exec: (...args) => entry.exec(context, ...args) })
+                    global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(context, ...args) })
                 })
             }
         }

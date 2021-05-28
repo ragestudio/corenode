@@ -3,6 +3,8 @@ import path from 'path'
 import filesize from 'filesize'
 import { EventEmitter } from 'events'
 import resolvePackagePath from 'resolve-package-path'
+import * as babel from "@babel/core"
+import * as compiler from '@corenode/builder/dist/lib'
 
 const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
@@ -28,6 +30,19 @@ export class EvalMachine {
         }
 
         this.params = params
+        this.babelOptions = {
+            plugins: compiler.defaultBabelPlugins,
+            presets: [
+                [
+                    require.resolve('@babel/preset-env'),
+                    {
+                        targets: {
+                            node: 6
+                        }
+                    },
+                ],
+            ]
+        }
 
         // maybe checking with fs is a terrible idea...
         try {
@@ -48,9 +63,6 @@ export class EvalMachine {
 
             // create script and moduleController
             this.vmt = String(vmt)
-            if (typeof this.params.eval !== "undefined") {
-                this.vmt = this.vmt + this.params.eval
-            }
         } catch (error) {
             verbosity.dump(error)
             throw new Error(`Cannot load VMT file >> ${error.message}`)
@@ -64,6 +76,10 @@ export class EvalMachine {
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
         this.events = new EventEmitter()
+
+        if (!this.params.isolatedContext) {
+            this.context = { ...this.context, ...global }
+        }
 
         if (typeof this.params.context !== "undefined") {
             this.context = { ...this.context, ...this.params.context }
@@ -93,15 +109,13 @@ export class EvalMachine {
         this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
 
         // set an process secure dispatcher
-        // jail.set('process', () => process, { configurable: false, writable: false, global: true})
-        this.jail.set('runtime', () => process.runtime, { configurable: false, writable: false, global: true })
-        this.jail.set('global', global, { global: true })
+        this.jail.set('process', process, { configurable: false, writable: false, global: true })
+        this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
 
         this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module), { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
-        this.jail.set('module', () => {
-            return new RequireController.CustomModuleController({ ...this._modulesRegistry })
-        }, { configurable: false, writable: false, global: true })
+        this.jail.set('module', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
+        //this.jail.set('require', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
 
         this.jail.set('dispatcher', (...context) => this.dispatcher(...context), { configurable: false, writable: false, global: true })
         this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
@@ -129,11 +143,15 @@ export class EvalMachine {
         }
 
         // create context
-        this.context = { ...this.jail.get() }
+        this.context = { ...this.context, ...this.jail.get() }
         this.vmController.createContext(this.context)
 
         // run vmt
-        this.run(this.vmt)
+        this.run(this.vmt, { babelTransform: false })
+
+        if (typeof this.params.eval !== "undefined") {
+            this.run(this.params.eval, { babelTransform: true })
+        }
     }
 
     dispatcher() {
@@ -154,12 +172,15 @@ export class EvalMachine {
                         })
 
                         const pass = JSON.stringify(argsObj)
-
+                     
                         return this.run(`
                         (function () {
                             var _argsParsed = self._deserialize(${pass})
+                            if (_argsParsed){
+                                return expose.${key}(..._argsParsed)
+                            }
 
-                            return expose.${key}(..._argsParsed)
+                            return expose.${key}()
                         }())`)
                     }
                     break
@@ -235,10 +256,21 @@ export class EvalMachine {
         process.runtime.vms.deep = Object.keys(process.runtime.vms.pool).length
     }
 
-    run(exec, callback) {
+    run(exec, options, callback) {
         if (typeof this.vmController === "undefined") {
             throw new Error(`vmController is not available (maybe destroyed)`)
         }
+
+        if (typeof options !== "object") {
+            options = {
+                babelTransform: true
+            }
+        }
+
+        if (options.babelTransform) {
+            exec = babel.transformSync(exec, { ...this.babelOptions, ...options.babelOptions }).code
+        }
+
         const vmscript = new this.vmController.Script(exec)
         const _run = vmscript.runInContext(this.context)
 

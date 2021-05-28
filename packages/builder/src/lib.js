@@ -2,35 +2,40 @@ import path from 'path'
 import fs from 'fs'
 const babel = require("@babel/core")
 
-const babelConfig = {
-  presets: [
-    [
-      require.resolve('@babel/preset-typescript'),
-      {},
-    ],
-    [
-      require.resolve('@babel/preset-env'),
-      {
-        targets: {
-          node: 6
-        }
-      },
-    ],
+export const defaultBabelPresets = [
+  [
+    require.resolve('@babel/preset-typescript'),
+    {},
   ],
-  plugins: [
-    require.resolve('@babel/plugin-transform-runtime'),
-    require.resolve('@babel/plugin-proposal-export-default-from'),
-    require.resolve('@babel/plugin-proposal-do-expressions'),
-    require.resolve('@babel/plugin-proposal-class-properties'),
+  [
+    require.resolve('@babel/preset-env'),
+    {
+      targets: {
+        node: 6
+      }
+    },
   ],
+]
+
+export const defaultBabelPlugins = [
+  require.resolve('@babel/plugin-transform-runtime'),
+  require.resolve('@babel/plugin-proposal-export-default-from'),
+  require.resolve('@babel/plugin-proposal-do-expressions'),
+  require.resolve('@babel/plugin-proposal-class-properties'),
+]
+
+export const defaultBabelConfig = {
+  presets: defaultBabelPresets,
+  plugins: defaultBabelPlugins,
 }
 
 export const agents = {
-  babel: (contents, filepath, env) => {
+  babel: (contents, options) => {
     return new Promise((resolve, reject) => {
-      try {
-        let opts = env.babel ?? {}
-        babel.transform(contents, { ...babelConfig, ...opts, filename: filepath }, (err, result) => {
+      try {        
+        let opts = options ?? {}
+        
+        babel.transform(contents, { ...defaultBabelConfig, ...opts }, (err, result) => {
           if (err) {
             return reject(err)
           }

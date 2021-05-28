@@ -1,7 +1,7 @@
 let { verbosity, objectToArrayMap } = require("@corenode/utils")
 verbosity = verbosity.options({ method: "[CLI]" })
 
-const _cli = global.corenode_cli
+const _cli = global._cli
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 
@@ -89,7 +89,7 @@ export default ({ commands, options }) => {
         }
     } else {
         try {
-            global.corenode.events.emit("cli_noCommand")
+            process.runtime.events.emit("cli_noCommand")
         } catch (error) {
             // so sorry
         }
