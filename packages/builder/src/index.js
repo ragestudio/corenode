@@ -91,8 +91,10 @@ export function build(payload) {
             }
           }
 
-          if (skipedSources.includes(path.resolve(file.path))) {
-            return passThrough()
+          if (Array.isArray(skipedSources)) {
+            if (skipedSources.includes(path.resolve(file.path))) {
+              return passThrough()
+            }
           }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
