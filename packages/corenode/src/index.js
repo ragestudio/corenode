@@ -140,7 +140,7 @@ class Runtime {
 
             function fnEv(cmd, context, filename, callback) {
                 try {
-                    const out = machine.run(cmd)
+                    const out = machine.run(cmd, { babelTransform: false })
                     callback(null, out)
                 } catch (error) {
                     return callback(error.message)

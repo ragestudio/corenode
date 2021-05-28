@@ -172,7 +172,7 @@ export class EvalMachine {
                         })
 
                         const pass = JSON.stringify(argsObj)
-                     
+
                         return this.run(`
                         (function () {
                             var _argsParsed = self._deserialize(${pass})
@@ -181,16 +181,16 @@ export class EvalMachine {
                             }
 
                             return expose.${key}()
-                        }())`)
+                        }())`, { babelTransform: false })
                     }
                     break
                 }
                 case "object": {
-                    obj[key] = this.run(`expose.${key}`)
+                    obj[key] = this.run(`expose.${key}`, { babelTransform: false })
                     break
                 }
                 default: {
-                    obj[key] = this.run(`expose.${key}`)
+                    obj[key] = this.run(`expose.${key}`, { babelTransform: false })
                     break
                 }
             }
