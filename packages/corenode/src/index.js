@@ -229,7 +229,7 @@ class Runtime {
                                     throw new Error(`Cannot read loader script [${targetBin}]`)
                                 }
                                 new EvalMachine({
-                                    eval: targetBin
+                                    file: targetBin
                                 })
                             } catch (error) {
                                 this.logger.dump("error", error.toString())

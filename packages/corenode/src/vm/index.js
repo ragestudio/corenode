@@ -60,12 +60,16 @@ export class EvalMachine {
         try {
             if (typeof this.params.file !== "undefined") {
                 if (fs.existsSync(this.params.file)) {
-                    this.params.eval = fs.readFileSync(path.resolve(this.params.eval))
+                    if (!path.extname(this.params.file)) {
+                        this.params.file = path.resolve(this.params.file, 'index.js')
+                    }
+
+                    this.params.eval = fs.readFileSync(path.resolve(this.params.file))
                 }
             }
         } catch (error) {
             getVerbosity().dump(error)
-            getVerbosity().error(`Cannot read file/script > ${error.message}`)
+            getVerbosity().error(`[${this.params.file}] Cannot read file/script > ${error.message}`)
         }
 
         try {
@@ -217,7 +221,7 @@ export class EvalMachine {
         if (typeof this.params.file !== "undefined") {
             return path.dirname(this.params.file)
         }
-        
+
         return this.params.cwd
     }
 
