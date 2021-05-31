@@ -1,18 +1,16 @@
 {
     "name": "next-module",
     "version": "0.1.32",
-    "description": "",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "addons": {
-        "next-module": "./load.addon.js"
+        "next-addon": "./load.addon.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@umijs/fabric": "^2.5.7",
         "@zeit/next-bundle-analyzer": "^0.1.2",
         "@zeit/next-css": "^1.0.1",
         "@zeit/next-less": "^1.0.1",

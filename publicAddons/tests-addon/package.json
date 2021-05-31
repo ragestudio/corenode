@@ -1,21 +1,11 @@
 {
-  "name": "@corenode/tests-module",
+  "name": "tests-addon",
   "version": "0.20.5",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "helpers",
     "dist",
-    "src",
-    "load.module.js"
+    "load.addon.js"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ragestudio/nodecore"
-  },
   "license": "MIT",
   "dependencies": {
     "@babel/core": "7.13.1",

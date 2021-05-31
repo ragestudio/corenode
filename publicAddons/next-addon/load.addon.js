@@ -1,5 +1,5 @@
 module.exports = {
-    pkg: "next-module",
+    pkg: "next",
     script: "./src/index.js",
     appendCli: [
         {
