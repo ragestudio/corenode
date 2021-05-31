@@ -128,11 +128,11 @@ export class EvalMachine {
         this.jail.set('process', process, { configurable: false, writable: false, global: true })
         this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
 
-        this.jail.set('_import', (_module) => require("import-from")(this.params.cwd, _module), { configurable: false, writable: false, global: true })
+        this.jail.set('_import', (key, from) => require("import-from")(from ?? this.getDirname(), key), { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
         this.jail.set('module', new RequireController.CustomModuleController({ ...this._modulesPaths }), { configurable: false, writable: false, global: true })
         this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
-        this.jail.set('_getDirname', () => this.getDirname(), { configurable: false, writable: false, global: true })
+        this.jail.set('__getDirname', () => this.getDirname(), { configurable: false, writable: false, global: true })
         //this.jail.set('require', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
 
         this.jail.set('dispatcher', (...context) => this.dispatcher(...context), { configurable: false, writable: false, global: true })
