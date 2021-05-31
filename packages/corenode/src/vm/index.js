@@ -112,7 +112,7 @@ export class EvalMachine {
         this.jail.set('process', process, { configurable: false, writable: false, global: true })
         this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
 
-        this.jail.set('_import', (_module) => require("import-from")(path.resolve(this.params.cwd, 'node_modules'), _module), { configurable: false, writable: false, global: true })
+        this.jail.set('_import', (_module) => require("import-from")(this.params.cwd, _module), { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
         this.jail.set('module', new RequireController.CustomModuleController({ ...this._modulesPaths }), { configurable: false, writable: false, global: true })
         //this.jail.set('require', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
