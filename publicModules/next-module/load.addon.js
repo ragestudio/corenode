@@ -5,7 +5,7 @@ module.exports = {
         {
             command: "next-dev",
             exec: (context) => {
-                const script = context.script.dispatcher()
+                const script = context.machine.dispatcher()
 
                 console.log("Starting Next.JS development server...")
                 script.initApp()

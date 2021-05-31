@@ -9,30 +9,126 @@ verbosity = verbosity.options({ method: `[ADDONS]`, time: false })
 const { EvalMachine } = require("../vm")
 
 const defaults = {
-    loader: `load.addon.js`,
-    registryObjectName: `addons`,
-    localAddonsPathname: `addons`
+    loaderFilename: `load.addon.js`,
+    addonsFlagName: `addons`,
+}
+
+function requireFromString(src, filename) {
+    var Module = module.constructor
+    var m = new Module()
+
+    m._compile(src, filename)
+    return m.exports
+}
+
+class Addon {
+    constructor(params) {
+        this.params = params ?? {}
+
+        this.loader = {}
+        this.machine = null
+
+        // try to read loader file
+        if (typeof this.params.loader === "string") {
+            try {
+                this.params.loader = path.resolve(this.params.loader)
+
+                if (fs.existsSync(this.params.loader)) {
+                    this.loader = fs.readFileSync(this.params.loader, 'utf-8')
+                    this.loader = requireFromString(this.loader, '')
+                    this.loader.file = this.params.loader
+                }
+            } catch (error) {
+                verbosity.dump(error)
+                verbosity.error(`Cannot read addon loader > ${error.message}`)
+            }
+        } else {
+            this.loader = this.params.loader
+        }
+
+        // process loader
+        if (typeof this.loader.pkg === "undefined") {
+            throw new Error(`Invalid addon, missing [pkg]`)
+        }
+
+        if (typeof this.loader.file !== "undefined") {
+            this.loader.dirname = path.dirname(this.loader.file)
+        }
+
+        return this
+    }
+
+    load() {
+        if (typeof this.loader.script !== "undefined") {
+            try {
+                const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
+                if (!fs.existsSync(loaderScriptPath)) {
+                    return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
+                }
+
+                this.machine = new EvalMachine({
+                    file: loaderScriptPath,
+                    cwd: this.loader.dirname,
+                })
+
+                process.runtime.appendToController(`${this.loader.pkg}`, (...context) => this.machine.run(...context))
+            } catch (error) {
+                verbosity.dump(error)
+                verbosity.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initalization >`, error)
+            }
+        }
+
+        if (typeof this.loader.appendCli !== "undefined") {
+            if (Array.isArray(this.loader.appendCli)) {
+                this.loader.appendCli.forEach((entry) => {
+                    if (typeof (global._cli.custom) == "undefined") {
+                        global._cli.custom = []
+                    }
+                    global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
+                })
+            }
+        }
+
+        if (typeof this.loader.init === "function") {
+            try {
+                this.loader.init()
+            } catch (error) {
+                verbosity.dump(error)
+                verbosity.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
+            }
+        }
+
+        return this.loader
+    }
+
+    unload() {
+
+    }
 }
 
 export default class AddonsController {
     constructor() {
-        this.defaultLoader = defaults.loader // maybe on an future it could be interesting to include more support for custom loaders
-        this.registryObjectName = defaults.registryObjectName
-        this.localAddonsPathname = defaults.localAddonsPathname
+        this.loaders = {}
+        this.addons = []
 
-        this.externalAddonsPath = path.resolve(process.cwd(), defaults.localAddonsPathname)
-        this.internalAddonsPath = path.resolve(global._runtimeRoot, 'packages')
-
-        this._addons = {}
-        this._libraries = {}
+        this.defaultLoader = defaults.loaderFilename
+        this.externalAddonsPath = path.resolve(process.cwd(), defaults.addonsFlagName)
 
         this.init()
     }
 
-    isOnRegistry(key) { return this.getRegistry(key) ? true : false }
+    loadAddon(loader) {
+        const addon = new Addon({ loader })
+        this.appendLoader(addon.load())
+    }
 
-    readLoader(loader) {
-        return require(loader)
+    appendLoader = (addon) => {
+        this.addons.push(addon.pkg)
+        this.loaders[addon.pkg] = addon
+    }
+
+    isOnPackage = (key) => {
+        return this.getAddonsFromPackage(key) ? true : false
     }
 
     resolveLoader(origin) {
@@ -56,7 +152,7 @@ export default class AddonsController {
         return loaders
     }
 
-    fetch(origin) {
+    fetch = (origin) => {
         const addons = []
 
         if (fs.existsSync(origin)) {
@@ -71,214 +167,64 @@ export default class AddonsController {
         return this.resolveLoader(addons)
     }
 
-    fetchInternals = () => this.fetch(this.internalAddonsPath)
+    fetchAllLoaders() {
+        const allLoaders = []
 
-    fetchExternals = () => this.fetch(this.externalAddonsPath)
-
-    fetchAddons() {
-        const addons = {}
-        const allAddons = []
-
-        const internals = this.fetchInternals()
-        const externals = this.fetchExternals()
-
-        if (internals.length > 0) allAddons.push(...internals)
-        if (externals.length > 0) allAddons.push(...externals)
-
-        allAddons.forEach((loader) => {
-            const _addon = this.readLoader(loader)
-            const { pkg } = _addon
-
-            addons[pkg] = {
-                internal: internals.includes(loader),
-                loader
-            }
+        objectToArrayMap(this.packageAddons.get()).forEach((addon) => {
+            allLoaders.push(addon.value)
         })
 
-        return addons
+        this.fetch(this.externalAddonsPath).forEach((addon) => {
+            allLoaders.push(addon)
+        })
+
+        return allLoaders
     }
 
-    getRegistry(key) {
-        const packageJSON = getRootPackage()
-        const registry = packageJSON[defaults.registryObjectName] ?? {}
+    packageAddons = {
+        get: (key) => {
+            const packageJSON = getRootPackage()
+            const registry = packageJSON[defaults.addonsFlagName] ?? {}
 
-        if (key) {
-            return registry[key]
-        }
-
-        return registry
-    }
-
-    getLoadedAddons() { return this._addons }
-
-    getLoadedLibraries() { return this._libraries }
-
-    getExternalAddonsPath() { return this.externalAddonsPath }
-
-    loadAddon(loader) {
-        let context = {}
-
-        try {
-            if (typeof (loader) === "string") {
-                if (fs.existsSync(loader)) {
-                    if (!loader.includes(`load.addon.js`)) {
-                        loader = path.resolve(loader, `load.addon.js`)
-                    }
-                    const loaderFile = loader
-
-                    loader = this.readLoader(loader)
-                    loader.file = loaderFile
-                }
+            if (key) {
+                return registry[key]
             }
-        } catch (error) {
-            verbosity.dump(error)
-            verbosity.error(`Failed to load external addon > [${loader}] >`, error.message)
-            return false
-        }
 
-        loader.meta = {
-            version: loader.version
-        }
-        loader.dirname = path.dirname(loader.file)
-
-        if (typeof loader.pkg === "undefined") {
-            throw new Error(`Invalid addon, missing [pkg]`)    
-        }
-
-        if (typeof loader.script !== "undefined") {
-            try {
-                const loaderScriptPath = path.resolve(loader.dirname, loader.script)
-                if (!fs.existsSync(loaderScriptPath)) {
-                    return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
-                }
-
-                const machine = new EvalMachine({
-                    eval: loaderScriptPath,
-                    cwd: loader.dirname,
-                })
-
-                context["script"] = machine
-                process.runtime.appendToController(`${loader.pkg}`, (...context) => machine.run(...context))
-            } catch (error) {
-                verbosity.dump(error)
-                verbosity.options({ method: `[VM]` }).error(`[${loader.pkg}] Failed at vm initalization >`, error)
-            }
-        }
-
-        if (typeof loader.appendCli !== "undefined") {
-            if (Array.isArray(loader.appendCli)) {
-                loader.appendCli.forEach((entry) => {
-                    if (typeof (global._cli.custom) == "undefined") {
-                        global._cli.custom = []
-                    }
-                    global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(context, ...args) })
-                })
-            }
-        }
-
-        if (typeof loader.init === "function") {
-            try {
-                // push libraries
-                loader.init({})
-            } catch (error) {
-                verbosity.dump(error)
-                verbosity.error(`Failed at addon initialization > [${loader.pkg}] >`, error.message)
-            }
-        }
-
-        const manifest = {
-            loader: loader.file,
-            meta: loader.meta,
-            internal: loader.internal ?? false,
-        }
-
-        this._addons[loader.pkg] = manifest
-        return manifest
-    }
-
-    unloadAddon(key) {
-        // emit event to runtime `beforeUnloadAddon`
-        // emit event to runtime `afterUnloadAddon`
-
-        // emit event to addon `onUnload`
-        delete this.pool[key]
-        delete this._addons[key]
-    }
-
-    registryKey = {
+            return registry
+        },
         add: (key, value) => {
-            let registry = this.getRegistry()
+            let registry = this.packageAddons.get()
             registry[key] = value ?? '0.0.0'
 
-            this.writeRegistry(registry)
+            this.packageAddons.writePackage(registry)
         },
         remove: (key) => {
-            let registry = this.getRegistry()
+            let registry = this.packageAddons.get()
             registry = delete registry[key]
 
-            this.writeRegistry(registry)
+            this.packageAddons.writePackage(registry)
+        },
+        write: (update) => {
+            if (!update) return false
+
+            const packageJSONPath = path.resolve(process.cwd(), 'package.json')
+            let packageJSON = getRootPackage()
+
+            if (typeof (packageJSON) !== "object") {
+                throw new Error(`Invalid typeof >> package.json is not an object`)
+            }
+
+            packageJSON[defaults.addonsFlagName] = update
+            fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, 2), { encoding: "utf8" })
         }
     }
 
-    writeRegistry(registry) {
-        if (!registry) return false
-        const packageJSONPath = path.resolve(process.cwd(), 'package.json')
-        let packageJSON = getRootPackage()
-
-        if (typeof (packageJSON) !== "object") {
-            throw new Error(`Invalid typeof >> package.json is not an object`)
-        }
-
-        packageJSON[this.registryObjectName] = registry
-        fs.writeFileSync(packageJSONPath, JSON.stringify(packageJSON, null, 2), { encoding: "utf8" })
-    }
+    getLoadedAddons = () => this.addons
 
     init() {
-        const allAddons = this.fetchAddons()
-        const registry = this.getRegistry()
+        const allLoaders = this.fetchAllLoaders()
 
-        objectToArrayMap(allAddons).forEach((manifest) => {
-            if (typeof this._addons[manifest.key] === "undefined") {
-                const { internal } = manifest.value
-
-                if (internal || this.isOnRegistry(manifest.key)) {
-                    const loader = this.readLoader(manifest.value.loader)
-                    const _addon = this.loadAddon({ ...loader, internal: internal, file: manifest.value.loader })
-
-                    if (!_addon) {
-                        return false
-                    }
-
-                    const { meta } = _addon
-
-                    if (!internal) {
-                        const fromReg = this.getRegistry(manifest.key)
-                        if (typeof (fromReg) !== "undefined" && typeof (meta.version) !== "undefined") {
-                            if (meta.version !== fromReg) {
-                                verbosity
-                                    .options({ dumpFile: true })
-                                    .warn(`Addon version conflict (${manifest.key}@${fromReg}) > Loaded (${manifest.key}@${meta.version})`)
-                            }
-                        } else {
-                            verbosity.options({ dumpFile: "only" }).warn(`Version control is not available for addon (${manifest.key})`)
-                        }
-                    }
-                }
-            }
-        })
-
-        // read all registry
-        objectToArrayMap(registry).forEach((entry) => {
-            let loader = null
-
-            const asPath = path.resolve(entry.value)
-            if (fs.existsSync(asPath)) {
-                loader = asPath
-            }else {
-                // import from cloud registry
-            }
-            
-            // load addon
+        allLoaders.forEach((loader) => {
             this.loadAddon(loader)
         })
     }

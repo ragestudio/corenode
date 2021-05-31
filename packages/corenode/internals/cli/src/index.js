@@ -35,10 +35,12 @@ let commandMap = [
                     let headers = ["addon", "_runtimed", "directory"]
                     let rows = []
                     
-                    objectToArrayMap(allAddons).forEach((_addon) => {
-                        const isRuntimed = _addon.value.internal ?? false
-                        const key = _addon.key
-                        const cwd = _addon.value.loader
+                    allAddons.forEach((addon) => {
+                        const loader = process.runtime.addons.loaders[addon]
+
+                        const isRuntimed = loader.internal ?? false
+                        const key = loader.pkg
+                        const cwd = loader.file
 
                         rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, `${isRuntimed}`, cwd])
                     })
