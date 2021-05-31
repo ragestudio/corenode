@@ -1,6 +1,8 @@
 {
   "name": "dev-addon",
   "version": "1.0.0",
-  "author": "",
+  "addons": {
+    "dev-addon": "./load.addon.js"
+  },
   "license": "ISC"
 }

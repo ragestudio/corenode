@@ -1,9 +1,0 @@
-{
-  "name": "cloudlink",
-  "version": "0.1.0",
-  "author": "RageStudio",
-  "license": "ISC",
-  "dependencies": {
-    "websocket": "^1.0.34"
-  }
-}
