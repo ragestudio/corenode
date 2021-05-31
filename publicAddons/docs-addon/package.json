@@ -1,9 +1,6 @@
 {
   "name": "docs-addon",
   "version": "0.20.5",
-  "publishConfig": {
-    "access": "public"
-  },
   "files": [
     "dist",
     "load.addon.js"
