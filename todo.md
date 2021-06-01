@@ -9,7 +9,7 @@
     - (1.1) [] WebApp
     - (1.2) [] Dev daemon
 
-- (2) [builder]
+- (2) [corenode/builder]
     - (2.1) [x] Reliability improvement
     - (2.2) [~] Multithreading
     - (2.3) [x] API improvement
@@ -19,26 +19,24 @@
     - (2.5) [~] Dynamic compiler
     - (2.6) [] WASM Support (C, C++)
 
-- (3) [corenodejs/modules] NRML | Native Runtimed Module Loader
-    - (3.1) [] Support module cloud registry publishing
-    - (3.2) [] Dynamic load
+- (3) [corenode/addons] NRAL | Native Runtimed Addons Loader
+    - (3.1) [] Addons registry service
+    - (3.2) [~] Dynamic load
     - (3.3) [x] Thread workers & load balancer
-    - (3.4) [] Module hierarchical load order from internal to external
-    - (3.5) [] Unload modules
-    - (3.6) [] Custom events & security
-      - (3.6.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
+    - (3.4) [] Unload addons
+    - (3.5) [] Custom events & security
+      - (3.5.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
 
 - (4) [corenode/core]
-  - (4.1) [] Module installer
-  - (4.2) [] WebAssembly support (wasi)
-  - (4.3) [] Autoupdate
-  - (4.4) [] SignalC (SignalCore)
-  - (4.5) [x] VM Transcompiler
-  - (4.6) [] Runtime daemon
-  - (4.7) [x] VM Runtime scripts loader
-  - (4.8) [] Runtime profiler
+  - (4.1) [] WebAssembly support (wasi)
+  - (4.2) [] Autoupdate
+  - (4.3) [] SignalC (SignalCore)
+  - (4.4) [x] VM Transcompiler
+  - (4.5) [] Runtime daemon
+  - (4.6) [x] VM Runtime scripts loader
+  - (4.7) [] Runtime profiler
 
-- (5) [corenodejs/helpers]
+- (5) [corenode/helpers]
   - (5.1) [] improve versioning
   - (5.2) [] improve bump version
   - (5.3) [x] Publish proyect improve performance
