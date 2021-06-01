@@ -1,4 +1,4 @@
-const { EvalMachine } = require('../packages/corenode/dist/vm')
+const { EvalMachine } = require('corenode/dist/vm')
 const filesize = require('filesize')
 const { performance } = require('perf_hooks')
 
