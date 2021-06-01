@@ -20,16 +20,17 @@ const builtInModules = {
 
 export class EvalMachine {
     constructor(params) {
+        this.params = params ?? {}
         this.vmController = require("vm")
 
-        if (typeof params === "undefined") {
-            params = {}
-        }
         if (typeof params.cwd === "undefined") {
             params.cwd = process.cwd()
         }
-
-        this.params = params
+        
+        this.scriptOptions = {
+            ...this.params.scriptOptions,
+        }
+       
         this.babelOptions = {
             plugins: compiler.defaultBabelPlugins,
             presets: [
@@ -64,6 +65,8 @@ export class EvalMachine {
                         this.params.file = path.resolve(this.params.file, 'index.js')
                     }
 
+                    this.scriptOptions["filename"] = path.basename(this.params.file)
+
                     this.params.eval = fs.readFileSync(path.resolve(this.params.file))
                 }
             }
@@ -92,7 +95,7 @@ export class EvalMachine {
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
         this.events = new EventEmitter()
-
+        
         if (!this.params.isolatedContext) {
             this.context = { ...this.context, ...global }
         }
@@ -298,7 +301,7 @@ export class EvalMachine {
             exec = babel.transformSync(exec, { ...this.babelOptions, ...options.babelOptions }).code
         }
 
-        const vmscript = new this.vmController.Script(exec)
+        const vmscript = new this.vmController.Script(exec, this.scriptOptions)
         const _run = vmscript.runInContext(this.context)
 
         if (typeof callback === "function") {
