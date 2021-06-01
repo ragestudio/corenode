@@ -1,12 +1,14 @@
 const convert = (name, options) => {
-    return `☺🏀 Hello ${name}`
+    return `👋 Hello ${name ?? "Unnamed"}`
 }
 
 expose = {
     convert: convert
 }
 
-const _self = self.dispatcher()
-const transformedSTR = _self.convert("help")
+const _ = self.dispatcher()
+const transformedString = _.convert("Kevin")
+const transformedString2 = _.convert()
 
-out(`${transformedSTR}`)
+console.log(transformedString)
+console.log(transformedString2)

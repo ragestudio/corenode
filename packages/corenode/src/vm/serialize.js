@@ -26,6 +26,7 @@ export class Serializer {
         if (Object.keys(input).length <= 0) {
             return false
         }
+
         return input
     }
 

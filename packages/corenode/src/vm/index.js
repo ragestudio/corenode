@@ -174,6 +174,7 @@ export class EvalMachine {
 
     dispatcher() {
         let obj = {}
+        
         const exposers = this.context.expose
         const keys = Object.keys(exposers)
 
@@ -184,7 +185,6 @@ export class EvalMachine {
                         let args = [...context]
                         let argsObj = []
 
-                        // create buffer for transform args to plain string
                         args.forEach((entry) => {
                             argsObj.push(this.serializer.serialize(entry))
                         })
@@ -193,12 +193,13 @@ export class EvalMachine {
 
                         return this.run(`
                         (function () {
-                            var _argsParsed = self._deserialize(${pass})
-                            if (_argsParsed){
-                                return expose.${key}(..._argsParsed)
+                            const _argsParsed = ${pass}
+
+                            if (Array.isArray(_argsParsed) && _argsParsed.length > 0) {
+                                return expose.${key}(..._argsParsed);
                             }
 
-                            return expose.${key}()
+                            return expose.${key}();
                         }())`, { babelTransform: false })
                     }
                     break
