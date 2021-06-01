@@ -1,3 +1,3 @@
 var controller = runtime.controller;
-var require = module._require;
+var require = module.createRequire(__getDirname());
 

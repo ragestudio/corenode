@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import filesize from 'filesize'
 import { EventEmitter } from 'events'
-import resolvePackagePath from 'resolve-package-path'
 import * as babel from "@babel/core"
 import * as compiler from '@corenode/builder/dist/lib'
 
@@ -14,23 +13,19 @@ const objects = require("./objects")
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
 
-const builtInModules = {
-    "@babel/runtime": resolvePackagePath("@babel/runtime")
-}
-
 export class EvalMachine {
     constructor(params) {
         this.params = params ?? {}
         this.vmController = require("vm")
 
-        if (typeof params.cwd === "undefined") {
-            params.cwd = process.cwd()
+        if (typeof this.params.cwd === "undefined") {
+            this.params.cwd = process.cwd()
         }
-        
+
         this.scriptOptions = {
             ...this.params.scriptOptions,
         }
-       
+
         this.babelOptions = {
             plugins: compiler.defaultBabelPlugins,
             presets: [
@@ -95,7 +90,7 @@ export class EvalMachine {
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
         this.events = new EventEmitter()
-        
+
         if (!this.params.isolatedContext) {
             this.context = { ...this.context, ...global }
         }
@@ -110,10 +105,7 @@ export class EvalMachine {
             }
         })
 
-        // reload cwd node_modules
-        const globalNodeModules = this.getNodeModules(process.cwd())
-        const localNodeModules = this.getNodeModules(this.params.cwd)
-        this._modulesPaths = { ...localNodeModules, ...globalNodeModules, ...builtInModules, ...this.params.aliaser }
+        this.moduleAliases = { ...this.params.aliaser }
 
         // set symbols
         this._functionScapeSymbol = Symbol()
@@ -131,12 +123,10 @@ export class EvalMachine {
         this.jail.set('process', process, { configurable: false, writable: false, global: true })
         this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
 
-        this.jail.set('_import', (key, from) => require("import-from")(from ?? this.getDirname(), key), { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
-        this.jail.set('module', new RequireController.CustomModuleController({ ...this._modulesPaths }), { configurable: false, writable: false, global: true })
+        this.jail.set('module', new RequireController.CustomModuleController({ aliases: this.moduleAliases }), { configurable: false, writable: false, global: true })
         this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
         this.jail.set('__getDirname', () => this.getDirname(), { configurable: false, writable: false, global: true })
-        //this.jail.set('require', new RequireController.CustomModuleController({ ...this._modulesRegistry }), { configurable: false, writable: false, global: true })
 
         this.jail.set('dispatcher', (...context) => this.dispatcher(...context), { configurable: false, writable: false, global: true })
         this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
@@ -177,7 +167,7 @@ export class EvalMachine {
 
     dispatcher() {
         let obj = {}
-        
+
         const exposers = this.context.expose
         const keys = Object.keys(exposers)
 
