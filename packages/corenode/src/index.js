@@ -223,7 +223,9 @@ class Runtime {
                     if (typeof args["_"][2] !== "undefined") {
                         const fileFromArgs = path.resolve(args["_"][2])
                         if (!targetBin && fs.existsSync(fileFromArgs)) {
-                            targetBin = fileFromArgs
+                            if (fs.lstatSync(fileFromArgs).isFile()) {
+                                targetBin = fileFromArgs
+                            }
                         }
                         if (targetBin) {
                             try {
