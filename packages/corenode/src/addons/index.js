@@ -63,7 +63,7 @@ class Addon {
             try {
                 const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
                 if (!fs.existsSync(loaderScriptPath)) {
-                    return verbosity.error(`[${loader.pkg}] Script file not exists: ` + loaderScriptPath)
+                    return verbosity.error(`[${this.loader.pkg}] Script file not exists: ` + loaderScriptPath)
                 }
 
                 this.machine = new EvalMachine({
@@ -131,11 +131,11 @@ export default class AddonsController {
         return this.getAddonsFromPackage(key) ? true : false
     }
 
-    fetchLoaders = (origin) => {
+    fetchLoaders = (origin, maxDepth) => {
         const loaders = []
 
         if (fs.existsSync(origin)) {
-            const dirs = readDirs(origin)
+            const dirs = readDirs(origin, maxDepth ?? 2)
 
             dirs.forEach((dir) => {
                 const loader = path.resolve(dir, defaults.loaderFilename)
