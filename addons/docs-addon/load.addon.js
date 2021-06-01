@@ -4,7 +4,7 @@ module.exports = {
         {
             command: "gendocs",
             exec: (context, args) => {
-                require("./dist/index.js").default(args)
+                require("./dist/index.js.js").default(args)
             }
         }
     ],

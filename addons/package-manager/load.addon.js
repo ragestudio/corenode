@@ -1,6 +1,6 @@
 module.exports = {
     pkg: "package-manager",
-    script: "./src/index.js",
+    script: "./addon/index.js",
     appendCli: [
         {
             command: "install [pkg]",
