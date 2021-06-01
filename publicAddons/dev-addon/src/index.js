@@ -1,8 +1,8 @@
-const path = require('path')
 const fs = require('fs')
+const colors = require('colors')
+
 const { EvalMachine } = require('corenode/dist/vm')
 const getChecksum = require('corenode/dist/libs/checksum').default
-const colors = require('colors')
 
 class Watcher {
     constructor(params) {
