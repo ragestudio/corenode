@@ -1,9 +1,13 @@
 {
-    "name": "next-module",
+    "name": "@corenode/next-addon",
     "version": "0.1.32",
     "addons": {
         "next-addon": "./load.addon.js"
     },
+    "files": [
+        "addon",
+        "load.addon.js"
+    ],
     "license": "ISC",
     "dependencies": {
         "@zeit/next-bundle-analyzer": "^0.1.2",

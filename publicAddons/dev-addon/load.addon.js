@@ -1,6 +1,6 @@
 module.exports = {
     pkg: "dev",
-    script: "./src/index.js",
+    script: "./addon/index.js",
     appendCli: [
         {
             command: "dev [file]",

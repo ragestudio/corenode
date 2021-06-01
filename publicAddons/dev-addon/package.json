@@ -1,9 +1,13 @@
 {
-  "name": "dev-addon",
-  "version": "1.0.0",
+  "name": "@corenode/dev-addon",
+  "version": "0.1.4",
   "addons": {
     "dev-addon": "./load.addon.js"
   },
+  "files": [
+    "addon",
+    "load.addon.js"
+  ],
   "license": "ISC",
   "dependencies": {
     "colors": "^1.4.0"

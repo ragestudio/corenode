@@ -1,5 +1,5 @@
 {
-  "name": "docs-addon",
+  "name": "@corenode/docs-addon",
   "version": "0.20.5",
   "files": [
     "dist",

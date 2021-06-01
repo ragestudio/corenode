@@ -1,6 +1,6 @@
 module.exports = {
     pkg: "next",
-    script: "./src/index.js",
+    script: "./addon/index.js",
     appendCli: [
         {
             command: "next-dev",

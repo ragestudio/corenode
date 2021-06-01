@@ -1,5 +1,5 @@
 {
-  "name": "tests-addon",
+  "name": "@corenode/tests-addon",
   "version": "0.20.5",
   "files": [
     "helpers",
