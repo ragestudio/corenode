@@ -1,12 +1,18 @@
 import fs from 'fs'
 import path from 'path'
 
-export function readDirs(origin) {
+export function readAllDirs(origin, maxDepth) {
     origin = path.resolve(origin)
-    let dirs = []
 
-    function read(dir) {
+    function read(dir, depth) {
+        depth += 1
         let dirs = []
+
+        if (typeof maxDepth !== "undefined") {
+            if (depth >= maxDepth) {
+                return []
+            }
+        }
 
         if (fs.existsSync(dir)) {
             fs.readdirSync(dir).forEach((innerDir) => {
@@ -14,6 +20,10 @@ export function readDirs(origin) {
 
                 if (fs.lstatSync(innerDir).isDirectory()) {
                     dirs.push(innerDir)
+
+                    read(innerDir, depth).forEach((innerDir) => {
+                        dirs.push(innerDir)
+                    })
                 }
             })
         }
@@ -21,16 +31,7 @@ export function readDirs(origin) {
         return dirs
     }
 
-    read(origin).forEach((dir) => {
-        dirs.push(dir)
-
-        const innerDirs = readDirs(dir)
-        if (innerDirs.length > 0) {
-            dirs.push(...innerDirs)
-        }
-    })
-
-    return dirs
+    return read(origin, 0)
 }
 
-export default readDirs
+export default readAllDirs
