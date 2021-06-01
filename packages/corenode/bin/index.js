@@ -35,15 +35,14 @@ try {
     }
 
     let options = {
-        cwd: args.cwd ? args.cwd : process.cwd(),
+        runCli: true,
+        isLocalMode,
+        cwd: args.cwd ? args.cwd : undefined,
         args: args,
         argv: argv
     }
     
-    new Runtime({
-        runCli: true,
-        isLocalMode,
-    }, options)
+    new Runtime(options)
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
     const now = new Date()

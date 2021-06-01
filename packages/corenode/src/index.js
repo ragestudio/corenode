@@ -14,19 +14,18 @@ verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 class Runtime {
-    constructor(load, options) {
+    constructor(load) {
+        this.load = load
         this.isMain = require.main === module
-        this.runParams = { load, options }
-        this.opts = this.runParams.options
 
-        if (this.opts.cwd) {
-            process.chdir(this.opts.cwd)
+        if (this.load.cwd) {
+            process.chdir(this.load.cwd)
         }
-        if (this.opts.args) {
-            process.args = this.opts.args
+        if (this.load.args) {
+            process.args = this.load.args
         }
-        if (this.opts.argv) {
-            process.argv = this.opts.argv
+        if (this.load.argv) {
+            process.argv = this.load.argv
         }
 
         if (typeof (global._inited) === "undefined") {
@@ -207,12 +206,12 @@ class Runtime {
                     console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
                 }
 
-                let { targetBin, isLocalMode } = this.runParams.load
+                let { targetBin, isLocalMode } = this.load
                 if (isLocalMode) {
                     global.isLocalMode = true
                 }
 
-                if (this.runParams.load.runCli) {
+                if (this.load.runCli) {
                     const yparser = require("yargs-parser")
                     const argv = process.argv
                     const args = yparser(argv)
