@@ -4,5 +4,8 @@
   "addons": {
     "dev-addon": "./load.addon.js"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0"
+  }
 }
