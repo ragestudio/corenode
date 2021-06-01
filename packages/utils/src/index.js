@@ -214,3 +214,5 @@ export { default as listAllFiles } from './listAllFiles'
 export { default as safeStringify } from './safeStringify'
 
 export { default as githubReleaseUrl } from './githubReleaseUrl'
+
+export { default as readDirs } from './readDirs'
