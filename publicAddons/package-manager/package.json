@@ -1,0 +1,11 @@
+{
+    "name": "packageManager",
+    "version": "0.1.0",
+    "addons": {
+        "package-manager": "./load.addon.js"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "react": "^17.0.2"
+    }
+}
