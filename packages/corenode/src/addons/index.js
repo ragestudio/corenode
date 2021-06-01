@@ -3,7 +3,7 @@ import path from 'path'
 
 import { getRootPackage } from '../helpers'
 
-let { verbosity, objectToArrayMap } = require('@corenode/utils')
+let { verbosity, objectToArrayMap, readDirs } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[ADDONS]`, time: false })
 
 const { EvalMachine } = require("../vm")
@@ -131,40 +131,21 @@ export default class AddonsController {
         return this.getAddonsFromPackage(key) ? true : false
     }
 
-    resolveLoader(origin) {
-        let loaders = []
-        let dirs = []
-
-        if (typeof (origin) === "string") {
-            dirs.push(origin)
-        }
-        if (Array.isArray(origin)) {
-            dirs = origin
-        }
-
-        dirs.forEach((dir) => {
-            const loader = `${dir}/${this.defaultLoader}`
-            if (fs.existsSync(loader)) {
-                loaders.push(loader)
-            }
-        })
-
-        return loaders
-    }
-
-    fetch = (origin) => {
-        const addons = []
+    fetchLoaders = (origin) => {
+        const loaders = []
 
         if (fs.existsSync(origin)) {
-            fs.readdirSync(origin).forEach((dir) => {
-                const addonsPath = path.resolve(origin, dir)
-                if (fs.existsSync(addonsPath)) {
-                    addons.push(addonsPath)
+            const dirs = readDirs(origin)
+
+            dirs.forEach((dir) => {
+                const loader = path.resolve(dir, defaults.loaderFilename)
+                if (fs.existsSync(loader)) {
+                    loaders.push(loader)
                 }
             })
         }
 
-        return this.resolveLoader(addons)
+        return loaders
     }
 
     fetchAllLoaders() {
@@ -174,7 +155,11 @@ export default class AddonsController {
             allLoaders.push(addon.value)
         })
 
-        this.fetch(this.externalAddonsPath).forEach((addon) => {
+        this.fetchLoaders(this.externalAddonsPath).forEach((addon) => {
+            allLoaders.push(addon)
+        })
+
+        this.fetchLoaders(path.resolve(process.cwd(), `node_modules`)).forEach((addon) => {
             allLoaders.push(addon)
         })
 
