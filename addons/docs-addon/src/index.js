@@ -119,7 +119,7 @@ export function generateDocs(params) {
     if (buildFromProject) {
         let includes = []
 
-        const pkgsFromRuntime = getProjectEnv().devRuntime?.docs
+        const pkgsFromRuntime = getProjectEnv().development?.docs
         const allPackages = getPackages()
 
         if (typeof (pkgsFromRuntime) !== "undefined") {

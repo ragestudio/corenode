@@ -65,10 +65,7 @@ export async function addonInstall(_pathFile) {
                 verbosity.options({ dumpFile: true }).warn(`Ignoring dependencies installation`)
             } else {
                 objectToArrayMap(_manifestSetup.dependencies).forEach((dep) => {
-                    const isInstalled = helpers.isDependencyInstalled(dep.key) ? true : false
-                    if (!isInstalled) {
-                        helpers.addDependency(dep, true)
-                    }
+                    // install dependencies
                 })
             }
         }

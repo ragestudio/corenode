@@ -1,6 +1,6 @@
 {
   "version": "0.24.0",
-  "devRuntime": {
+  "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
     "docs": [

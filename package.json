@@ -9,7 +9,7 @@
     "postinstall": "npm run initBuilder",
     "initBuilder": "node ./postinstall/index.js",
     "firstInstall": "cross-env INSTALL_INIT=true node ./postinstall/index.js",
-    "debug": "cross-env LOCAL_BIN=true DEBUG=true --inspect-brk node ./packages/corenode/bin/index.js",
+    "debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./packages/corenode/bin/index.js",
     "local": "cross-env LOCAL_BIN=true node ./packages/corenode/bin/index.js",
     "prod": "cross-env LOCAL_BIN=false node ./packages/corenode/bin/index.js",
     "builder": "node ./packages/builder/cli.js",

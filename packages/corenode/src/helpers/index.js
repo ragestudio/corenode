@@ -22,7 +22,7 @@ export function getVersion(opts) {
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
         const pkgProject = fs.existsSync(projectPkgPath) ? require(projectPkgPath) : {}
-        
+
         if (opts?.engine) {
             version = pkgEngine["version"] ?? "0.0.0"
         } else {
@@ -50,15 +50,11 @@ export function getProjectEnv() {
 
 /**
  * Get `originGit` from `.corenode` env 
- * @function getGit 
+ * @function getOriginGit 
  * @returns {string} originGit
  */
-export function getGit() {
-    const envs = getProjectEnv().devRuntime
-    if (!envs || typeof (envs.originGit) == "undefined") {
-        return false
-    }
-    return envs.originGit
+export function getOriginGit() {
+    return getProjectEnv().development
 }
 
 /**
@@ -69,16 +65,6 @@ export function getGit() {
  */
 export function getPackages(params) {
     return readRootDirectorySync("packages", params)
-}
-
-/**
- * Get all dependent modules from current project
- * @function getInstalledDependencies 
- * @param {boolean} [params.fullPath = false] Return array with full path to packages
- * @returns {array} Packages names
- */
-export function getInstalledDependencies(params) {
-    return readRootDirectorySync("node_modules", params)
 }
 
 /**
@@ -132,43 +118,6 @@ export function isProjectMode(dir) {
     }
 
     return false
-}
-
-export function modifyRuntimeEnv(mutation) {
-    // TODO: modifyRuntimeEnv
-}
-
-/**
- * Check if an dependecy is installed on current project
- * @function isDependencyInstalled 
- * @param name Package name
- * @returns {boolean}
- */
-export function isDependencyInstalled(name) {
-    const currentPackages = getRootPackage().dependencies ?? {}
-    return currentPackages[name] ?? false
-}
-
-/**
- * Add an dependecy to package of the current project
- * @function addDependency
- * @param dependency.key NPM Package name
- * @param dependency.value NPM Package version
- * @param [write = false] Write to package.json
- * @returns {object} Updated package.json
- */
-
-// TODO: Support append to devDependencies
-export function addDependency(dependency, write = false) {
-    const projectPkgPath = global._packages._project
-
-    let packageJSON = getRootPackage() ?? {}
-    packageJSON.dependencies[dependency.key] = dependency.value
-
-    if (write) {
-        fs.writeFileSync(projectPkgPath, JSON.stringify(packageJSON, null, 2) + '\n', 'utf-8')
-    }
-    return packageJSON
 }
 
 /**
@@ -240,11 +189,11 @@ export function syncPackageVersionFromName(name, write) {
         if (pkg) {
             pkg.version = currentVersion
 
-            if (typeof (pkg["dependencies"]) !== "undefined" && typeof (global._env.devRuntime?.headPackage) !== "undefined") {
+            if (typeof (pkg["dependencies"]) !== "undefined" && typeof (global._env.development?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
                     // TODO: Support multiple packages
-                    // TODO: Support packagejson fallback if not `devRuntime.headPackage` is available
-                    if (name.startsWith(`@${global._env.devRuntime?.headPackage}`)) {
+                    // TODO: Support packagejson fallback if not `development.headPackage` is available
+                    if (name.startsWith(`@${global._env.development?.headPackage}`)) {
                         pkg["dependencies"][name] = currentVersion
                     }
                 })
@@ -278,6 +227,6 @@ export function syncAllPackagesVersions() {
 }
 
 function rewriteRuntimeEnv() {
-    verbosity.options({ dumpFile: true, time: false, method: false }).warn(`Runtime environment rewrited > ${global._envpath}`)
-    return fs.writeFileSync(global._envpath, JSON.stringify(global._env, null, 2) + '\n', 'utf-8')
+    verbosity.options({ dumpFile: true, time: false, method: false }).warn(`Runtime environment rewrited > ${global.project._envpath}`)
+    return fs.writeFileSync(global.project._envpath, JSON.stringify(global._env, null, 2) + '\n', 'utf-8')
 }

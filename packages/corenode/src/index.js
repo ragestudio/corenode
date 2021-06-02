@@ -41,6 +41,8 @@ class Runtime {
             process.runtime = {}
         }
 
+        global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
+
         // Create controllers
         this.controller = {}
         this.helpers = require("./helpers")
@@ -81,7 +83,6 @@ class Runtime {
 
     createProjectGlobal(instance = {}) {
         instance.version = this.helpers.getVersion({ engine: false })
-        instance._versionScheme = { mayor: 0, minor: 1, patch: 2 }
 
         instance._envpath = this.get.paths._env()
         instance._runtimeSource = this.get.paths._src()

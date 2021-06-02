@@ -6,7 +6,7 @@ import execa from 'execa'
 
 import { Observable } from 'rxjs'
 
-import { getPackages, getGit, getVersion, isProjectMode } from 'corenode'
+import { getPackages, getOriginGit, getVersion, isProjectMode } from 'corenode'
 import buildProject from '@corenode/builder'
 import getChangelogs from '../getChangelogs'
 
@@ -17,7 +17,7 @@ export function publishProject(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
 
-        const gitRemote = getGit()
+        const gitRemote = getOriginGit()
         const isProject = isProjectMode()
 
         let config = {

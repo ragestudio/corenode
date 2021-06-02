@@ -19,7 +19,7 @@
             "request": "launch",
             "internalConsoleOptions": "openOnSessionStart",
             "console": "integratedTerminal",
-            "program": "${workspaceFolder}/packages/corenode/bin.js",
+            "program": "${workspaceFolder}/packages/corenode/bin",
             "args": [
                 "${file}",
             ],

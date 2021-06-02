@@ -1,17 +1,17 @@
 import { existsSync, writeFileSync } from 'fs'
 import path from 'path'
-import { getGit, getProjectEnv, getVersion, getPackages } from 'corenode'
+import { getOriginGit, getProjectEnv, getVersion, getPackages } from 'corenode'
 
 export default async (params) => {
   return new Promise(async (resolve, reject) => {
     {
       const version = getVersion()
-      const devRuntime = getProjectEnv().devRuntime
+      const devRuntime = getProjectEnv().development
       const pkgs = getPackages()
 
       let opt = {
         license: 'MIT',
-        originGit: getGit(),
+        originGit: getOriginGit(),
         headPackage: devRuntime.headPackage,
         force: false
       }
