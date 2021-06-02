@@ -124,7 +124,12 @@ export function publishProject(args) {
                         try {
                             execa.sync('git', ['tag', releaseTag])
                             execa.sync('git', ['push', 'origin', 'master', '--tags'])
+                        } catch (error) {
+                            process.runtime.logger.dump(error)
+                            return task.skip(`❌ Failed to tag release > ${error.message}`)
+                        }
 
+                        try {
                             const newGithubReleaseUrl = githubReleaseUrl({
                                 repoUrl: gitRemote,
                                 tag: releaseTag,
