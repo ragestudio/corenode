@@ -71,7 +71,7 @@ class Addon {
                     cwd: this.loader.dirname,
                 })
 
-                process.runtime.appendToController(`${this.loader.pkg}`, (...context) => this.machine.run(...context))
+                process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
                 verbosity.dump(error)
                 verbosity.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initalization >`, error)
