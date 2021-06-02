@@ -29,6 +29,9 @@ let commandMap = [
                     break
                 }
                 default: {
+                    if (!process.runtime.addons) {
+                        return console.log(`!!! Addons manager are disabled`)
+                    }
                     const allAddons = process.runtime.addons.getLoadedAddons()
                     const pt = new prettyTable()
 

@@ -151,8 +151,10 @@ class Runtime {
                     }
 
                     // create new addonController
-                    const addonController = require("./addons").default
-                    this.addons = new addonController()
+                    if (!this.load.disableAddons) {
+                        const addonController = require("./addons").default
+                        this.addons = new addonController()
+                    }
 
                     // flag runtime as inited
                     global._inited = true

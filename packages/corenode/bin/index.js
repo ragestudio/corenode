@@ -29,6 +29,7 @@ try {
 
     let options = {
         runCli: true,
+        disableAddons: args.disableAddons,
         isLocalMode,
         cwd: args.cwd,
         args: args,
