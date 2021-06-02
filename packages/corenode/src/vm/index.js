@@ -78,7 +78,7 @@ export class EvalMachine {
             // create script and moduleController
             this.vmt = String(vmt)
         } catch (error) {
-            verbosity.dump(error)
+            process.runtime.logger.dump(error)
             throw new Error(`Cannot load VMT file >> ${error.message}`)
         }
 

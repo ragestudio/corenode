@@ -12,7 +12,7 @@ export function extract(file, extractPath) {
 
         unpackStream.on('progress', (progress) => {
             let printStr = `Extracting ${progress.filename ?? 'file ...'}`
-            verbosity.dump(printStr)
+            console.log(printStr)
         })
 
         unpackStream.on('end', () => {
@@ -20,7 +20,8 @@ export function extract(file, extractPath) {
         })
 
         unpackStream.on('error', (err) => {
-            verbosity.options({ dumpFile: 'only' }).error(err)
+            process.runtime.logger.dump(err)
+            verbosity.error(err)
             return reject(err)
         })
     })

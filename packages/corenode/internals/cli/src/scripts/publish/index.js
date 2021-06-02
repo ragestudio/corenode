@@ -85,11 +85,11 @@ export function publishProject(args) {
                                     execa('npm', cliArgs, { cwd: packagePath })
                                         .then((stdout) => {
                                             publishCount += 1
-                                            verbosity.dump(logOutput)
+                                            process.runtime.logger.dump(logOutput)
                                             observer.next(logOutput)
 
                                             if (publishCount == (projectPackages.length - 1)) {
-                                                verbosity.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                                process.runtime.logger.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                                 observer.complete()
                                             }
                                         })
@@ -98,7 +98,7 @@ export function publishProject(args) {
                                 }
                             } else {
                                 const errstr = `❌ ${pkg} has no valid package.json`
-                                verbosity.dump(errstr)
+                                process.runtime.logger.dump(errstr)
                                 observer.next(errstr)
                             }
 
@@ -137,7 +137,7 @@ export function publishProject(args) {
 
                             return res()
                         } catch (error) {
-                            verbosity.dump(error)
+                            process.runtime.logger.dump(error)
                             return task.skip(`❌ Failed github publish, skipping`)
                         }
                     })

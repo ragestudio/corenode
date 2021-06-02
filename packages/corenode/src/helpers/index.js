@@ -251,7 +251,7 @@ export function syncPackageVersionFromName(name, write) {
             }
 
             if (write) {
-                verbosity.dump(`writting update version on package [${name}] > ${pkgJSONPath} > ${JSON.stringify(pkg)}`)
+                process.runtime.logger.dump(`writting update version on package [${name}] > ${pkgJSONPath} > ${JSON.stringify(pkg)}`)
                 fs.writeFileSync(pkgJSONPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
             }
 

@@ -39,7 +39,7 @@ class Addon {
                     this.loader.file = this.params.loader
                 }
             } catch (error) {
-                verbosity.dump(error)
+                process.runtime.logger.dump(error)
                 verbosity.error(`Cannot read addon loader > ${error.message}`)
             }
         } else {
@@ -73,7 +73,7 @@ class Addon {
 
                 process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
-                verbosity.dump(error)
+                process.runtime.logger.dump(error)
                 verbosity.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initalization >`, error)
             }
         }
@@ -93,7 +93,7 @@ class Addon {
             try {
                 this.loader.init()
             } catch (error) {
-                verbosity.dump(error)
+                process.runtime.logger.dump(error)
                 verbosity.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
             }
         }

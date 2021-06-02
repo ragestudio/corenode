@@ -136,10 +136,6 @@ class verbosity {
         return this
     }
 
-    dump(...context) {
-        this.output('info', { ...this._options, dumpFile: "only" }, this._colors, ...context)
-        return this
-    }
     log(...context) {
         this.output('log', this._options, this._colors, ...context)
         return this
