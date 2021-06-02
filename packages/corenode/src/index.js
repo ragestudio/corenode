@@ -83,7 +83,7 @@ class Runtime {
                 global[key] = {}
             }
         })
-        
+
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
         global.isLocalMode = false
 
@@ -129,29 +129,8 @@ class Runtime {
 
     startREPL() {
         try {
-            const repl = require('repl')
-            const machine = new EvalMachine()
-
-            machine.onDestroy((address) => {
-                console.error(`🛑 VM[${address}] Has been destroyed`)
-                process.exit()
-            })
-
-            function fnEv(cmd, context, filename, callback) {
-                try {
-                    const out = machine.run(cmd, { babelTransform: false })
-                    callback(null, out)
-                } catch (error) {
-                    return callback(error.message)
-                }
-            }
-
-            console.log(`|  REPL Console | v${this.version}_${process.versions.node} |\n`)
-            repl.start({
-                prompt: `#> `,
-                useColors: true,
-                eval: fnEv
-            })
+            const { REPLMachine } = require('./repl')
+            new REPLMachine().start()
         } catch (error) {
             console.error(error)
             verbosity.error(`Error starting eval machine > ${error}`)
@@ -177,9 +156,6 @@ class Runtime {
 
                 // set version controller
                 this.version = this.helpers.getVersion({ engine: true })
-                this._version = schemizedParse(this.version, Object.keys(global._versionScheme), '.')
-
-                // set aliasers
 
                 // create new addonController
                 const addonController = require("./addons").default
@@ -217,7 +193,7 @@ class Runtime {
                     const args = yparser(argv)
 
                     process.yargv = args
-                    
+
                     // TODO: overrides cli commands over file loader
                     if (typeof args["_"][2] !== "undefined") {
                         const fileFromArgs = path.resolve(args["_"][2])
