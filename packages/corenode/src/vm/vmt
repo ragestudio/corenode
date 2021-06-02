@@ -1,5 +1,0 @@
-var controller = runtime.controller;
-var require = module.createRequire(__getDirname());
-var logger = runtime.logger.log
-var project = global.project
-

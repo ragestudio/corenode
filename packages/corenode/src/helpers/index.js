@@ -3,7 +3,7 @@ import process from 'process'
 import fs from 'fs'
 
 let { schemizedStringify, schemizedParse, verbosity, readRootDirectorySync } = require('@corenode/utils')
-verbosity = verbosity.options({ method: "[RUNTIME]" })
+verbosity = verbosity.options({ method: "[HELPERS]" })
 
 /**
  * Get parsed version of package

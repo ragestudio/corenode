@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@babel/cli": "7.14.3",
     "@babel/core": "^7.13.1",
     "@babel/node": "^7.13.0",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
@@ -54,6 +55,9 @@
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
-    "node-gyp": "^8.0.0"
+    "nexe": "^4.0.0-beta.18",
+    "node-gyp": "^8.0.0",
+    "@vercel/ncc": "^0.28.6",
+    "pkg": "^5.2.1"
   }
 }

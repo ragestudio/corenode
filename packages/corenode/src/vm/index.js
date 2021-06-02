@@ -13,6 +13,13 @@ const objects = require("./objects")
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
 
+const vmt = `
+var controller = runtime.controller;
+var require = module.createRequire(__getDirname());
+var logger = runtime.logger.log;
+var project = global.project;
+`
+
 export class EvalMachine {
     constructor(params) {
         this.params = params ?? {}
@@ -68,18 +75,6 @@ export class EvalMachine {
         } catch (error) {
             getVerbosity().dump(error)
             getVerbosity().error(`[${this.params.file}] Cannot read file/script > ${error.message}`)
-        }
-
-        try {
-            // read vm script template
-            const vmtFile = path.resolve(__dirname, 'vmt')
-            const vmt = fs.readFileSync(vmtFile, 'utf8')
-
-            // create script and moduleController
-            this.vmt = String(vmt)
-        } catch (error) {
-            process.runtime.logger.dump(error)
-            throw new Error(`Cannot load VMT file >> ${error.message}`)
         }
 
         // try to allocate to pool
@@ -158,7 +153,7 @@ export class EvalMachine {
         this.vmController.createContext(this.context)
 
         // run vmt
-        this.run(this.vmt, { babelTransform: false })
+        this.run(vmt, { babelTransform: false })
 
         if (typeof this.params.eval !== "undefined") {
             this.run(this.params.eval, { babelTransform: true })
