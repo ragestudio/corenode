@@ -6,6 +6,7 @@ import path from 'path'
 import fs from 'fs'
 import { EventEmitter } from 'events'
 
+const REPL = require('./repl')
 const { EvalMachine } = require('./vm/index.js')
 const { Logger } = require('./logger')
 
@@ -16,30 +17,33 @@ const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenod
 class Runtime {
     constructor(load) {
         this.load = load
-        this.isMain = require.main === module
 
+        // handle load params
         if (this.load.cwd) {
+            if (!path.isAbsolute(this.load.cwd)) {
+                this.load.cwd = path.resolve(this.load.cwd)
+            }
+
             process.chdir(this.load.cwd)
         }
         if (this.load.args) {
             process.args = this.load.args
         }
-        if (this.load.argv) {
-            process.argv = this.load.argv
-        }
 
-        if (typeof (global._inited) === "undefined") {
+        // set undefined globals
+        if (typeof global._inited === "undefined") {
             global._inited = false
         }
-
-        if (typeof (process.runtime) !== "object") {
+        if (typeof global.isLocalMode === "undefined") {
+            global.isLocalMode = false
+        }
+        if (typeof process.runtime !== "object") {
             process.runtime = {}
         }
 
         // Create controllers
         this.controller = {}
         this.helpers = require("./helpers")
-        this.thread = 0 // By default
         this.addons = null
 
         this.events = new EventEmitter()
@@ -52,7 +56,7 @@ class Runtime {
     get = {
         environmentFiles: () => environmentFiles,
         paths: {
-            _env: () => path.resolve(process.cwd(), '.corenode'),
+            _env: () => global._loadedEnvPath ?? path.resolve(process.cwd(), '.corenode'),
             _src: () => path.resolve(__dirname, ".."),
             _root: () => path.resolve(__dirname, '../../..')
         }
@@ -75,48 +79,32 @@ class Runtime {
         return this.controller[key]
     }
 
-    setGlobals() {
-        const keywords = ["_packages", "_env", "_cli"]
+    createProjectGlobal(instance = {}) {
+        instance.version = this.helpers.getVersion({ engine: false })
+        instance._versionScheme = { mayor: 0, minor: 1, patch: 2 }
 
-        keywords.forEach((key) => {
-            if (typeof (global[key]) === "undefined") {
-                global[key] = {}
-            }
-        })
+        instance._envpath = this.get.paths._env()
+        instance._runtimeSource = this.get.paths._src()
+        instance._runtimeRoot = this.get.paths._root()
 
-        global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
-        global.isLocalMode = false
+        return instance
+    }
 
-        global._envpath = this.get.paths._env()
-        global._runtimeSource = this.get.paths._src()
-        global._runtimeRoot = this.get.paths._root()
+    createRuntimeGlobal(instance = {}) {
+        instance.argvf = process.argv.slice(1)
+        instance.version = this.helpers.getVersion({ engine: true })
+        instance.isMain = require.main === module
 
-        Object.defineProperty(global, '_setPackage', {
-            configurable: false,
-            enumerable: true,
-            writable: false,
-            value: Object.freeze((key, path) => {
-                global._packages[key] = path
-            })
-        })
-        Object.defineProperty(global, '_delPackage', {
-            configurable: false,
-            enumerable: true,
-            writable: false,
-            value: Object.freeze((key) => {
-                delete global._packages[key]
-            })
-        })
-
-        global._setPackage("_engine", path.resolve(__dirname, '../package.json'))
-        global._setPackage("_project", path.resolve(process.cwd(), 'package.json'))
+        return instance
     }
 
     setEnvironment() {
-        environmentFiles.forEach(file => {
+        environmentFiles.forEach((file) => {
             const fromPath = path.resolve(process.cwd(), `./${file}`)
+
             if (fs.existsSync(fromPath)) {
-                global._envpath = fromPath
+                global._loadedEnvPath = fromPath
+
                 try {
                     global._env = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
                 } catch (error) {
@@ -127,53 +115,47 @@ class Runtime {
         })
     }
 
-    startREPL() {
-        try {
-            const { REPLMachine } = require('./repl')
-            new REPLMachine().start()
-        } catch (error) {
-            console.error(error)
-            verbosity.error(`Error starting eval machine > ${error}`)
-        }
-    }
-
     setEvents() {
         this.events.addListener("cli_noCommand", () => {
-            this.startREPL()
+            REPL.attachREPL()
         })
     }
 
     init() {
         return new Promise((resolve, reject) => {
             try {
-                process.runtime = this
-                process.argvf = process.argv.slice(1)
-
                 if (!global._inited) {
-                    this.setGlobals()
+                    global._cli = {}
+                    global._env = {}
+
                     this.setEnvironment()
-                }
 
-                // set version controller
-                this.version = this.helpers.getVersion({ engine: true })
-
-                // create new addonController
-                const addonController = require("./addons").default
-                this.addons = new addonController()
-
-                // detect local mode
-                try {
-                    const rootPkg = this.helpers.getRootPackage()
-
-                    if (rootPkg.name.includes("corenode")) {
-                        global.isLocalMode = true
+                    global._packages = {
+                        _engine: path.resolve(__dirname, '../package.json'),
+                        _project: path.resolve(process.cwd(), 'package.json')
                     }
-                } catch (error) {
-                    // terrible
-                }
 
-                // flag runtime as inited
-                global._inited = true
+                    global.project = this.createProjectGlobal()
+                    process.runtime = this.createRuntimeGlobal(this)
+
+                    // detect local mode
+                    try {
+                        const rootPkg = this.helpers.getRootPackage()
+
+                        if (rootPkg.name.includes("corenode")) {
+                            global.isLocalMode = true
+                        }
+                    } catch (error) {
+                        // terrible
+                    }
+
+                    // create new addonController
+                    const addonController = require("./addons").default
+                    this.addons = new addonController()
+
+                    // flag runtime as inited
+                    global._inited = true
+                }
 
                 // warn local mode
                 if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
@@ -187,21 +169,23 @@ class Runtime {
                     global.isLocalMode = true
                 }
 
+                // load
                 if (this.load.runCli) {
-                    const yparser = require("yargs-parser")
-                    const argv = process.argv
-                    const args = yparser(argv)
+                    const args = require("yargs-parser")(process.argv)
 
-                    process.yargv = args
+                    process.parsedArgs = args
+                    process.runtime.repl = REPL
 
                     // TODO: overrides cli commands over file loader
                     if (typeof args["_"][2] !== "undefined") {
                         const fileFromArgs = path.resolve(args["_"][2])
+
                         if (!targetBin && fs.existsSync(fileFromArgs)) {
                             if (fs.lstatSync(fileFromArgs).isFile()) {
                                 targetBin = fileFromArgs
                             }
                         }
+
                         if (targetBin) {
                             try {
                                 if (!fs.existsSync(targetBin)) {
@@ -219,7 +203,7 @@ class Runtime {
                             return require('../internals/cli/dist')
                         }
                     } else {
-                        this.startREPL()
+                        REPL.attachREPL()
                     }
                 }
 

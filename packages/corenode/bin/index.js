@@ -8,8 +8,7 @@ const yparser = require("yargs-parser")
 const localPkgJson = `${process.cwd()}/package.json`
 const fatalCrashLogFile = path.resolve(process.cwd(), '.crash.log')
 
-const argv = process.argv
-const args = yparser(argv)
+const args = yparser(process.argv)
 
 let targetBin = null
 let isLocalMode = false
@@ -28,18 +27,11 @@ if (fs.existsSync(localPkgJson)) {
 try {
     const { Runtime } = require('../dist/index.js')
 
-    if (args.cwd) {
-        if (!path.isAbsolute(args.cwd)) {
-            args.cwd = path.resolve(args.cwd)
-        }
-    }
-
     let options = {
         runCli: true,
         isLocalMode,
-        cwd: args.cwd ? args.cwd : undefined,
+        cwd: args.cwd,
         args: args,
-        argv: argv
     }
     
     new Runtime(options)
