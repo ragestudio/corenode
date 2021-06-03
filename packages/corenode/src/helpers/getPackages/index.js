@@ -1,4 +1,5 @@
-import { readRootDirectorySync } from '@corenode/utils'
+import path from 'path'
+import { readRootDirectorySync, isProjectMode } from '@corenode/utils'
 
 /**
  * Get all packages from current project
@@ -7,6 +8,10 @@ import { readRootDirectorySync } from '@corenode/utils'
  * @returns {array} Packages names
  */
 export function getPackages(params) {
+    if (isProjectMode()) {
+        return path.resolve(process.cwd(), './src')
+    }
+
     return readRootDirectorySync("packages", params)
 }
 
