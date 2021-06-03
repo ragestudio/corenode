@@ -6,9 +6,15 @@
   "publishConfig": {
     "access": "public"
   },
+  "license": "MIT",
   "files": [
     "dist",
     "load.addon.js"
   ],
-  "license": "MIT"
+  "originGit": "https://github.com/ragestudio/corenode",
+  "headPackage": "corenode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ragestudio/corenode"
+  }
 }

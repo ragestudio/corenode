@@ -125,7 +125,7 @@ let commandMap = [
         exec: (argv) => {
             bootstrapProject(argv)
                 .then((res) => {
-                    console.log(`\n✅ DONE\nAll packages bootstraped > ${res}\n`)
+                    console.log(`✅ DONE`)
                 })
         }
     },
