@@ -10,10 +10,10 @@ import { readRootDirectorySync } from '@corenode/utils'
  */
 export function getPackages(params) {
     if (isProjectMode()) {
-        return path.resolve(process.cwd(), './src')
+        return readRootDirectorySync("packages", params)
     }
 
-    return readRootDirectorySync("packages", params)
+    return path.resolve(process.cwd(), './src')  
 }
 
 export default getPackages

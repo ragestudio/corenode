@@ -7,8 +7,8 @@ import { verbosity } from '@corenode/utils'
  * @function syncAllPackagesVersions 
  */
 export function syncAllPackagesVersions() {
-    const pkgs = getPackages()
-    pkgs.forEach((pkg) => {
+    const packages = getPackages()
+    packages.forEach((pkg) => {
         try {
             syncPackageVersionFromName(pkg, true)
             verbosity.options({ time: false }).log(`[${pkg}] ✅ New version synchronized`)

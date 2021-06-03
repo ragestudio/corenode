@@ -15,7 +15,6 @@ export function isProjectMode(dir) {
         if (fs.readdirSync(packagesDir)) {
             return true
         }
-        return false
     }
 
     return false
