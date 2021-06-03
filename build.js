@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const rimraf = require('rimraf')
 const { compile } = require('nexe')
 
 const buildsPath = path.resolve(process.cwd(), "./build")
