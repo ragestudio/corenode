@@ -207,7 +207,7 @@ export { default as doArray } from './doArray'
 
 export { default as doWithMap } from './doWithMap'
 
-export { default as addressFileStream } from './addressFileStream'
+export { default as createHttpGetStream } from './createHttpGetStream'
 
 export { default as listAllFiles } from './listAllFiles'
 
