@@ -1,0 +1,14 @@
+{
+  "name": "@corenode/ual",
+  "version": "0.24.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "load.addon.js"
+  ],
+  "license": "MIT"
+}
