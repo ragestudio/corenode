@@ -1,5 +1,6 @@
 import path from 'path'
-import { readRootDirectorySync, isProjectMode } from '@corenode/utils'
+import isProjectMode from '../isProjectMode'
+import { readRootDirectorySync } from '@corenode/utils'
 
 /**
  * Get all packages from current project
