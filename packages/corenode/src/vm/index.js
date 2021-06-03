@@ -85,6 +85,7 @@ export class EvalMachine {
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
         this.events = new EventEmitter()
+        this.errorHandler = this.params.onError
 
         if (!this.params.isolatedContext) {
             this.context = { ...this.context, ...global }
@@ -284,17 +285,25 @@ export class EvalMachine {
             }
         }
 
-        if (options.babelTransform) {
-            exec = babel.transformSync(exec, { ...this.babelOptions, ...options.babelOptions }).code
-        }
+        try {
+            if (options.babelTransform) {
+                exec = babel.transformSync(exec, { ...this.babelOptions, ...options.babelOptions }).code
+            }
 
-        const vmscript = new this.vmController.Script(exec, this.scriptOptions)
-        const _run = vmscript.runInContext(this.context)
+            const vmscript = new this.vmController.Script(exec, this.scriptOptions)
+            const _run = vmscript.runInContext(this.context)
 
-        if (typeof callback === "function") {
-            callback(_run)
+            if (typeof callback === "function") {
+                callback()
+            }
+            return _run
+        } catch (error) {
+            if (typeof this.errorHandler === "function") {
+                return this.errorHandler(error)
+            } else {
+                throw error
+            }
         }
-        return _run
     }
 
     runSync() {

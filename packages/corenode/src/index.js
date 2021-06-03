@@ -195,11 +195,15 @@ class Runtime {
                                     throw new Error(`Cannot read loader script [${targetBin}]`)
                                 }
                                 new EvalMachine({
-                                    file: targetBin
+                                    file: targetBin,
+                                    onError: (err) => {
+                                        this.logger.dump("error", err.toString())
+                                        verbosity.options({ method: "[script]", file: targetBin }).error(err)
+                                    }
                                 })
                             } catch (error) {
                                 this.logger.dump("error", error.toString())
-                                verbosity.options({ method: "[RUNTIME]" }).error(`Main loader > ${error.message}`)
+                                verbosity.error(`${error.message}`)
                                 console.log("This error has been exported, check the log file for more details")
                             }
                         } else {
