@@ -29,10 +29,6 @@ export default async (params) => {
         fields.originGit = devEnv.originGit
       }
 
-      if (typeof devEnv.headPackage !== "undefined") {
-        fields.headPackage = devEnv.headPackage
-      }
-
       if (typeof devEnv.publishAccess !== "undefined") {
         fields.publishConfig = {
           access: devEnv.publishAccess
