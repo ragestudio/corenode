@@ -1,64 +1,84 @@
-import { existsSync, writeFileSync } from 'fs'
+import fs from 'fs'
 import path from 'path'
-import { getOriginGit, getProjectEnv, getVersion, getPackages } from 'corenode'
+
+import { getPackages, isProjectMode } from 'corenode'
 
 export default async (params) => {
   return new Promise(async (resolve, reject) => {
     {
-      const version = getVersion()
-      const devRuntime = getProjectEnv().development
-      const pkgs = getPackages()
+      const hasPackages = isProjectMode()
+      const projectVersion = global.project.version
+      const devEnv = global._env.development ?? {}
+      const allPackages = getPackages()
 
-      let opt = {
+      let options = {
+        force: false,
+        ...params
+      }
+
+      let fields = {
         license: 'MIT',
-        originGit: getOriginGit(),
-        headPackage: devRuntime.headPackage,
-        force: false
-      }
-      if (params) {
-        opt = { ...opt, ...params }
+        files: ['dist', 'load.addon.js']
       }
 
-      pkgs.forEach((packageName) => {
-        const name = `${opt.headPackage ? `@${opt.headPackage}/` : ''}${packageName}`
-        const pkgPath = path.resolve(process.cwd(), `./packages/${packageName}`)
+      if (typeof devEnv.defaultLicense !== "undefined") {
+        fields.license = devEnv.defaultLicense
+      }
+
+      if (typeof devEnv.originGit !== "undefined") {
+        fields.originGit = devEnv.originGit
+      }
+
+      if (typeof devEnv.headPackage !== "undefined") {
+        fields.headPackage = devEnv.headPackage
+      }
+
+      if (typeof devEnv.publishAccess !== "undefined") {
+        fields.publishConfig = {
+          access: devEnv.publishAccess
+        }
+      }
+
+      if (typeof devEnv.packagesFiles !== "undefined") {
+        fields.files = devEnv.packagesFiles
+      }
+
+      allPackages.forEach((packageName) => {
+        const name = `${fields.headPackage ? `@${fields.headPackage}/` : ''}${packageName}`
+        const pkgPath = hasPackages ? path.resolve(process.cwd(), `./packages/${packageName}`) : process.cwd()
 
         const readmePath = path.resolve(pkgPath, `./README.md`)
         const pkgJSONPath = path.resolve(pkgPath, `./package.json`)
 
-        const pkgJSONExists = existsSync(pkgJSONPath)
-        const readmeExist = existsSync(readmePath)
+        const pkgJSONExists = fs.existsSync(pkgJSONPath)
+        const readmeExist = fs.existsSync(readmePath)
 
-        if (opt.force || !pkgJSONExists) {
-          const json = {
+        if (options.force || !readmeExist) {
+          fs.writeFileSync(readmePath, `# ${name}\n`)
+        }
+
+        if (options.force || !pkgJSONExists) {
+          let content = {
             name,
-            version,
+            version: projectVersion,
             main: 'dist/index.js',
             types: 'dist/index.d.ts',
             publishConfig: {
               access: 'public',
             },
+            ...fields
           }
 
-          if (!pkgJSONExists) {
-            json.version = version
-            json.files = ['dist', 'load.addon.js']
-          }
-
-          if (opt.originGit) {
-            json.repository = {
+          if (fields.originGit) {
+            content.repository = {
               type: 'git',
-              url: opt.originGit,
+              url: fields.originGit,
             }
           }
 
-          if (opt.license) {
-            json.license = opt.license
-          }
-
           if (pkgJSONExists) {
-            const pkg = require(pkgJSONPath);
-            [
+            const pkg = require(pkgJSONPath)
+            const keys = [
               'dependencies',
               'devDependencies',
               'peerDependencies',
@@ -68,20 +88,21 @@ export default async (params) => {
               'sideEffects',
               'main',
               'module',
-            ].forEach((key) => {
-              if (pkg[key]) json[key] = pkg[key];
+            ]
+
+            keys.forEach((key) => {
+              if (pkg[key]) {
+                content[key] = pkg[key]
+              }
             })
           }
-          writeFileSync(pkgJSONPath, `${JSON.stringify(json, null, 2)}\n`)
+
+          fs.writeFileSync(pkgJSONPath, `${JSON.stringify(content, null, 2)}\n`)
         }
 
-        if (packageName !== opt.headPackage) {
-          if (opt.force || !readmeExist) {
-            writeFileSync(readmePath, `# ${name}\n`)
-          }
-        }
       })
-      return resolve(pkgs)
+
+      return resolve()
     }
   })
 }
