@@ -1,6 +1,6 @@
 {
   "name": "@corenode/ual",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -16,5 +16,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ragestudio/corenode"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
   }
 }
