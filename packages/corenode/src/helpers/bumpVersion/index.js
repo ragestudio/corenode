@@ -1,3 +1,4 @@
+import fs from 'fs'
 import getVersion from '../getVersion'
 import { schemizedParse, schemizedStringify, verbosity } from '@corenode/utils'
 
