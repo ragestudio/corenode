@@ -81,7 +81,7 @@ class Addon {
         if (typeof this.loader.appendCli !== "undefined") {
             if (Array.isArray(this.loader.appendCli)) {
                 this.loader.appendCli.forEach((entry) => {
-                    if (typeof (global._cli.custom) == "undefined") {
+                    if (typeof global._cli.custom === "undefined") {
                         global._cli.custom = []
                     }
                     global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
