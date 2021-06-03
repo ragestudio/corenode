@@ -158,6 +158,8 @@ export class EvalMachine {
         if (typeof this.params.eval !== "undefined") {
             this.run(this.params.eval, { babelTransform: true })
         }
+
+        return this
     }
 
     dispatcher() {
