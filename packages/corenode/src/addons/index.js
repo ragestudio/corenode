@@ -119,7 +119,12 @@ export default class AddonsController {
 
     loadAddon(loader) {
         const addon = new Addon({ loader })
-        this.appendLoader(addon.load())
+
+        // check if the addon is not loaded
+        if (typeof this.loaders[addon.loader.pkg] === "undefined") {
+            addon.load()
+            this.appendLoader(addon.loader)
+        }
     }
 
     appendLoader = (addon) => {
