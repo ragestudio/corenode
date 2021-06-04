@@ -6,12 +6,11 @@ import path from 'path'
 import fs from 'fs'
 import { EventEmitter } from 'events'
 
+import { verbosity } from '@corenode/utils'
+
 const REPL = require('./repl')
 const { EvalMachine } = require('./vm/index.js')
 const { Logger } = require('./logger')
-
-let { verbosity, schemizedParse } = require('@corenode/utils')
-verbosity = verbosity.options({ method: "[RUNTIME]" })
 
 const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 class Runtime {
@@ -203,7 +202,7 @@ class Runtime {
                                 })
                             } catch (error) {
                                 this.logger.dump("error", error.toString())
-                                verbosity.error(`${error.message}`)
+                                verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
                                 console.log("This error has been exported, check the log file for more details")
                             }
                         } else {
