@@ -230,7 +230,7 @@ export function buildProject(opts) {
 
         builderErrors.forEach((err) => {
           let obj = { ...err }
-          log.dump("warn", `[${obj.task ?? "UNTASKED"}][${obj.dir}] BUILD ERROR >> ${obj.message}`)
+          log.dump("warn", `BUILD ERROR >> [${obj.task ?? "UNTASKED"}][${obj.dir}] >> ${obj.message}`)
 
           if (obj?.message?.length > maximunLenghtErrorShow) {
             obj.message = (String(obj.message).slice(0, (maximunLenghtErrorShow - 3)) + "...")
