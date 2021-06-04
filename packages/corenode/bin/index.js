@@ -10,7 +10,6 @@ const fatalCrashLogFile = path.resolve(process.cwd(), '.crash.log')
 
 const args = yparser(process.argv)
 
-let targetBin = null
 let isLocalMode = false
 
 if (fs.existsSync(localPkgJson)) {
