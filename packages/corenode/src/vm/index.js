@@ -151,6 +151,7 @@ export class EvalMachine {
 
         // create context
         this.context = { ...this.context, ...this.jail.get() }
+        this.context.global.runtime = process.runtime
         this.vmController.createContext(this.context)
 
         // run vmt
