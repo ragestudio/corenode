@@ -11,7 +11,9 @@ import through from 'through2'
 
 import * as lib from './lib'
 
-let env = {}
+let env = {
+  babel: {}
+}
 let builderErrors = Array()
 
 let includedSources = null
@@ -36,7 +38,7 @@ function canRead(dir) {
   }
 }
 
-export function build(payload) {
+export function babelBuild(payload) {
   return new Promise((resolve, reject) => {
     let { dir, opts, ticker } = payload
     let options = {
@@ -98,7 +100,10 @@ export function build(payload) {
           }
 
           if (fileExtWatch.includes(path.extname(file.path))) {
+            // set env
             env.babel.filename = file.path
+
+            // exec babel agent
             lib.agents[options.agent](file.contents, { ...env.babel, filename: file.path })
               .then((_output) => {
                 file.contents = Buffer.from(_output.code)
@@ -154,7 +159,10 @@ export function buildProject(opts) {
     let packages = isProjectMode ? readDir(packagesPath) : ["./"]
 
     try {
-      env = lib.getBuilderEnv(from)
+      const projectEnv = lib.getBuilderEnv(from)
+      if (projectEnv) {
+        env = { ...projectEnv }
+      }
     } catch (error) {
       handleError(error.message)
     }
@@ -306,7 +314,7 @@ export function buildProject(opts) {
       }
 
       // start builder
-      build({ dir, opts, ticker: () => handleTicker(job) })
+      babelBuild({ dir, opts, ticker: () => handleTicker(job) })
         .then((done) => {
           handleThen(job)
         })
