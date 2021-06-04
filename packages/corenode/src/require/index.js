@@ -14,14 +14,14 @@ export class CustomModuleController {
             paths: []
         }
 
-        if (typeof (aliases) === "object") {
+        if (typeof aliases === "object") {
             objectToArrayMap(aliases).forEach((alias) => {
                 Module.overrides.filenames[alias.key] = _path.resolve(alias.value)
             })
         }
 
-        if (typeof (paths) === "object") {
-
+        if (Array.isArray(paths)) {
+            Module.overrides.paths = paths
         }
 
         Module = overrideResolveFilename(Module, Module.overrides.filenames)

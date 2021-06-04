@@ -101,8 +101,9 @@ export class EvalMachine {
             }
         })
 
-        this.moduleAliases = { ...this.params.aliaser, ...global._env.aliases }
-
+        this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
+        this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
+        
         // set symbols
         this._functionScapeSymbol = Symbol()
 
@@ -120,7 +121,7 @@ export class EvalMachine {
         this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
 
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
-        this.jail.set('module', new RequireController.CustomModuleController({ aliases: this.moduleAliases }), { configurable: false, writable: false, global: true })
+        this.jail.set('module', new RequireController.CustomModuleController({ aliases: this.modulesAliases, paths: this.modulesPaths }), { configurable: false, writable: false, global: true })
         this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
         this.jail.set('__getDirname', () => this.getDirname(), { configurable: false, writable: false, global: true })
 
