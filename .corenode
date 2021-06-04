@@ -1,5 +1,5 @@
 {
-  "version": "0.24.5",
+  "version": "0.24.7",
   "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
