@@ -1,6 +1,6 @@
 export class Jail {
     constructor(context) {
-        this.data = {...context} ?? {}
+        this.data = {...context}
         this.global = {}
     }
 
