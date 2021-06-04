@@ -33,3 +33,7 @@ debugger-ui/node_modules
 **/*/.tmp
 **/*/node_modules
 **/*/dist
+
+**/*/dumps.log
+**/*/build
+**/*/.DS_Store
