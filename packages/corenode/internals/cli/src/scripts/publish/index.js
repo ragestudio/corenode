@@ -85,11 +85,11 @@ export function publishProject(args) {
                                     execa('npm', cliArgs, { cwd: packagePath })
                                         .then((stdout) => {
                                             publishCount += 1
-                                            process.runtime.logger.dump(logOutput)
+                                            process.runtime.logger.dump("info", logOutput)
                                             observer.next(logOutput)
 
                                             if (publishCount == (projectPackages.length - 1)) {
-                                                process.runtime.logger.dump(`NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                                process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                                 observer.complete()
                                             }
                                         })
@@ -98,7 +98,7 @@ export function publishProject(args) {
                                 }
                             } else {
                                 const errstr = `❌ ${pkg} has no valid package.json`
-                                process.runtime.logger.dump(errstr)
+                                process.runtime.logger.dump("error", errstr)
                                 observer.next(errstr)
                             }
 
@@ -117,7 +117,8 @@ export function publishProject(args) {
                         try {
                             changelogNotes = getChangelogs(gitRemote)
                         } catch (error) {
-                            verbosity.options({ dumpFile: true, method: false }).warn(`⚠️  Get changelogs failed!\n`)
+                            process.runtime.logger.dump("error", error)
+                            verbosity.options({ method: false }).warn(`⚠️  Get changelogs failed!\n`)
                             // really terrible
                         }
 
@@ -125,7 +126,7 @@ export function publishProject(args) {
                             execa.sync('git', ['tag', releaseTag])
                             execa.sync('git', ['push', 'origin', 'master', '--tags'])
                         } catch (error) {
-                            process.runtime.logger.dump(error)
+                            process.runtime.logger.dump("error", error)
                             return task.skip(`❌ Failed to tag release > ${error.message}`)
                         }
 
@@ -142,7 +143,7 @@ export function publishProject(args) {
 
                             return res()
                         } catch (error) {
-                            process.runtime.logger.dump(error)
+                            process.runtime.logger.dump("error", error)
                             return task.skip(`❌ Failed github publish, skipping`)
                         }
                     })
@@ -155,7 +156,8 @@ export function publishProject(args) {
                 console.log(`✅ Publish done`)
                 return resolve(true)
             }).catch((error) => {
-                verbosity.options({ dumpFile: true, method: false }).error(`❌ Failed publish >`, error)
+                process.runtime.logger.dump("error", error)
+                verbosity.options({ method: false }).error(`❌ Failed publish >`, error)
                 return reject(error)
             })
     })

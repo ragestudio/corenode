@@ -4,6 +4,7 @@ import fs from 'fs'
 import cliProgress from 'cli-progress'
 
 import { prettyTable } from '@corenode/utils'
+import { Logger } from 'corenode/dist/logger'
 
 import rimraf from 'rimraf'
 import vfs from 'vinyl-fs'
@@ -20,6 +21,8 @@ let includedSources = null
 let skipedSources = null
 
 const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
+
+const log = new Logger()
 
 function handleError(err, index, dir) {
   builderErrors.push({ task: index, message: err, dir: dir })
@@ -241,6 +244,7 @@ export function buildProject(opts) {
 
         console.log(`\n⚠️  ERRORS / WARNINGS DURING BUILDING`)
         pt.print()
+        log.dump("warn", pt.toString())
       }
 
       resolve()

@@ -7,14 +7,13 @@ import { options as CliOptions } from 'jest-cli/build/cli/args'
 import createDefaultConfig from './createDefaultConfig/createDefaultConfig'
 
 let { verbosity, mergeConfig } = require('@corenode/utils')
-verbosity.options({ method: "[TEST]", dumpFile: true })
+verbosity.options({ method: "[TEST]" })
 
 export * from './utils'
 
 export default async function (args) {
   process.env.NODE_ENV = 'test'
   verbosity.log(`🚧  Starting JEST tests...`)
-  verbosity.dump(`args: ${JSON.stringify(args)}`)
 
   const cwd = args.cwd || process.cwd()
 
@@ -22,13 +21,11 @@ export default async function (args) {
   const userJestConfigFile = join(cwd, 'jest.config.js')
   const userJestConfig = existsSync(userJestConfigFile) && require(userJestConfigFile)
 
-  verbosity.dump(`config from jest.config.js: ${JSON.stringify(userJestConfig)}`)
 
   // Read jest config from package.json
   const packageJSONPath = join(cwd, 'package.json')
   const packageJestConfig = existsSync(packageJSONPath) && require(packageJSONPath).jest
 
-  verbosity.dump(`jest config from package.json: ${JSON.stringify(packageJestConfig)}`)
 
   // Merge configs
   // user config and args config could have value function for modification
@@ -37,7 +34,6 @@ export default async function (args) {
     packageJestConfig,
     userJestConfig,
   )
-  verbosity.dump(`final config: ${JSON.stringify(config)}`)
 
   // Generate jest options
   const argsConfig = Object.keys(CliOptions).reduce((prev, name) => {
@@ -48,7 +44,6 @@ export default async function (args) {
     if (alias && args[alias]) prev[name] = args[alias]
     return prev
   })
-  verbosity.dump(`config from args: ${JSON.stringify(argsConfig)}`)
 
   // Run jest
   const result = await runCLI(
@@ -60,7 +55,6 @@ export default async function (args) {
     },
     [cwd],
   )
-  verbosity.dump(`JEST returns results >`, result)
 
   // Throw error when run failed
   assert(result.results.success, `Test with jest failed`)

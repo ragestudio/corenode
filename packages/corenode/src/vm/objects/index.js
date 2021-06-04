@@ -4,7 +4,8 @@ let vmObjects = {
     Error: class OverrideError extends Error {
         constructor(...context) {
             super(...context)
-            verbosity.options({ method: `[Unhandled ThrowError]`, dump: true, dumpFile: true }).error(...context)
+            process.runtime.logger.dump("error", error)
+            verbosity.options({ method: `[Unhandled ThrowError]` }).error(...context)
         }
     },
     out: function (...args) {

@@ -55,7 +55,7 @@ export class EvalMachine {
                 }
             }
         } catch (error) {
-            getVerbosity().dump(error)
+            process.runtime.logger.dump("error", error)
             getVerbosity().error(`Cannot check eval file/script > ${error.message}`)
         }
 
@@ -73,7 +73,7 @@ export class EvalMachine {
                 }
             }
         } catch (error) {
-            getVerbosity().dump(error)
+            process.runtime.logger.dump("error", error)
             getVerbosity().error(`[${this.params.file}] Cannot read file/script > ${error.message}`)
         }
 
@@ -324,7 +324,7 @@ export class EvalMachine {
                     return resolve(result)
                 })
                 .catch((error) => {
-                    getVerbosity().dump(error)
+                    process.runtime.logger.dump("error", error)
                     getVerbosity().error(error)
                     return reject(`Unavailable`)
                 })

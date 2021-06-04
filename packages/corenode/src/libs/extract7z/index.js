@@ -20,7 +20,7 @@ export function extract(file, extractPath) {
         })
 
         unpackStream.on('error', (err) => {
-            process.runtime.logger.dump(err)
+            process.runtime.logger.dump("error", err)
             verbosity.error(err)
             return reject(err)
         })

@@ -19,7 +19,6 @@ const defaultDecoratorOptions = Object.freeze({
     line: false,
     file: false,
     method: true,
-    dumpFile: false,
 })
 const defaultDecoratorData = Object.freeze({
     time: new Date().toLocaleTimeString(),

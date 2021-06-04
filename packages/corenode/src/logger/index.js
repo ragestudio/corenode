@@ -45,14 +45,13 @@ export class Logger {
                 timestamp(),
                 printf(({ message, label, timestamp }) => {
                     switch (label) {
-                        case "error":{
+                        case "error": {
                             return `> ${timestamp} (${stack?.functionName ?? "anonymous"})[error] : ${message} \n\t ${stack.toString()}`
                         }
 
                         default:
                             return `> ${timestamp} (${stack?.functionName ?? "anonymous"})[${label ?? "log"}] : ${message}`
                     }
-                   
                 })
             ),
             transports: [
