@@ -20,10 +20,10 @@ export default class OSMonitor extends React.Component { // lgtm[js/react/unused
       this.setState(stateUpdate)
     })
 
-    // memoryMonitor.on('memUsage', (data) => {
-    //   const stateUpdate = { memoryMonitor: data }
-    //   this.setState(stateUpdate)
-    // })
+    memoryMonitor.on('memUsage', (data) => {
+      const stateUpdate = { memoryMonitor: data }
+      this.setState(stateUpdate)
+    })
 
     setInterval(() => {
       const stateUpdate = { freemem: os.freemem() }

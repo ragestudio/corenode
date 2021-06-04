@@ -1,7 +1,7 @@
 const helpers = process.runtime.helpers
 
 import { publishProject, bootstrapProject, getChangelogs } from './scripts'
-import { prettyTable, objectToArrayMap } from '@corenode/utils'
+import { prettyTable } from '@corenode/utils'
 import generateCli from './genCli'
 
 let optionsMap = [
