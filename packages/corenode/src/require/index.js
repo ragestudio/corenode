@@ -63,7 +63,7 @@ export function overrideResolveFilename(instance, to = {}) {
             }
         }
 
-        const fromFile = _path.join(fromDirectory, 'noop.js')
+        const fromFile = _path.join(fromDirectory, 'anon.js')
 
         const resolveFileName = () => instance._resolveFilename(moduleId, {
             id: fromFile,
