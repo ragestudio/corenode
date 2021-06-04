@@ -101,7 +101,7 @@ export class EvalMachine {
             }
         })
 
-        this.moduleAliases = { ...this.params.aliaser }
+        this.moduleAliases = { ...this.params.aliaser, ...global._env.aliases }
 
         // set symbols
         this._functionScapeSymbol = Symbol()
