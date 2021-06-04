@@ -2,7 +2,7 @@ import React from 'react'
 import os from 'os'
 import { Row, Col, Statistic, Descriptions } from 'antd'
 
-export default class OSMonitor extends React.Component {
+export default class OSMonitor extends React.Component { // lgtm[js/react/unused-or-undefined-state-property]
   state = {
     memoryMonitor: {},
     cpuMonitor: {},
