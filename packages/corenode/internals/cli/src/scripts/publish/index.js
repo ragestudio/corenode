@@ -16,8 +16,6 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 export function publishProject(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
-
-        const gitRemote = getOriginGit()
         const isProject = isProjectMode()
 
         let config = {
@@ -111,6 +109,7 @@ export function publishProject(args) {
                 enabled: () => config.github === true,
                 task: (ctx, task) => {
                     return new Promise((res, rej) => {
+                        const gitRemote = getOriginGit()
                         let changelogNotes = ""
                         const releaseTag = `v${getVersion()}`
 
