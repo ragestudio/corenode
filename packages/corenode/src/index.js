@@ -9,6 +9,7 @@ import { EventEmitter } from 'events'
 import { verbosity } from '@corenode/utils'
 
 const REPL = require('./repl')
+const requireLib = require('./require')
 const { EvalMachine } = require('./vm/index.js')
 const { Logger } = require('./logger')
 
@@ -136,7 +137,9 @@ class Runtime {
                     }
 
                     global.project = this.createProjectGlobal()
-                    process.runtime = this.createRuntimeGlobal(this)
+                    global.runtime = process.runtime = this.createRuntimeGlobal(this)
+
+                    module = new requireLib.moduleController({ instance: module.constructor, aliases: global._env.modulesAliases, paths: global._env.modulesPaths })
 
                     // detect local mode
                     try {

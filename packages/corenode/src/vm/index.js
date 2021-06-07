@@ -7,17 +7,15 @@ import * as compiler from '@corenode/builder/dist/lib'
 
 const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
-const RequireController = require("../require")
+const requireLib = require("../require")
 const objects = require("./objects")
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
 
 const vmt = `
-var controller = runtime.controller;
 var require = module.createRequire(__getDirname());
-var logger = runtime.logger.log;
-var project = global.project;
+var _import = global._import;
 `
 
 export class EvalMachine {
@@ -87,7 +85,7 @@ export class EvalMachine {
         this.events = new EventEmitter()
         this.errorHandler = this.params.onError
 
-        if (!this.params.isolatedContext) {
+        if (!this.params.excludeGlobalContext) {
             this.context = { ...this.context, ...global }
         }
 
@@ -95,17 +93,20 @@ export class EvalMachine {
             this.context = { ...this.context, ...this.params.context }
         }
 
+        // init module controller
+        this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
+        this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
+        this.moduleController = this.createModuleController()
+
+        // set symbols
+        this._functionScapeSymbol = Symbol()
+
+        // set events
         this.events.on(`destroyVM`, () => {
             if (typeof this._sendOnDestroy === "function") {
                 this._sendOnDestroy(this.address)
             }
         })
-
-        this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
-        this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
-        
-        // set symbols
-        this._functionScapeSymbol = Symbol()
 
         // set globals to jail
         this.serializer = new Serializer()
@@ -113,25 +114,29 @@ export class EvalMachine {
 
         this.jail.set('selfThis', this, { configurable: false, writable: false, global: false })
         this.jail.set('self', this.jail.get(), { configurable: false, writable: false, global: true })
-        this.jail.set('console', console, { global: true })
-        this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
 
         // set an process secure dispatcher
         this.jail.set('process', process, { configurable: false, writable: false, global: true })
         this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
+        this.jail.set('controller', process.runtime.controller, { configurable: false, writable: false, global: true })
 
+        this.jail.set('module', this.moduleController, { configurable: false, writable: false, global: true })
+        this.jail.set('__createModuleController', this.createModuleController, { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
-        this.jail.set('module', new RequireController.CustomModuleController({ aliases: this.modulesAliases, paths: this.modulesPaths }), { configurable: false, writable: false, global: true })
-        this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
-        this.jail.set('__getDirname', () => this.getDirname(), { configurable: false, writable: false, global: true })
 
-        this.jail.set('dispatcher', (...context) => this.dispatcher(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
+        this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
+        this.jail.set('__getDirname', this.getDirname, { configurable: false, writable: false, global: true })
+
+        this.jail.set('dispatcher', this.dispatcher, { configurable: false, writable: false, global: true })
         this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
         this.jail.set('destroy', (...context) => this.destroy(...context), { configurable: false, writable: false, global: true })
 
         this.jail.set('_serialize', (...context) => this.serializer.serialize(...context), { configurable: false, writable: false, global: true })
         this.jail.set('_deserialize', (...context) => this.serializer.deserialize(...context), { configurable: false, writable: false, global: true })
+        this.jail.set('console', console, { global: true })
 
+        // parse custom vm objects
         if (typeof (objects) === "object") {
             objectToArrayMap(objects).forEach((obj) => {
                 const objectType = typeof obj.value
@@ -152,7 +157,13 @@ export class EvalMachine {
 
         // create context
         this.context = { ...this.context, ...this.jail.get() }
-        this.context.global.runtime = process.runtime
+        // set global
+        this.context.global = {
+            _import: requireLib.createScopedRequire(this.moduleController, this.getDirname()),
+            _env: global._env,
+            project: global.project,
+            runtime: process.runtime
+        }
         this.vmController.createContext(this.context)
 
         // run vmt
@@ -165,7 +176,11 @@ export class EvalMachine {
         return this
     }
 
-    dispatcher() {
+    createModuleController = () => {
+        return new requireLib.moduleController({ aliases: this.modulesAliases, paths: this.modulesPaths })
+    }
+
+    dispatcher = () => {
         let obj = {}
 
         const exposers = this.context.expose
@@ -211,7 +226,7 @@ export class EvalMachine {
         return obj
     }
 
-    getDirname() {
+    getDirname = () => {
         if (typeof this.params.file !== "undefined") {
             return path.dirname(this.params.file)
         }
@@ -219,7 +234,7 @@ export class EvalMachine {
         return this.params.cwd
     }
 
-    getNodeModules(origin) {
+    getNodeModules = (origin) => {
         let obj = {}
 
         function readDir(from, resolvePath) {

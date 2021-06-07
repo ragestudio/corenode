@@ -4,10 +4,10 @@ import _ from 'lodash'
 
 import { objectToArrayMap } from '@corenode/utils'
 
-export class CustomModuleController {
+export class moduleController {
     constructor(payload) {
-        const { aliases, paths } = payload ?? {}
-        let Module = _.clone(require("module"))
+        const { instance, aliases, paths } = payload ?? {}
+        var Module = instance ?? _.clone(module.constructor)
 
         Module.overrides = {
             filenames: {},
@@ -32,10 +32,6 @@ export class CustomModuleController {
 }
 
 export function overrideResolveFilename(instance, to = {}) {
-    if (typeof (instance) !== "object") {
-        throw new Error(`Instance must be an object`)
-    }
-
     const oldResolveFilename = instance._resolveFilename
     instance._resolveFilename = function (request, parentModule, isMain, options) {
         if (typeof (to[request]) !== "undefined") {
@@ -82,10 +78,6 @@ export function overrideResolveFilename(instance, to = {}) {
 }
 
 export function overrideNodeModulesPath(instance, to = []) {
-    if (typeof (instance) !== "object") {
-        throw new Error(`Instance must be an object`)
-    }
-
     const oldNodeModulePaths = instance._origin_nodeModulePaths = instance._nodeModulePaths
     instance._nodeModulePaths = function (from) {
         let paths = oldNodeModulePaths.call(this, from)
@@ -97,4 +89,8 @@ export function overrideNodeModulesPath(instance, to = []) {
     }
 
     return instance
+}
+
+export function createScopedRequire(instance, from) {
+    return overrideResolveFilename(instance, instance.overrides?.filenames ?? {}).createRequire(_path.resolve(from ?? process.cwd(), 'anon.js'))
 }
