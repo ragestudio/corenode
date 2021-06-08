@@ -20,15 +20,14 @@ targets.forEach((target) => {
     }
 
     compile({
-        input: './packages/corenode/package.json',
+        input: './packages/corenode/bin/index.js',
         output: output,
         build: true,
         verbose: false,
         silent: true,
         target: t,
-        resources: [`./package.json`]
+        resources: [`./packages/corenode/package.json`]
     }).then(() => {
         console.log(`[${t}] Compiling done!`)
     })
 })
-

@@ -11,6 +11,7 @@ yarn.lock
 /packages/*/node_modules
 /packages/*/corenode_modules
 
+/build
 /dist
 /docs
 /node_modules
@@ -30,10 +31,10 @@ dumps.log
 
 debugger-ui/node_modules
 
-**/*/.tmp
-**/*/node_modules
-**/*/dist
+*/**/.tmp
+*/**/node_modules
+*/**/dist
 
-**/*/dumps.log
-**/*/build
-**/*/.DS_Store
+*/**/dumps.log
+*/**/build
+*/**/.DS_Store
