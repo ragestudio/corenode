@@ -1,4 +1,5 @@
 import { verbosity } from '@corenode/utils'
+import { EvalMachine } from '../index'
 
 let vmObjects = {
     Error: class OverrideError extends Error {
@@ -11,6 +12,10 @@ let vmObjects = {
     out: function (...args) {
         const v = verbosity.options({ method: `[${this.id ?? "out"}]` })
         v.log(...args)
+    },
+    fork: function (fn) {
+        const machine = new EvalMachine()
+        machine.run()
     }
 }
 

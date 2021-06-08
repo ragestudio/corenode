@@ -17,7 +17,6 @@ const vmt = `
 var require = module.createRequire(__getDirname());
 var _import = global._import;
 `
-
 export class EvalMachine {
     constructor(params) {
         this.params = params ?? {}
@@ -289,6 +288,10 @@ export class EvalMachine {
 
         // set deep with current pool length
         process.runtime.vms.deep = Object.keys(process.runtime.vms.pool).length
+    }
+
+    do(fn, option, callback) {
+        //* *//
     }
 
     run(exec, options, callback) {
