@@ -18,7 +18,7 @@ class Runtime {
     constructor(load) {
         this.load = load
 
-        // handle load params
+        //? handle load params
         if (this.load.cwd) {
             if (!path.isAbsolute(this.load.cwd)) {
                 this.load.cwd = path.resolve(this.load.cwd)
@@ -30,7 +30,7 @@ class Runtime {
             process.args = this.load.args
         }
 
-        // set undefined globals
+        //? set undefined globals
         if (typeof global._inited === "undefined") {
             global._inited = false
         }
@@ -43,7 +43,10 @@ class Runtime {
 
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
 
-        // Create controllers
+        //? Create controllers
+        this.modulesAliases = {}
+        this.modulesPaths = {}
+    
         this.controller = {}
         this.helpers = require("./helpers")
         this.addons = null
@@ -122,6 +125,32 @@ class Runtime {
         })
     }
 
+    registerModulesAliases = (mutation) => {
+        if (typeof mutation === "object") {
+            this.modulesAliases = {
+                ...this.modulesAliases,
+                ...mutation
+            }
+        }
+
+        this.overrideModuleController()
+    }
+
+    registerModulesPaths = (mutation) => {
+        if (typeof mutation === "object") {
+            this.modulesPaths = {
+                ...this.modulesPaths,
+                ...mutation
+            }
+        }
+
+        this.overrideModuleController()
+    }
+
+    overrideModuleController() {
+        module = new requireLib.moduleController({ instance: module.constructor, aliases: this.modulesAliases, paths: this.modulesPaths })
+    }
+
     init() {
         return new Promise((resolve, reject) => {
             try {
@@ -131,6 +160,14 @@ class Runtime {
 
                     this.setEnvironment()
 
+                    //? set global aliases
+                    this.modulesAliases = {
+                        ...global._env.modulesAliases
+                    } 
+                    this.modulesPaths = {
+                        ...global._env.modulesPaths
+                    }
+
                     global._packages = {
                         _engine: path.resolve(__dirname, '../package.json'),
                         _project: path.resolve(process.cwd(), 'package.json')
@@ -139,9 +176,14 @@ class Runtime {
                     global.project = this.createProjectGlobal()
                     global.runtime = process.runtime = this.createRuntimeGlobal(this)
 
-                    module = new requireLib.moduleController({ instance: module.constructor, aliases: global._env.modulesAliases, paths: global._env.modulesPaths })
+                    //? register internal libs
+                    this.registerModulesAliases({
+                        "@@classes": path.resolve(__dirname, 'classes'),
+                        "@@vm": path.resolve(__dirname, 'vm'),
+                        "@@libs": path.resolve(__dirname, 'libs'),
+                    })
 
-                    // detect local mode
+                    //? detect local mode
                     try {
                         const rootPkg = this.helpers.getRootPackage()
 
