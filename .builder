@@ -1,6 +1,6 @@
 {
     "babel": {
-        "retainLines": true,
+        "retainLines": false,
         "sourceMap": true,
         "inputSourceMap": true,
         "sourceFileName": "[name].js.map",
