@@ -26,5 +26,3 @@ export function extract(file, extractPath) {
         })
     })
 }
-
-export default extractFull
