@@ -22,6 +22,8 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "7zip-bin": "^5.1.1",
+    "node-7z": "^2.1.2",
     "listr": "0.14.3",
     "execa": "5.0.0",
     "escape-goat": "^3.0.0",
