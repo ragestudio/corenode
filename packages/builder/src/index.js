@@ -145,7 +145,7 @@ function readDir(_path) {
   return fs.readdirSync(_path).filter((dir) => dir.charAt(0) !== '.')
 }
 
-export function buildProject(opts) {
+export function buildProject(opts = {}) {
   return new Promise((resolve, reject) => {
     const tasks = {}
 
