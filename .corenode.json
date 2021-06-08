@@ -6,6 +6,7 @@
     "docs": [
       "corenode",
       "utils"
-    ]
+    ],
+    "dockerImageName": "srgooglo/corenode"
   }
 }
