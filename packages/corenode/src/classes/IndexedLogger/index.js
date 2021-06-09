@@ -1,4 +1,4 @@
-export class Logger {
+export class IndexedLogger {
     constructor() {
         this.options = {
             display: true,
@@ -13,8 +13,6 @@ export class Logger {
         let obj = date + message
 
         this.data.push(obj)
-
-        console.log(this.data.lastIndex)
         
         if (key) {
             this.address[this.data.lastIndex] = key
@@ -33,12 +31,12 @@ export class Logger {
         }
     }
 
-    remove() {
-
+    remove(key) {
+        delete this.data[this.address[key]]
     }
 
     disableDisplay = () => this.options.display = false
     enableDisplay = () => this.options.display = true
 }
 
-export default Logger
+export default IndexedLogger

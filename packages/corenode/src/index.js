@@ -9,9 +9,9 @@ import { EventEmitter } from 'events'
 import { verbosity } from '@corenode/utils'
 
 const REPL = require('./repl')
-const requireLib = require('./require')
+const moduleController = require('./module')
 const { EvalMachine } = require('./vm/index.js')
-const { Logger } = require('./logger')
+const Logger = require('./logger')
 const constables = require('./constables')
 
 const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
@@ -149,7 +149,7 @@ class Runtime {
     }
 
     overrideModuleController() {
-        module = new requireLib.moduleController({ instance: module.constructor, aliases: this.modulesAliases, paths: this.modulesPaths })
+        module = new moduleController.moduleController({ instance: module.constructor, aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
     init() {
@@ -270,6 +270,9 @@ class Runtime {
 
 module.exports = {
     Runtime,
+    REPL,
+    Logger,
     constables,
+    moduleController,
     ...require("./helpers"),
 }

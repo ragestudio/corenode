@@ -1,2 +1,2 @@
 export { default as Jail } from './Jail'
-export { default as Logger } from './Logger'
+export { default as IndexedLogger } from './IndexedLogger'

@@ -221,8 +221,9 @@ export function buildProject(opts = {}) {
       }
 
       if (Array.isArray(builderErrors) && builderErrors.length > 0) {
-        const { Logger } = require("corenode/dist/logger")
+        const Logger = require("corenode/dist/logger")
         const log = new Logger()
+        
         const pt = new prettyTable()
         const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
         const rows = []

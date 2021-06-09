@@ -4,13 +4,14 @@ import { verbosity } from '@corenode/utils'
 
 const { combine, timestamp, label, printf } = format
 
-export class Logger {
+class Logger {
     log = (...context) => {
         StackTrace.get().then((stack) => {
             stack = stack[2]
             this.output({ level: "log", stack }, ...context)
         })
     }
+
     warn = (...context) => {
         StackTrace.get().then((stack) => {
             stack = stack[2]
@@ -60,3 +61,5 @@ export class Logger {
         })
     }
 }
+
+module.exports = Logger

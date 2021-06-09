@@ -8,7 +8,7 @@ import * as compiler from '@corenode/builder/dist/lib'
 
 const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
-const requireLib = require("../require")
+const requireLib = require("../module")
 const objects = require("./objects")
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
