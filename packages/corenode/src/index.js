@@ -12,6 +12,7 @@ const REPL = require('./repl')
 const requireLib = require('./require')
 const { EvalMachine } = require('./vm/index.js')
 const { Logger } = require('./logger')
+const constables = require('./constables')
 
 const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 class Runtime {
@@ -181,6 +182,7 @@ class Runtime {
                         "@@classes": path.resolve(__dirname, 'classes'),
                         "@@vm": path.resolve(__dirname, 'vm'),
                         "@@libs": path.resolve(__dirname, 'libs'),
+                        "@@constables": path.resolve(__dirname, 'constables')
                     })
 
                     //? detect local mode
@@ -206,9 +208,9 @@ class Runtime {
 
                 // warn local mode
                 if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
-                    console.warn("\n\x1b[7m", `⚠️  'LOCAL_BIN' environment flag is enabled, but this project is not allowed to run in local mode, ignoring running in local mode!`, "\x1b[0m\n")
+                    console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
                 } else if (global.isLocalMode) {
-                    console.warn("\n\n\x1b[7m", `🚧  USING LOCAL DEVELOPMENT MODE  🚧`, "\x1b[0m\n\n")
+                    console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
                 }
 
                 let { targetBin, isLocalMode } = this.load
@@ -248,7 +250,7 @@ class Runtime {
                             } catch (error) {
                                 this.logger.dump("error", error.toString())
                                 verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
-                                console.log("This error has been exported, check the log file for more details")
+                                console.log(constables.ERROR_EXPORTED)
                             }
                         } else {
                             return require('../internals/cli/dist')
@@ -268,5 +270,6 @@ class Runtime {
 
 module.exports = {
     Runtime,
+    constables,
     ...require("./helpers"),
 }

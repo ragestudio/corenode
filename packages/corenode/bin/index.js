@@ -3,6 +3,7 @@ const path = require("path")
 const process = require("process")
 const open = require("open")
 const yparser = require("yargs-parser")
+const constables = require("../dist/constables")
 
 const localPkgJson = `${process.cwd()}/package.json`
 const fatalCrashLogFile = path.resolve(process.cwd(), '.crash.log')
@@ -18,7 +19,7 @@ if (fs.existsSync(localPkgJson)) {
             isLocalMode = true
         }
     } catch (error) {
-        console.log(`❌ Error processing package.json > ${error.message}`)
+        console.log(`${constables.ERROR_PROCESSING_PACKAGE} > ${error.message}`)
     }
 }
 
