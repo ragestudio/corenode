@@ -1,22 +1,38 @@
 const path = require('path')
-const fs = require('fs')
-const builder = require('@corenode/builder')
 const execa = require('execa')
 
 const tasks = ["compileSource", "compileBinaries", "compileDocker"]
 
+const DOCKER_FILE = path.join(process.cwd(), "Dockerfile")
 const DOCKER_IMAGE = global._env?.development?.dockerImageName ?? "ragestudio/corenode"
-const DOCKER_FILE = path.resolve(process.cwd(), "docker/Dockerfile")
 
 const fn = {
     compileSource: async () => {
-        await builder.default({ cliui: true })
+        if (process.args.noBuild) {
+            return true
+        }
+        await require('@corenode/builder').default({ cliui: true })
     },
     compileBinaries: async () => {
-        await execa("corenode", path.resolve(__dirname, "./binariesBuild.js"))
+        if (process.args.noBin) {
+            return true
+        }
+        await require("./lib/binariesBuild")()
     },
     compileDocker: async () => {
-        await execa("docker", ["build", "-t", DOCKER_IMAGE, `--file`, `${DOCKER_FILE}`])
+        if (process.args.noDocker) {
+            return true
+        }
+
+        console.log(DOCKER_IMAGE, DOCKER_FILE)
+
+        try {
+            const { stdout } = await execa(`docker`, ["build", "-t", DOCKER_IMAGE, "-f", DOCKER_FILE, "."])
+            console.log(stdout)
+        } catch (error) {
+            runtime.logger.dump(error)
+            console.error(error)
+        }
     }
 }
 
