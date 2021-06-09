@@ -13,9 +13,14 @@ let vmObjects = {
         const v = verbosity.options({ method: `[${this.id ?? "out"}]` })
         v.log(...args)
     },
-    fork: function (fn) {
+    fork: function (fn, options, callback) {
         const machine = new EvalMachine()
-        machine.run()
+        machine.do(fn, options, (...context) => {
+            if (typeof callback === "function") {
+                callback(...context)
+            }
+            machine.destroy()
+        })
     }
 }
 

@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { inspect } from 'util'
 import filesize from 'filesize'
 import { EventEmitter } from 'events'
 import * as babel from "@babel/core"
@@ -291,7 +292,14 @@ export class EvalMachine {
     }
 
     do(fn, option, callback) {
-        //* *//
+        let script = `
+            (function(){
+                const _ = ${fn.toString()}
+                _.call()
+            }())
+        `
+
+        this.run(script, option, callback)
     }
 
     run(exec, options, callback) {
