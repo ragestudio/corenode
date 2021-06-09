@@ -17,7 +17,7 @@ async function build() {
         const output = `${buildPath}/corenode`
 
         if (!fs.existsSync(buildPath)) {
-            await fs.mkdir(buildPath)
+            await fs.mkdirSync(buildPath)
         }
 
         await compile({
