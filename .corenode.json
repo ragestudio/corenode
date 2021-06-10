@@ -1,5 +1,5 @@
 {
-  "version": "0.24.11",
+  "version": "0.24.12",
   "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
@@ -54,7 +54,7 @@
   "DENO_INSTALL": "/Users/srgooglo/.deno",
   "npm_package_scripts_postinstall": "npm run initBuilder",
   "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"local\"],\"original\":[\"run\",\"local\",\"version\",\"--bump-patch\",\"--sync\",\"--disableAddons\"]}",
-  "PATH": "/var/folders/rw/qzskqdxs5y5b7wdfzy7f3mh00000gn/T/yarn--1623320046710-0.5911665590838879:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.config/yarn/link/node_modules/.bin:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/bin/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.deno/bin:/Users/srgooglo/.wasmer/bin:/Users/srgooglo/.wasienv/bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/srgooglo/.cargo/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/srgooglo/.wasmer/globals/wapm_packages/.bin",
+  "PATH": "/var/folders/rw/qzskqdxs5y5b7wdfzy7f3mh00000gn/T/yarn--1623320328606-0.5882608500184894:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.config/yarn/link/node_modules/.bin:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/bin/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.deno/bin:/Users/srgooglo/.wasmer/bin:/Users/srgooglo/.wasienv/bin:/Users/srgooglo/.nvm/versions/node/v16.1.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/srgooglo/.cargo/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/srgooglo/.wasmer/globals/wapm_packages/.bin",
   "npm_package_scripts_update_deps": "yarn upgrade-interactive --latest",
   "npm_package_dependencies__babel_core": "^7.13.1",
   "_": "/Users/srgooglo/repos/corenode/node_modules/.bin/cross-env",
