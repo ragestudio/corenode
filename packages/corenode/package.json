@@ -14,7 +14,7 @@
     "access": "public"
   },
   "bin": {
-    "corenode": "node ./bin/index.js"
+    "corenode": "./bin/index.js"
   },
   "scripts": {
     "start": "npx babel-node ./src",
