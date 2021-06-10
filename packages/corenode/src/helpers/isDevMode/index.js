@@ -7,7 +7,10 @@ import fs from 'fs'
  * @returns {boolean}
  */
 export function isDevMode() {
-    return fs.existsSync(path.resolve(process.cwd(), './.dev'))
+    if (process.env.NODE_ENV === "development") {
+        return true
+    }
+    return fs.existsSync(path.resolve(process.cwd(), './.dev')) ? true : false
 }
 
 export default isDevMode
