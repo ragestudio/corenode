@@ -111,7 +111,11 @@ class Runtime {
                 global._loadedEnvPath = fromPath
 
                 try {
-                    global._env = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
+                    const runtimeEnv = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
+                    global._env = {
+                        ...runtimeEnv,
+                        ...process.env
+                    }
                 } catch (error) {
                     console.error(`\n🆘  Error parsing runtime env > ${error.message} \n\n`)
                     console.error(error)
