@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { inspect } from 'util'
 import filesize from 'filesize'
 import { EventEmitter } from 'events'
 import * as babel from "@babel/core"
