@@ -8,14 +8,17 @@ import { EventEmitter } from 'events'
 
 import { verbosity } from '@corenode/utils'
 
-const Net = require('./net')
-const REPL = require('./repl')
+//* BUILTIN LIBRARIES
+const net = require('./net')
+const repl = require('./repl')
 const moduleController = require('./module')
 const { EvalMachine } = require('./vm/index.js')
-const Logger = require('./logger')
+const logger = require('./logger')
 const constables = require('./constables')
 
-const environmentFiles = ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
+//* constants
+const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
+
 class Runtime {
     constructor(load) {
         this.load = load
@@ -54,7 +57,7 @@ class Runtime {
         this.addons = null
 
         this.events = new EventEmitter()
-        this.logger = new Logger()
+        this.logger = new logger()
 
         this.setEvents()
         this.init()
@@ -127,7 +130,7 @@ class Runtime {
 
     setEvents() {
         this.events.addListener("cli_noCommand", () => {
-            REPL.attachREPL()
+            repl.attachREPL()
         })
     }
 
@@ -229,7 +232,7 @@ class Runtime {
 
                     runtime.args = args
                     process.parsedArgs = args
-                    process.runtime.repl = REPL
+                    process.runtime.repl = repl
 
                     // TODO: overrides cli commands over file loader
                     if (typeof args["_"][2] !== "undefined") {
@@ -262,7 +265,7 @@ class Runtime {
                             return require('../internals/cli/dist')
                         }
                     } else {
-                        REPL.attachREPL()
+                        repl.attachREPL()
                     }
                 }
 
@@ -275,10 +278,11 @@ class Runtime {
 }
 
 module.exports = {
-    Net,
     Runtime,
-    REPL,
-    Logger,
+    environmentFiles,
+    net,
+    repl,
+    logger,
     constables,
     moduleController,
     ...require("./helpers"),
