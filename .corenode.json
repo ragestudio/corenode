@@ -1,5 +1,5 @@
 {
-  "version": "0.25.0",
+  "version": "0.25.1",
   "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
@@ -53,8 +53,8 @@
   "npm_execpath": "/usr/local/lib/node_modules/yarn/bin/yarn.js",
   "DENO_INSTALL": "/Users/srgooglo/.deno",
   "npm_package_scripts_postinstall": "npm run initBuilder",
-  "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"local\"],\"original\":[\"run\",\"local\",\"version\",\"--bump-minor\",\"--sync\",\"--disableAddons\"]}",
-  "PATH": "/var/folders/rw/qzskqdxs5y5b7wdfzy7f3mh00000gn/T/yarn--1623761626872-0.07770021378595193:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.config/yarn/link/node_modules/.bin:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.deno/bin:/Users/srgooglo/.wasmer/bin:/Users/srgooglo/.wasienv/bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/srgooglo/.cargo/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/srgooglo/.wasmer/globals/wapm_packages/.bin",
+  "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"local\"],\"original\":[\"run\",\"local\",\"version\",\"--bump-patch\",\"--sync\",\"--disableAddons\"]}",
+  "PATH": "/var/folders/rw/qzskqdxs5y5b7wdfzy7f3mh00000gn/T/yarn--1623762183075-0.21004834231437908:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.config/yarn/link/node_modules/.bin:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.deno/bin:/Users/srgooglo/.wasmer/bin:/Users/srgooglo/.wasienv/bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/srgooglo/.cargo/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/srgooglo/.wasmer/globals/wapm_packages/.bin",
   "npm_package_scripts_update_deps": "yarn upgrade-interactive --latest",
   "npm_package_dependencies__babel_core": "^7.13.1",
   "_": "/Users/srgooglo/repos/corenode/node_modules/.bin/cross-env",
