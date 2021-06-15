@@ -24,7 +24,7 @@ const fn = {
             return true
         }
 
-        console.log(DOCKER_IMAGE, DOCKER_FILE)
+        console.log(`⚙️  Building Docker image [${DOCKER_IMAGE}] with dockerfile ${DOCKER_FILE}`)
 
         try {
             const { stdout } = await execa(`docker`, ["build", "-t", DOCKER_IMAGE, "-f", DOCKER_FILE, "."])
