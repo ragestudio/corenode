@@ -13,11 +13,13 @@ class WSClient {
         this.wsAddress = `${this.wsProtocol === "secure" ? "wss" : "ws"}://${this.hostname}${this.wsPort ? `:${this.wsPort}` : ""}`
 
         //? handlers
-        this.onMessage = this.params.onMessage ?? false
-        this.onClose = this.params.onClose ?? false
-        this.onError = this.params.onError ?? false
-        this.onConnectFail = this.params.onConnectFail ?? false
-
+        this.onMessage = this.params.onMessage
+        this.onClose = this.params.onClose
+        this.onError = this.params.onError
+        this.onConnectFail = this.params.onConnectFail ?? function(err) { 
+            throw new Error(`Failed to connect to [${this.hostname}] > ${err}`)
+        }
+        
         this.client.on('connectFailed', (...context) => this.onConnectFail(...context))
         
         this.client.on('connect', (connection) => {
@@ -30,9 +32,15 @@ class WSClient {
 
             this.events.emit('connect')
 
-            connection.on('error', (...context) => this.onError(connection, ...context))
-            connection.on('close', (...context) => this.onClose(connection, ...context))
-            connection.on('message', (...context) => this.onMessage(connection, ...context))
+            if (typeof this.onError === "function") {
+                connection.on('error', (...context) => this.onError(connection, ...context))
+            }
+            if (typeof this.onClose === "function") {
+                connection.on('close', (...context) => this.onClose(connection, ...context))
+            }
+            if (typeof this.onMessage === "function") {
+                connection.on('message', (...context) => this.onMessage(connection, ...context))
+            }
         })
 
         return this
