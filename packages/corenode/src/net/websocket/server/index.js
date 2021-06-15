@@ -16,11 +16,10 @@ class WSServer {
         })
 
         // handlers
-        this.onMessage = this.params.onMessage ?? false
-        this.onClose = this.params.onClose ?? false
+        this.onMessage = this.params.onMessage
+        this.onClose = this.params.onClose
         this.authorizeOrigin = this.params.authorizeOrigin
 
-        this.init()
         return this
     }
 
@@ -55,14 +54,19 @@ class WSServer {
             const connection = request.accept('echo-protocol', request.origin)
 
             // set builtIn handlers
-            connection.on('message', (...context) => this.onMessage(connection, ...context))
-            connection.on('close', (...context) => this.onClose(connection, ...context))
+            if (typeof this.onClose === 'function') {
+                connection.on('message', (...context) => this.onMessage(connection, ...context))
+            }
+            if (typeof this.onClose === 'function') {
+                connection.on('close', (...context) => this.onClose(connection, ...context))
+            }
         })
     }
 }
 
 function createInstance(context) {
     const instance = new WSServer({ ...context })
+    instance.init()
     return instance
 }
 
