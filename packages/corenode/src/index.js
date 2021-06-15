@@ -8,6 +8,7 @@ import { EventEmitter } from 'events'
 
 import { verbosity } from '@corenode/utils'
 
+const Net = require('./net')
 const REPL = require('./repl')
 const moduleController = require('./module')
 const { EvalMachine } = require('./vm/index.js')
@@ -47,7 +48,7 @@ class Runtime {
         //? Create controllers
         this.modulesAliases = {}
         this.modulesPaths = {}
-    
+
         this.controller = {}
         this.helpers = require("./helpers")
         this.addons = null
@@ -168,7 +169,7 @@ class Runtime {
                     //? set global aliases
                     this.modulesAliases = {
                         ...global._env.modulesAliases
-                    } 
+                    }
                     this.modulesPaths = {
                         ...global._env.modulesPaths
                     }
@@ -226,6 +227,7 @@ class Runtime {
                 if (this.load.runCli) {
                     const args = require("yargs-parser")(process.argv)
 
+                    runtime.args = args
                     process.parsedArgs = args
                     process.runtime.repl = REPL
 
@@ -273,6 +275,7 @@ class Runtime {
 }
 
 module.exports = {
+    Net,
     Runtime,
     REPL,
     Logger,
