@@ -15,9 +15,7 @@ class Thing {
     eject() {
         //* disconnect from global controller
     }
-
 }
-
 
 module.exports = {
     Thing
