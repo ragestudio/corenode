@@ -60,10 +60,7 @@ module.exports = [
 
             if (bumps.length > 0) {
                 helpers.bumpVersion(bumps)
-
-                if (helpers.isProjectMode() || argv.sync) {
-                    helpers.syncAllPackagesVersions()
-                }
+                helpers.syncVersions()
             } else {
                 const engineVersion = helpers.getVersion({ engine: true })
                 const proyectVersion = helpers.getVersion()

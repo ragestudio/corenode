@@ -13,7 +13,7 @@ export function getPackages(params) {
         return readRootDirectorySync("packages", params)
     }
 
-    return path.resolve(process.cwd(), './src')  
+    return path.resolve(process.cwd(), './src')
 }
 
 export default getPackages

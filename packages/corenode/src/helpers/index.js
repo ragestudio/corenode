@@ -11,8 +11,7 @@ export { default as isDevMode } from './isDevMode'
 export { default as isProjectMode } from './isProjectMode'
 
 // sync
-export { default as syncPackageVersionFromName } from './syncPackageVersionFromName'
-export { default as syncAllPackagesVersions } from './syncAllPackagesVersions'
+export { default as syncVersions } from './syncVersions'
 
 // fn
 export { default as bumpVersion } from './bumpVersion'
