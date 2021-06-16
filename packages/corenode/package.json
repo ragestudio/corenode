@@ -22,6 +22,7 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "ora": "^5.4.1",
     "websocket": "^1.0.34",
     "7zip-bin": "^5.1.1",
     "node-7z": "^2.1.2",
