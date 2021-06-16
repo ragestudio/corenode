@@ -1,5 +1,5 @@
 {
-  "version": "0.25.1",
+  "version": "0.25.2",
   "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
@@ -20,7 +20,7 @@
   "npm_package_scripts_prod": "cross-env LOCAL_BIN=false node ./packages/corenode/bin/index.js",
   "WASMER_DIR": "/Users/srgooglo/.wasmer",
   "NVM_CD_FLAGS": "-q",
-  "_P9K_TTY": "/dev/ttys000",
+  "_P9K_TTY": "/dev/ttys001",
   "INIT_CWD": "/Users/srgooglo/repos/corenode",
   "SHELL": "/bin/zsh",
   "TERM": "xterm-256color",
@@ -32,7 +32,7 @@
   "npm_package_devDependencies_pkg": "^5.2.1",
   "TERM_PROGRAM_VERSION": "440",
   "npm_package_scripts_initBuilder": "node ./postinstall/index.js",
-  "TERM_SESSION_ID": "B3521B35-35A0-4EC7-B4E0-4755EDC6C7DE",
+  "TERM_SESSION_ID": "3EE3476E-D510-45B2-A8CD-95D784304195",
   "npm_config_registry": "https://registry.yarnpkg.com",
   "npm_package_private": "true",
   "npm_package_dependencies__babel_preset_env": "^7.13.5",
@@ -45,7 +45,7 @@
   "npm_package_license": "MIT",
   "npm_package_dependencies__babel_node": "^7.13.0",
   "npm_package_dependencies__babel_plugin_syntax_dynamic_import": "^7.8.3",
-  "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.CEP19oIqFr/Listeners",
+  "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.k7wqZfEhJa/Listeners",
   "npm_package_git": "https://github.com/ragestudio/corenode",
   "__CF_USER_TEXT_ENCODING": "0x1F5:0x0:0x8",
   "npm_package_dependencies__babel_plugin_proposal_private_methods": "^7.13.0",
@@ -54,10 +54,10 @@
   "DENO_INSTALL": "/Users/srgooglo/.deno",
   "npm_package_scripts_postinstall": "npm run initBuilder",
   "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"local\"],\"original\":[\"run\",\"local\",\"version\",\"--bump-patch\",\"--sync\",\"--disableAddons\"]}",
-  "PATH": "/var/folders/rw/qzskqdxs5y5b7wdfzy7f3mh00000gn/T/yarn--1623762183075-0.21004834231437908:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.config/yarn/link/node_modules/.bin:/Users/srgooglo/repos/corenode/node_modules/.bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/lib/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin/node_modules/npm/bin/node-gyp-bin:/Users/srgooglo/.deno/bin:/Users/srgooglo/.wasmer/bin:/Users/srgooglo/.wasienv/bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/srgooglo/.cargo/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/srgooglo/.wasmer/globals/wapm_packages/.bin",
+  "PATH": "/Users/srgooglo/.deno/bin:/Users/srgooglo/.wasmer/bin:/Users/srgooglo/.wasienv/bin:/Users/srgooglo/.nvm/versions/node/v13.14.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/srgooglo/.cargo/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/srgooglo/.wasmer/globals/wapm_packages/.bin",
   "npm_package_scripts_update_deps": "yarn upgrade-interactive --latest",
   "npm_package_dependencies__babel_core": "^7.13.1",
-  "_": "/Users/srgooglo/repos/corenode/node_modules/.bin/cross-env",
+  "_": "/usr/local/bin/corenode",
   "npm_package_dependencies__types_jest": "^26.0.4",
   "__CFBundleIdentifier": "com.apple.Terminal",
   "PWD": "/Users/srgooglo/repos/corenode",
@@ -81,7 +81,7 @@
   "XPC_SERVICE_NAME": "0",
   "npm_package_dependencies__types_babel__core": "7.1.12",
   "npm_package_devDependencies_node_gyp": "^8.0.0",
-  "SHLVL": "2",
+  "SHLVL": "1",
   "HOME": "/Users/srgooglo",
   "npm_package_dependencies__babel_plugin_proposal_class_properties": "^7.13.0",
   "npm_config_strict_ssl": "true",
@@ -114,5 +114,6 @@
   "npm_config_init_version": "1.0.0",
   "npm_package_workspaces_0": "packages/**/*",
   "npm_config_version_tag_prefix": "v",
-  "npm_node_execpath": "/Users/srgooglo/.nvm/versions/node/v13.14.0/bin/node"
+  "npm_node_execpath": "/Users/srgooglo/.nvm/versions/node/v13.14.0/bin/node",
+  "OLDPWD": "/Users/srgooglo/repos"
 }
