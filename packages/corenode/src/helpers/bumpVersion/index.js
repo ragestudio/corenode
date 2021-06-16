@@ -11,8 +11,8 @@ import { schemizedParse, schemizedStringify, verbosity } from '@corenode/utils'
 export function bumpVersion(params) {
     if (!params) return false
 
-    const version = getVersion()
-    const parsedVersion = schemizedParse(version, global._versionScheme, '.')
+    let version = getVersion()
+    let parsedVersion = schemizedParse(version, global._versionScheme, '.')
 
     const bumps = [
         {
@@ -46,17 +46,23 @@ export function bumpVersion(params) {
         }
     })
 
-    const after = schemizedStringify(parsedVersion, global._versionScheme, '.')
-    console.log(`🏷 Updated to new version ${after} > before ${version}`)
+    const before = version
 
-    global._env.version = after
+    version = schemizedStringify(parsedVersion, global._versionScheme, '.')
+    global._env.version = version
 
-    return rewriteRuntimeEnv()
+    console.log(`🏷 Version updated! [${before} > ${version}]`)
+
+    return updateEnv({
+        version: version,
+    })
 }
 
-function rewriteRuntimeEnv() {
-    verbosity.options({ time: false, method: false }).warn(`Runtime environment rewrited > ${global.project._envpath}`)
-    return fs.writeFileSync(global.project._envpath, JSON.stringify(global._env, null, 2) + '\n', 'utf-8')
+function updateEnv(mutation) {
+    let data = JSON.parse(fs.readFileSync(global.project._envpath, 'utf8'))
+    data = { ...data, ...mutation }
+
+    return fs.writeFileSync(global.project._envpath, JSON.stringify(data, null, 2) + '\n', 'utf-8')
 }
 
 export default bumpVersion

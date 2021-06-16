@@ -60,7 +60,8 @@ module.exports = [
 
             if (bumps.length > 0) {
                 helpers.bumpVersion(bumps)
-                if (argv.sync) {
+
+                if (helpers.isProjectMode() || argv.sync) {
                     helpers.syncAllPackagesVersions()
                 }
             } else {
@@ -133,13 +134,6 @@ module.exports = [
         exec: async (argv) => {
             const changes = await getChangelogs(helpers.getOriginGit(), argv.to, argv.from)
             console.log(changes)
-        }
-    },
-    {
-        command: "env",
-        description: "Show current runtime enviroment",
-        exec: () => {
-            console.log(global._env)
         }
     }
 ]

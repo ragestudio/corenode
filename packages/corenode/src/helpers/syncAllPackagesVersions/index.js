@@ -8,14 +8,17 @@ import { verbosity } from '@corenode/utils'
  */
 export function syncAllPackagesVersions() {
     const packages = getPackages()
-    packages.forEach((pkg) => {
-        try {
-            syncPackageVersionFromName(pkg, true)
-            verbosity.options({ time: false }).log(`[${pkg}] ✅ New version synchronized`)
-        } catch (error) {
-            verbosity.options({ time: false }).log(`[${pkg}] ❌ Error syncing ! > ${error}`)
-        }
-    })
+
+    if (Array.isArray(packages)) {
+        packages.forEach((pkg) => {
+            try {
+                syncPackageVersionFromName(pkg, true)
+                verbosity.options({ time: false }).log(`[${pkg}] ✅ New version synchronized`)
+            } catch (error) {
+                verbosity.options({ time: false }).log(`[${pkg}] ❌ Error syncing ! > ${error}`)
+            }
+        })
+    }
 }
 
 export default syncAllPackagesVersions
