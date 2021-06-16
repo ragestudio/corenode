@@ -15,10 +15,10 @@ export function syncVersions(dir) {
     const currentVersion = getVersion()
 
     function fail(pkg, error) {
-        verbosity.options({ time: false }).log(`[${pkg}] ❌ Error syncing ! > ${error}`)
+        verbosity.options({ time: false, method: "[VERSION SYNC]" }).log(`[${pkg}] ❌ Error > ${error}`)
     }
     function success(pkg) {
-        verbosity.options({ time: false }).log(`[${pkg}] ✅ New version synchronized`)
+        verbosity.options({ time: false, method: "[VERSION SYNC]" }).log(`[${pkg}] ✅ Version synchronized`)
     }
 
     if (typeof dir !== 'string') {
