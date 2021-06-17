@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import { getRootPackage } from '../helpers'
+import dependencies from '../dependencies'
 
 let { verbosity, objectToArrayMap, readDirs } = require('@corenode/utils')
 verbosity = verbosity.options({ method: `[ADDONS]`, time: false })
@@ -27,6 +28,7 @@ class Addon {
 
         this.loader = {}
         this.machine = null
+        this.ready = false
 
         // try to read loader file
         if (typeof this.params.loader === "string") {
@@ -55,47 +57,80 @@ class Addon {
             this.loader.dirname = path.dirname(this.loader.file)
         }
 
+        //* before init
+        if (this.loader.hasDependencies && typeof this.loader.dirname !== "undefined") {
+            const addonPackageJson = path.resolve(this.loader.dirname, 'package.json')
+            if (fs.existsSync(addonPackageJson)) {
+                this.loader.dependencies = require(addonPackageJson).dependencies ?? {}
+            }
+        }
+
+        const dependenciesTypes = ["dependencies", "devDependencies"]
+        dependenciesTypes.forEach((type) => {
+            if (typeof this.loader[type] === "object") {
+                objectToArrayMap(this.loader[type]).forEach((dependency) => {
+                    const { key, value } = dependency
+                    const depValid = dependencies.check(key)
+
+                    //* try to install before initialization
+                    if (!depValid && !this.loader.ignoreDependencies) {
+                        this.ready = false
+                        const dep = `${key}@${value}`
+
+                        console.warn(`Detected missing dependency, trying to install...[${dep}]`)
+                        dependencies.install(dep, undefined, () => {
+                            this.ready = true
+                        })
+                    }
+                })
+            }
+        })
+
+        this.ready = true
         return this
     }
 
-    load() {
-        if (typeof this.loader.script !== "undefined") {
-            try {
-                const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
-                if (!fs.existsSync(loaderScriptPath)) {
-                    return verbosity.error(`[${this.loader.pkg}] Script file not exists: ` + loaderScriptPath)
+    load = () => {
+        while (this.ready) {
+            if (typeof this.loader.init === "function") {
+                try {
+                    this.loader.init()
+                } catch (error) {
+                    process.runtime.logger.dump("error", error)
+                    verbosity.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
                 }
-
-                this.machine = new EvalMachine({
-                    file: loaderScriptPath,
-                    cwd: this.loader.dirname,
-                })
-
-                process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
-            } catch (error) {
-                process.runtime.logger.dump("error", error)
-                verbosity.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initalization >`, error)
             }
-        }
 
-        if (typeof this.loader.appendCli !== "undefined") {
-            if (Array.isArray(this.loader.appendCli)) {
-                this.loader.appendCli.forEach((entry) => {
-                    if (typeof global._cli.custom === "undefined") {
-                        global._cli.custom = []
+            if (typeof this.loader.script !== "undefined") {
+                try {
+                    const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
+                    if (!fs.existsSync(loaderScriptPath)) {
+                        return verbosity.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
                     }
-                    global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
-                })
-            }
-        }
 
-        if (typeof this.loader.init === "function") {
-            try {
-                this.loader.init()
-            } catch (error) {
-                process.runtime.logger.dump("error", error)
-                verbosity.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
+                    this.machine = new EvalMachine({
+                        file: loaderScriptPath,
+                        cwd: this.loader.dirname,
+                    })
+
+                    process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
+                } catch (error) {
+                    process.runtime.logger.dump("error", error)
+                    verbosity.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
+                }
             }
+
+            if (typeof this.loader.appendCli !== "undefined") {
+                if (Array.isArray(this.loader.appendCli)) {
+                    this.loader.appendCli.forEach((entry) => {
+                        if (typeof global._cli.custom === "undefined") {
+                            global._cli.custom = []
+                        }
+                        global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
+                    })
+                }
+            }
+            break
         }
 
         return this.loader
@@ -121,7 +156,7 @@ export default class AddonsController {
         const addon = new Addon({ loader })
 
         // check if the addon is not loaded
-        if (typeof this.loaders[addon.loader.pkg] === "undefined") {
+        if (typeof this.addons.includes[addon.loader.pkg] === "undefined") {
             addon.load()
             this.appendLoader(addon.loader)
         }
@@ -130,10 +165,6 @@ export default class AddonsController {
     appendLoader = (addon) => {
         this.addons.push(addon.pkg)
         this.loaders[addon.pkg] = addon
-    }
-
-    isOnPackage = (key) => {
-        return this.getAddonsFromPackage(key) ? true : false
     }
 
     fetchLoaders = (origin, maxDepth) => {
