@@ -70,6 +70,8 @@ export function overrideResolveFilename(instance, to = {}) {
         return resolveFileName()
     }
 
+    instance._req = require
+    
     instance.createRequire = function (from) {
         return (moduleId) => require(instance.resolveFrom(from, moduleId))
     }
