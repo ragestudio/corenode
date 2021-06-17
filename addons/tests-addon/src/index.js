@@ -1,17 +1,14 @@
-import { existsSync } from 'fs'
-import { runCLI } from 'jest'
-import { join } from 'path'
-import assert from 'assert'
+const { existsSync } = require('fs')
+const { runCLI } = require('jest')
+const { join } = require('path')
+const assert = require('assert')
+const { options } = require('jest-cli/build/cli/args')
 
-import { options as CliOptions } from 'jest-cli/build/cli/args'
-import createDefaultConfig from './createDefaultConfig/createDefaultConfig'
-
+const { createDefaultConfig } = require('./utils')
 let { verbosity, mergeConfig } = require('@corenode/utils')
 verbosity.options({ method: "[TEST]" })
 
-export * from './utils'
-
-export default async function (args) {
+async function runTests(args = {}) {
   process.env.NODE_ENV = 'test'
   verbosity.log(`🚧  Starting JEST tests...`)
 
@@ -36,11 +33,11 @@ export default async function (args) {
   )
 
   // Generate jest options
-  const argsConfig = Object.keys(CliOptions).reduce((prev, name) => {
+  const argsConfig = Object.keys(options).reduce((prev, name) => {
     if (args[name]) prev[name] = args[name]
 
     // Convert alias args into real one
-    const { alias } = CliOptions[name]
+    const { alias } = options[name]
     if (alias && args[alias]) prev[name] = args[alias]
     return prev
   })
@@ -59,3 +56,5 @@ export default async function (args) {
   // Throw error when run failed
   assert(result.results.success, `Test with jest failed`)
 }
+
+module.exports = { runTests }

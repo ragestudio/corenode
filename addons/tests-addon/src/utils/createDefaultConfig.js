@@ -1,8 +1,20 @@
-import { existsSync } from 'fs'
-import { join } from 'path'
-import assert from 'assert'
+const { existsSync } = require('fs')
+const { join } = require('path')
+const assert = require('assert')
+const sc = require('smart-circular')
 
-export default function (cwd, args) {
+function generateGlobal() {
+  let obj = {}
+  const keys = ["project", "_env", "runtime"]
+  
+  keys.forEach((key) => {
+    obj[key] = global[key]
+  })
+
+  return sc(obj)
+}
+
+function createDefaultConfig(cwd, args) {
   const hasPackages = existsSync(join(cwd, 'packages'))
   const hasSrc = existsSync(join(cwd, 'src'))
 
@@ -28,6 +40,7 @@ export default function (cwd, args) {
       '!**/fixtures/**',
       '!**/*.d.ts',
     ].filter(Boolean),
+    globals: generateGlobal(),
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     setupFiles: [require.resolve('../../helpers/setupFiles/shim')],
     setupFilesAfterEnv: [require.resolve('../../helpers/setupFiles/jasmine')],
@@ -47,6 +60,8 @@ export default function (cwd, args) {
     verbose: true,
     transformIgnorePatterns: [
     ],
-    ...(process.env.MAX_WORKERS? { maxWorkers: Number(process.env.MAX_WORKERS) }: {}),
+    ...(process.env.MAX_WORKERS ? { maxWorkers: Number(process.env.MAX_WORKERS) } : {}),
   }
 }
+
+module.exports = createDefaultConfig
