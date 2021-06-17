@@ -216,3 +216,5 @@ export { default as safeStringify } from './safeStringify'
 export { default as githubReleaseUrl } from './githubReleaseUrl'
 
 export { default as readDirs } from './readDirs'
+
+export { default as dargs } from './dargs'
