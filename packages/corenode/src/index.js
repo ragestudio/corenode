@@ -9,6 +9,7 @@ import { EventEmitter } from 'events'
 import { verbosity } from '@corenode/utils'
 
 //* BUILTIN LIBRARIES
+const dependencies = require('./dependencies')
 const net = require('./net')
 const repl = require('./repl')
 const moduleController = require('./module')
@@ -110,7 +111,7 @@ class Runtime {
     setEnvironment() {
         //* load dotenv
         require('dotenv').config()
-        
+
         environmentFiles.forEach((file) => {
             const fromPath = path.resolve(process.cwd(), `./${file}`)
 
@@ -159,7 +160,24 @@ class Runtime {
         this.overrideModuleController()
     }
 
-    overrideModuleController() {
+    appendToCli = (entries) => {
+        let commands = []
+
+        if (Array.isArray(entries)) {
+            commands = entries
+        } else if (typeof entries === "object") {
+            commands.push(entries)
+        }
+
+        commands.forEach((entry) => {
+            if (typeof global._cli.custom === "undefined") {
+                global._cli.custom = []
+            }
+            global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
+        })
+    }
+
+    overrideModuleController = () => {
         module = new moduleController.moduleController({ instance: module.constructor, aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
@@ -282,6 +300,7 @@ class Runtime {
 
 module.exports = {
     Runtime,
+    dependencies,
     environmentFiles,
     net,
     repl,
