@@ -67,7 +67,7 @@ function install(dependency, options = {}, callback) {
             runtime.logger.dump("error", err)
             console.error(`Error installing dependency [${dependency}] > ${err.message}`)
         } else {
-            outStr = `Dependency sucessfully installed [${dependency}]`
+            outStr = `Dependency successfully installed [${dependency}]`
 
             runtime.logger.dump("info", outStr)
             console.log(outStr)
@@ -75,14 +75,14 @@ function install(dependency, options = {}, callback) {
     })
 }
 
-function set(dependency, version = "lastest", type = "dependencies") {
+function set(dependency, version = "latest", type = "dependencies") {
     let packageJson = helpers.getRootPackage()
 
     if (!dependenciesTypes.includes(type)) {
         type = "dependencies"
     }
 
-    if (version === "lastest") {
+    if (version === "latest") {
         version = lastVersionSync(dependency)
     }
     
