@@ -1,6 +1,7 @@
 module.exports = {
     pkg: "dev",
     script: "./addon/index.js",
+    ignoreDependencies: true,
     appendCli: [
         {
             command: "dev [file]",
@@ -15,5 +16,8 @@ module.exports = {
                 script.watch({ file: args.file })
             }
         }
-    ]
+    ],
+    dependencies: {
+        "@ragestudio/cloudlink": "0.5.2"
+    }
 }
