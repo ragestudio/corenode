@@ -63,5 +63,5 @@ export function getBuilderEnv(from) {
     from = path.resolve(from ?? process.cwd(), '.builder')
   }
 
-  return JSON.parse(fs.readFileSync(path.resolve(from), 'utf-8'))
+  return JSON.parse(fs.readFileSync(from, 'utf-8'))
 }
