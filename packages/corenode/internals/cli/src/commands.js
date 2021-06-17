@@ -92,16 +92,14 @@ module.exports = [
         }
     },
     {
-        command: 'build',
+        command: 'build [from]',
         description: "Build project with builtin builder",
         exec: (argv) => {
             require("@corenode/builder").buildProject({
                 cliui: argv.silent ? false : true,
-                from: argv.from
+                from: argv.from,
+                ...argv
             })
-                .then(() => {
-                    console.log(`✅  DONE`)
-                })
         }
     },
     {

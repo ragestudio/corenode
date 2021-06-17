@@ -159,7 +159,7 @@ export function buildProject(opts = {}) {
     let packages = isProjectMode ? readDir(packagesPath) : ["./"]
 
     try {
-      const projectEnv = lib.getBuilderEnv(from)
+      const projectEnv = lib.getBuilderEnv(opts.rcfile ?? from)
       if (projectEnv) {
         env = { ...projectEnv }
       }

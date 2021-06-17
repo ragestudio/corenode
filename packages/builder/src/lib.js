@@ -32,9 +32,9 @@ export const defaultBabelConfig = {
 export const agents = {
   babel: (contents, options) => {
     return new Promise((resolve, reject) => {
-      try {        
+      try {
         let opts = options ?? {}
-        
+
         babel.transform(contents, { ...defaultBabelConfig, ...opts }, (err, result) => {
           if (err) {
             return reject(err)
@@ -59,7 +59,9 @@ export function listAllFiles(dir) {
 }
 
 export function getBuilderEnv(from) {
-  const envFile = path.resolve(from ?? process.cwd(), '.builder')
+  if (fs.statSync(from).isDirectory()) {
+    from = path.resolve(from ?? process.cwd(), '.builder')
+  }
 
-  return JSON.parse(fs.readFileSync(envFile, 'utf-8'))
+  return JSON.parse(fs.readFileSync(path.resolve(from), 'utf-8'))
 }
