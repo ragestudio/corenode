@@ -6,8 +6,8 @@ export default (url, to, from) => {
         throw new Error(`Please provide an git url`)
     }
 
-    const lastest = git.latestTagOrFirstCommit()
-    const log = git.commitLogBetweenTags((from ?? lastest), to)
+    const latest = git.latestTagOrFirstCommit()
+    const log = git.commitLogBetweenTags((from ?? latest), to)
 
     if (!log) {
         throw new Error(`Get changelog failed, no new commits was found.`)
