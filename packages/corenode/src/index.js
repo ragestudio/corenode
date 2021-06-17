@@ -108,6 +108,9 @@ class Runtime {
     }
 
     setEnvironment() {
+        //* load dotenv
+        require('dotenv').config()
+        
         environmentFiles.forEach((file) => {
             const fromPath = path.resolve(process.cwd(), `./${file}`)
 

@@ -22,6 +22,7 @@
     "babelOut": "babel src --out-dir dist"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "uuid": "^8.3.2",
     "ora": "^5.4.1",
     "websocket": "^1.0.34",
