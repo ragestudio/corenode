@@ -1,3 +1,0 @@
-test("get all dependencies", () => {
-    
-})

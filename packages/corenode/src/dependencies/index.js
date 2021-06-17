@@ -55,24 +55,32 @@ function install(dependency, options = {}, callback) {
     if (typeof agents[options.agent] === "undefined") {
         throw new Error(`Agent [${options.agent}] is not available`)
     }
+    
+    try {
+        let outStr = String(`Installing dependency [${dependency}] `)
 
-    agents[options.agent]("install", dependency, options, (err) => {
-        if (typeof callback === "function") {
-            callback(err)
-        }
+        runtime.logger.dump("info", outStr)
+        console.log(outStr)
 
-        let outStr = String()
-
-        if (err) {
-            runtime.logger.dump("error", err)
-            console.error(`Error installing dependency [${dependency}] > ${err.message}`)
-        } else {
-            outStr = `Dependency successfully installed [${dependency}]`
-
-            runtime.logger.dump("info", outStr)
-            console.log(outStr)
-        }
-    })
+        agents[options.agent]("install", dependency, options, (err) => {
+            if (typeof callback === "function") {
+                callback(err)
+            }
+    
+            if (err) {
+                runtime.logger.dump("error", err)
+                console.error(`Error installing dependency [${dependency}] > ${err.message}`)
+            } else {
+                outStr = `Dependency successfully installed [${dependency}]`
+    
+                runtime.logger.dump("info", outStr)
+                console.log(outStr)
+            }
+        })
+    } catch (error) {
+        runtime.logger.dump("error", err)
+        console.error(`Failed when trying to install dependency [${dependency}] > ${err.message}`)
+    }
 }
 
 function set(dependency, version = "latest", type = "dependencies") {
@@ -129,5 +137,5 @@ module.exports = {
     del,
     check,
     lastVersion,
-    lastVersionSync
+    lastVersionSync,
 }
