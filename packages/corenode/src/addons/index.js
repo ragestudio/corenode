@@ -199,7 +199,7 @@ export default class AddonsController {
         const loaders = []
 
         if (fs.existsSync(origin)) {
-            const dirs = readDirs(origin, maxDepth ?? 2)
+            const dirs = readDirs(origin, maxDepth ?? (global._env.maxFetchLoadersDepth ?? 3))
 
             dirs.forEach((dir) => {
                 const loader = path.resolve(dir, defaults.loaderFilename)
