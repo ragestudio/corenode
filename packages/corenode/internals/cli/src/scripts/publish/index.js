@@ -89,16 +89,14 @@ export function publishProject(args) {
 
                             if (fs.existsSync(pkgJSON)) {
                                 try {
-                                    const { name } = require(pkgJSON)
-
-                                    observer.next(`[${publishedPackages}/${projectPackages.length}] Publishing npm package [${index}]${name}`)
+                                    observer.next(`[${publishedPackages}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
                                     await npmPublish(packagePath, config, true)
                                         .then(() => {
                                             publishedPackages += 1
-                                            process.runtime.logger.dump("info", `+ published npm package ${name}`)
+                                            process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
                                         })
                                 } catch (error) {
-                                    observer.next(`❌ Failed to publish > ${name} > ${error}`)
+                                    observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
 
                                 if (publishedPackages >= projectPackages.length) {
