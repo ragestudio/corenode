@@ -8,12 +8,12 @@ import { EventEmitter } from 'events'
 
 import { verbosity } from '@corenode/utils'
 
-//* BUILTIN LIBRARIES
+//* PRIMORDIAL LIBRARIES
 const dependencies = require('./dependencies')
 const net = require('./net')
 const repl = require('./repl')
 const moduleController = require('./module')
-const { EvalMachine } = require('./vm/index.js')
+const { EvalMachine } = require('./vm')
 const logger = require('./logger')
 const constables = require('./constables')
 
@@ -231,6 +231,8 @@ class Runtime {
 
                     //? register internal libs
                     this.registerModulesAliases({
+                        "@@helpers": path.resolve(__dirname, 'helpers'),
+                        "@@addons": path.resolve(__dirname, 'addons'),
                         "@@classes": path.resolve(__dirname, 'classes'),
                         "@@vm": path.resolve(__dirname, 'vm'),
                         "@@libs": path.resolve(__dirname, 'libs'),
@@ -249,10 +251,8 @@ class Runtime {
                     }
 
                     // create new addonController
-                    if (!this.load.disableAddons) {
-                        const addonController = require("./addons").default
-                        this.addons = new addonController()
-                    }
+                    const addonController = require("./addons").default
+                    this.addons = new addonController()
 
                     // flag runtime as inited
                     global._inited = true
