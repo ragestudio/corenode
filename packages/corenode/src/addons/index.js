@@ -1,25 +1,16 @@
-import fs from 'fs'
-import path from 'path'
+const fs = require("fs")
+const path = require("path")
+const { performance } = require('perf_hooks')
+const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
-import { getRootPackage } from '../helpers'
-import dependencies from '../dependencies'
-
-let { verbosity, objectToArrayMap, readDirs } = require('@corenode/utils')
-verbosity = verbosity.options({ method: `[ADDONS]`, time: false })
-
+const dependencies = require("../dependencies")
+const { getRootPackage } = require("../helpers")
 const { EvalMachine } = require("../vm")
 
+const log = process.runtime.logger
 const defaults = {
     loaderFilename: `load.addon.js`,
     addonsFlagName: `addons`,
-}
-
-function requireFromString(src, filename) {
-    var Module = module.constructor
-    var m = new Module()
-
-    m._compile(src, filename)
-    return m.exports
 }
 
 class Addon {
@@ -33,16 +24,14 @@ class Addon {
         // try to read loader file
         if (typeof this.params.loader === "string") {
             try {
-                this.params.loader = path.resolve(this.params.loader)
-
                 if (fs.existsSync(this.params.loader)) {
                     this.loader = fs.readFileSync(this.params.loader, 'utf-8')
-                    this.loader = requireFromString(this.loader, '')
+                    this.loader = moduleFromString(this.loader, '')
                     this.loader.file = this.params.loader
                 }
             } catch (error) {
-                process.runtime.logger.dump("error", error)
-                verbosity.error(`Cannot read addon loader > ${error.message}`)
+                log.dump("error", error)
+                log.error(`Cannot read addon loader > ${error.message}`)
             }
         } else {
             this.loader = this.params.loader
@@ -74,65 +63,64 @@ class Addon {
 
                     //* try to install before initialization
                     if (!depValid && !this.loader.ignoreDependencies) {
-                        this.ready = false
                         const dep = `${key}@${value}`
 
-                        console.warn(`Detected missing dependency, trying to install...[${dep}]`)
-                        dependencies.install(dep, undefined, () => {
-                            this.ready = true
-                        })
+                        console.warn(`⚠️  Missing dependency, trying to install...[${dep}]`)
+                        dependencies.install(dep)
                     }
                 })
             }
         })
 
-        this.ready = true
+        if (typeof this.loader.init === "function") {
+            try {
+                this.loader.init()
+            } catch (error) {
+                log.dump("error", error)
+                log.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
+            }
+        }
+
         return this
     }
 
     load = () => {
-        while (this.ready) {
-            if (typeof this.loader.init === "function") {
-                try {
-                    this.loader.init()
-                } catch (error) {
-                    process.runtime.logger.dump("error", error)
-                    verbosity.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
+        const loadStart = performance.now()
+
+        if (typeof this.loader.script !== "undefined") {
+            try {
+                const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
+                if (!fs.existsSync(loaderScriptPath)) {
+                    return log.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
                 }
+
+                this.machine = new EvalMachine({
+                    file: loaderScriptPath,
+                    cwd: this.loader.dirname,
+                })
+
+                process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
+            } catch (error) {
+                log.dump("error", error)
+                log.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
             }
-
-            if (typeof this.loader.script !== "undefined") {
-                try {
-                    const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
-                    if (!fs.existsSync(loaderScriptPath)) {
-                        return verbosity.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
-                    }
-
-                    this.machine = new EvalMachine({
-                        file: loaderScriptPath,
-                        cwd: this.loader.dirname,
-                    })
-
-                    process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
-                } catch (error) {
-                    process.runtime.logger.dump("error", error)
-                    verbosity.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
-                }
-            }
-
-            if (typeof this.loader.appendCli !== "undefined") {
-                if (Array.isArray(this.loader.appendCli)) {
-                    this.loader.appendCli.forEach((entry) => {
-                        if (typeof global._cli.custom === "undefined") {
-                            global._cli.custom = []
-                        }
-                        global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
-                    })
-                }
-            }
-            break
         }
 
+        if (typeof this.loader.appendCli !== "undefined") {
+            if (Array.isArray(this.loader.appendCli)) {
+                this.loader.appendCli.forEach((entry) => {
+                    if (typeof global._cli.custom === "undefined") {
+                        global._cli.custom = []
+                    }
+                    global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
+                })
+            }
+        }
+
+        const loaderEnd = performance.now()
+        this.loader.timings = {
+            load: loaderEnd - loadStart
+        }
         return this.loader
     }
 
@@ -145,16 +133,27 @@ export default class AddonsController {
     constructor() {
         this.loaders = {}
         this.addons = []
+        this.query = []
 
         this.defaultLoader = defaults.loaderFilename
         this.externalAddonsPath = path.resolve(process.cwd(), defaults.addonsFlagName)
-
-        this.init()
+        console.time("loaders")
+        this.allLoaders = this.fetchAllLoaders()
+        console.timeEnd("loaders")
+        this.allLoaders.forEach((loader) => {
+            this.queryLoader(loader)
+        })
     }
 
-    loadAddon(loader) {
+    queryLoader(loader) {
         const addon = new Addon({ loader })
+        this.query.push(addon)
+    }
 
+    loadAddon(addon) {
+        if (typeof addon !== "object") {
+            throw new Error(`Invalid addon, addon in not an object!`)
+        }
         // check if the addon is not loaded
         if (typeof this.addons.includes[addon.loader.pkg] === "undefined") {
             addon.load()
@@ -242,11 +241,11 @@ export default class AddonsController {
 
     getLoadedAddons = () => this.addons
 
-    init() {
-        const allLoaders = this.fetchAllLoaders()
+    async init() {
+        for await (const addon of this.query) {
+            await this.loadAddon(addon)
+        }
 
-        allLoaders.forEach((loader) => {
-            this.loadAddon(loader)
-        })
+        process.runtime.events.emit('init_addons_done')
     }
 }
