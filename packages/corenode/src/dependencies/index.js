@@ -4,7 +4,7 @@ const execa = require('execa')
 const helpers = require('../helpers')
 const agents = require('./agents')
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const npmCommand = global.npmCommand ?? process.platform === 'win32' ? 'npm.cmd' : 'npm'
 const dependenciesTypes = ["dependencies", "devDependencies", "peerDependencies"]
 
 //* HELPERS
@@ -39,7 +39,7 @@ function write(mutation) {
 //* METHODS
 function get(type, key) {
     const types = ["dependencies", "devDependencies", "peerDependencies"]
-    let dependencies = helpers.getRootPackage()[(type && types.includes(type) ? type : "dependencies") ?? "dependencies"] ?? {}
+    let dependencies = helpers.getRootPackage()[types[type] ?? "dependencies"] ?? {}
 
     if (typeof key !== "undefined") {
         return dependencies[key]
@@ -113,7 +113,7 @@ function del(dependency, prune, options, callback) {
                 callback(err)
             }
     
-            let outStr = String()
+            let outStr = null
     
             if (err) {
                 runtime.logger.dump("error", err)

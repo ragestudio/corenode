@@ -1,6 +1,6 @@
 import fs from 'fs'
 import getVersion from '../getVersion'
-import { schemizedParse, schemizedStringify, verbosity } from '@corenode/utils'
+import { schemizedParse, schemizedStringify } from '@corenode/utils'
 
 /**
  * Bumps current version of the current project
