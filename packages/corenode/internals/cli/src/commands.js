@@ -22,7 +22,7 @@ module.exports = [
                     const allAddons = addons.getLoadedAddons()
                     const pt = new prettyTable()
 
-                    let headers = ["addon", "_runtimed", "directory"]
+                    let headers = ["addon", "timings", "directory"]
                     let rows = []
 
                     allAddons.forEach((addon) => {
@@ -32,7 +32,7 @@ module.exports = [
                         const key = loader.pkg
                         const cwd = loader.file
 
-                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, `${isRuntimed}`, cwd])
+                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, loader.timings? JSON.stringify(loader.timings) : "none" ,cwd])
                     })
 
                     pt.create(headers, rows)
