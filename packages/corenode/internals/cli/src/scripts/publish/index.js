@@ -63,12 +63,12 @@ export function publishProject(args) {
             },
             buildProject: {
                 title: "📦 Building project",
-                skip: () => config.skipBuild === true,
-                task: () => {
-                    return new Promise((res, rej) => {
-                        buildProject({ buildBuilder: true })
-                            .then((done) => res())
-                            .catch((error) => rej(new Error(`Failed build! > ${error.message}`)))
+                enabled: () => config.build === true,
+                task: async () => {
+                    return new Promise(async (res, rej) => {
+                        await buildProject().catch((error) => rej(new Error(`Failed build! > ${error.message}`)))
+                        console.log(`\n\n`)
+                        return res()
                     })
                 }
             },
@@ -103,14 +103,14 @@ export function publishProject(args) {
                                 } catch (error) {
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
-                                
+
                                 if (publishedPackages >= projectPackages.length) {
                                     process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                     if (config.fast) {
                                         setTimeout(() => {
                                             observer.complete()
                                         }, 850)
-                                    }else {
+                                    } else {
                                         observer.complete()
                                     }
                                 }
