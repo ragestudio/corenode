@@ -15,7 +15,7 @@
     "builder": "node ./packages/builder/cli.js",
     "build:docs": "corenode docs --innerFiles",
     "release:next": "npm run builder && node ./packages/corenode/bin/index.js publish --preRelease --next --npm --github --skipBuild",
-    "release:prod": "npm run builder && node ./packages/corenode/bin/index.js publish --npm --github --skipBuild",
+    "release:prod": "npm run builder && node ./packages/corenode/bin/index.js publish --npm --github --skipBuild --fast",
     "link:main": "cd packages/corenode && yarn link && cd -",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
