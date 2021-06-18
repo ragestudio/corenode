@@ -131,7 +131,8 @@ class Addon {
 export default class AddonsController {
     constructor() {
         this.disabledController = process.runtime.load.disableAddons
-        this.disabledAddons = []
+        this.disabledAddons = [...(global._env?.disabledAddons ?? [])]
+
         this.loaders = {}
         this.addons = {}
         this.query = []
@@ -142,7 +143,7 @@ export default class AddonsController {
         this.allLoaders = this.fetchAllLoaders()
 
         if (!this.disabledController) {
-            this.allLoaders.forEach((loader) => {
+            this.allLoaders.forEach((loader) => { 
                 this.queryLoader(loader)
             })
         }
