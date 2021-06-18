@@ -286,6 +286,10 @@ export class EvalMachine {
         // set pool address with `this`
         this.poolRef = process.runtime.vms.pool[this.address] = this
 
+        this.updateDeep()
+    }
+
+    updateDeep() {
         // set deep with current pool length
         process.runtime.vms.deep = Object.keys(process.runtime.vms.pool).length
     }
@@ -372,5 +376,6 @@ export class EvalMachine {
         delete this.poolRef
         delete process.runtime.vms.pool[this.address]
         delete this.vmController
+        this.updateDeep()
     }
 }
