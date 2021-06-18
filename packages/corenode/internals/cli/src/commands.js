@@ -32,7 +32,7 @@ module.exports = [
                         const key = loader.pkg
                         const cwd = loader.file
 
-                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key}`, loader.timings? JSON.stringify(loader.timings) : "none" ,cwd])
+                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key} ${loader.disabled? "(disabled)" : ""}`, loader.timings? JSON.stringify(loader.timings) : "none" ,cwd])
                     })
 
                     pt.create(headers, rows)

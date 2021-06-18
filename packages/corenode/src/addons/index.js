@@ -131,6 +131,7 @@ class Addon {
 export default class AddonsController {
     constructor() {
         this.disabledController = process.runtime.load.disableAddons
+        this.disabledAddons = []
         this.loaders = {}
         this.addons = {}
         this.query = []
@@ -157,7 +158,7 @@ export default class AddonsController {
     }
 
     queryLoader(loader) {
-        const addon = new Addon({ loader })
+        const addon = new Addon({ loader })        
         this.query.push(addon)
     }
 
@@ -168,10 +169,14 @@ export default class AddonsController {
 
         // check if the addon is not loaded
         if (typeof this.addons[addon.loader.pkg] === "undefined") {
+            addon.disabled = this.disabledAddons.includes(addon.loader.pkg)
+            addon.loader.disabled = addon.disabled
+
             this.appendLoader(addon.loader)
             this.addons[addon.loader.pkg] = addon
-
-            addon.load()
+            if (!addon.disabled) {
+                addon.load()
+            }
         }
     }
 
