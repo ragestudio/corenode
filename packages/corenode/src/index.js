@@ -60,6 +60,11 @@ class Runtime {
         this.events = new EventEmitter()
         this.logger = new logger()
 
+        // runtime preload
+        this.preloadDone = false
+        this.preloadEvents = ['init_addons_done']
+        this.preloadPromises = []
+
         this.setEvents()
         this.init()
     }
@@ -181,8 +186,26 @@ class Runtime {
         module = new moduleController.moduleController({ instance: module.constructor, aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
-    init() {
-        return new Promise((resolve, reject) => {
+    setPreloaders() {
+        const eventPromise = (id) => {
+            return new Promise((res, rej) => {
+                this.events.on(id, () => {
+                    return res()
+                })
+            })
+        }
+
+        this.preloadEvents.forEach((wait) => {
+            this.preloadPromises.push(eventPromise(wait))
+        })
+    }
+
+    waitForPreloadEvent = (event) => {
+        this.preloadPromises.push(event)
+    }
+
+    async init() {
+        return new Promise(async (resolve, reject) => {
             try {
                 if (!global._inited) {
                     global._cli = {}
@@ -247,7 +270,17 @@ class Runtime {
                     global.isLocalMode = true
                 }
 
-                // load
+                //* RUNTIME PRELOAD
+                this.setPreloaders()
+
+                //? fire preloaders
+                this.addons.init()
+
+                //? await for them
+                await Promise.all(this.preloadPromises)
+                this.preloadDone = true
+
+                //* load
                 if (this.load.runCli) {
                     const args = require("yargs-parser")(process.argv)
 
