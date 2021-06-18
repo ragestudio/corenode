@@ -22,7 +22,7 @@ async function npmPublish(packagePath, config) {
     }
 
     if (config.fast) {
-        execa(cmd, cliArgs, { cwd: packagePath })
+        return execa(cmd, cliArgs, { cwd: packagePath })
     } else {
         return await execa(cmd, cliArgs, { cwd: packagePath })
     }
