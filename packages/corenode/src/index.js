@@ -19,6 +19,7 @@ const constables = require('./constables')
 
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
+global.npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
 class Runtime {
     constructor(load) {
