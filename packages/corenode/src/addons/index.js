@@ -101,7 +101,7 @@ class Addon {
                 process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
                 log.dump("error", error)
-                log.options({ method: `[VM]` }).error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
+                log.error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
             }
         }
 
