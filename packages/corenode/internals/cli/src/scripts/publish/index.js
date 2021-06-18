@@ -23,7 +23,6 @@ async function npmPublish(packagePath, config) {
 
     if (config.fast) {
         execa(cmd, cliArgs, { cwd: packagePath })
-        return true
     } else {
         return await execa(cmd, cliArgs, { cwd: packagePath })
     }
@@ -79,6 +78,7 @@ export function publishProject(args) {
                 task: async () => {
                     return new Observable(async (observer) => {
                         let publishedPackages = Number(0)
+
                         if (!Array.isArray(projectPackages) && !isProject) {
                             projectPackages = ["_"]
                         }
@@ -90,11 +90,20 @@ export function publishProject(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     observer.next(`[${publishedPackages}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
-                                    await npmPublish(packagePath, config, true)
-                                        .then(() => {
-                                            publishedPackages += 1
-                                            process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
-                                        })
+
+                                    if (config.fast) {
+                                        npmPublish(packagePath, config, true)
+                                            .then(() => {
+                                                publishedPackages += 1
+                                                process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
+                                            })
+                                    } else {
+                                        await npmPublish(packagePath, config, true)
+                                            .then(() => {
+                                                publishedPackages += 1
+                                                process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
+                                            })
+                                    }
                                 } catch (error) {
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
