@@ -77,7 +77,7 @@ export function publishProject(args) {
                 enabled: () => config.npm === true,
                 task: async () => {
                     return new Observable(async (observer) => {
-                        let publishedPackages = Number(0)
+                        let packagesCount = Number(0)
 
                         if (!Array.isArray(projectPackages) && !isProject) {
                             projectPackages = ["_"]
@@ -91,20 +91,21 @@ export function publishProject(args) {
                                 try {
                                     if (config.fast) {
                                         npmPublish(packagePath, config, true)
-                                        publishedPackages += 1
+                                        packagesCount += 1
                                     } else {
-                                        observer.next(`[${publishedPackages}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
+                                        observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
                                         await npmPublish(packagePath, config, true)
                                             .then(() => {
-                                                publishedPackages += 1
+                                                packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
                                             })
                                     }
                                 } catch (error) {
+                                    packagesCount += 1
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
 
-                                if (publishedPackages >= projectPackages.length) {
+                                if (packagesCount >= projectPackages.length) {
                                     process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                     if (config.fast) {
                                         setTimeout(() => {
