@@ -218,3 +218,5 @@ export { default as githubReleaseUrl } from './githubReleaseUrl'
 export { default as readDirs } from './readDirs'
 
 export { default as dargs } from './dargs'
+
+export { default as moduleFromString } from './moduleFromString'
