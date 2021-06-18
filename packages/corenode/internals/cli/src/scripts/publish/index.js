@@ -103,10 +103,16 @@ export function publishProject(args) {
                                 } catch (error) {
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
-
+                                
                                 if (publishedPackages >= projectPackages.length) {
                                     process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
-                                    observer.complete()
+                                    if (config.fast) {
+                                        setTimeout(() => {
+                                            observer.complete()
+                                        }, 850)
+                                    }else {
+                                        observer.complete()
+                                    }
                                 }
                             } else {
                                 const errstr = `❌ ${pkg} has no valid package.json`
