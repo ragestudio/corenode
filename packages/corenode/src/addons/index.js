@@ -4,8 +4,8 @@ const { performance } = require('perf_hooks')
 const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
 const dependencies = require("../dependencies")
-const { getRootPackage } = require("../helpers")
-const { EvalMachine } = require("../vm")
+const { getRootPackage } = require("@@helpers")
+const { EvalMachine } = require("@@vm")
 
 const log = process.runtime.logger
 const defaults = {
@@ -19,7 +19,6 @@ class Addon {
 
         this.loader = {}
         this.machine = null
-        this.ready = false
 
         // try to read loader file
         if (typeof this.params.loader === "string") {
@@ -124,25 +123,37 @@ class Addon {
         return this.loader
     }
 
-    unload() {
-
+    unload = () => {
+        process.runtime.addons.unload(this.loader.pkg)
     }
 }
 
 export default class AddonsController {
     constructor() {
+        this.disabledController = process.runtime.load.disableAddons
         this.loaders = {}
-        this.addons = []
+        this.addons = {}
         this.query = []
 
         this.defaultLoader = defaults.loaderFilename
         this.externalAddonsPath = path.resolve(process.cwd(), defaults.addonsFlagName)
-        console.time("loaders")
+
         this.allLoaders = this.fetchAllLoaders()
-        console.timeEnd("loaders")
-        this.allLoaders.forEach((loader) => {
-            this.queryLoader(loader)
-        })
+
+        if (!this.disabledController) {
+            this.allLoaders.forEach((loader) => {
+                this.queryLoader(loader)
+            })
+        }
+    }
+
+    unload = (key) => {
+        if (typeof this.addons[key] === 'undefined') {
+            return false
+        }
+        this.addons[key].machine.destroy()
+        delete this.addons[key]
+        delete this.loaders[key]
     }
 
     queryLoader(loader) {
@@ -151,18 +162,20 @@ export default class AddonsController {
     }
 
     loadAddon(addon) {
-        if (typeof addon !== "object") {
-            throw new Error(`Invalid addon, addon in not an object!`)
+        if (!addon instanceof Addon) {
+            throw new Error(`Invalid class of addon!`)
         }
+
         // check if the addon is not loaded
-        if (typeof this.addons.includes[addon.loader.pkg] === "undefined") {
-            addon.load()
+        if (typeof this.addons[addon.loader.pkg] === "undefined") {
             this.appendLoader(addon.loader)
+            this.addons[addon.loader.pkg] = addon
+
+            addon.load()
         }
     }
 
     appendLoader = (addon) => {
-        this.addons.push(addon.pkg)
         this.loaders[addon.pkg] = addon
     }
 
@@ -239,11 +252,14 @@ export default class AddonsController {
         }
     }
 
-    getLoadedAddons = () => this.addons
+    getLoadedAddons = () => Object.keys(this.addons)
 
     async init() {
-        for await (const addon of this.query) {
-            await this.loadAddon(addon)
+        if (!this.disabledController) {
+            for await (const [index, addon] of this.query.entries()) {
+                this.query = this.query.slice(index, (this.query.length - 1))
+                await this.loadAddon(addon)
+            }
         }
 
         process.runtime.events.emit('init_addons_done')
