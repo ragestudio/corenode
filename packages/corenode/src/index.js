@@ -271,10 +271,11 @@ class Runtime {
                     global.isLocalMode = true
                 }
 
-                //* RUNTIME PRELOAD
+                //* set preloaders before load
                 this.setPreloaders()
 
                 //? fire preloaders
+                await this.addons.checkDependencies()
                 this.addons.init()
 
                 //? await for them

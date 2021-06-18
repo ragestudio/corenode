@@ -46,6 +46,19 @@ class Addon {
         }
 
         //* before init
+        if (typeof this.loader.init === "function") {
+            try {
+                this.loader.init()
+            } catch (error) {
+                log.dump("error", error)
+                log.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
+            }
+        }
+
+        return this
+    }
+
+    checkDependencies = () => {
         if (this.loader.hasDependencies && typeof this.loader.dirname !== "undefined") {
             const addonPackageJson = path.resolve(this.loader.dirname, 'package.json')
             if (fs.existsSync(addonPackageJson)) {
@@ -70,17 +83,6 @@ class Addon {
                 })
             }
         })
-
-        if (typeof this.loader.init === "function") {
-            try {
-                this.loader.init()
-            } catch (error) {
-                log.dump("error", error)
-                log.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
-            }
-        }
-
-        return this
     }
 
     load = () => {
@@ -161,6 +163,14 @@ export default class AddonsController {
     queryLoader(loader) {
         const addon = new Addon({ loader })        
         this.query.push(addon)
+    }
+
+    checkDependencies = async () => {
+        if (Array.isArray(this.query)) {
+            for await (const addon of this.query) {
+                await addon.checkDependencies()
+            }
+        }
     }
 
     loadAddon(addon) {
