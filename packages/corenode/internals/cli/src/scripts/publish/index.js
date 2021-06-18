@@ -13,6 +13,22 @@ import getChangelogs from '../getChangelogs'
 let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
+async function npmPublish(packagePath, config) {
+    const cmd = global.npmCommand ?? "npm"
+    const cliArgs = ['publish']
+
+    if (config.next) {
+        cliArgs.push('--tag', 'next')
+    }
+
+    if (config.fast) {
+        execa(cmd, cliArgs, { cwd: packagePath })
+        return true
+    } else {
+        return await execa(cmd, cliArgs, { cwd: packagePath })
+    }
+}
+
 export function publishProject(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
@@ -25,6 +41,7 @@ export function publishProject(args) {
             github: false,
             preRelease: false,
             next: false,
+            fast: false,
         }
 
         if (typeof (args) !== "undefined") {
@@ -59,48 +76,42 @@ export function publishProject(args) {
             npmRelease: {
                 title: "📢 Publish on NPM",
                 enabled: () => config.npm === true,
-                task: () => {
-                    return new Observable((observer) => {
-                        let publishCount = Number(0)
+                task: async () => {
+                    return new Observable(async (observer) => {
+                        let publishedPackages = Number(0)
                         if (!Array.isArray(projectPackages) && !isProject) {
                             projectPackages = ["_"]
                         }
 
-                        projectPackages.forEach((pkg, index) => {
+                        for await (const [index, pkg] of projectPackages.entries()) {
                             const packagePath = isProject ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
                             const pkgJSON = path.resolve(packagePath, 'package.json')
-                            const cliArgs = ['publish']
-
-                            if (config.next) {
-                                cliArgs.push('--tag', 'next')
-                            }
 
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     const { name } = require(pkgJSON)
-                                    const logOutput = `[${publishCount}/${projectPackages.length}] Published npm package ${name}[${index}]`
 
-                                    execa('npm', cliArgs, { cwd: packagePath })
-                                        .then((stdout) => {
-                                            publishCount += 1
-                                            process.runtime.logger.dump("info", logOutput)
-                                            observer.next(logOutput)
-
-                                            if (publishCount == (projectPackages.length - 1)) {
-                                                process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
-                                                observer.complete()
-                                            }
+                                    observer.next(`[${publishedPackages}/${projectPackages.length}] Publishing npm package [${index}]${name}`)
+                                    await npmPublish(packagePath, config, true)
+                                        .then(() => {
+                                            publishedPackages += 1
+                                            process.runtime.logger.dump("info", `+ published npm package ${name}`)
                                         })
                                 } catch (error) {
                                     observer.next(`❌ Failed to publish > ${name} > ${error}`)
+                                }
+
+                                if (publishedPackages >= projectPackages.length) {
+                                    process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                    observer.complete()
                                 }
                             } else {
                                 const errstr = `❌ ${pkg} has no valid package.json`
                                 process.runtime.logger.dump("error", errstr)
                                 observer.next(errstr)
                             }
+                        }
 
-                        })
                     })
                 }
             },
