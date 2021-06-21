@@ -12,7 +12,7 @@ import { verbosity } from '@corenode/utils'
 const dependencies = require('./dependencies')
 const net = require('./net')
 const repl = require('./repl')
-const moduleController = require('./module')
+const moduleLib = require('./module')
 const { EvalMachine } = require('./vm')
 const logger = require('./logger')
 const constables = require('./constables')
@@ -184,7 +184,7 @@ class Runtime {
     }
 
     overrideModuleController = () => {
-        module = new moduleController.moduleController({ instance: module.constructor, aliases: this.modulesAliases, paths: this.modulesPaths })
+        module = moduleLib.override(module, { aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
     setPreloaders() {
@@ -341,6 +341,6 @@ module.exports = {
     repl,
     logger,
     constables,
-    moduleController,
+    moduleLib,
     ...require("./helpers"),
 }

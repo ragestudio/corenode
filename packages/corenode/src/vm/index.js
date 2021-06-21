@@ -7,7 +7,7 @@ import * as compiler from '@corenode/builder/dist/lib'
 
 const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
-const requireLib = require("../module")
+const moduleLib = require("../module")
 const objects = require("./objects")
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
@@ -68,6 +68,8 @@ export class EvalMachine {
 
                     this.params.eval = fs.readFileSync(path.resolve(this.params.file))
                 }
+            } else {
+                this.params.file = path.join(process.cwd(), "anonVM.js")
             }
         } catch (error) {
             process.runtime.logger.dump("error", error)
@@ -120,7 +122,6 @@ export class EvalMachine {
         this.jail.set('controller', process.runtime.controller, { configurable: false, writable: false, global: true })
 
         this.jail.set('module', this.moduleController, { configurable: false, writable: false, global: true })
-        this.jail.set('__createModuleController', this.createModuleController, { configurable: false, writable: false, global: true })
         this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
 
         this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
@@ -158,7 +159,7 @@ export class EvalMachine {
         this.context = { ...this.context, ...this.jail.get() }
         // set global
         this.context.global = {
-            _import: requireLib.createScopedRequire(this.moduleController, this.getDirname()),
+            _import: moduleLib.createScopedRequire(this.moduleController, this.getDirname()),
             _env: global._env,
             project: global.project,
             runtime: process.runtime
@@ -176,7 +177,7 @@ export class EvalMachine {
     }
 
     createModuleController = () => {
-        return new requireLib.moduleController({ aliases: this.modulesAliases, paths: this.modulesPaths })
+        return new moduleLib.moduleController({ filename: this.params.file, aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
     dispatcher = () => {

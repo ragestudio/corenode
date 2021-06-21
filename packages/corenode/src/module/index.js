@@ -2,33 +2,67 @@ import _path from 'path'
 import fs from 'fs'
 import _ from 'lodash'
 
-import { objectToArrayMap } from '@corenode/utils'
-
 export class moduleController {
     constructor(payload) {
-        const { instance, aliases, paths } = payload ?? {}
-        var Module = instance ?? _.clone(module.constructor)
+        const { filename, aliases, paths } = payload ?? {}
+        let Module = new module.constructor(filename)
 
-        Module.overrides = {
-            filenames: {},
-            paths: []
+        let overrides = {
+            aliases: { ...aliases },
+            paths: [...paths ?? []]
         }
 
-        if (typeof aliases === "object") {
-            objectToArrayMap(aliases).forEach((alias) => {
-                Module.overrides.filenames[alias.key] = _path.resolve(alias.value)
+        Module.overrides = overrides
+
+        Module = override(Module, { aliases: overrides.aliases, paths: overrides.paths })
+
+        Module.resolveFrom = (fromDirectory, moduleId) => {
+            if (typeof fromDirectory !== 'string') {
+                throw new TypeError(`Expected \`fromDir\` to be of type \`string\`, got \`${typeof fromDirectory}\``)
+            }
+
+            if (typeof moduleId !== 'string') {
+                throw new TypeError(`Expected \`moduleId\` to be of type \`string\`, got \`${typeof moduleId}\``)
+            }
+
+            try {
+                fromDirectory = fs.realpathSync(fromDirectory)
+            } catch (error) {
+                if (error.code === 'ENOENT') {
+                    fromDirectory = _path.resolve(fromDirectory)
+                } else {
+                    throw error
+                }
+            }
+
+            const fromFile = _path.join(fromDirectory, 'anon.js')
+
+            const resolveFileName = () => Module.constructor._resolveFilename(moduleId, {
+                id: fromFile,
+                filename: fromFile,
+                paths: Module.constructor._nodeModulePaths(fromDirectory)
             })
+
+            return resolveFileName()
         }
 
-        if (Array.isArray(paths)) {
-            Module.overrides.paths = paths
+        Module.createRequire = function (from) {
+            return (moduleId) => require(Module.resolveFrom(from, moduleId))
         }
-
-        Module = overrideResolveFilename(Module, Module.overrides.filenames)
-        Module = overrideNodeModulesPath(Module, Module.overrides.paths)
 
         return Module
     }
+}
+
+export function override(instance, to = {}) {
+    if (to.aliases) {
+        instance.constructor = overrideResolveFilename(instance.constructor, to.aliases)
+    }
+    if (Array.isArray(to.paths)) {
+        instance.constructor = overrideNodeModulesPath(instance.constructor, to.paths)
+    }
+
+    return instance
 }
 
 export function overrideResolveFilename(instance, to = {}) {
@@ -38,42 +72,6 @@ export function overrideResolveFilename(instance, to = {}) {
             request = to[request]
         }
         return oldResolveFilename.call(this, request, parentModule, isMain, options)
-    }
-
-    instance.resolveFrom = (fromDirectory, moduleId) => {
-        if (typeof fromDirectory !== 'string') {
-            throw new TypeError(`Expected \`fromDir\` to be of type \`string\`, got \`${typeof fromDirectory}\``)
-        }
-
-        if (typeof moduleId !== 'string') {
-            throw new TypeError(`Expected \`moduleId\` to be of type \`string\`, got \`${typeof moduleId}\``)
-        }
-
-        try {
-            fromDirectory = fs.realpathSync(fromDirectory)
-        } catch (error) {
-            if (error.code === 'ENOENT') {
-                fromDirectory = _path.resolve(fromDirectory)
-            } else {
-                throw error
-            }
-        }
-
-        const fromFile = _path.join(fromDirectory, 'anon.js')
-
-        const resolveFileName = () => instance._resolveFilename(moduleId, {
-            id: fromFile,
-            filename: fromFile,
-            paths: instance._nodeModulePaths(fromDirectory)
-        })
-
-        return resolveFileName()
-    }
-
-    instance._req = require
-    
-    instance.createRequire = function (from) {
-        return (moduleId) => require(instance.resolveFrom(from, moduleId))
     }
 
     return instance
