@@ -1,54 +1,69 @@
-## TO DO:
+> Task statement symbols highlights
+| Symbol | State |
+|--|--|
+| [x] | Fully Implemented |
+| [~] | Partially implemented |
+| [@] | Ongoing implementation |
+| [!] | Fix as soon as possible (ASAP) |
+| [-] | Rejected / Reviewing |
+| [*] | Under investigation |
+| [ ] | Not started |
 
-- [] Binary builds
-  - [] Nodejs bindings
-  - [] OS bindings
-  - [] Add packages manager
+## Features work in progress:
 
-- (1) [debuggerUI]
-    - (1.1) [] WebApp
-    - (1.2) [] Dev daemon
+#### [builder]
+  - [~] Multithreading
+  - [*] Dynamic compiler
+  - [*] On demand compiler
+  - [x] API improvement
+  - [x] Show detailed builded sources
+  - [ ] Show detailed builder result
+  - [ ] WASM Support (C, C++)
 
-- (2) [corenode/builder]
-    - (2.1) [x] Reliability improvement
-    - (2.2) [~] Multithreading
-    - (2.3) [x] API improvement
-    - (2.4) [] CLI UI MODE
-      - (2.4.1) [x] Show ignored sources
-      - (2.4.2) [] Show more builder details
-    - (2.5) [~] Dynamic compiler
-    - (2.6) [] WASM Support (C, C++)
+#### [addons]
+  - [ ] Cloud registry
+  - [ ] Security & permissions
+  - [~] Dynamic load
+  - [~] Addon loader schema (load.addon.js)
 
-- (3) [corenode/addons] NRAL | Native Runtimed Addons Loader
-    - (3.1) [] Addons registry service
-    - (3.2) [~] Dynamic load
-    - (3.3) [x] Thread workers & load balancer
-    - (3.4) [] Unload addons
-    - (3.5) [] Custom events & security
-      - (3.5.1) [] Custom version conflict >> (unsafe = unload()) | (unsafe = warn())
+#### [core]
+  - [ ] WebAssembly loader support (WASI)
+  - [ ] Process profiler
+  - [ ] Source update
+  - [ ] SignalC (SignalCore)
+  - [ ] `VM`
+    - [x] Code transcompiler 
+    - [x] Scripts loader (nodescript)
+    - [~] Exposers dispatcher
+  - [x] `ModuleController`
+    - [x] Support Aliases overrides
+    - [x] Support Paths overrides
+    - [x] `importFrom`
 
-- (4) [corenode/core]
-  - (4.1) [] WebAssembly support (wasi)
-  - (4.2) [] Autoupdate
-  - (4.3) [] SignalC (SignalCore)
-  - (4.4) [x] VM Transcompiler
-  - (4.5) [] Runtime daemon
-  - (4.6) [x] VM Runtime scripts loader
-  - (4.7) [] Runtime profiler
+#### [libraries]
+  - [ ] net
+    - [ ] websocket
+      - [~] websocket.server
+      - [ ] websocket.client
+  
+  - [ ] factory
+    - [*] Thing(class) generator
 
-- (5) [corenode/helpers]
-  - (5.1) [] improve versioning
-  - (5.2) [] improve bump version
-  - (5.3) [x] Publish proyect improve performance
-  - (5.4) [] fn() access file || fileExists
+#### [helpers]
+  - [x] integrate `syncVersion`
 
-- (6) [test-module]
-  - (6.1) [] `global & env` Enviroment support Jest
-  - (6.2) [] Merge jest runtime with corenode runtime init support
+#### [cli]
+  - [x] `version` improve bump version
+  - [x] `publish` performance
 
-- (7) [] Support client/server polymorphism
-
-- (8) [] Add global API documentation
-- (9) [] Add test units to scripts & packages
-
-- (10) [] Create some first-hand plugins & modules
+#### [#testing]
+  - [!] Support JEST testing with runtime
+  
+#### [#reliability]
+  - [!] Unit code tests
+  
+#### [#maintainability]
+  - [ ] API Documentation
+  - [ ] Project documentation & organization
+  - [ ] Project policies
+  - [ ] Project roadmap
