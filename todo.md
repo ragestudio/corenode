@@ -1,4 +1,5 @@
 > Task statement symbols highlights
+
 | Symbol | State |
 |--|--|
 | [x] | Fully Implemented |
