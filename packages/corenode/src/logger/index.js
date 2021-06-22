@@ -60,7 +60,7 @@ class Logger {
                 })
             ),
             transports: [
-                new transports.File({ filename: "dumps.log" }),
+                new transports.File({ filename: process.runtime.dumpLogsFile ?? "dumps.log" }),
             ],
         })
     }
