@@ -5,11 +5,9 @@ import { EventEmitter } from 'events'
 import * as babel from "@babel/core"
 import * as compiler from '@corenode/builder/dist/lib'
 
-const { FactoryController } = require("../factory")
 const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
-const objects = require("./objects")
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
@@ -18,12 +16,15 @@ const vmt = `
 var require = module.createRequire(__getDirname());
 var _import = global._import;
 `
+
+export class VMObject {
+
+}
+
 export class EvalMachine {
     constructor(params) {
-        this.params = params ?? {}
+        this.params = { ...params }
         this.vmController = require("vm")
-
-        this.factoryController = new FactoryController(process.runtime.mainFactory, "vm")
 
         if (typeof this.params.cwd === "undefined") {
             this.params.cwd = process.cwd()
@@ -140,7 +141,7 @@ export class EvalMachine {
         this.jail.set('console', console, { global: true })
 
         // parse custom vm objects
-        if (typeof (objects) === "object") {
+        if (typeof (process.runtime.runtimeObjects) === "object") {
             objectToArrayMap(objects).forEach((obj) => {
                 const objectType = typeof obj.value
 

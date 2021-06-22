@@ -1,5 +1,4 @@
 const assert = require('assert')
-
 class MainFactory {
     constructor() {
         this.factories = {}
@@ -42,8 +41,17 @@ class FactoryController {
 class Thing {
     constructor(params) {
         this.params = params
+        this.thing = null
+        this.connectWith = undefined
 
+        if (typeof this.connectWith !== "undefined") {
+            this.connect(this.connectWith)
+        }
         return this
+    }
+
+    _getThing(){
+        return this.thing
     }
 
     create = (thing, factoryID) => {
@@ -51,11 +59,11 @@ class Thing {
     }
 
     connect = (to) => {
-
+        process.runtime.mainFactory.factories[to].set(this._getThing())
     }
 
     eject() {
-
+        
     }
 }
 

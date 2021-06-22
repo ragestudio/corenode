@@ -15,7 +15,6 @@ const repl = require('./repl')
 const moduleLib = require('./module')
 const logger = require('./logger')
 const constables = require('./constables')
-const { MainFactory } = require('./factory')
 
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
@@ -54,6 +53,7 @@ class Runtime {
         this.modulesAliases = {}
         this.modulesPaths = {}
 
+        this.runtimeObjects = {}
         this.controller = {}
         this.helpers = require("./helpers")
         this.addons = null
@@ -76,6 +76,14 @@ class Runtime {
             _env: () => global._loadedEnvPath ?? path.resolve(process.cwd(), '.corenode'),
             _src: () => path.resolve(__dirname, ".."),
             _root: () => path.resolve(__dirname, '../../..')
+        }
+    }
+
+    createRuntimeObject = (key, thing) => {
+        if (typeof this.runtimeObjects[key] === "undefined") {
+            this.runtimeObjects[key] = thing
+        }else {
+            throw new Error(`[${key}] is already set`)
         }
     }
 
@@ -208,8 +216,10 @@ class Runtime {
     async init() {
         return new Promise(async (resolve, reject) => {
             try {
-                if (!global._inited) {
-                    this.mainFactory = new MainFactory()
+                if (!global._inited) {       
+                    const objects = require('../internals/objects')
+                   
+
                     global._cli = {}
                     global._env = {}
 
