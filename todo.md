@@ -62,7 +62,7 @@
   
 #### [#reliability]
   - [!] Unit code tests
-  
+  - [!] CI/CD Implementation
 #### [#maintainability]
   - [ ] API Documentation
   - [ ] Project documentation & organization
