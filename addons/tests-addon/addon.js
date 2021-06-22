@@ -1,8 +1,13 @@
-const { runTests } = require("./src")
+function run(context, args) {
+    const { runTests } = require("./src")
+    runTests(args)
+}
 
 runtime.appendToCli({
     command: "test",
-    exec: (context, args) => {
-        runTests(args)
-    }
+    exec: run
 })
+
+expose = {
+    run
+}

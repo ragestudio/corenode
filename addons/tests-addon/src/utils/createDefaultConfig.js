@@ -1,18 +1,7 @@
 const { existsSync } = require('fs')
 const { join } = require('path')
 const assert = require('assert')
-const sc = require('smart-circular')
 
-function generateGlobal() {
-  let obj = {}
-  const keys = ["project", "_env", "runtime"]
-  
-  keys.forEach((key) => {
-    obj[key] = global[key]
-  })
-
-  return sc(obj)
-}
 
 function createDefaultConfig(cwd, args) {
   const hasPackages = existsSync(join(cwd, 'packages'))
@@ -21,7 +10,7 @@ function createDefaultConfig(cwd, args) {
   const testMatchTypes = ['spec', 'test']
 
   const hasPackage = hasPackages && args.package
-  const testMatchPrefix = hasPackage ? `**/packages/${args.package}/` : ''
+  const testMatchPrefix = hasPackage ? `packages/${args.package}/` : ''
 
   if (hasPackage) {
     assert(
@@ -40,23 +29,12 @@ function createDefaultConfig(cwd, args) {
       '!**/fixtures/**',
       '!**/*.d.ts',
     ].filter(Boolean),
-    globals: generateGlobal(),
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-    setupFiles: [require.resolve('../../helpers/setupFiles/shim')],
-    setupFilesAfterEnv: [require.resolve('../../helpers/setupFiles/jasmine')],
-    testEnvironment: require.resolve('jest-environment-jsdom-fourteen'),
     testMatch: [
       `${testMatchPrefix}**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`,
+      '!node_modules'
     ],
-    testPathIgnorePatterns: ['/node_modules/', '/fixtures/', '/dist/'],
-    transform: {
-      '^.+\\.(js|jsx|ts|tsx)$': require.resolve(
-        '../../helpers/transformers/javascript',
-      ),
-      '^(?!.*\\.(js|jsx|ts|tsx|css|less|sass|scss|stylus|json)$)': require.resolve(
-        '../../helpers/transformers/file',
-      ),
-    },
+    ignoreMatch: ['**/*/node_modules', '**/*/fixtures', '**/*/dist'],
     verbose: true,
     transformIgnorePatterns: [
     ],

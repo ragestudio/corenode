@@ -1,60 +1,59 @@
-const { existsSync } = require('fs')
-const { runCLI } = require('jest')
-const { join } = require('path')
+const fs = require('fs')
+const path = require('path')
+
+const mocha = require('mocha')
+const chai = require('chai')
 const assert = require('assert')
-const { options } = require('jest-cli/build/cli/args')
 
 const { createDefaultConfig } = require('./utils')
-let { verbosity, mergeConfig } = require('@corenode/utils')
-verbosity.options({ method: "[TEST]" })
+const { logger } = require('corenode')
+const { mergeConfig } = require('@corenode/utils')
+const { matchSync } = require('filesystem')
+
+const state = new logger({ id: `#TESTS` })
 
 async function runTests(args = {}) {
   process.env.NODE_ENV = 'test'
-  verbosity.log(`🚧  Starting JEST tests...`)
+  state.log(`🧰  Starting unit tests...`)
 
   const cwd = args.cwd || process.cwd()
 
-  // Read config from cwd/jest.config.js
-  const userJestConfigFile = join(cwd, 'jest.config.js')
-  const userJestConfig = existsSync(userJestConfigFile) && require(userJestConfigFile)
+  const configFilePath = path.join(cwd, 'tests.config.js')
+  const configFile = fs.existsSync(configFilePath) && require(configFilePath)
 
+  const packageJSON = runtime.helpers.getRootPackage()
+  const packageConfig = packageJSON.tests
 
-  // Read jest config from package.json
-  const packageJSONPath = join(cwd, 'package.json')
-  const packageJestConfig = existsSync(packageJSONPath) && require(packageJSONPath).jest
-
-
-  // Merge configs
-  // user config and args config could have value function for modification
   const config = mergeConfig(
     createDefaultConfig(cwd, args),
-    packageJestConfig,
-    userJestConfig,
+    packageConfig,
+    configFile,
   )
+  const patters = [...config.testMatch, ...config.ignoreMatch.map((ignore) => { return `!${ignore}` })]
+  const sources = matchSync(patters)
 
-  // Generate jest options
-  const argsConfig = Object.keys(options).reduce((prev, name) => {
-    if (args[name]) prev[name] = args[name]
-
-    // Convert alias args into real one
-    const { alias } = options[name]
-    if (alias && args[alias]) prev[name] = args[alias]
-    return prev
+  //* load global
+  // add assert
+  global.assert = assert
+  // add chai lib
+  Object.keys(chai).forEach((key) => {
+    global[key] = chai[key]
   })
 
-  // Run jest
-  const result = await runCLI(
-    {
-      _: args._ || [],
-      $0: args.$0 || '',
-      config: JSON.stringify(config),
-      ...argsConfig,
-    },
-    [cwd],
-  )
+  const testInstance = new mocha()
 
-  // Throw error when run failed
-  assert(result.results.success, `Test with jest failed`)
+  sources.forEach((match) => {
+    testInstance.addFile(path.resolve(cwd, match))
+  })
+
+  // Run
+  testInstance.run((errors) => {
+    if (errors > 0) {
+      state.dump(errors)
+      state.error(result)
+
+    }
+  })
 }
 
 module.exports = { runTests }
