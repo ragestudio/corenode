@@ -5,6 +5,10 @@ import { verbosity } from '@corenode/utils'
 const { combine, timestamp, label, printf } = format
 
 class Logger {
+    constructor(params = {}){
+        this.id = params.id ?? null
+    }
+
     log = (...context) => {
         StackTrace.get().then((stack) => {
             stack = stack[2]
@@ -36,7 +40,7 @@ class Logger {
         const { level, stack } = payload
 
         this.createDump({ level, stack }).info(...context)
-        verbosity.options({ method: `[${stack.functionName}]` })[level](...context)
+        verbosity.options({ method: `[${this.id? `${this.id} | ` : ""}${stack.functionName}]` })[level](...context)
     }
 
     createDump({ level, stack }) {
