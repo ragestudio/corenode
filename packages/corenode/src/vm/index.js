@@ -5,6 +5,7 @@ import { EventEmitter } from 'events'
 import * as babel from "@babel/core"
 import * as compiler from '@corenode/builder/dist/lib'
 
+const { FactoryController } = require("../factory")
 const { Serializer } = require('./serialize.js')
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
@@ -21,6 +22,8 @@ export class EvalMachine {
     constructor(params) {
         this.params = params ?? {}
         this.vmController = require("vm")
+
+        this.factoryController = new FactoryController(process.runtime.mainFactory, "vm")
 
         if (typeof this.params.cwd === "undefined") {
             this.params.cwd = process.cwd()

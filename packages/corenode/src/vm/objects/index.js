@@ -21,7 +21,7 @@ let vmObjects = {
             }
             machine.destroy()
         })
-    }
+    },
 }
 
 module.exports = vmObjects

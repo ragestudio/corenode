@@ -13,9 +13,9 @@ const dependencies = require('./dependencies')
 const net = require('./net')
 const repl = require('./repl')
 const moduleLib = require('./module')
-const { EvalMachine } = require('./vm')
 const logger = require('./logger')
 const constables = require('./constables')
+const { MainFactory } = require('./factory')
 
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
@@ -209,6 +209,7 @@ class Runtime {
         return new Promise(async (resolve, reject) => {
             try {
                 if (!global._inited) {
+                    this.mainFactory = new MainFactory()
                     global._cli = {}
                     global._env = {}
 
@@ -218,7 +219,7 @@ class Runtime {
                     this.modulesAliases = {
                         ...global._env.modulesAliases
                     }
-                    this.modulesPaths = {
+                    this.modulesPathfas = {
                         ...global._env.modulesPaths
                     }
 
@@ -232,6 +233,8 @@ class Runtime {
 
                     //? register internal libs
                     this.registerModulesAliases({
+                        "factory": path.resolve(__dirname, 'factory'),
+                        "filesystem": path.resolve(__dirname, 'filesystem'),
                         "@@helpers": path.resolve(__dirname, 'helpers'),
                         "@@addons": path.resolve(__dirname, 'addons'),
                         "@@classes": path.resolve(__dirname, 'classes'),
@@ -305,6 +308,8 @@ class Runtime {
                                 if (!fs.existsSync(targetBin)) {
                                     throw new Error(`Cannot read loader script [${targetBin}]`)
                                 }
+                                const { EvalMachine } = require('./vm')
+
                                 new EvalMachine({
                                     file: targetBin,
                                     onError: (err) => {
