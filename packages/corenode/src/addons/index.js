@@ -44,6 +44,8 @@ class Addon {
         if (typeof this.loader.file !== "undefined") {
             this.loader.dirname = path.dirname(this.loader.file)
         }
+        
+        this.dirname = this.loader.dirname
 
         //* before init
         if (typeof this.loader.init === "function") {
@@ -58,14 +60,18 @@ class Addon {
         return this
     }
 
-    checkDependencies = () => {
+    checkDependencies = async () => {
+        if (process.runtime.disableCheckDependencies) {
+            return true
+        }
+
         if (this.loader.hasDependencies && typeof this.loader.dirname !== "undefined") {
             const addonPackageJson = path.resolve(this.loader.dirname, 'package.json')
             if (fs.existsSync(addonPackageJson)) {
                 this.loader.dependencies = require(addonPackageJson).dependencies ?? {}
             }
         }
-
+        
         const dependenciesTypes = ["dependencies", "devDependencies"]
         dependenciesTypes.forEach((type) => {
             if (typeof this.loader[type] === "object") {
@@ -78,7 +84,7 @@ class Addon {
                         const dep = `${key}@${value}`
 
                         console.warn(`⚠️  Missing dependency, trying to install...[${dep}]`)
-                        dependencies.install(dep)
+                        dependencies.install(dep, { cwd: this.loader.dirname })
                     }
                 })
             }
