@@ -90,11 +90,11 @@ export function publishProject(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     if (config.fast) {
-                                        npmPublish(packagePath, config, true)
+                                        npmPublish(packagePath, config)
                                         packagesCount += 1
                                     } else {
                                         observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
-                                        await npmPublish(packagePath, config, true)
+                                        await npmPublish(packagePath, config)
                                             .then(() => {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
