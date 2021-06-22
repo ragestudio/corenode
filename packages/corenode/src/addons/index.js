@@ -145,7 +145,7 @@ export default class AddonsController {
         this.allLoaders = this.fetchAllLoaders()
 
         if (!this.disabledController) {
-            this.allLoaders.forEach((loader) => { 
+            this.allLoaders.forEach((loader) => {
                 this.queryLoader(loader)
             })
         }
@@ -161,7 +161,7 @@ export default class AddonsController {
     }
 
     queryLoader(loader) {
-        const addon = new Addon({ loader })        
+        const addon = new Addon({ loader })
         this.query.push(addon)
     }
 
@@ -174,20 +174,20 @@ export default class AddonsController {
     }
 
     loadAddon(addon) {
-        if (!addon instanceof Addon) {
-            throw new Error(`Invalid class of addon!`)
-        }
+        if (addon instanceof Addon) {
+            // check if the addon is not loaded
+            if (typeof this.addons[addon.loader.pkg] === "undefined") {
+                addon.disabled = this.disabledAddons.includes(addon.loader.pkg)
+                addon.loader.disabled = addon.disabled
 
-        // check if the addon is not loaded
-        if (typeof this.addons[addon.loader.pkg] === "undefined") {
-            addon.disabled = this.disabledAddons.includes(addon.loader.pkg)
-            addon.loader.disabled = addon.disabled
-
-            this.appendLoader(addon.loader)
-            this.addons[addon.loader.pkg] = addon
-            if (!addon.disabled) {
-                addon.load()
+                this.appendLoader(addon.loader)
+                this.addons[addon.loader.pkg] = addon
+                if (!addon.disabled) {
+                    addon.load()
+                }
             }
+        } else {
+            throw new Error(`Invalid class of addon!`)
         }
     }
 
