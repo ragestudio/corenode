@@ -3,7 +3,6 @@ import StackTrace from 'stacktrace-js'
 import { verbosity } from '@corenode/utils'
 
 const { combine, timestamp, label, printf } = format
-
 class Logger {
     constructor(params = {}){
         this.id = params.id ?? null
