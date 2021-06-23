@@ -2,10 +2,12 @@ import fs from 'fs'
 import path from 'path'
 import filesize from 'filesize'
 import { EventEmitter } from 'events'
+import Serializer from './serialize.js'
+
 import * as babel from "@babel/core"
 import * as compiler from '@corenode/builder/dist/lib'
 
-const { Serializer } = require('./serialize.js')
+const vmlib = require("vm")
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
 
@@ -21,10 +23,75 @@ export class VMObject {
 
 }
 
+export class VMController {
+    constructor() {
+        this.defaultJail = this.createDefaultJail()
+        this.objects = this.getObjects()
+
+        this.deep = {}
+        this.pool = {}
+
+        this.poolObserver = new MutationObserver(this.onPoolMutation)
+        this.poolObserver.observe(this.pool)
+    }
+
+    getObjects() {
+        let objects = {}
+
+        const runtimeObjects = process.runtime.objects
+        if (typeof runtimeObjects === "object") {
+            objects = { ...objects, ...runtimeObjects }
+        }
+
+        return objects
+    }
+
+    createDefaultJail() {
+        const jail = new Jail()
+
+        jail.set('process', process, { configurable: false, writable: false, global: true })
+        jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
+        jail.set('controller', process.runtime.controller, { configurable: false, writable: false, global: true })
+        jail.set('_serialize', (...context) => Serializer.serialize(...context), { configurable: false, writable: false, global: true })
+        jail.set('_deserialize', (...context) => Serializer.deserialize(...context), { configurable: false, writable: false, global: true })
+        jail.set('console', console, { global: true })
+        jail.set('expose', {}, { configurable: true, writable: false, global: true })
+
+        return jail
+    }
+
+    createVMContext = () => {
+
+    }
+
+    onPoolMutation = (mutation) => {
+        //update deep
+        this.deep = Object.keys(this.pool).length
+        console.log(mutation)
+    }
+
+    allocate(evalMachine, callback) {
+        if (evalMachine instanceof EvalMachine) {
+            let address = Number(0)
+
+            // iterate short addresses and increment local address until an free pool index is located
+            while (typeof this.pool[address] !== "undefined") {
+                address += 1
+            }
+
+            this.pool[address] = evalMachine
+            return callback(address)
+        }
+    }
+}
+
 export class EvalMachine {
     constructor(params) {
+        if (typeof process.runtime.vmController !== "object") {
+            throw new Error(`Runtime has not an vmController`)
+        }
+
         this.params = { ...params }
-        this.vmController = require("vm")
 
         if (typeof this.params.cwd === "undefined") {
             this.params.cwd = process.cwd()
@@ -80,11 +147,8 @@ export class EvalMachine {
             getVerbosity().error(`[${this.params.file}] Cannot read file/script > ${error.message}`)
         }
 
-        // try to allocate to pool
-        this.address = 0
-        this.allocateNew()
-
         // define vm basics
+        this.address = 0
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
         this.events = new EventEmitter()
@@ -98,13 +162,29 @@ export class EvalMachine {
             this.context = { ...this.context, ...this.params.context }
         }
 
+        // set objects
+        objectToArrayMap(fromObjects).forEach((obj) => {
+            const objectType = typeof obj.value
+
+            switch (objectType) {
+                case "function": {
+                    obj.value = obj.value.bind(this)
+                    break
+                }
+
+                default: {
+                    this.jail.set(obj.key, obj.value, { global: true })
+                    break
+                }
+            }
+
+            objects[obj.key] = obj.value
+        })
+
         // init module controller
         this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
         this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
         this.moduleController = this.createModuleController()
-
-        // set symbols
-        this._functionScapeSymbol = Symbol()
 
         // set events
         this.events.on(`destroyVM`, () => {
@@ -114,51 +194,17 @@ export class EvalMachine {
         })
 
         // set globals to jail
-        this.serializer = new Serializer()
         this.jail = new Jail()
 
         this.jail.set('selfThis', this, { configurable: false, writable: false, global: false })
         this.jail.set('self', this.jail.get(), { configurable: false, writable: false, global: true })
-
-        // set an process secure dispatcher
-        this.jail.set('process', process, { configurable: false, writable: false, global: true })
-        this.jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
-        this.jail.set('controller', process.runtime.controller, { configurable: false, writable: false, global: true })
-
         this.jail.set('module', this.moduleController, { configurable: false, writable: false, global: true })
-        this.jail.set('expose', {}, { configurable: true, writable: false, global: true })
-
         this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
         this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
         this.jail.set('__getDirname', this.getDirname, { configurable: false, writable: false, global: true })
-
         this.jail.set('dispatcher', this.dispatcher, { configurable: false, writable: false, global: true })
         this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
         this.jail.set('destroy', (...context) => this.destroy(...context), { configurable: false, writable: false, global: true })
-
-        this.jail.set('_serialize', (...context) => this.serializer.serialize(...context), { configurable: false, writable: false, global: true })
-        this.jail.set('_deserialize', (...context) => this.serializer.deserialize(...context), { configurable: false, writable: false, global: true })
-        this.jail.set('console', console, { global: true })
-
-        // parse custom vm objects
-        const objects = process.runtime.objects
-        if (typeof objects === "object") {
-            objectToArrayMap(objects).forEach((obj) => {
-                const objectType = typeof obj.value
-
-                switch (objectType) {
-                    case "function": {
-                        this.jail.set(obj.key, obj.value.bind(this), { global: true })
-                        break
-                    }
-
-                    default: {
-                        this.jail.set(obj.key, obj.value, { global: true })
-                        break
-                    }
-                }
-            })
-        }
 
         // create context
         this.context = { ...this.context, ...this.jail.get() }
@@ -169,14 +215,19 @@ export class EvalMachine {
             project: global.project,
             runtime: process.runtime
         }
-        this.vmController.createContext(this.context)
 
-        // run vmt
-        this.run(vmt, { babelTransform: false })
+        // before run script need to allocate to pool
+        process.runtime.vmController.allocate(this, (address) => {
+            this.address = address
+            this.poolRef = process.runtime.vmController.pool[this.address]
+            this.events.emit("ready")
 
-        if (typeof this.params.eval !== "undefined") {
-            this.run(this.params.eval, { babelTransform: true })
-        }
+            // run first script, sending vmt for vm initialization
+            this.run(vmt, { babelTransform: false })
+            if (typeof this.params.eval !== "undefined") {
+                this.run(this.params.eval, { babelTransform: true })
+            }
+        })
 
         return this
     }
@@ -239,68 +290,18 @@ export class EvalMachine {
         return this.params.cwd
     }
 
-    getNodeModules = (origin) => {
-        let obj = {}
+    do = (fn, option, callback) => {
+        let script = `
+            (async function(){
+                const _ = ${fn.toString()}
+                _.call()
+            }())
+        `
 
-        function readDir(from, resolvePath) {
-            if (typeof from !== "string") {
-                return false
-            }
-
-            const directory = resolvePath ? path.resolve(from, resolvePath) : path.resolve(from)
-
-            if (!fs.existsSync(directory)) {
-                return false
-            }
-
-            return fs.readdirSync(directory).map((dir) => {
-                return {
-                    dir: dir,
-                    _path: path.resolve(directory, dir)
-                }
-            })
-        }
-
-        const node_modules = readDir(origin, `node_modules`)
-
-        if (Array.isArray(node_modules)) {
-            node_modules.forEach((entry) => {
-                const pkg = path.resolve(entry._path, 'package.json')
-                if (fs.existsSync(pkg)) {
-                    obj[entry.dir] = entry._path
-                }
-            })
-        }
-
-        return obj
+        this.run(script, option, callback)
     }
 
-    allocateNew() {
-        // create vms global object if not already created
-        if (typeof process.runtime.vms !== "object") {
-            process.runtime.vms = {
-                deep: 0,
-                pool: {}
-            }
-        }
-
-        // iterate short addresses and increment local address until an free pool index is located
-        while (typeof process.runtime.vms.pool[this.address] !== "undefined") {
-            this.address += 1
-        }
-
-        // set pool address with `this`
-        this.poolRef = process.runtime.vms.pool[this.address] = this
-
-        this.updateDeep()
-    }
-
-    updateDeep() {
-        // set deep with current pool length
-        process.runtime.vms.deep = Object.keys(process.runtime.vms.pool).length
-    }
-
-    do(fn, option, callback) {
+    doSync = () => {
         let script = `
             (function(){
                 const _ = ${fn.toString()}
@@ -311,11 +312,7 @@ export class EvalMachine {
         this.run(script, option, callback)
     }
 
-    run(exec, options, callback) {
-        if (typeof this.vmController === "undefined") {
-            throw new Error(`vmController is not available (maybe destroyed)`)
-        }
-
+    run = (exec, options, callback) => {
         if (typeof options !== "object") {
             options = {
                 babelTransform: true
@@ -327,8 +324,8 @@ export class EvalMachine {
                 exec = babel.transformSync(exec, { ...this.babelOptions, ...options.babelOptions }).code
             }
 
-            const vmscript = new this.vmController.Script(exec, this.scriptOptions)
-            const _run = vmscript.runInContext(this.context)
+            const vmscript = new vmlib.Script(exec, this.scriptOptions)
+            const _run = vmscript.runInContext(vmlib.createContext(this.context))
 
             if (typeof callback === "function") {
                 callback()
@@ -349,7 +346,7 @@ export class EvalMachine {
 
     measureMemory(opts = {}) {
         return new Promise((resolve, reject) => {
-            this.vmController.measureMemory({ mode: opts?.mode ?? 'detailed', execution: opts?.execution ?? 'eager' })
+            vmlib.measureMemory({ mode: opts?.mode ?? 'detailed', execution: opts?.execution ?? 'eager' })
                 .then((result) => {
                     if (opts?.humanize) {
                         let total = result.total
@@ -369,19 +366,18 @@ export class EvalMachine {
 
     }
 
-    onDestroy(fn) {
+    onDestroy = (fn) => {
         if (typeof fn !== "function") {
             throw new Error(`[${typeof fn}] is not an valid type for "onDestroy"`)
         }
         this._sendOnDestroy = fn
     }
 
-    destroy() {
+    destroy = () => {
         this.events.emit(`destroyVM`)
 
         delete this.poolRef
         delete process.runtime.vms.pool[this.address]
-        delete this.vmController
         this.updateDeep()
     }
 }

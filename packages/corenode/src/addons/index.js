@@ -132,11 +132,11 @@ class Addon {
     }
 
     unload = () => {
-        process.runtime.addons.unload(this.loader.pkg)
+        process.runtime.addonsController.unload(this.loader.pkg)
     }
 }
 
-export default class AddonsController {
+class addonsController {
     constructor() {
         this.disabledController = process.runtime.load.disableAddons
         this.disabledAddons = [...(global._env?.disabledAddons ?? [])]
@@ -286,4 +286,9 @@ export default class AddonsController {
 
         process.runtime.events.emit('init_addons_done')
     }
+}
+
+module.exports = {
+    addonsController,
+    Addon
 }

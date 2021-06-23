@@ -57,3 +57,5 @@ export class Serializer {
         return input
     }
 }
+
+export default new Serializer()

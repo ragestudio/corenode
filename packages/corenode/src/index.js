@@ -76,7 +76,7 @@ class Runtime {
         this.objects = {}
         this.controller = {}
         this.helpers = require("./helpers")
-        this.addons = null
+        this.addonsController = null
 
         this.events = new EventEmitter()
         this.logger = new logger()
@@ -298,16 +298,19 @@ class Runtime {
                         console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
                     }
 
-                    // create new addonController
-                    const addonController = require("./addons").default
-                    this.addons = new addonController()
+                    //* create and initialize runtime controllers
+                    const { EvalMachine, vmController } = require('./vm')
+                    this.vmController = new vmController()
+
+                    const { addonsController } = require("./addons")
+                    this.addonsController = new addonsController()
 
                     //* set preloaders before load
                     this.initPreloaders()
 
                     //? fire preloaders
-                    await this.addons.checkDependencies()
-                    this.addons.init()
+                    await this.addonsController.checkDependencies()
+                    this.addonsController.init()
 
                     //? await for them
                     await Promise.all(this.preloadPromises)
@@ -336,7 +339,6 @@ class Runtime {
                                 if (!fs.existsSync(targetBin)) {
                                     throw new Error(`Cannot read loader script [${targetBin}]`)
                                 }
-                                const { EvalMachine } = require('./vm')
 
                                 new EvalMachine({
                                     file: targetBin,
