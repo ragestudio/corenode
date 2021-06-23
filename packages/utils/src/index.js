@@ -220,3 +220,5 @@ export { default as readDirs } from './readDirs'
 export { default as dargs } from './dargs'
 
 export { default as moduleFromString } from './moduleFromString'
+
+export { default as camalize } from './camalize'
