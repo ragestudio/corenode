@@ -23,20 +23,22 @@ global.npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 class Runtime {
     constructor(load) {
         this.load = load
-        
+
         //? handle load params
         if (this.load.cwd) {
             if (!path.isAbsolute(this.load.cwd)) {
                 this.load.cwd = path.resolve(this.load.cwd)
             }
-            
+
             process.chdir(this.load.cwd)
         }
         if (this.load.args) {
             process.args = this.load.args
         }
-        
+
         this.args = require("yargs-parser")(process.argv)
+        process.parsedArgs = this.args
+        this.disableCheckDependencies = this.args.disableCheckDependencies
 
         //? set undefined globals
         if (typeof global._inited === "undefined") {
@@ -50,10 +52,12 @@ class Runtime {
         }
 
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
+        global._packages = {
+            _engine: path.resolve(__dirname, '../package.json'),
+            _project: path.resolve(process.cwd(), 'package.json')
+        }
 
-        this.disableCheckDependencies = this.args.disableCheckDependencies
-
-        // register primordials
+        // register primordials modules
         this.registerModulesAliases({
             "factory": path.resolve(__dirname, 'factory'),
             "filesystem": path.resolve(__dirname, 'filesystem'),
@@ -83,15 +87,21 @@ class Runtime {
         this.preloadPromises = []
 
         // set runtime objects
-        const internalObjects = require('../internals/objects')
+        const internalObjects = this.getInternalObjects()
         if (typeof internalObjects === 'object') {
             objectToArrayMap(internalObjects).forEach((obj) => {
                 this.createRuntimeObject(obj.key, obj.value)
             })
         }
 
-        this.setEvents()
-        this.init()
+        const builtInEvents = require('./events')
+        if (Array.isArray(builtInEvents)) {
+            builtInEvents.forEach((_case) => {
+                this.events.addListener(_case.on, _case.event)
+            })
+        }
+
+        this.initialize()
     }
 
     get = {
@@ -101,6 +111,20 @@ class Runtime {
             _src: () => path.resolve(__dirname, ".."),
             _root: () => path.resolve(__dirname, '../../..')
         }
+    }
+
+    getInternalObjects = () => {
+        let objects = {}
+
+        try {
+            const internalObjects = require('../internals/objects')
+            objects = internalObjects
+        } catch (error) {
+            this.logger.dump(error)
+            this.logger.error(`Failed to get internal objects`)
+        }
+
+        return objects
     }
 
     createRuntimeObject = (key, thing) => {
@@ -146,7 +170,7 @@ class Runtime {
         return instance
     }
 
-    setEnvironment() {
+    initEnvironment() {
         //* load dotenv
         require('dotenv').config()
 
@@ -167,12 +191,6 @@ class Runtime {
                     console.error(error)
                 }
             }
-        })
-    }
-
-    setEvents() {
-        this.events.addListener("cli_noCommand", () => {
-            repl.attachREPL()
         })
     }
 
@@ -219,7 +237,7 @@ class Runtime {
         module = moduleLib.override(module, { aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
-    setPreloaders() {
+    initPreloaders() {
         const eventPromise = (id) => {
             return new Promise((res, rej) => {
                 this.events.on(id, () => {
@@ -237,7 +255,7 @@ class Runtime {
         this.preloadPromises.push(event)
     }
 
-    async init() {
+    async initialize() {
         return new Promise(async (resolve, reject) => {
             //? register internal libs
             try {
@@ -245,7 +263,7 @@ class Runtime {
                     global._cli = {}
                     global._env = {}
 
-                    this.setEnvironment()
+                    this.initEnvironment()
 
                     //? set global aliases
                     this.modulesAliases = {
@@ -253,11 +271,6 @@ class Runtime {
                     }
                     this.modulesPaths = {
                         ...global._env.modulesPaths
-                    }
-
-                    global._packages = {
-                        _engine: path.resolve(__dirname, '../package.json'),
-                        _project: path.resolve(process.cwd(), 'package.json')
                     }
 
                     global.project = this.createProjectGlobal()
@@ -274,40 +287,39 @@ class Runtime {
                         // terrible
                     }
 
+                    if (this.load.isLocalMode) {
+                        global.isLocalMode = true
+                    }
+
+                    // warn local mode
+                    if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
+                        console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
+                    } else if (global.isLocalMode) {
+                        console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
+                    }
+
                     // create new addonController
                     const addonController = require("./addons").default
                     this.addons = new addonController()
+
+                    //* set preloaders before load
+                    this.initPreloaders()
+
+                    //? fire preloaders
+                    await this.addons.checkDependencies()
+                    this.addons.init()
+
+                    //? await for them
+                    await Promise.all(this.preloadPromises)
+                    this.preloadDone = true
 
                     // flag runtime as inited
                     global._inited = true
                 }
 
-                // warn local mode
-                if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
-                    console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
-                } else if (global.isLocalMode) {
-                    console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
-                }
-
-                let { targetBin, isLocalMode } = this.load
-                if (isLocalMode) {
-                    global.isLocalMode = true
-                }
-
-                //* set preloaders before load
-                this.setPreloaders()
-
-                //? fire preloaders
-                await this.addons.checkDependencies()
-                this.addons.init()
-
-                //? await for them
-                await Promise.all(this.preloadPromises)
-                this.preloadDone = true
-
                 //* load
                 if (this.load.runCli) {
-                    process.parsedArgs = this.args
+                    let { targetBin } = this.load
 
                     // TODO: overrides cli commands over file loader
                     if (typeof this.args["_"][2] !== "undefined") {
