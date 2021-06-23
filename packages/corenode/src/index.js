@@ -23,18 +23,20 @@ global.npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 class Runtime {
     constructor(load) {
         this.load = load
-
+        
         //? handle load params
         if (this.load.cwd) {
             if (!path.isAbsolute(this.load.cwd)) {
                 this.load.cwd = path.resolve(this.load.cwd)
             }
-
+            
             process.chdir(this.load.cwd)
         }
         if (this.load.args) {
             process.args = this.load.args
         }
+        
+        this.args = require("yargs-parser")(process.argv)
 
         //? set undefined globals
         if (typeof global._inited === "undefined") {
@@ -48,6 +50,8 @@ class Runtime {
         }
 
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
+
+        this.disableCheckDependencies = this.args.disableCheckDependencies
 
         // register primordials
         this.registerModulesAliases({
@@ -303,15 +307,11 @@ class Runtime {
 
                 //* load
                 if (this.load.runCli) {
-                    const args = require("yargs-parser")(process.argv)
-
-                    runtime.args = args
-                    process.parsedArgs = args
-                    process.runtime.repl = repl
+                    process.parsedArgs = this.args
 
                     // TODO: overrides cli commands over file loader
-                    if (typeof args["_"][2] !== "undefined") {
-                        const fileFromArgs = path.resolve(args["_"][2])
+                    if (typeof this.args["_"][2] !== "undefined") {
+                        const fileFromArgs = path.resolve(this.args["_"][2])
 
                         if (!targetBin && fs.existsSync(fileFromArgs)) {
                             if (fs.lstatSync(fileFromArgs).isFile()) {
