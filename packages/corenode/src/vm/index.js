@@ -141,7 +141,8 @@ export class EvalMachine {
         this.jail.set('console', console, { global: true })
 
         // parse custom vm objects
-        if (typeof (process.runtime.runtimeObjects) === "object") {
+        const objects = process.runtime.objects
+        if (typeof objects === "object") {
             objectToArrayMap(objects).forEach((obj) => {
                 const objectType = typeof obj.value
 

@@ -2,11 +2,11 @@
  * corenode
  * @module corenode 
  */
-import path from 'path'
-import fs from 'fs'
-import { EventEmitter } from 'events'
 
-import { verbosity } from '@corenode/utils'
+const path = require('path')
+const fs = require('fs')
+const { EventEmitter } = require('events')
+const { verbosity, objectToArrayMap } = require("@corenode/utils")
 
 //* PRIMORDIAL LIBRARIES
 const dependencies = require('./dependencies')
@@ -49,11 +49,23 @@ class Runtime {
 
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
 
-        //? Create controllers
+        // register primordials
+        this.registerModulesAliases({
+            "factory": path.resolve(__dirname, 'factory'),
+            "filesystem": path.resolve(__dirname, 'filesystem'),
+            "@@helpers": path.resolve(__dirname, 'helpers'),
+            "@@addons": path.resolve(__dirname, 'addons'),
+            "@@classes": path.resolve(__dirname, 'classes'),
+            "@@vm": path.resolve(__dirname, 'vm'),
+            "@@libs": path.resolve(__dirname, 'libs'),
+            "@@constables": path.resolve(__dirname, 'constables')
+        })
+
+        // controllers
         this.modulesAliases = {}
         this.modulesPaths = {}
 
-        this.runtimeObjects = {}
+        this.objects = {}
         this.controller = {}
         this.helpers = require("./helpers")
         this.addons = null
@@ -65,6 +77,14 @@ class Runtime {
         this.preloadDone = false
         this.preloadEvents = ['init_addons_done']
         this.preloadPromises = []
+
+        // set runtime objects
+        const internalObjects = require('../internals/objects')
+        if (typeof internalObjects === 'object') {
+            objectToArrayMap(internalObjects).forEach((obj) => {
+                this.createRuntimeObject(obj.key, obj.value)
+            })
+        }
 
         this.setEvents()
         this.init()
@@ -80,9 +100,9 @@ class Runtime {
     }
 
     createRuntimeObject = (key, thing) => {
-        if (typeof this.runtimeObjects[key] === "undefined") {
-            this.runtimeObjects[key] = thing
-        }else {
+        if (typeof this.objects[key] === "undefined") {
+            this.objects[key] = thing
+        } else {
             throw new Error(`[${key}] is already set`)
         }
     }
@@ -215,11 +235,9 @@ class Runtime {
 
     async init() {
         return new Promise(async (resolve, reject) => {
+            //? register internal libs
             try {
-                if (!global._inited) {       
-                    const objects = require('../internals/objects')
-                   
-
+                if (!global._inited) {
                     global._cli = {}
                     global._env = {}
 
@@ -229,7 +247,7 @@ class Runtime {
                     this.modulesAliases = {
                         ...global._env.modulesAliases
                     }
-                    this.modulesPathfas = {
+                    this.modulesPaths = {
                         ...global._env.modulesPaths
                     }
 
@@ -240,18 +258,6 @@ class Runtime {
 
                     global.project = this.createProjectGlobal()
                     global.runtime = process.runtime = this.createRuntimeGlobal(this)
-
-                    //? register internal libs
-                    this.registerModulesAliases({
-                        "factory": path.resolve(__dirname, 'factory'),
-                        "filesystem": path.resolve(__dirname, 'filesystem'),
-                        "@@helpers": path.resolve(__dirname, 'helpers'),
-                        "@@addons": path.resolve(__dirname, 'addons'),
-                        "@@classes": path.resolve(__dirname, 'classes'),
-                        "@@vm": path.resolve(__dirname, 'vm'),
-                        "@@libs": path.resolve(__dirname, 'libs'),
-                        "@@constables": path.resolve(__dirname, 'constables')
-                    })
 
                     //? detect local mode
                     try {

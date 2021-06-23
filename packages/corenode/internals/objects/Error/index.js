@@ -1,4 +1,4 @@
-import { verbosity } from '@corenode/utils'
+const { verbosity } = require('@corenode/utils')
 
 class OverrideError extends Error {
     constructor(...context) {
