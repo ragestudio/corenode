@@ -38,7 +38,7 @@ function canRead(dir) {
   }
 }
 
-export function babelBuild(payload) {
+export function transcompile(payload) {
   return new Promise((resolve, reject) => {
     let { dir, opts, ticker } = payload
     let options = {
@@ -222,12 +222,12 @@ export function buildProject(opts = {}) {
 
       if (Array.isArray(builderErrors) && builderErrors.length > 0) {
         const Logger = require("corenode/dist/logger")
-        const log = new Logger()
-        
+        const log = new Logger({ id: "#BUILDER" })
+
         const pt = new prettyTable()
         const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
         const rows = []
-
+        
         builderErrors.forEach((err) => {
           let obj = { ...err }
           log.dump("warn", `BUILD ERROR >> [${obj.task ?? "UNTASKED"}][${obj.dir}] >> ${obj.message}`)
@@ -291,7 +291,6 @@ export function buildProject(opts = {}) {
             format: '[{bar}] {percentage}% | {filename} | {value}/{total}'
           }, cliProgress.Presets.shades_grey)
         }
-
       }
     } catch (error) {
       handleError(error, "UNTASKED", "CLI INIT")
@@ -318,7 +317,7 @@ export function buildProject(opts = {}) {
       }
 
       // start builder
-      babelBuild({ dir, opts, ticker: () => handleTicker(job) })
+      transcompile({ dir, opts, ticker: () => handleTicker(job) })
         .then((done) => {
           handleThen(job)
         })
