@@ -1,6 +1,6 @@
 {
   "name": "@corenode/builder",
-  "version": "0.25.13",
+  "version": "0.25.14",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -30,7 +30,7 @@
     "@babel/preset-env": "7.13.12",
     "@babel/preset-typescript": "7.13.0",
     "@babel/runtime": "7.13.10",
-    "@corenode/utils": "0.25.13",
+    "@corenode/utils": "0.25.14",
     "cli-progress": "^3.9.0",
     "corenode": "^0.25.11",
     "map-stream": "^0.0.7",
