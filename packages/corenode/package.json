@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "files": [
     "internals/*/**/dist",
+    "internals/objects/*/**",
     "dist",
     "types.d.ts"
   ],
