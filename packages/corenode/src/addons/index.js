@@ -102,14 +102,11 @@ class Addon {
                     return log.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
                 }
 
-                console.time(`[${this.id}] VM CREATION`)
                 this.machine = new EvalMachine({
                     file: loaderScriptPath,
                     cwd: this.loader.dirname,
                 })
-                console.timeEnd(`[${this.id}] VM CREATION`)
-                console.log(`\n`)
-
+                
                 process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
                 log.dump("error", error)

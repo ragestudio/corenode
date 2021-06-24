@@ -8,6 +8,7 @@ import * as babel from "@babel/core"
 import * as compiler from '@corenode/builder/dist/lib'
 
 const vmlib = require("vm")
+const { Timings } = require("../libs/timings")
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
 const { Observable } = require("../observer")
@@ -173,6 +174,12 @@ export class EvalMachine {
         this.errorHandler = this.params.onError
         this.runs = Number(0)
         this.locked = this.params.lock ?? false
+        this.timings = new Timings({ 
+            disabled: this.params.disableTimings,
+            mutation: true,
+            decorated: true,
+            id: this.name
+        })
         this.scriptOptions = {
             ...this.params.scriptOptions,
         }
@@ -186,7 +193,7 @@ export class EvalMachine {
         }
 
         // read file/script
-        console.time(`readFile [${this.name}]`)
+        this.timings.start(`readFile`)
         if (typeof this.params.file !== "undefined") {
             if (fs.existsSync(this.params.file)) {
                 try {
@@ -204,11 +211,10 @@ export class EvalMachine {
         } else {
             this.params.file = path.join(process.cwd(), "anonVM.js")
         }
-        console.timeEnd(`readFile [${this.name}]`)
-
+        this.timings.stop(`readFile`)
 
         // set objects
-        console.time(`setObjects [${this.name}]`)
+        this.timings.start(`setObjects`)
         objectToArrayMap(process.runtime.vmController.objects).forEach((obj) => {
             const objectType = typeof obj.value
 
@@ -224,17 +230,17 @@ export class EvalMachine {
                 }
             }
         })
-        console.timeEnd(`setObjects [${this.name}]`)
+        this.timings.stop(`setObjects`)
 
         // init module controller
-        console.time(`createModuleController [${this.name}]`)
+        this.timings.start(`createModuleController`)
         this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
         this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
         this.moduleController = this.createModuleController()
-        console.timeEnd(`createModuleController [${this.name}]`)
+        this.timings.stop(`createModuleController`)
 
         // set events
-        console.time(`setEvents [${this.name}]`)
+        this.timings.start(`setEvents`)
         this._sendBeforeDestroy = null
         this._sendOnDestroy = null
 
@@ -251,40 +257,40 @@ export class EvalMachine {
         this.events.on(`destroyRejected`, (reason) => {
             console.warn(`VM[${this.address}][${this.name}] Destroy has been rejected > ${reason ?? "unknown"}`)
         })
-        console.timeEnd(`setEvents [${this.name}]`)
+        this.timings.stop(`setEvents`)
 
         // set globals to jail
-        console.time(`setJail [${this.name}]`)
+        this.timings.start(`setJail`)
         this.jail = this.createJail()
-        console.timeEnd(`setJail [${this.name}]`)
+        this.timings.stop(`setJail`)
 
         // create context
-        console.time(`createContext [${this.name}]`)
+        this.timings.start(`createContext`)
         this.context = { ...this.context, ...this.jail.get(), ...process.runtime.vmController.defaultJail.get() }
-        console.timeEnd(`createContext [${this.name}]`)
+        this.timings.stop(`createContext`)
 
         // set global
-        console.time(`setGlobals [${this.name}]`)
+        this.timings.start(`setGlobals`)
         this.context.global = {
             _import: moduleLib.createScopedRequire(this.moduleController, this.getDirname()),
             _env: global._env,
             project: global.project,
             runtime: process.runtime
         }
-        console.timeEnd(`setGlobals [${this.name}]`)
+        this.timings.start(`setGlobals`)
 
         this.events.emit("ready")
 
         // run first script, sending vmt for vm initialization
-        console.time(`runINIT [${this.name}]`)
+        this.timings.start(`runTemplateInit`)
         this.run(vmt, { babelTransform: false })
-        console.timeEnd(`runINIT [${this.name}]`)
+        this.timings.stop(`runTemplateInit`)
 
-        console.time(`runEVAL [${this.name}]`)
+        this.timings.start(`runFirstEval`)
         if (typeof this.params.eval !== "undefined") {
             this.run(this.params.eval, { babelTransform: true })
         }
-        console.timeEnd(`runEVAL [${this.name}]`)
+        this.timings.stop(`runFirstEval`)
         return this
     }
 
@@ -432,11 +438,10 @@ export class EvalMachine {
     }
 
     transformCode = (exec, options = {}) => {
-        console.time(`tranformCode [${this.name}]`)
-
+        this.timings.start(`lastTranscompile`)
         const controllerBabelOptions = process.runtime.vmController.babelOptions
         exec = babel.transformSync(exec, { ...controllerBabelOptions, ...options }).code
-        console.timeEnd(`tranformCode [${this.name}]`)
+        this.timings.end(`lastTranscompile`)
 
         return exec
     }
@@ -452,10 +457,14 @@ export class EvalMachine {
             if (options.babelTransform) {
                 exec = this.transformCode(exec, options.babelOptions)
             }
-            console.time(`createScript [${this.name}]`)
+
+            this.timings.start(`lastCreateScript`)
             const vmscript = new vmlib.Script(exec, this.scriptOptions)
-            console.timeEnd(`createScript [${this.name}]`)
+            this.timings.stop(`lastCreateScript`)
+
+            this.timings.start(`lastRun`)
             const _run = vmscript.runInContext(vmlib.createContext(this.context))
+            this.timings.stop(`lastRun`)
 
             if (typeof callback === "function") {
                 callback(_run)
