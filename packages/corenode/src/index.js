@@ -18,7 +18,6 @@ const constables = require('./constables')
 
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
-global.npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
 class Runtime {
     constructor(load) {
@@ -38,12 +37,9 @@ class Runtime {
 
         this.args = require("yargs-parser")(process.argv)
         process.parsedArgs = this.args
-        this.disableCheckDependencies = this.args.disableCheckDependencies
+        this.disableCheckDependencies = this.args.disableCheckDependencies ?? false
 
         //? set undefined globals
-        if (typeof global._inited === "undefined") {
-            global._inited = false
-        }
         if (typeof global.isLocalMode === "undefined") {
             global.isLocalMode = false
         }

@@ -14,7 +14,7 @@ let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 async function npmPublish(packagePath, config) {
-    const cmd = global.npmCommand ?? "npm"
+    const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
     const cliArgs = ['publish']
 
     if (config.next) {
@@ -89,7 +89,7 @@ export function publishProject(args) {
                         let packagesCount = Number(0)
 
                         if (!Array.isArray(projectPackages) && !isProject) {
-                            projectPackages = ["_"]
+                            projectPackages = ["src"]
                         }
 
                         for await (const [index, pkg] of projectPackages.entries()) {

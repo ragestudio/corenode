@@ -4,7 +4,7 @@ const execa = require('execa')
 const helpers = require('../helpers')
 const agents = require('./agents')
 
-const npmCommand = global.npmCommand ?? process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 const dependenciesTypes = ["dependencies", "devDependencies", "peerDependencies"]
 
 //* HELPERS
