@@ -32,6 +32,15 @@ export function publishProject(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
         const isProject = isProjectMode()
+        const env = global._env.publish ?? {}
+
+        if (Array.isArray(env.ignorePackages)) {
+            env.ignorePackages.forEach((ignore) => {
+                if (Array.isArray(projectPackages)) {
+                    projectPackages = projectPackages.filter(pkg => pkg !== ignore)
+                }
+            })            
+        }
 
         let config = {
             skipStatus: false,

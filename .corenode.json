@@ -8,5 +8,10 @@
       "utils"
     ],
     "dockerImageName": "srgooglo/corenode"
+  },
+  "publish": {
+    "ignorePackages": [
+      "transcompiler"
+    ]
   }
 }
