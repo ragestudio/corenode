@@ -178,6 +178,7 @@ export class EvalMachine {
             disabled: this.params.disableTimings,
             mutation: true,
             decorated: true,
+            toFixedValue: 3,
             id: this.name
         })
         this.scriptOptions = {
@@ -277,7 +278,7 @@ export class EvalMachine {
             project: global.project,
             runtime: process.runtime
         }
-        this.timings.start(`setGlobals`)
+        this.timings.stop(`setGlobals`)
 
         this.events.emit("ready")
 
@@ -441,7 +442,7 @@ export class EvalMachine {
         this.timings.start(`lastTranscompile`)
         const controllerBabelOptions = process.runtime.vmController.babelOptions
         exec = babel.transformSync(exec, { ...controllerBabelOptions, ...options }).code
-        this.timings.end(`lastTranscompile`)
+        this.timings.stop(`lastTranscompile`)
 
         return exec
     }

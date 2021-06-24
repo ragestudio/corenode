@@ -1,5 +1,10 @@
 {
   "version": "0.25.16",
+  "publish": {
+    "ignorePackages": [
+      "transcompiler"
+    ]
+  },
   "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
@@ -8,10 +13,5 @@
       "utils"
     ],
     "dockerImageName": "srgooglo/corenode"
-  },
-  "publish": {
-    "ignorePackages": [
-      "transcompiler"
-    ]
   }
 }
