@@ -40,7 +40,7 @@ export default async (params) => {
       }
 
       allPackages.forEach((packageName) => {
-        const name = `${fields.headPackage ? `@${fields.headPackage}/` : ''}${packageName}`
+        const name = `${hasPackages && devEnv.headPackage ? `@${devEnv.headPackage}/` : ''}${packageName}`
         const pkgPath = hasPackages ? path.resolve(process.cwd(), `./packages/${packageName}`) : process.cwd()
 
         const readmePath = path.resolve(pkgPath, `./README.md`)
@@ -50,7 +50,7 @@ export default async (params) => {
         const readmeExist = fs.existsSync(readmePath)
 
         if (options.force || !readmeExist) {
-          fs.writeFileSync(readmePath, `# ${name}\n`)
+          fs.writeFileSync(readmePath, `#${name}\n`)
         }
 
         if (options.force || !pkgJSONExists) {
