@@ -6,11 +6,12 @@ class REPLMachine {
 
         this.repl = require('repl')
         this.machine = new EvalMachine({
+            name: "repl_machine",
             lock: true
         })
 
         this.machine.onDestroy((address) => {
-            console.error(`🛑 REPL VM[${address}] Has been destroyed`)
+            console.error(`🛑 REPL VM[${this.machine.name}] Has been destroyed`)
             process.exit()
         })
     }

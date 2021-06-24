@@ -198,7 +198,7 @@ export class EvalMachine {
         })
 
         // define vm basics
-        this.id = `EvalMachine_${this.params.id ?? this.address}`
+        this.name = this.params.name ?? `EvalMachine_${this.address}`
         this.context = {}
         this.events = new EventEmitter()
         this.errorHandler = this.params.onError
@@ -250,7 +250,7 @@ export class EvalMachine {
             }
         })
         this.events.on(`destroyRejected`, (reason) => {
-            console.warn(`VM[${this.address}] Destroy has been rejected > ${reason ?? "unknown"}`)
+            console.warn(`VM[${this.address}][${this.name}] Destroy has been rejected > ${reason ?? "unknown"}`)
         })
 
         // set globals to jail
