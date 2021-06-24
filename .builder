@@ -10,7 +10,8 @@
         "comments": false
     },
     "ignore": [
-        "builder"
+        "builder",
+        "transcompiler"
     ],
     "skip": [
         "packages/utils/src/verbosity.js"
