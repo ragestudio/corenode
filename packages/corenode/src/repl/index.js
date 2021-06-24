@@ -8,7 +8,7 @@ class REPLMachine {
         this.machine = new EvalMachine()
 
         this.machine.onDestroy((address) => {
-            console.error(`🛑 VM[${address}] Has been destroyed`)
+            console.error(`🛑 REPL VM[${address}] Has been destroyed`)
             process.exit()
         })
     }

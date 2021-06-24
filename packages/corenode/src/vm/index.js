@@ -125,9 +125,23 @@ export class VMController {
         }
     }
 
-    destroy(address) {
-        delete this.pool[address]
-        delete this.refs[address]
+    destroy(address, callback) {
+        if (this.pool[address] instanceof EvalMachine) {
+            const vm = this.pool[address]
+
+            if (!vm.locked) {
+                vm.events.emit(`beforeDestroy`)
+
+                delete this.pool[address]
+                delete this.refs[address]
+
+                if (typeof callback === "function") {
+                    callback()
+                }
+            }else {
+                vm.events.emit(`destroyRejected`, `VM Is locked`)
+            }
+        }
     }
 }
 
@@ -189,7 +203,8 @@ export class EvalMachine {
         this.events = new EventEmitter()
         this.errorHandler = this.params.onError
         this.runs = Number(0)
-        
+        this.locked = false
+
         if (!this.params.excludeGlobalContext) {
             this.context = { ...this.context, ...global }
         }
@@ -197,8 +212,6 @@ export class EvalMachine {
         if (typeof this.params.context !== "undefined") {
             this.context = { ...this.context, ...this.params.context }
         }
-
-
 
         // set objects
         objectToArrayMap(process.runtime.vmController.objects).forEach((obj) => {
@@ -223,24 +236,25 @@ export class EvalMachine {
         this.moduleController = this.createModuleController()
 
         // set events
-        this.events.on(`destroyVM`, () => {
+        this._sendBeforeDestroy = null
+        this._sendOnDestroy = null
+
+        this.events.on(`beforeDestroy`, () => {
+            if (typeof this._sendBeforeDestroy === "function") {
+                this._sendBeforeDestroy(this.address)
+            }
+        })
+        this.events.on(`destroyed`, () => {
             if (typeof this._sendOnDestroy === "function") {
                 this._sendOnDestroy(this.address)
             }
         })
+        this.events.on(`destroyRejected`, (reason) => {
+            console.warn(`VM[${this.address}] Destroy has been rejected > ${reason ?? "unknown"}`)
+        })
 
         // set globals to jail
-        this.jail = new Jail()
-
-        this.jail.set('selfThis', this, { configurable: false, writable: false, global: false })
-        this.jail.set('self', this.jail.get(), { configurable: false, writable: false, global: true })
-        this.jail.set('module', this.moduleController, { configurable: false, writable: false, global: true })
-        this.jail.set('cwd', this.params.cwd, { configurable: false, writable: false, global: true })
-        this.jail.set('__dirname', this.getDirname(), { configurable: false, writable: false, global: true })
-        this.jail.set('__getDirname', this.getDirname, { configurable: false, writable: false, global: true })
-        this.jail.set('dispatcher', this.dispatcher, { configurable: false, writable: false, global: true })
-        this.jail.set('run', (...context) => this.run(...context), { configurable: false, writable: false, global: true })
-        this.jail.set('destroy', (...context) => this.destroy(...context), { configurable: false, writable: false, global: true })
+        this.jail = this.createJail()
 
         // create context
         this.context = { ...this.context, ...this.jail.get(), ...process.runtime.vmController.defaultJail.get() }
@@ -261,6 +275,69 @@ export class EvalMachine {
             this.run(this.params.eval, { babelTransform: true })
         }
         return this
+    }
+
+    createJail() {
+        const jail = new Jail()
+
+        jail.set(
+            'selfThis',
+            this,
+            { configurable: false, writable: false, global: false }
+        )
+        jail.set(
+            'self',
+            jail.get(),
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            'module',
+            this.moduleController,
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            'cwd',
+            this.params.cwd,
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            '__dirname',
+            this.getDirname(),
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            '__getDirname',
+            this.getDirname,
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            'dispatcher',
+            this.dispatcher,
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            'run', (...context) =>
+            this.run(...context),
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            'destroy', (...context) =>
+            this.destroy(...context),
+            { configurable: false, writable: false, global: true }
+        )
+        jail.set(
+            '_vmLock',
+            (to) => {
+                if (typeof to !== "undefined") {
+                    this.locked = Boolean(to)
+                } else {
+                    this.locked = !this.locked
+                }
+            },
+            { configurable: false, writable: false, global: true }
+        )
+
+        return jail
     }
 
     createModuleController = () => {
@@ -346,7 +423,7 @@ export class EvalMachine {
     transformCode = (exec, options = {}) => {
         const controllerBabelOptions = process.runtime.vmController.babelOptions
         exec = babel.transformSync(exec, { ...controllerBabelOptions, ...options }).code
-      
+
         return exec
     }
 
@@ -356,7 +433,7 @@ export class EvalMachine {
                 babelTransform: true
             }
         }
-        
+
         try {
             if (options.babelTransform) {
                 exec = this.transformCode(exec, options.babelOptions)
@@ -364,7 +441,7 @@ export class EvalMachine {
 
             const vmscript = new vmlib.Script(exec, this.scriptOptions)
             const _run = vmscript.runInContext(vmlib.createContext(this.context))
-            
+
             if (typeof callback === "function") {
                 callback(_run)
             }
@@ -385,6 +462,13 @@ export class EvalMachine {
         //
     }
 
+    beforeDestroy = (fn) => {
+        if (typeof fn !== "function") {
+            throw new Error(`[${typeof fn}] is not an valid type for "beforeDestroy"`)
+        }
+        this._sendBeforeDestroy = fn
+    }
+
     onDestroy = (fn) => {
         if (typeof fn !== "function") {
             throw new Error(`[${typeof fn}] is not an valid type for "onDestroy"`)
@@ -393,7 +477,8 @@ export class EvalMachine {
     }
 
     destroy = () => {
-        this.events.emit(`destroyVM`)
-        process.runtime.vmController.destroy(this.address)
+        process.runtime.vmController.destroy(this.address, () => {
+            this.events.emit(`destroyed`)
+        })
     }
 }
