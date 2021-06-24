@@ -5,7 +5,9 @@ class REPLMachine {
         this.params = params ?? {}
 
         this.repl = require('repl')
-        this.machine = new EvalMachine()
+        this.machine = new EvalMachine({
+            lock: true
+        })
 
         this.machine.onDestroy((address) => {
             console.error(`🛑 REPL VM[${address}] Has been destroyed`)
