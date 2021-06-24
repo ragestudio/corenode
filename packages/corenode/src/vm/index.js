@@ -83,10 +83,9 @@ export class VMController {
     onRefsMutation = (mutation) => {
         //update deep
         this.deep = Object.keys(this.pool).length
-        console.log(`CurrentDeep: ${this.deep}`)
     }
 
-    measureMemory(opts = {}) {
+    measureMemory = (opts = {}) => {
         return new Promise((resolve, reject) => {
             vmlib.measureMemory({ mode: opts?.mode ?? 'detailed', execution: opts?.execution ?? 'eager' })
                 .then((result) => {
