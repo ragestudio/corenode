@@ -37,7 +37,7 @@ export function publishProject(args) {
         if (Array.isArray(env.ignorePackages)) {
             env.ignorePackages.forEach((ignore) => {
                 if (Array.isArray(projectPackages)) {
-                    projectPackages = projectPackages.filter(pkg => pkg !== ignore)
+                    projectPackages = projectPackages.filter(pkg => pkg === ignore)
                 }
             })            
         }
