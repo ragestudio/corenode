@@ -6,6 +6,14 @@
     "packages/**/*",
     "addons/**/*"
   ],
+  "engines": {
+    "node": ">= 16.1.0"
+  },
+  "funding": [
+		{
+			"url": "https://www.paypal.com/paypalme/RageStudioES"
+		}
+	],
   "scripts": {
     "postinstall": "npm run initBuilder",
     "initBuilder": "node ./postinstall/index.js",

@@ -1,7 +1,7 @@
 import { publishProject, bootstrapProject, getChangelogs } from './scripts'
 import { prettyTable } from '@corenode/utils'
 
-const { addons, helpers } = process.runtime
+const { addonsController, helpers } = process.runtime
 
 module.exports = [
     {
@@ -16,17 +16,17 @@ module.exports = [
                     break
                 }
                 default: {
-                    if (!addons) {
-                        return console.log(`!!! Addons manager are disabled`)
+                    if (!addonsController) {
+                        return console.log(`!!! Addons controller is not available`)
                     }
-                    const allAddons = addons.getLoadedAddons()
+                    const allAddons = addonsController.getLoadedAddons()
                     const pt = new prettyTable()
 
                     let headers = ["addon", "timings", "directory"]
                     let rows = []
 
                     allAddons.forEach((addon) => {
-                        const loader = addons.loaders[addon]
+                        const loader = addonsController.loaders[addon]
 
                         const isRuntimed = loader.internal ?? false
                         const key = loader.pkg

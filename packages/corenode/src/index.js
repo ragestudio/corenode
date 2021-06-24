@@ -165,7 +165,6 @@ class Runtime {
     createRuntimeGlobal(instance = {}) {
         instance.argvf = process.argv.slice(1)
         instance.version = this.helpers.getVersion({ engine: true })
-        instance.isMain = require.main === module
 
         return instance
     }
@@ -257,68 +256,63 @@ class Runtime {
 
     async initialize() {
         return new Promise(async (resolve, reject) => {
-            //? register internal libs
             try {
-                if (!global._inited) {
-                    global._cli = {}
-                    global._env = {}
+                global._cli = {}
+                global._env = {}
 
-                    this.initEnvironment()
+                this.initEnvironment()
 
-                    //? set global aliases
-                    this.modulesAliases = {
-                        ...global._env.modulesAliases
-                    }
-                    this.modulesPaths = {
-                        ...global._env.modulesPaths
-                    }
+                //? set global aliases
+                this.modulesAliases = {
+                    ...global._env.modulesAliases
+                }
+                this.modulesPaths = {
+                    ...global._env.modulesPaths
+                }
 
-                    global.project = this.createProjectGlobal()
-                    global.runtime = process.runtime = this.createRuntimeGlobal(this)
+                global.project = this.createProjectGlobal()
+                global.runtime = process.runtime = this.createRuntimeGlobal(this)
 
-                    //? detect local mode
-                    try {
-                        const rootPkg = this.helpers.getRootPackage()
+                //? detect local mode
+                try {
+                    const rootPkg = this.helpers.getRootPackage()
 
-                        if (rootPkg.name.includes("corenode")) {
-                            global.isLocalMode = true
-                        }
-                    } catch (error) {
-                        // terrible
-                    }
-
-                    if (this.load.isLocalMode) {
+                    if (rootPkg.name.includes("corenode")) {
                         global.isLocalMode = true
                     }
-
-                    // warn local mode
-                    if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
-                        console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
-                    } else if (global.isLocalMode) {
-                        console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
-                    }
-
-                    //* create and initialize runtime controllers
-                    const { EvalMachine, vmController } = require('./vm')
-                    this.vmController = new vmController()
-
-                    const { addonsController } = require("./addons")
-                    this.addonsController = new addonsController()
-
-                    //* set preloaders before load
-                    this.initPreloaders()
-
-                    //? fire preloaders
-                    await this.addonsController.checkDependencies()
-                    this.addonsController.init()
-
-                    //? await for them
-                    await Promise.all(this.preloadPromises)
-                    this.preloadDone = true
-
-                    // flag runtime as inited
-                    global._inited = true
+                } catch (error) {
+                    // terrible
                 }
+
+                if (this.load.isLocalMode) {
+                    global.isLocalMode = true
+                }
+
+                // warn local mode
+                if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
+                    console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
+                } else if (global.isLocalMode) {
+                    console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
+                }
+
+                //* create and initialize runtime controllers
+                const { EvalMachine, VMController } = require('./vm')
+                this.vmController = new VMController()
+
+                const { addonsController } = require("./addons")
+                this.addonsController = new addonsController()
+
+                //* set preloaders before load
+                this.initPreloaders()
+
+                //? fire preloaders
+                await this.addonsController.checkDependencies()
+                this.addonsController.init()
+
+                //? await for them
+                await Promise.all(this.preloadPromises)
+                this.preloadDone = true
+
 
                 //* load
                 if (this.load.runCli) {

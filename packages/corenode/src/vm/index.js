@@ -10,9 +10,11 @@ import * as compiler from '@corenode/builder/dist/lib'
 const vmlib = require("vm")
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
+const { Observable } = require("../observer")
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
+
 
 const vmt = `
 var require = module.createRequire(__getDirname());
@@ -28,11 +30,25 @@ export class VMController {
         this.defaultJail = this.createDefaultJail()
         this.objects = this.getObjects()
 
-        this.deep = {}
-        this.pool = {}
+        this.babelOptions = {
+            plugins: compiler.defaultBabelPlugins,
+            presets: [
+                [
+                    require.resolve('@babel/preset-env'),
+                    {
+                        targets: {
+                            node: 6
+                        }
+                    },
+                ],
+            ]
+        }
 
-        this.poolObserver = new MutationObserver(this.onPoolMutation)
-        this.poolObserver.observe(this.pool)
+        this.refs = Observable.from({})
+        this.deep = Number(0)
+        this.pool = Object()
+
+        this.refs.observe(this.onRefsMutation)
     }
 
     getObjects() {
@@ -64,10 +80,31 @@ export class VMController {
 
     }
 
-    onPoolMutation = (mutation) => {
+    onRefsMutation = (mutation) => {
         //update deep
         this.deep = Object.keys(this.pool).length
-        console.log(mutation)
+        console.log(`CurrentDeep: ${this.deep}`)
+    }
+
+    measureMemory(opts = {}) {
+        return new Promise((resolve, reject) => {
+            vmlib.measureMemory({ mode: opts?.mode ?? 'detailed', execution: opts?.execution ?? 'eager' })
+                .then((result) => {
+                    if (opts?.humanize) {
+                        let total = result.total
+                        total.jsMemoryEstimate = filesize(total.jsMemoryEstimate)
+                        total.jsMemoryRange = [...total.jsMemoryRange.map((range) => filesize(range))]
+
+                        result.total = total
+                    }
+                    return resolve(result)
+                })
+                .catch((error) => {
+                    process.runtime.logger.dump("error", error)
+                    getVerbosity().error(error)
+                    return reject(`Unavailable`)
+                })
+        })
     }
 
     allocate(evalMachine, callback) {
@@ -80,8 +117,17 @@ export class VMController {
             }
 
             this.pool[address] = evalMachine
+            this.refs[address] = () => {
+                return this.pool[address]
+            }
+
             return callback(address)
         }
+    }
+
+    destroy(address) {
+        delete this.pool[address]
+        delete this.refs[address]
     }
 }
 
@@ -90,7 +136,6 @@ export class EvalMachine {
         if (typeof process.runtime.vmController !== "object") {
             throw new Error(`Runtime has not an vmController`)
         }
-
         this.params = { ...params }
 
         if (typeof this.params.cwd === "undefined") {
@@ -99,20 +144,6 @@ export class EvalMachine {
 
         this.scriptOptions = {
             ...this.params.scriptOptions,
-        }
-
-        this.babelOptions = {
-            plugins: compiler.defaultBabelPlugins,
-            presets: [
-                [
-                    require.resolve('@babel/preset-env'),
-                    {
-                        targets: {
-                            node: 6
-                        }
-                    },
-                ],
-            ]
         }
 
         // maybe checking with fs is a terrible idea...
@@ -147,13 +178,18 @@ export class EvalMachine {
             getVerbosity().error(`[${this.params.file}] Cannot read file/script > ${error.message}`)
         }
 
+        // allocate address with controller
+        process.runtime.vmController.allocate(this, (address) => {
+            this.address = address
+        })
+
         // define vm basics
-        this.address = 0
         this.id = `EvalMachine_${this.params.id ?? this.address}`
         this.context = {}
         this.events = new EventEmitter()
         this.errorHandler = this.params.onError
-
+        this.runs = Number(0)
+        
         if (!this.params.excludeGlobalContext) {
             this.context = { ...this.context, ...global }
         }
@@ -162,8 +198,10 @@ export class EvalMachine {
             this.context = { ...this.context, ...this.params.context }
         }
 
+
+
         // set objects
-        objectToArrayMap(fromObjects).forEach((obj) => {
+        objectToArrayMap(process.runtime.vmController.objects).forEach((obj) => {
             const objectType = typeof obj.value
 
             switch (objectType) {
@@ -177,8 +215,6 @@ export class EvalMachine {
                     break
                 }
             }
-
-            objects[obj.key] = obj.value
         })
 
         // init module controller
@@ -207,7 +243,8 @@ export class EvalMachine {
         this.jail.set('destroy', (...context) => this.destroy(...context), { configurable: false, writable: false, global: true })
 
         // create context
-        this.context = { ...this.context, ...this.jail.get() }
+        this.context = { ...this.context, ...this.jail.get(), ...process.runtime.vmController.defaultJail.get() }
+
         // set global
         this.context.global = {
             _import: moduleLib.createScopedRequire(this.moduleController, this.getDirname()),
@@ -216,19 +253,13 @@ export class EvalMachine {
             runtime: process.runtime
         }
 
-        // before run script need to allocate to pool
-        process.runtime.vmController.allocate(this, (address) => {
-            this.address = address
-            this.poolRef = process.runtime.vmController.pool[this.address]
-            this.events.emit("ready")
+        this.events.emit("ready")
 
-            // run first script, sending vmt for vm initialization
-            this.run(vmt, { babelTransform: false })
-            if (typeof this.params.eval !== "undefined") {
-                this.run(this.params.eval, { babelTransform: true })
-            }
-        })
-
+        // run first script, sending vmt for vm initialization
+        this.run(vmt, { babelTransform: false })
+        if (typeof this.params.eval !== "undefined") {
+            this.run(this.params.eval, { babelTransform: true })
+        }
         return this
     }
 
@@ -312,24 +343,34 @@ export class EvalMachine {
         this.run(script, option, callback)
     }
 
+    transformCode = (exec, options = {}) => {
+        const controllerBabelOptions = process.runtime.vmController.babelOptions
+        exec = babel.transformSync(exec, { ...controllerBabelOptions, ...options }).code
+      
+        return exec
+    }
+
     run = (exec, options, callback) => {
         if (typeof options !== "object") {
             options = {
                 babelTransform: true
             }
         }
-
+        
         try {
             if (options.babelTransform) {
-                exec = babel.transformSync(exec, { ...this.babelOptions, ...options.babelOptions }).code
+                exec = this.transformCode(exec, options.babelOptions)
             }
 
             const vmscript = new vmlib.Script(exec, this.scriptOptions)
             const _run = vmscript.runInContext(vmlib.createContext(this.context))
-
+            
             if (typeof callback === "function") {
-                callback()
+                callback(_run)
             }
+
+            this.runs += 1
+
             return _run
         } catch (error) {
             if (typeof this.errorHandler === "function") {
@@ -344,28 +385,6 @@ export class EvalMachine {
         //
     }
 
-    measureMemory(opts = {}) {
-        return new Promise((resolve, reject) => {
-            vmlib.measureMemory({ mode: opts?.mode ?? 'detailed', execution: opts?.execution ?? 'eager' })
-                .then((result) => {
-                    if (opts?.humanize) {
-                        let total = result.total
-                        total.jsMemoryEstimate = filesize(total.jsMemoryEstimate)
-                        total.jsMemoryRange = [...total.jsMemoryRange.map((range) => filesize(range))]
-
-                        result.total = total
-                    }
-                    return resolve(result)
-                })
-                .catch((error) => {
-                    process.runtime.logger.dump("error", error)
-                    getVerbosity().error(error)
-                    return reject(`Unavailable`)
-                })
-        })
-
-    }
-
     onDestroy = (fn) => {
         if (typeof fn !== "function") {
             throw new Error(`[${typeof fn}] is not an valid type for "onDestroy"`)
@@ -375,9 +394,6 @@ export class EvalMachine {
 
     destroy = () => {
         this.events.emit(`destroyVM`)
-
-        delete this.poolRef
-        delete process.runtime.vms.pool[this.address]
-        this.updateDeep()
+        process.runtime.vmController.destroy(this.address)
     }
 }
