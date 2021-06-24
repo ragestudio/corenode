@@ -14,7 +14,7 @@ let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 async function npmPublish(packagePath, config) {
-    const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+    const cmd = process.platform === 'win32' ? 'npm.cmd' : '/usr/bin/env npm'
     const cliArgs = ['publish']
 
     if (config.next) {
