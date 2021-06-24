@@ -22,9 +22,9 @@ async function npmPublish(packagePath, config) {
     }
 
     if (config.fast) {
-        return execa(cmd, cliArgs, { cwd: packagePath })
+        return execa.command(`${cmd} ${cliArgs.join(' ')}`,{ cwd: packagePath })
     } else {
-        return await execa(cmd, cliArgs, { cwd: packagePath })
+        return await execa.command(`${cmd} ${cliArgs.join(' ')}`,{ cwd: packagePath })
     }
 }
 
@@ -37,16 +37,16 @@ export function publishProject(args) {
         if (Array.isArray(env.ignorePackages)) {
             env.ignorePackages.forEach((ignore) => {
                 if (Array.isArray(projectPackages)) {
-                    projectPackages = projectPackages.filter(pkg => pkg === ignore)
+                    projectPackages = projectPackages.filter(pkg => pkg !== ignore)
                 }
             })            
         }
 
         let config = {
             skipStatus: false,
-            skipBuild: false,
             npm: false,
             github: false,
+            build: false,
             preRelease: false,
             next: false,
             fast: false,
