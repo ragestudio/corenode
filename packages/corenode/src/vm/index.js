@@ -203,7 +203,7 @@ export class EvalMachine {
         this.events = new EventEmitter()
         this.errorHandler = this.params.onError
         this.runs = Number(0)
-        this.locked = false
+        this.locked = this.params.lock ?? false
 
         if (!this.params.excludeGlobalContext) {
             this.context = { ...this.context, ...global }
