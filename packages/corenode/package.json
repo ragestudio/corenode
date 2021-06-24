@@ -22,9 +22,6 @@
     "build": "rimraf dist && npm run babelOut",
     "babelOut": "babel src --out-dir dist"
   },
-  "engines": {
-    "node": ">= 16.1.0"
-  },
   "funding": [
     {
       "url": "https://www.paypal.com/paypalme/RageStudioES"
