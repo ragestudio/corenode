@@ -1,0 +1,99 @@
+diff --git a/package.json b/package.json
+index 826ad87f..1ac6cee3 100644
+--- a/package.json
++++ b/package.json
+@@ -22,14 +22,14 @@
+     "clean:test": "rimraf build && rimraf test/config/node_modules",
+     "docs": "node scripts/buildDocs.js",
+     "compile": "npm-run-all -p compile:core compile:test -s compile:scripts",
+-    "compile:core": "tsc -p src",
+-    "compile:scripts": "tsc -p scripts",
+-    "compile:test": "tsc -p test",
++    "compile:core": "sucrase ./src -d ./lib --transforms typescript,imports --enable-legacy-typescript-module-interop",
++    "compile:scripts": "sucrase ./scripts -d ./scripts --transforms typescript,imports --enable-legacy-typescript-module-interop",
++    "compile:test": "mkdir -p build && sucrase ./test -d ./build/test --exclude-dirs files,rules --transforms typescript,imports --enable-legacy-typescript-module-interop && sucrase ./src -d ./build/src --transforms typescript,imports --enable-legacy-typescript-module-interop",
+     "lint": "npm-run-all -p lint:global lint:from-bin",
+     "lint:global": "tslint --project test/tsconfig.json --format stylish # test includes 'src' too",
+     "lint:from-bin": "node bin/tslint --project test/tsconfig.json --format stylish",
+     "publish:local": "./scripts/npmPublish.sh",
+-    "test": "npm-run-all test:pre -p test:mocha test:rules",
++    "test": "npm-run-all compile test:pre -p test:mocha test:rules",
+     "test:pre": "cd ./test/config && npm install --no-save",
+     "test:mocha": "mocha --reporter spec --colors \"build/test/**/*Tests.js\"",
+     "test:rules": "node ./build/test/ruleTestRunner.js",
+diff --git a/test/executable/executableTests.ts b/test/executable/executableTests.ts
+index a5affd2b..c5481e45 100644
+--- a/test/executable/executableTests.ts
++++ b/test/executable/executableTests.ts
+@@ -141,6 +141,7 @@ describe("Executable", function(this: Mocha.ISuiteCallbackContext) {
+                     cwd: "./test/config",
+                 },
+                 (err, stdout) => {
++                    console.log(`err is ${err}`);
+                     assert.isNotNull(err, "process should exit with error");
+                     assert.strictEqual(err.code, 2, "error code should be 2");
+                     assert.include(stdout, "hello from custom formatter", "stdout should contain output of custom formatter");
+diff --git a/test/files/custom-rules/alwaysFailRule.js b/test/files/custom-rules/alwaysFailRule.js
+index 4f1b0bf7..049d4f31 100644
+--- a/test/files/custom-rules/alwaysFailRule.js
++++ b/test/files/custom-rules/alwaysFailRule.js
+@@ -1,27 +1,12 @@
+-var __extends = (this && this.__extends) || function (d, b) {
+-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+-    function __() { this.constructor = d; }
+-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+-};
+ var Lint = require('../../../lib/index');
+-var Rule = (function (_super) {
+-    __extends(Rule, _super);
+-    function Rule() {
+-        _super.apply(this, arguments);
+-    }
+-    Rule.prototype.apply = function (sourceFile) {
++class Rule extends Lint.Rules.AbstractRule {
++    apply(sourceFile) {
+         return this.applyWithWalker(new AlwaysFailWalker(sourceFile, this.getOptions()));
+-    };
+-    return Rule;
+-})(Lint.Rules.AbstractRule);
+-exports.Rule = Rule;
+-var AlwaysFailWalker = (function (_super) {
+-    __extends(AlwaysFailWalker, _super);
+-    function AlwaysFailWalker() {
+-        _super.apply(this, arguments);
+     }
+-    AlwaysFailWalker.prototype.visitSourceFile = function (node) {
++}
++exports.Rule = Rule;
++class AlwaysFailWalker extends Lint.RuleWalker {
++    visitSourceFile(node) {
+         this.addFailure(this.createFailure(node.getStart(), node.getWidth(), "failure"));
+-    };
+-    return AlwaysFailWalker;
+-})(Lint.RuleWalker);
++    }
++}
+diff --git a/tsconfig.json b/tsconfig.json
+new file mode 100644
+index 00000000..60dc8db4
+--- /dev/null
++++ b/tsconfig.json
+@@ -0,0 +1,18 @@
++{
++    "compilerOptions": {
++        "module": "commonjs",
++        "noImplicitAny": true,
++        "noImplicitReturns": true,
++        "noImplicitThis": true,
++        "noUnusedParameters": true,
++        "noUnusedLocals": true,
++        "strictNullChecks": true,
++        "strictFunctionTypes": true,
++        "importHelpers": true,
++        "declaration": true,
++        "sourceMap": false,
++        "target": "es2017",
++        "lib": ["es6"],
++        "outDir": "../lib"
++    }
++}

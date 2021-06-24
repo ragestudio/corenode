@@ -18,8 +18,7 @@ class Addon {
         this.params = params ?? {}
 
         this.loader = {}
-        this.machine = null
-
+        
         // try to read loader file
         if (typeof this.params.loader === "string") {
             try {
@@ -44,8 +43,10 @@ class Addon {
         if (typeof this.loader.file !== "undefined") {
             this.loader.dirname = path.dirname(this.loader.file)
         }
-        
+
+        this.id = this.loader.pkg
         this.dirname = this.loader.dirname
+        this.machine = null
 
         //* before init
         if (typeof this.loader.init === "function") {
@@ -101,10 +102,13 @@ class Addon {
                     return log.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
                 }
 
+                console.time(`[${this.id}] VM CREATION`)
                 this.machine = new EvalMachine({
                     file: loaderScriptPath,
                     cwd: this.loader.dirname,
                 })
+                console.timeEnd(`[${this.id}] VM CREATION`)
+                console.log(`\n`)
 
                 process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
@@ -128,6 +132,7 @@ class Addon {
         this.loader.timings = {
             load: loaderEnd - loadStart
         }
+
         return this.loader
     }
 
