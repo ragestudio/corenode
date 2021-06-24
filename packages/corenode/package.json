@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.25.16",
+  "version": "0.25.17",
   "types": "types.d.ts",
   "main": "./dist/index.js",
   "files": [
@@ -26,10 +26,10 @@
     "node": ">= 16.1.0"
   },
   "funding": [
-		{
-			"url": "https://www.paypal.com/paypalme/RageStudioES"
-		}
-	],
+    {
+      "url": "https://www.paypal.com/paypalme/RageStudioES"
+    }
+  ],
   "dependencies": {
     "cross-blob": "^2.0.0",
     "fast-glob": "^3.2.5",
@@ -52,8 +52,8 @@
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
     "@babel/runtime": "^7.13.10",
-    "@corenode/git-lib": "0.25.16",
-    "@corenode/builder": "0.25.16",
-    "@corenode/utils": "0.25.16"
+    "@corenode/git-lib": "0.25.17",
+    "@corenode/builder": "0.25.17",
+    "@corenode/utils": "0.25.17"
   }
 }
