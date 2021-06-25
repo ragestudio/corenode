@@ -343,7 +343,24 @@ function del(dependency, prune, options, callback) {
     write(packageJson)
 }
 
+async function npmPublish(packagePath, config) {
+    const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+    const cliArgs = ['publish']
+
+    if (config.next) {
+        cliArgs.push('--tag', 'next')
+    }
+
+    if (config.fast) {
+        return execa(cmd, cliArgs, { cwd: packagePath })
+    } else {
+        return await execa(cmd, cliArgs, { cwd: packagePath })
+    }
+}
+
+
 module.exports = {
+    npmPublish,
     viewPackage,
     checkAlreadyPublish,
     canPublish,
