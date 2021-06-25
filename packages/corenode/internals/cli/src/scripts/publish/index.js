@@ -31,7 +31,7 @@ export function publish(args) {
 
         let config = {
             ignoreGitStatus: false,
-            npm: false,
+            yarn: false,
             github: false,
             build: false,
             preRelease: false,
@@ -74,7 +74,7 @@ export function publish(args) {
                 }
             },
             npmRelease: {
-                title: "📢 Publish on NPM",
+                title: "📢 Publish on Yarn",
                 enabled: () => config.npm === true,
                 task: async () => {
                     return new Observable(async (observer) => {
@@ -91,11 +91,11 @@ export function publish(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     if (config.fast) {
-                                        pkgManager.npmPublish(packagePath, config)
+                                        pkgManager.yarnPublish(packagePath, config)
                                         packagesCount += 1
                                     } else {
                                         observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
-                                        await pkgManager.npmPublish(packagePath, config)
+                                        await pkgManager.yarnPublish(packagePath, config)
                                             .then(() => {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
@@ -107,7 +107,7 @@ export function publish(args) {
                                 }
 
                                 if (packagesCount >= projectPackages.length) {
-                                    process.runtime.logger.dump("info", `NPM Release successfuly finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                    process.runtime.logger.dump("info", `Yarn Release successfully finished with [${projectPackages.length}] packages > ${projectPackages}`)
                                     if (config.fast) {
                                         setTimeout(() => {
                                             observer.complete()

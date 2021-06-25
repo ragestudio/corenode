@@ -358,8 +358,24 @@ async function npmPublish(packagePath, config) {
     }
 }
 
+async function yarnPublish(packagePath, config) {
+    const cmd = process.platform === 'win32' ? 'yarn.cmd' : 'yarn'
+    const cliArgs = ['publish']
+
+    if (config.next) {
+        cliArgs.push('--tag', 'next')
+    }
+
+    if (config.fast) {
+        return spawn(cmd, cliArgs, { cwd: packagePath })
+    } else {
+        return await spawn(cmd, cliArgs, { cwd: packagePath })
+    }
+}
+
 
 module.exports = {
+    yarnPublish,
     npmPublish,
     viewPackage,
     checkAlreadyPublish,
