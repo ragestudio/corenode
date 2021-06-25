@@ -28,6 +28,9 @@
     }
   ],
   "dependencies": {
+    "cross-spawn": "^7.0.3",
+    "extract-first-json": "^1.0.1",
+    "semver": "^7.3.5",
     "cross-blob": "^2.0.0",
     "fast-glob": "^3.2.5",
     "dargs": "^8.0.0",
