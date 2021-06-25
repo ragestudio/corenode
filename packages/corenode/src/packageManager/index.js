@@ -352,9 +352,9 @@ async function npmPublish(packagePath, config) {
     }
 
     if (config.fast) {
-        return execa(cmd, cliArgs, { cwd: packagePath })
+        return spawn(cmd, cliArgs, { cwd: packagePath })
     } else {
-        return await execa(cmd, cliArgs, { cwd: packagePath })
+        return await spawn(cmd, cliArgs, { cwd: packagePath })
     }
 }
 
