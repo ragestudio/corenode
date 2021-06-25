@@ -3,7 +3,7 @@ const path = require("path")
 const { performance } = require('perf_hooks')
 const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
-const dependencies = require("../dependencies")
+const pkgManager = require("../packageManager")
 const { getRootPackage } = require("@@helpers")
 const { EvalMachine } = require("@@vm")
 
@@ -78,14 +78,14 @@ class Addon {
             if (typeof this.loader[type] === "object") {
                 objectToArrayMap(this.loader[type]).forEach((dependency) => {
                     const { key, value } = dependency
-                    const depValid = dependencies.check(key)
+                    const depValid = pkgManager.check(key)
 
                     //* try to install before initialization
                     if (!depValid && !this.loader.ignoreDependencies) {
                         const dep = `${key}@${value}`
 
                         console.warn(`⚠️  Missing dependency, trying to install...[${dep}]`)
-                        dependencies.install(dep, { cwd: this.loader.dirname })
+                        pkgManager.install(dep, { cwd: this.loader.dirname })
                     }
                 })
             }

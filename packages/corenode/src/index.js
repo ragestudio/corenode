@@ -9,7 +9,7 @@ const { EventEmitter } = require('events')
 const { verbosity, objectToArrayMap } = require("@corenode/utils")
 
 //* PRIMORDIAL LIBRARIES
-const dependencies = require('./dependencies')
+const dependencies = require('./packageManager')
 const net = require('./net')
 const repl = require('./repl')
 const moduleLib = require('./module')
