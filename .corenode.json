@@ -1,5 +1,5 @@
 {
-  "version": "0.25.18",
+  "version": "0.25.19",
   "publish": {
     "ignorePackages": [
       "transcompiler"

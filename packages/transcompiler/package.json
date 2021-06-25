@@ -1,6 +1,6 @@
 {
   "name": "@corenode/transcompiler",
-  "version": "0.25.18",
+  "version": "0.25.19",
   "description": "Transcompiler based on sucrase",
   "main": "dist/index",
   "module": "dist/index.mjs",
