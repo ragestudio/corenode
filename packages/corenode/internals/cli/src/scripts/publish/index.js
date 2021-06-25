@@ -75,7 +75,7 @@ export function publish(args) {
             },
             npmRelease: {
                 title: "📢 Publish on Yarn",
-                enabled: () => config.npm === true,
+                enabled: () => config.yarn === true,
                 task: async () => {
                     return new Observable(async (observer) => {
                         let packagesCount = Number(0)
