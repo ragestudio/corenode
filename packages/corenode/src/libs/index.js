@@ -1,5 +1,6 @@
 export { default as checksum } from './checksum'
 export { default as temporalDir } from './temporalDir'
+export { default as builtins }from './builtins'
 
 export * as performance from './performance'
 export * as random from './random'
