@@ -8,42 +8,29 @@ import { Observable } from 'rxjs'
 
 import { getPackages, getOriginGit, getVersion, isProjectMode } from 'corenode'
 import buildProject from '@corenode/builder'
+import pkgManager from 'corenode/dist/packageManager'
 import getChangelogs from '../getChangelogs'
 
 let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
-async function npmPublish(packagePath, config) {
-    const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
-    const cliArgs = ['publish']
 
-    if (config.next) {
-        cliArgs.push('--tag', 'next')
-    }
-
-    if (config.fast) {
-        return execa(cmd, cliArgs, { cwd: packagePath })
-    } else {
-        return await execa(cmd, cliArgs, { cwd: packagePath })
-    }
-}
-
-export function publishProject(args) {
+export function publish(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
         const isProject = isProjectMode()
         const env = global._env.publish ?? {}
 
         if (Array.isArray(env.ignorePackages)) {
-            env.ignorePackages.forEach((ignore) => {
+            env.ignorePackages.forEach((ignore) => {
                 if (Array.isArray(projectPackages)) {
                     projectPackages = projectPackages.filter(pkg => pkg !== ignore)
                 }
-            })            
+            })
         }
 
         let config = {
-            skipStatus: false,
+            ignoreGitStatus: false,
             npm: false,
             github: false,
             build: false,
@@ -59,14 +46,15 @@ export function publishProject(args) {
         let tasks = {
             checkGit: {
                 title: "📝 Checking git status",
-                skip: () => config.skipStatus === true,
+                skip: () => config.ignoreGitStatus === true,
                 task: () => {
                     return new Promise((res, rej) => {
                         const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout
                         if (gitStatus.length) {
                             return rej(new Error("⛔️ Your git status is not clean"))
                         }
-                        return res(gitStatus)
+
+                        return res()
                     })
                 }
             },
@@ -75,7 +63,11 @@ export function publishProject(args) {
                 enabled: () => config.build === true,
                 task: async () => {
                     return new Promise(async (res, rej) => {
-                        await buildProject().catch((error) => rej(new Error(`Failed build! > ${error.message}`)))
+                        await buildProject()
+                            .catch((error) => {
+                                return rej(new Error(`Build failed! > ${error.message}`))
+                            })
+
                         console.log(`\n\n`)
                         return res()
                     })
@@ -99,11 +91,11 @@ export function publishProject(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     if (config.fast) {
-                                        npmPublish(packagePath, config)
+                                        pkgManager.npmPublish(packagePath, config)
                                         packagesCount += 1
                                     } else {
                                         observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
-                                        await npmPublish(packagePath, config)
+                                        await pkgManager.npmPublish(packagePath, config)
                                             .then(() => {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
@@ -173,7 +165,7 @@ export function publishProject(args) {
                             return res()
                         } catch (error) {
                             process.runtime.logger.dump("error", error)
-                            return task.skip(`❌ Failed github publish, skipping`)
+                            return task.skip(`❌ Failed github publish`)
                         }
                     })
                 },
@@ -182,11 +174,9 @@ export function publishProject(args) {
 
         new Listr(objectToArrayMap(tasks).map((task) => { return task.value }), { collapse: false }).run()
             .then(response => {
-                console.log(`✅ Publish done`)
-                return resolve(true)
+                return resolve()
             }).catch((error) => {
                 process.runtime.logger.dump("error", error)
-                verbosity.options({ method: false }).error(`❌ Failed publish >`, error)
                 return reject(error)
             })
     })

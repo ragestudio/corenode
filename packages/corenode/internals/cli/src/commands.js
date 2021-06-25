@@ -1,4 +1,4 @@
-import { publishProject, bootstrapProject, getChangelogs } from './scripts'
+import { publish, bootstrapProject, getChangelogs } from './scripts'
 import { prettyTable } from '@corenode/utils'
 
 const { addonsController, helpers } = process.runtime
@@ -32,7 +32,7 @@ module.exports = [
                         const key = loader.pkg
                         const cwd = loader.file
 
-                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key} ${loader.disabled? "(disabled)" : ""}`, loader.timings? JSON.stringify(loader.timings) : "none" ,cwd])
+                        rows.push([`${isRuntimed ? `⚙️ ` : `📦 `} ${key} ${loader.disabled ? "(disabled)" : ""}`, loader.timings ? JSON.stringify(loader.timings) : "none", cwd])
                     })
 
                     pt.create(headers, rows)
@@ -63,7 +63,7 @@ module.exports = [
                 helpers.syncVersions()
             } else {
                 const engineVersion = helpers.getVersion({ engine: true })
-                const proyectVersion = helpers.getVersion()
+                const projectVersion = helpers.getVersion()
 
                 const projectPkg = helpers.getRootPackage()
                 const pt = new prettyTable()
@@ -75,7 +75,7 @@ module.exports = [
                     rows.push(["Corenode™", `v${engineVersion}${helpers.isCorenodeProject() ? "@local" : ""}`, __dirname])
                 }
 
-                proyectVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${proyectVersion}`, process.cwd()]) : console.log("🏷  Version not available")
+                projectVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${projectVersion}`, process.cwd()]) : console.log("🏷  Version not available")
 
                 if (rows.length > 0) {
                     pt.create(headers, rows)
@@ -88,7 +88,13 @@ module.exports = [
         command: 'publish',
         description: "Publish this current project",
         exec: (argv) => {
-            publishProject(argv)
+            publish(argv)
+                .then(() => {
+                    console.log(`\n✅ Publish done`)
+                })
+                .catch((error) => {
+                    console.error(`\n❌ Publish aborted due an error`)
+                })
         }
     },
     {
