@@ -331,7 +331,7 @@ function del(dependency, prune, options, callback) {
                 runtime.logger.dump("error", err)
                 console.error(`Error uninstalled dependency [${dependency}] > ${err.message}`)
             } else {
-                outStr = `Dependency sucessfully uninstalled [${dependency}]`
+                outStr = `Dependency successfully uninstalled [${dependency}]`
 
                 runtime.logger.dump("info", outStr)
                 console.log(outStr)
@@ -343,16 +343,10 @@ function del(dependency, prune, options, callback) {
 }
 
 async function npmPublish(packagePath, config) {
-    const cliArgs = [packagePath]
-
-    if (config.next) {
-        cliArgs.push('--tag', 'next')
-    }
-
     if (config.fast) {
-        return npmPublishLib([packagePath])
+        return npmPublishLib({ cwd: packagePath, ...config })
     } else {
-        return await npmPublishLib([packagePath])
+        return await npmPublishLib({ cwd: packagePath, ...config })
     }
 }
 

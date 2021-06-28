@@ -23,39 +23,22 @@ function getManifest(spec, opts) {
     return pacote.manifest(spec, { ...opts, fullMetadata: true })
 }
 
-async function npmPublish(args = []) {
-    if (args.length === 0)
-        args = ['.']
-    if (args.length !== 1)
-        throw new Error('Invalid args')
+async function npmPublish(args = {}) {
+    await npm.config.load()
 
-    const unicode = npm.config.get('unicode')
-    const dryRun = npm.config.get('dry-run')
-    const json = npm.config.get('json')
+    const dryRun = args.dryRun ?? npm.config.get('dry-run')
     const defaultTag = npm.config.get('tag')
 
     if (semver.validRange(defaultTag))
         throw new Error('Tag name must not be a valid SemVer range: ' + defaultTag.trim())
 
     const opts = { ...npm.flatOptions }
-    // you can publish name@version, ./foo.tgz, etc.
-    // even though the default is the 'file:.' cwd.
-    const spec = npa(args[0])
+
+    const spec = npa(args.cwd ?? process.cwd())
     let manifest = await getManifest(spec, opts)
 
     if (manifest.publishConfig)
         flatten(manifest.publishConfig, opts)
-
-    // only run scripts for directory type publishes
-    if (spec.type === 'directory') {
-        await runScript({
-            event: 'prepublishOnly',
-            path: spec.fetchSpec,
-            stdio: 'inherit',
-            pkg: manifest,
-            banner: !silent,
-        })
-    }
 
     const tarballData = await pack(spec, opts)
     const pkgContents = await getContents(manifest, tarballData)
