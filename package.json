@@ -23,8 +23,8 @@
     "prod": "cross-env LOCAL_BIN=false node ./packages/corenode/bin/index.js",
     "builder": "node ./packages/builder/cli.js",
     "build:docs": "corenode docs --innerFiles",
-    "release:next": "npm run builder && node ./packages/corenode/bin/index.js publish --preRelease --next --yarn --fast --github",
-    "release:prod": "npm run builder && node ./packages/corenode/bin/index.js publish --yarn --github --fast",
+    "release:next": "npm run builder && node ./packages/corenode/bin/index.js publish --preRelease --next --npm --fast --github",
+    "release:prod": "npm run builder && node ./packages/corenode/bin/index.js publish --npm --github --fast",
     "link:main": "cd packages/corenode && yarn link && cd -",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
