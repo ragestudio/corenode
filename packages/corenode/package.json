@@ -28,6 +28,7 @@
     }
   ],
   "dependencies": {
+    "npm": "^7.19.0",
     "cross-spawn": "^7.0.3",
     "extract-first-json": "^1.0.1",
     "semver": "^7.3.5",

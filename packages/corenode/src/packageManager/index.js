@@ -6,10 +6,9 @@ const spawn = require("cross-spawn")
 const helpers = require('../helpers')
 const agents = require('./agents')
 
-const validateName = require("./lib")
+const { validateName, npmPublishLib } = require("./lib")
 const { extractJSONObject } = require("extract-first-json")
 
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 const dependenciesTypes = ["dependencies", "devDependencies", "peerDependencies"]
 
 function check(dependency) {
@@ -66,7 +65,7 @@ const readPkgWithPath = (filePathOrDirPath) => {
 function checkPkgName(packagePath, options) {
     return readPkgWithPath(packagePath).then((pkg) => {
         const name = pkg["name"]
-        const result = validatePkgName(name)
+        const result = validateName(name)
         // Treat Legacy Names as valid
         // https://github.com/npm/validate-npm-package-name#legacy-names
         // https://github.com/azu/can-npm-publish/issues/8
@@ -344,38 +343,20 @@ function del(dependency, prune, options, callback) {
 }
 
 async function npmPublish(packagePath, config) {
-    const cmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
-    const cliArgs = ['publish']
+    const cliArgs = [packagePath]
 
     if (config.next) {
         cliArgs.push('--tag', 'next')
     }
 
     if (config.fast) {
-        return spawn(cmd, cliArgs, { cwd: packagePath })
+        return npmPublishLib()
     } else {
-        return await spawn(cmd, cliArgs, { cwd: packagePath })
+        return await npmPublishLib()
     }
 }
-
-async function yarnPublish(packagePath, config) {
-    const cmd = process.platform === 'win32' ? 'yarn.cmd' : 'yarn'
-    const cliArgs = ['publish']
-
-    if (config.next) {
-        cliArgs.push('--tag', 'next')
-    }
-
-    if (config.fast) {
-        return spawn(cmd, cliArgs, { cwd: packagePath })
-    } else {
-        return await spawn(cmd, cliArgs, { cwd: packagePath })
-    }
-}
-
 
 module.exports = {
-    yarnPublish,
     npmPublish,
     viewPackage,
     checkAlreadyPublish,

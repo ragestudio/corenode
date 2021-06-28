@@ -30,7 +30,7 @@ export function publish(args) {
         }
 
         let config = {
-            ignoreGitStatus: false,
+            ignoreGit: false,
             yarn: false,
             github: false,
             build: false,
@@ -46,7 +46,7 @@ export function publish(args) {
         let tasks = {
             checkGit: {
                 title: "📝 Checking git status",
-                skip: () => config.ignoreGitStatus === true,
+                skip: () => config.ignoreGit === true,
                 task: () => {
                     return new Promise((res, rej) => {
                         const gitStatus = execa.sync('git', ['status', '--porcelain']).stdout
@@ -74,8 +74,8 @@ export function publish(args) {
                 }
             },
             npmRelease: {
-                title: "📢 Publish on Yarn",
-                enabled: () => config.yarn === true,
+                title: "📢 Publish on npm",
+                enabled: () => config.npm === true,
                 task: async () => {
                     return new Observable(async (observer) => {
                         let packagesCount = Number(0)
@@ -91,11 +91,11 @@ export function publish(args) {
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     if (config.fast) {
-                                        pkgManager.yarnPublish(packagePath, config)
+                                        pkgManager.npmPublish(packagePath, config)
                                         packagesCount += 1
                                     } else {
                                         observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
-                                        await pkgManager.yarnPublish(packagePath, config)
+                                        await pkgManager.npmPublish(packagePath, config)
                                             .then(() => {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)

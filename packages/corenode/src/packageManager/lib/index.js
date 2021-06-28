@@ -1,3 +1,4 @@
 module.exports = {
-    validateName: require("./validateName")
+    validateName: require("./validateName"),
+    npmPublishLib: require("./npmPublishLib")
 }
