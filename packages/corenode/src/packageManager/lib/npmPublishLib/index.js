@@ -23,7 +23,7 @@ function getManifest(spec, opts) {
     return pacote.manifest(spec, { ...opts, fullMetadata: true })
 }
 
-async function npmPublish(args) {
+async function npmPublish(args = []) {
     if (args.length === 0)
         args = ['.']
     if (args.length !== 1)

@@ -350,9 +350,9 @@ async function npmPublish(packagePath, config) {
     }
 
     if (config.fast) {
-        return npmPublishLib()
+        return npmPublishLib([packagePath])
     } else {
-        return await npmPublishLib()
+        return await npmPublishLib([packagePath])
     }
 }
 
