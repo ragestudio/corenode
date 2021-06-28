@@ -5,7 +5,6 @@ const util = require('util')
 const semver = require('semver')
 const pack = require('libnpmpack')
 const libpub = require('libnpmpublish').publish
-const runScript = require('@npmcli/run-script')
 const pacote = require('pacote')
 const npa = require('npm-package-arg')
 const npmFetch = require('npm-registry-fetch')
@@ -29,7 +28,7 @@ class PublishController {
         })
     }
 
-    async load() {
+    async load() {
         await this.config.load()
         this.loaded = true
     }
@@ -45,23 +44,20 @@ class PublishController {
         if (semver.validRange(defaultTag))
             throw new Error('Tag name must not be a valid SemVer range: ' + defaultTag.trim())
 
-        const spec = npa(args.cwd ?? process.cwd())
-        let manifest = await this.getManifest(spec, args)
+        const opts = { ...args, ...this.config.flat }
+        const spec = npa(opts.cwd ?? process.cwd())
+        let manifest = await this.getManifest(spec, opts)
 
-        if (manifest.publishConfig)
-            flatten(manifest.publishConfig, args)
+        if (manifest.publishConfig) {
+            flatten(manifest.publishConfig, opts)
+        }
 
-        const tarballData = await pack(spec, args)
+        const tarballData = await pack(spec, opts)
         const pkgContents = await getContents(manifest, tarballData)
-
-        manifest = await this.getManifest(spec, args)
-
-        if (manifest.publishConfig)
-            flatten(manifest.publishConfig, args)
 
         if (!dryRun) {
             const resolved = npa.resolve(manifest.name, manifest.version)
-            const registry = npmFetch.pickRegistry(resolved, args)
+            const registry = npmFetch.pickRegistry(resolved, opts)
             const creds = this.config.getCredentialsByURI(registry)
 
             if (!creds.token && !creds.username) {
@@ -70,25 +66,7 @@ class PublishController {
                 })
             }
 
-            await otplease(args, opts => libpub(manifest, tarballData, opts))
-        }
-
-        if (spec.type === 'directory') {
-            await runScript({
-                event: 'publish',
-                path: spec.fetchSpec,
-                stdio: 'inherit',
-                pkg: manifest,
-                banner: !args.silent,
-            })
-
-            await runScript({
-                event: 'postpublish',
-                path: spec.fetchSpec,
-                stdio: 'inherit',
-                pkg: manifest,
-                banner: !args.silent,
-            })
+            await otplease(opts, opts => libpub(manifest, tarballData, opts))
         }
 
         return pkgContents

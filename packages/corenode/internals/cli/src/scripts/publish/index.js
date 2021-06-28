@@ -103,7 +103,7 @@ export function publish(args) {
                                             })
                                     } 
                                 } catch (error) {
-                                    lastError = `[${pkg}] ${error.message}`
+                                    lastError = `[${pkg}/${index}] ${error.message}`
                                     packagesCount += 1
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }

@@ -344,13 +344,12 @@ function del(dependency, prune, options, callback) {
 
 async function npmPublish(packagePath, config) {
     const controller = new npmPublishLib.PublishController()
-    
+
     if (config.fast) {
         controller.publish({ cwd: packagePath, ...config })
         return true
     } else {
-        controller.publish({ cwd: packagePath, ...config })
-        return true
+        return controller.publish({ cwd: packagePath, ...config })
     }
 }
 
