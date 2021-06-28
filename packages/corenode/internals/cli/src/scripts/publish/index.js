@@ -31,7 +31,7 @@ export function publish(args) {
 
         let config = {
             ignoreGit: false,
-            yarn: false,
+            npm: false,
             github: false,
             build: false,
             preRelease: false,
