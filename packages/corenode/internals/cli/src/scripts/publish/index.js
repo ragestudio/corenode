@@ -85,6 +85,7 @@ export function publish(args) {
                         }
 
                         for await (const [index, pkg] of projectPackages.entries()) {
+                            let lastError = null
                             const packagePath = isProject ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
                             const pkgJSON = path.resolve(packagePath, 'package.json')
 
@@ -100,21 +101,21 @@ export function publish(args) {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
                                             })
-                                    }
+                                    } 
                                 } catch (error) {
+                                    lastError = `[${pkg}] ${error.message}`
                                     packagesCount += 1
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
 
                                 if (packagesCount >= projectPackages.length) {
-                                    process.runtime.logger.dump("info", `Yarn Release successfully finished with [${projectPackages.length}] packages > ${projectPackages}`)
-                                    if (config.fast) {
-                                        setTimeout(() => {
-                                            observer.complete()
-                                        }, 850)
-                                    } else {
-                                        observer.complete()
+                                    if (lastError != null) {
+                                        return observer.error(new Error(lastError))
                                     }
+                                    process.runtime.logger.dump("info", `Release successfully finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                    setTimeout(() => {
+                                        observer.complete()
+                                    }, 850)
                                 }
                             } else {
                                 const errstr = `❌ ${pkg} has no valid package.json`
