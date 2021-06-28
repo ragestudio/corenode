@@ -1,4 +1,4 @@
-const npm = require('npm/lib/npm.js')
+const npm = require('npm')
 const util = require('util')
 const semver = require('semver')
 const pack = require('libnpmpack')
