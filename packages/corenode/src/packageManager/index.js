@@ -259,7 +259,7 @@ function getDependencies(type, key) {
     return dependencies
 }
 
-function install(dependency, options = {}, callback) {
+async function install(dependency, options = {}) {
     if (typeof options.agent === "undefined") {
         options.agent = "npm"
     }
@@ -269,29 +269,29 @@ function install(dependency, options = {}, callback) {
     }
 
     try {
-        let outStr = String(`Installing dependency [${dependency}] `)
+        let outStr = String(`Installing dependency [${dependency}]`)
 
         runtime.logger.dump("info", outStr)
-        console.log(outStr)
+        runtime.logger.warn(outStr)
 
-        agents[options.agent]("install", dependency, options, (err) => {
-            if (typeof callback === "function") {
-                callback(err)
-            }
+        await agents[options.agent]("install", dependency, options, (code, error) => {
 
-            if (err) {
-                runtime.logger.dump("error", err)
-                console.error(`Error installing dependency [${dependency}] > ${err.message}`)
+            console.log(code, error)
+            
+            if (error) {
+               
+                runtime.logger.dump("error", error)
+                runtime.logger.error(`Error installing dependency [${dependency}] > ${error.message}`)
             } else {
                 outStr = `Dependency successfully installed [${dependency}]`
 
                 runtime.logger.dump("info", outStr)
-                console.log(outStr)
+                runtime.logger.log(outStr)
             }
         })
     } catch (error) {
         runtime.logger.dump("error", err)
-        console.error(`Failed when trying to install dependency [${dependency}] > ${err.message}`)
+        runtime.logger.error(`Failed when trying to install dependency [${dependency}] > ${err.message}`)
     }
 }
 

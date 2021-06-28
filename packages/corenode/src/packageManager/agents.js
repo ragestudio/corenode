@@ -4,10 +4,7 @@ const { dargs } = require('@corenode/utils')
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
 const agents = {
-    npm: (cmd, packages, options = {}, cb) => {
-        let opt = {
-            ...options
-        }
+    npm: async (cmd, packages, options = {}, cb) => {
         function callback(...context) {
             if (typeof cb === 'function') {
                 return cb(...context)
@@ -15,49 +12,36 @@ const agents = {
             return false
         }
 
-        if (typeof packages === 'function') {
-            throw new TypeError('expected packages as first argument')
-        }
-
-        const npmCmd = opt.command ?? npmCommand
         // packages to install
-        var deps = [].concat(packages).filter(Boolean)
+        const deps = [].concat(packages).filter(Boolean)
         if (deps.length === 0) {
             return process.nextTick(() => {
                 callback(null)
             })
         }
 
-        var spawnArgs = {
-            cwd: opt.cwd,
-            env: opt.env || process.env,
-            stdio: opt.stdio
+        const spawnArgs = {
+            cwd: options.cwd,
+            ...options.spawnArgs
         }
-        var cliArgs = dargs(opt, {
+
+        let cliArgs = dargs(options, {
             excludes: Object.keys(spawnArgs)
         })
-        var args = [cmd].concat(deps).concat(cliArgs)
-        var proc = child_process.spawn(npmCmd, args, spawnArgs)
-        var error = ''
+        let args = [cmd].concat(deps).concat(cliArgs)
+        let error = null
 
-        if (proc.stderr) {
-            proc.stderr.on('data', function (data) {
-                error += data.toString()
+        try {
+            const thread = await child_process.spawn(npmCommand, args, spawnArgs)
+
+            thread.once('exit', (code) => {
+                callback(code, error)
+                return code
             })
+        } catch (error) {
+            callback(1, error)
+            return error
         }
-
-        proc.once('exit', function (code) {
-            // ensure we pass an Error
-            if (code === 0) {
-                callback(null)
-            } else {
-                var msg = error || 'exit code ' + code
-                callback(new Error(msg))
-            }
-        })
-
-        return proc
-
     }
 }
 
