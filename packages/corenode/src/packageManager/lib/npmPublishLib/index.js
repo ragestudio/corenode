@@ -1,3 +1,6 @@
+const path = require('path')
+const npmLibPath = path.dirname(require.resolve("npm"))
+
 const npm = require('npm')
 const util = require('util')
 const semver = require('semver')
@@ -8,9 +11,10 @@ const pacote = require('pacote')
 const npa = require('npm-package-arg')
 const npmFetch = require('npm-registry-fetch')
 
-const otplease = require('npm/lib/utils/otplease.js')
-const { getContents } = require('npm/lib/utils/tar.js')
-const flatten = require('npm/lib/utils/config/flatten.js')
+const otplease = require(path.join(npmLibPath, "utils/otplease.js"))
+const { getContents } = require(path.join(npmLibPath, "utils/tar.js"))
+const flatten = require(path.join(npmLibPath, "utils/config/flatten.js"))
+
 const readJson = util.promisify(require('read-package-json'))
 
 function getManifest(spec, opts) {
