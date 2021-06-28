@@ -38,3 +38,4 @@ debugger-ui/node_modules
 */**/dumps.log
 */**/build
 */**/.DS_Store
+node_source
