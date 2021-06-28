@@ -70,7 +70,7 @@ class PublishController {
                 })
             }
 
-            await otplease(opts, opts => libpub(manifest, tarballData, opts))
+            await otplease(args, opts => libpub(manifest, tarballData, opts))
         }
 
         if (spec.type === 'directory') {
