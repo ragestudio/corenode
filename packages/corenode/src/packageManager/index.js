@@ -343,10 +343,14 @@ function del(dependency, prune, options, callback) {
 }
 
 async function npmPublish(packagePath, config) {
+    const controller = new npmPublishLib.PublishController()
+    
     if (config.fast) {
-        return npmPublishLib({ cwd: packagePath, ...config })
+        controller.publish({ cwd: packagePath, ...config })
+        return true
     } else {
-        return await npmPublishLib({ cwd: packagePath, ...config })
+        controller.publish({ cwd: packagePath, ...config })
+        return true
     }
 }
 
