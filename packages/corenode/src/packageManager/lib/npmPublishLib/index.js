@@ -1,5 +1,4 @@
 const path = require('path')
-const npmLibPath = path.dirname(require.resolve("npm"))
 
 const util = require('util')
 const semver = require('semver')
@@ -9,12 +8,12 @@ const pacote = require('pacote')
 const npa = require('npm-package-arg')
 const npmFetch = require('npm-registry-fetch')
 const Config = require('@npmcli/config')
+const readJson = util.promisify(require('read-package-json'))
 
+const npmLibPath = path.dirname(require.resolve("npm"))
 const otplease = require(path.join(npmLibPath, "utils/otplease.js"))
 const { getContents } = require(path.join(npmLibPath, "utils/tar.js"))
 const { flatten, definitions, shorthands } = require(path.join(npmLibPath, "utils/config"))
-
-const readJson = util.promisify(require('read-package-json'))
 class PublishController {
     constructor(params) {
         this.params = { ...params }
