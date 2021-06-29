@@ -4,8 +4,8 @@ const { performance } = require('perf_hooks')
 const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
 const pkgManager = require("../packageManager")
-const { getRootPackage } = require("@@helpers")
-const { EvalMachine } = require("@@vm")
+const { getRootPackage } = require('../helpers')
+const { EvalMachine } = require('../vm')
 
 const log = process.runtime.logger
 const defaults = {
