@@ -168,7 +168,7 @@ class Runtime {
     initEnvironment() {
         //* load dotenv
         require('dotenv').config()
-        
+
         environmentFiles.forEach((file) => {
             const fromPath = path.resolve(process.cwd(), `./${file}`)
 
@@ -177,7 +177,7 @@ class Runtime {
 
                 try {
                     const runtimeEnv = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
-                    process.env = {...runtimeEnv}
+                    process.env = { ...runtimeEnv }
                 } catch (error) {
                     console.error(`\n🆘  Error parsing runtime env > ${error.message} \n\n`)
                     console.error(error)
