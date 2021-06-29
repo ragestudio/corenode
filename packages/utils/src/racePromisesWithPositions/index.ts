@@ -1,7 +1,7 @@
 import castArray from 'lodash/castArray'
 
-import isPositiveInteger from './isPositiveInteger'
-import racePromises from './racePromises'
+import isPositiveInteger from '../isPositiveInteger'
+import racePromises from '../racePromises'
 
 export default <T>(promises: readonly Promise<T>[], limit = Infinity) => {
   const len = promises.length

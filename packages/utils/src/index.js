@@ -3,13 +3,12 @@
  * @module @corenode/utils
  */
 
-export { default as prettyTable } from './prettyTable'
 
 /**
 * Read all directories from root path
 * @param {string} [dir = ""]
 * @param {object} [params = undefined]
-* @param {object} [params.cwd = proccess.cwd]
+* @param {object} [params.cwd = process.cwd]
 * @param {object} [params.dotFilter = true]
 * @function readRootDirectorySync
 */
@@ -95,12 +94,12 @@ export { default as chalkRandomColor } from './chalkRandomColor'
  * and puts them in an array
  * @function objectToArray
  */
-export { objectToArray } from './objectToArray'
+export { default as objectToArray } from './objectToArray'
 
 /**
  * @function objectToArrayMap
  */
-export { objectToArrayMap } from './objectToArray'
+export { default as objectToArrayMap } from './objectToArrayMap'
 
 /**
  * @function verbosity
@@ -203,22 +202,57 @@ export { schemizedStringify } from './schemized'
  */
 export { schemizedParse } from './schemized'
 
+/**
+ * @function doArray 
+ */
 export { default as doArray } from './doArray'
 
+/**
+ * @function doWithMap 
+ */
 export { default as doWithMap } from './doWithMap'
 
+/**
+ * @function createHttpGetStream 
+ */
 export { default as createHttpGetStream } from './createHttpGetStream'
 
+/**
+ * @function listAllFiles 
+ */
 export { default as listAllFiles } from './listAllFiles'
 
+/**
+ * @function safeStringify 
+ */
 export { default as safeStringify } from './safeStringify'
 
+/**
+ * @function githubReleaseUrl 
+ */
 export { default as githubReleaseUrl } from './githubReleaseUrl'
 
+/**
+ * @function readDirs 
+ */
 export { default as readDirs } from './readDirs'
 
+/**
+ * @function dargs 
+ */
 export { default as dargs } from './dargs'
 
+/**
+ * @function moduleFromString 
+ */
 export { default as moduleFromString } from './moduleFromString'
 
+/**
+ * @function camalize 
+ */
 export { default as camalize } from './camalize'
+
+/**
+ * @function prettyTable 
+ */
+export { default as prettyTable } from './prettyTable'

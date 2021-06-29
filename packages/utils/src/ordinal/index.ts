@@ -1,4 +1,4 @@
-import isPositiveInteger from './isPositiveInteger'
+import isPositiveInteger from '../isPositiveInteger'
 
 const got = (i: any) =>
   typeof i === 'string' ? JSON.stringify(i) : i

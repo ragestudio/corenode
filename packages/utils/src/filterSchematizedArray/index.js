@@ -1,3 +1,4 @@
+//! Deprecated
 export default function requireQueryFilter(data) {
     let tmp = []
     return new Promise(resolve => {

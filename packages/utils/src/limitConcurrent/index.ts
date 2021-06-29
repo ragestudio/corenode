@@ -1,5 +1,5 @@
-import isPositiveInteger from './isPositiveInteger'
-import lockAsync from './lockAsync'
+import isPositiveInteger from '../isPositiveInteger'
+import lockAsync from '../lockAsync'
 
 type Func<Args extends any[], RetVal> = (...args: Args) => Promise<RetVal>
 

@@ -1,4 +1,4 @@
-import isPositiveInteger from './isPositiveInteger'
+import isPositiveInteger from '../isPositiveInteger'
 
 type FuncType = typeof isPositiveInteger
 
