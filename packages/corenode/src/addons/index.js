@@ -44,7 +44,7 @@ class Addon {
             this.loader.dirname = path.dirname(this.loader.file)
         }
 
-        this.id = this.loader.pkg
+        this.pkg = this.loader.pkg
         this.dirname = this.loader.dirname
         this.machine = null
 
@@ -142,6 +142,7 @@ class addonsController {
     constructor() {
         this.disabledController = process.runtime.load.disableAddons
         this.disabledAddons = [...(global._env?.disabledAddons ?? [])]
+        this.ignoreAddons = [...(global._env?.ignoreAddons ?? [])]
 
         this.loaders = {}
         this.addons = {}
@@ -169,8 +170,18 @@ class addonsController {
     }
 
     queryLoader(loader) {
+        let allowed = true
         const addon = new Addon({ loader })
-        this.query.push(addon)
+
+        if (Array.isArray(this.ignoreAddons)) {
+            if (this.ignoreAddons.includes(addon.pkg)) {
+                allowed = false
+            }
+        }
+
+        if (allowed) {
+            this.query.push(addon)
+        }
     }
 
     checkDependencies = async () => {
