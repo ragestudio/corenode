@@ -274,12 +274,8 @@ async function install(dependency, options = {}) {
         runtime.logger.dump("info", outStr)
         runtime.logger.warn(outStr)
 
-        await agents[options.agent]("install", dependency, options, (code, error) => {
-
-            console.log(code, error)
-            
+        await agents[options.agent]("install", dependency, options, (code, error) => {            
             if (error) {
-               
                 runtime.logger.dump("error", error)
                 runtime.logger.error(`Error installing dependency [${dependency}] > ${error.message}`)
             } else {
