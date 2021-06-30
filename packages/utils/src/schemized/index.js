@@ -1,4 +1,4 @@
-const { objectToArrayMap } = require('../objectToArray')
+const { objectToArrayMap } = require('../objectToArrayMap')
 
 export function schemizedStringify(obj, schema, join) {
     let version = []
