@@ -10,6 +10,7 @@ const { validateName, npmPublishLib } = require("./lib")
 const { extractJSONObject } = require("extract-first-json")
 
 const dependenciesTypes = ["dependencies", "devDependencies", "peerDependencies"]
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
 function check(dependency) {
     try {
@@ -23,12 +24,14 @@ function check(dependency) {
 }
 
 async function lastVersion(dependency) {
-    const res = await execa.command(`${npmCommand} show ${dependency} version`)
+    const cmd = `${npmCommand} show ${dependency} version`
+    const res = await execa.command(cmd)
     return res.stdout
 }
 
 function lastVersionSync(dependency) {
-    const res = execa.commandSync(`${npmCommand} show ${dependency} version`)
+    const cmd = `${npmCommand} show ${dependency} version`
+    const res = execa.commandSync(cmd)
     return res.stdout
 }
 
