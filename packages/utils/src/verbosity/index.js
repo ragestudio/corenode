@@ -1,7 +1,8 @@
 const StackTrace = require("stacktrace-js")
 const chalk = require("chalk")
-const objectToArrayMap = require("../objectToArrayMap")
-const chalkRandomColor = require("../chalkRandomColor")
+
+const objectToArrayMap = require("../objectToArrayMap").default
+const chalkRandomColor = require("../chalkRandomColor").default
 
 const defaultColors = Object.freeze({
     decorator: {
