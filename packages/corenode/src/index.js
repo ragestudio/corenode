@@ -18,7 +18,6 @@ const constables = require('./constables')
 
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
-
 class Runtime {
     constructor(load) {
         this.load = load
@@ -308,48 +307,51 @@ class Runtime {
                 await Promise.all(this.preloadPromises)
                 this.preloadDone = true
 
+                //* LOAD
+                let { targetBin } = this.load
 
-                //* load
-                if (this.load.runCli) {
-                    let { targetBin } = this.load
+                if (typeof this.args["_"][2] !== "undefined") {
+                    const fileFromArgs = path.resolve(this.args["_"][2])
 
-                    // TODO: overrides cli commands over file loader
-                    if (typeof this.args["_"][2] !== "undefined") {
-                        const fileFromArgs = path.resolve(this.args["_"][2])
+                    if (!targetBin && fs.existsSync(fileFromArgs)) {
+                        if (fs.lstatSync(fileFromArgs).isFile()) {
+                            targetBin = fileFromArgs
+                        }
+                    }
+                } 
 
-                        if (!targetBin && fs.existsSync(fileFromArgs)) {
-                            if (fs.lstatSync(fileFromArgs).isFile()) {
-                                targetBin = fileFromArgs
-                            }
+                if (typeof targetBin !== "undefined") {
+                    try {
+                        if (!fs.existsSync(targetBin)) {
+                            throw new Error(`Cannot read loader script [${targetBin}]`)
                         }
 
-                        if (targetBin) {
-                            try {
-                                if (!fs.existsSync(targetBin)) {
-                                    throw new Error(`Cannot read loader script [${targetBin}]`)
-                                }
-
-                                new EvalMachine({
-                                    file: targetBin,
-                                    onError: (err) => {
-                                        this.logger.dump("error", err.toString())
-                                        verbosity.options({ method: "[script]", file: targetBin }).error(err)
-                                    }
-                                })
-                            } catch (error) {
-                                this.logger.dump("error", error.toString())
-                                verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
-                                console.log(constables.ERROR_EXPORTED)
+                        new EvalMachine({
+                            file: targetBin,
+                            onError: (err) => {
+                                this.logger.dump("error", err.toString())
+                                verbosity.options({ method: "[script]", file: targetBin }).error(err)
                             }
-                        } else {
-                            return require('../internals/cli/dist')
-                        }
-                    } else {
-                        repl.attachREPL()
+                        })
+                        return resolve()
+                    } catch (error) {
+                        this.logger.dump("error", error.toString())
+                        verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
+                        console.log(constables.ERROR_EXPORTED)
                     }
                 }
 
-                return resolve()
+                if (this.load.runCli) {
+                    if (typeof targetBin === "undefined") {
+                        if (this.args["_"].length >= 2) {
+                            require('../internals/cli/dist')
+                        }else {
+                            repl.attachREPL()
+                        }
+                    }
+
+                    return resolve()
+                }
             } catch (error) {
                 return reject(error)
             }
