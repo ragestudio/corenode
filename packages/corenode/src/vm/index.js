@@ -376,7 +376,7 @@ export class EvalMachine {
                         let argsObj = []
 
                         args.forEach((entry) => {
-                            argsObj.push(this.serializer.serialize(entry))
+                            argsObj.push(Serializer.serialize(entry))
                         })
 
                         const pass = JSON.stringify(argsObj)
