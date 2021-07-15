@@ -115,14 +115,7 @@ class Addon {
         }
 
         if (typeof this.loader.appendCli !== "undefined") {
-            if (Array.isArray(this.loader.appendCli)) {
-                this.loader.appendCli.forEach((entry) => {
-                    if (typeof global._cli.custom === "undefined") {
-                        global._cli.custom = []
-                    }
-                    global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
-                })
-            }
+            process.runtime.appendToCli(this.loader.appendCli)
         }
 
         const loaderEnd = performance.now()
@@ -140,7 +133,7 @@ class Addon {
 
 class addonsController {
     constructor() {
-        this.disabledController = process.runtime.load.disableAddons
+        this.disabledController = process.runtime.disabledAddons
         this.disabledAddons = [...(global._env?.disabledAddons ?? [])]
         this.ignoreAddons = [...(global._env?.ignoreAddons ?? [])]
 
