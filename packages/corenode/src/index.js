@@ -34,9 +34,16 @@ class Runtime {
             process.args = this.load.args
         }
 
+        // fix argv
+        process._argvf = process.argv
+        this.argv = process.argv = process.argv.slice(2)
         this.args = require("yargs-parser")(process.argv)
+        
         process.parsedArgs = this.args
-        this.disableCheckDependencies = this.args.disableCheckDependencies ?? false
+
+        // disabler
+        this.disableCheckDependencies = this.args.disableCheckDependencies ?? this.load.disableCheckDependencies ?? false
+        this.disabledAddons = this.args.disableAddons ?? this.load.disableAddons ?? false
 
         //? set undefined globals
         if (typeof global.isLocalMode === "undefined") {
@@ -219,10 +226,10 @@ class Runtime {
         }
 
         commands.forEach((entry) => {
-            if (typeof global._cli.custom === "undefined") {
-                global._cli.custom = []
+            if (typeof process.cli.custom === "undefined") {
+                process.cli.custom = []
             }
-            global._cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
+            process.cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
         })
     }
 
@@ -251,7 +258,7 @@ class Runtime {
     async initialize() {
         return new Promise(async (resolve, reject) => {
             try {
-                global._cli = {}
+                process.cli = {}
                 global._env = {}
 
                 this.initEnvironment()
@@ -310,8 +317,8 @@ class Runtime {
                 //* LOAD
                 let { targetBin } = this.load
 
-                if (typeof this.args["_"][2] !== "undefined") {
-                    const fileFromArgs = path.resolve(this.args["_"][2])
+                if (typeof this.argv[0] !== "undefined") {
+                    const fileFromArgs = path.resolve(this.argv[0])
 
                     if (!targetBin && fs.existsSync(fileFromArgs)) {
                         if (fs.lstatSync(fileFromArgs).isFile()) {
@@ -343,10 +350,10 @@ class Runtime {
 
                 if (this.load.runCli) {
                     if (typeof targetBin === "undefined") {
-                        if (this.args["_"].length >= 2) {
+                        if (this.argv.length >= 1) {
                             require('../internals/cli/dist')
                         }else {
-                            repl.attachREPL()
+                            process.runtime.events.emit('cli_noCommand')
                         }
                     }
 

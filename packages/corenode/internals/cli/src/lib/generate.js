@@ -1,22 +1,22 @@
+const yargs = require('yargs/yargs')
 let { verbosity, objectToArrayMap } = require("@corenode/utils")
 verbosity = verbosity.options({ method: "[CLI]" })
 
-const yargs = require('yargs/yargs')
-const { hideBin } = require('yargs/helpers')
-const cliGlobal = global._cli
-
 export default ({ commands, options }) => {
+    const cliGlobal = process.cli ?? {} 
+
     // set helpers
     if (typeof cliGlobal.keys === "undefined") {
         cliGlobal.keys = []
     }
+    
     process.runtime.appendToController("appendCli", (entry) => {
         custom.push({ ...entry })
     })
 
     // 
-    const argvf = process.args["_"].splice(2) ?? hideBin(process.argv)
-    const cli = yargs(hideBin(process.argv))
+    const argv = process.argv
+    const cli = yargs(process.argv)
 
     let optionsMap = options ?? []
     let commandMap = commands ?? []
@@ -79,14 +79,13 @@ export default ({ commands, options }) => {
         let exists = false
 
         cliGlobal.keys.forEach((key) => {
-            if (key.includes(argvf[0])) {
+            if (key.includes(argv[0])) {
                 return exists = true
             }
         })
 
         if (!exists) {
-            cli.showHelp()
-            verbosity.error("Unknown command, use a valid command! \n")
+            process.runtime.events.emit('cli_noCommand')
         }
     }
 
