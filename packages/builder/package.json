@@ -1,8 +1,7 @@
 {
   "name": "@corenode/builder",
   "version": "0.25.26",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
   "files": [
     "dist",
     "bin",
@@ -33,6 +32,8 @@
     "@corenode/utils": "0.25.26",
     "cli-progress": "^3.9.0",
     "map-stream": "^0.0.7",
+    "md5": "^2.3.0",
+    "winston": "^3.3.3",
     "rimraf": "^3.0.2",
     "slash2": "^2.0.0",
     "threads": "^1.6.3",

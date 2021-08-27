@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-require("./dist/index").default({ cliui: true })
+const path = require('path')
+const { Builder } = require('./src')

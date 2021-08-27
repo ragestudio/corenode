@@ -1,8 +1,8 @@
-import path from 'path'
-import fs from 'fs'
+const fs = require('fs')
+const path = require('path')
 const babel = require("@babel/core")
 
-export const defaultBabelPresets = [
+const defaultBabelPresets = [
   [
     require.resolve('@babel/preset-typescript'),
     {},
@@ -18,19 +18,19 @@ export const defaultBabelPresets = [
   ],
 ]
 
-export const defaultBabelPlugins = [
+const defaultBabelPlugins = [
   require.resolve('@babel/plugin-transform-runtime'),
   require.resolve('@babel/plugin-proposal-export-default-from'),
   require.resolve('@babel/plugin-proposal-do-expressions'),
   require.resolve('@babel/plugin-proposal-class-properties'),
 ]
 
-export const defaultBabelConfig = {
+const defaultBabelConfig = {
   presets: defaultBabelPresets,
   plugins: defaultBabelPlugins,
 }
 
-export const agents = {
+const agents = {
   babel: (contents, options) => {
     return new Promise((resolve, reject) => {
       try {
@@ -50,7 +50,7 @@ export const agents = {
   }
 }
 
-export function listAllFiles(dir) {
+function listAllFiles(dir) {
   return fs.readdirSync(dir).reduce((list, file) => {
     const name = path.join(dir, file)
     const isDir = fs.statSync(name).isDirectory()
@@ -59,10 +59,19 @@ export function listAllFiles(dir) {
   }, [])
 }
 
-export function getBuilderEnv(from) {
+function getBuilderEnv(from) {
   if (fs.statSync(from).isDirectory()) {
     from = path.resolve(from ?? process.cwd(), '.builder')
   }
 
   return JSON.parse(fs.readFileSync(from, 'utf-8'))
+}
+
+module.exports = {
+  agents,
+  listAllFiles,
+  getBuilderEnv,
+  defaultBabelConfig,
+  defaultBabelPlugins,
+  defaultBabelPresets
 }

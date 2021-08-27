@@ -1,33 +1,19 @@
+const fs = require('fs')
+const path = require('path')
+const rimraf = require('rimraf')
+const { createLogger, format, transports } = require('winston')
 
-import path from 'path'
-import fs from 'fs'
-import cliProgress from 'cli-progress'
+const cliProgress = require('cli-progress')
+const { prettyTable } = require("@corenode/utils")
+const vfs = require('vinyl-fs')
+const through = require('through2')
 
-import { prettyTable } from '@corenode/utils'
-
-import rimraf from 'rimraf'
-import vfs from 'vinyl-fs'
-import through from 'through2'
-
-import * as lib from './lib'
-
-let env = {
-  babel: {}
-}
-let builderErrors = Array()
-
-let includedSources = null
-let skipedSources = null
+const lib = require('./lib')
 
 const maximunLenghtErrorShow = (Number(process.stdout.columns) / 2) - 10
 
-function handleError(err, index, dir) {
-  builderErrors.push({ task: index, message: err, dir: dir })
-}
-
-//  >> MAIN <<
-const outExt = '.js'
 const fileExtWatch = ['.js', '.ts']
+const { combine, timestamp, label, printf } = format
 
 function canRead(dir) {
   try {
@@ -38,91 +24,181 @@ function canRead(dir) {
   }
 }
 
-export function transcompile(payload) {
-  return new Promise((resolve, reject) => {
-    let { dir, opts, ticker } = payload
-    let options = {
-      outDir: 'dist',
-      agent: 'babel' // default
+class Builder {
+  constructor(params) {
+    this.params = { ...params }
+
+    if (typeof this.params.dir === "undefined") {
+      throw new Error("dir not defined!")
     }
 
-    if (typeof (opts) !== "undefined") {
-      options = { ...options, ...opts }
+
+    this.silentMode = this.params.silentMode ?? false
+    this.showProgressBar = this.params.showProgress ?? false
+
+    this.agent = this.params.agent ?? "babel"
+
+    this.skipSources = Array.isArray(this.params.skipSources) ? this.params.skipSources : []
+    this.ticks = Number(0)
+    this.fails = []
+    this.tasks = []
+
+    // progress bar 
+    this.taskBar = null
+    this.bars = []
+
+    // init taskbar if requires
+    if (!this.silentMode && this.showProgressBar) {
+      this.initTaskBar()
     }
 
-    const src = path.resolve(options.from, `${dir}/src`)
-    const out = path.resolve(options.from, `${dir}/${options.outDir}`)
+    return this
+  }
 
-    const sources = [
-      path.join(src, '**/*'),
-      `!${path.join(src, '**/*.test.js')}`,
-    ]
+  watch = () => {
 
-    function handleTicker() {
-      try {
-        if (typeof (ticker) == "function") ticker()
-      } catch (error) {
-        // terrible
+  }
+
+  initTaskBar = () => {
+    this.taskBar = new cliProgress.MultiBar({
+      forceRedraw: false,
+      stopOnComplete: true,
+      barsize: 20,
+      clearOnComplete: false,
+      hideCursor: true,
+      format: '[{bar}] {percentage}% | {filename} | {value}/{total}'
+    }, cliProgress.Presets.shades_grey)
+  }
+
+  buildAllSources = () => {
+    return new Promise(async (resolve, reject) => {
+      let queue = []
+
+      if (Array.isArray(this.params.dir)) {
+        queue = this.params.dir.map(dir => {
+          return path.resolve(dir)
+        })
+      } else {
+        queue.push(path.resolve(this.params.dir))
+      }
+
+      const isOnce = queue.length === 1
+
+      for await (const dir of queue) {
+        let output = []
+
+        if (typeof this.params.output !== "undefined") {
+          output.push(this.params.output)
+        } else {
+          output.push(dir)
+          output.push("../dist")
+
+          // TODO: (FIX) Deleting the dist folder its causing an read file exception, its async issue with rimraf library
+          // check if dist output is already exists and remove it
+          // const distDir = path.resolve(output.join("/"))
+          // if (fs.existsSync(distDir) && fs.statSync(distDir).isDirectory()) {
+          //   await rimraf.sync(distDir)
+          // }
+        }
+
+        if (!isOnce) {
+          output.push(path.basename(dir))
+        }
+
+        const inputPath = path.resolve(dir)
+        const outputPath = path.resolve(output.join("/"))
+
+        await this.buildFromDir(inputPath, outputPath)
+          .catch(({ message, task }) => {
+            this.handleError(message, path.basename(task), inputPath)
+          })
+      }
+
+      this.onFinish()
+    })
+  }
+
+  transform = (content, options = {}) => {
+    return lib.agents[options.agent](content, { ...options.env, filename: options.filename })
+  }
+
+  getTransformFilePipe = (job) => through.obj((file, codec, callback) => {
+    const passThrough = () => {
+      this.handleTicker(job)
+      return callback(null, file)
+    }
+
+    if (!path.extname(file.path)) {
+      if (canRead(file.path)) {
+        return passThrough()
+      }
+
+      const oldFilepath = file.path
+      file.path = `${file.path}/index.js`
+
+      if (fs.existsSync(file.path) && !canRead(file.path)) {
+        file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
       }
     }
 
-    if (fs.existsSync(out)) {
-      rimraf.sync(out)
+    if (this.skipSources.includes(path.resolve(file.path))) {
+      return passThrough()
     }
 
-    try {
-      const stream = vfs.src(sources, {
+    if (fileExtWatch.includes(path.extname(file.path))) {
+      let babelEnv = {
+        filename: file.path,
+      }
+
+      // exec babel agent
+      this.transform(file.contents, { ...babelEnv, filename: file.path, agent: this.agent })
+        .then((_output) => {
+          file.contents = Buffer.from(_output.code)
+          file.path = file.path.replace(path.extname(file.path), ".js")
+
+          return passThrough()
+        })
+        .catch((err) => {
+          this.handleError(err.message, path.basename(file.path), file.path)
+          return passThrough()
+        })
+    } else {
+      // ignore and return callback for stream file
+      this.handleError(`Type extension not included, ignoring...`, path.basename(file.path), file.path)
+      return passThrough()
+    }
+  })
+
+  buildFromDir = (input, output) => {
+    return new Promise((resolve, reject) => {
+      if (!fs.existsSync(input)) {
+        return reject({ message: "Input directory does not exist", task: input })
+      }
+
+      const isFile = !fs.lstatSync(input).isDirectory()
+
+      const job = path.basename(input)
+      const sources = isFile ? [isFile] : lib.listAllFiles(input)
+
+      if (!sources) {
+        return reject(`No sources available for [${job}]`, 0, job)
+      }
+
+      if (this.taskBar != null) {
+        this.bars[job] = this.taskBar.create(sources.length, 0)
+        this.bars[job].update(0, { filename: job })
+      }
+
+      const globSource = [
+        path.join(input, `**/*`),
+        `!${path.join(input, `**/*.test.js`)}`
+      ]
+
+      const stream = vfs.src(globSource, {
         allowEmpty: true
       })
-        .pipe(through.obj((file, codec, callback) => {
-          function passThrough() {
-            handleTicker()
-            return callback(null, file)
-          }
 
-          if (!path.extname(file.path)) {
-            if (canRead(file.path)) {
-              return passThrough()
-            }
-
-            const oldFilepath = file.path
-            file.path = `${file.path}/index${outExt}`
-
-            if (fs.existsSync(file.path) && !canRead(file.path)) {
-              file.path = `${oldFilepath}/${path.basename(oldFilepath)}`
-            }
-          }
-
-          if (Array.isArray(skipedSources)) {
-            if (skipedSources.includes(path.resolve(file.path))) {
-              return passThrough()
-            }
-          }
-
-          if (fileExtWatch.includes(path.extname(file.path))) {
-            // set env
-            env.babel.filename = file.path
-
-            // exec babel agent
-            lib.agents[options.agent](file.contents, { ...env.babel, filename: file.path })
-              .then((_output) => {
-                file.contents = Buffer.from(_output.code)
-                file.path = file.path.replace(path.extname(file.path), outExt)
-
-                return passThrough()
-              })
-              .catch((err) => {
-                handleError(err.message, 0, path.basename(file.path))
-
-                return passThrough()
-              })
-          } else {
-            // ignore and return callback for stream file
-            handleError(`[${path.extname(file.path)}] type extension not included, ignoring...`, 0, path.basename(file.path))
-            return passThrough()
-          }
-        }))
-        .pipe(vfs.dest(out))
+      stream.pipe(this.getTransformFilePipe(job)).pipe(vfs.dest(output))
 
       stream.on('end', () => {
         return resolve(true)
@@ -131,208 +207,101 @@ export function transcompile(payload) {
       stream.on('error', (err) => {
         return reject(err)
       })
-
-    } catch (error) {
-      return reject(error)
-    }
-  })
-}
-
-function readDir(_path) {
-  return fs.readdirSync(_path).filter((dir) => dir.charAt(0) !== '.')
-}
-
-export function buildProject(opts = {}) {
-  return new Promise((resolve, reject) => {
-    const tasks = {}
-
-    const cliEnabled = opts?.cliui ? true : false
-    const multibarEnabled = cliEnabled
-
-    const from = opts.from = opts?.from ?? process.cwd()
-    const packagesPath = path.resolve(from, 'packages')
-    const isProjectMode = fs.existsSync(packagesPath)
-
-    let builderCount = Number(0)
-    let multibar = null
-
-    let packages = isProjectMode ? readDir(packagesPath) : ["./"]
-
-    try {
-      const projectEnv = lib.getBuilderEnv(opts.rcfile ?? from)
-      if (projectEnv) {
-        env = { ...projectEnv }
-      }
-    } catch (error) {
-      handleError(error.message)
-    }
-
-    // parse options from ".builder" config file
-    const { skip, ignore, include } = env
-
-    if (skip && Array.isArray(skip)) {
-      if (skip.length > 0) {
-        skipedSources = env.skip.map((source) => {
-          return path.resolve(source)
-        })
-      }
-    }
-
-    if (ignore) {
-      if (ignore.length > 0) {
-        ignore.forEach((source) => {
-          packages = packages.filter(pkg => pkg !== source)
-        })
-      }
-    }
-
-    // list all packages dirs inside project
-    let dirs = packages.map((name) => {
-      return isProjectMode ? `./packages/${name}` : `${name}`
     })
+  }
 
-    if (include) {
-      includedSources = include
-      const regex = /[*]/
+  // TODO: Cache hash map
+  // cache = () => {
 
-      if (Array.isArray(include)) {
-        include.forEach((source) => {
-          let absoluteDir = path.resolve(from, source)
-          const res = regex.exec(absoluteDir)
+  // }
 
-          if (res) {
-            absoluteDir = path.resolve(absoluteDir.slice(0, res.index))
-            if (fs.existsSync(absoluteDir)) {
-              readDir(absoluteDir).forEach((entry) => {
-                dirs.push(path.resolve(absoluteDir, entry))
-              })
-            }
-          } else {
-            dirs.push(absoluteDir)
-          }
+  handleTicker = (job) => {
+    this.ticks += 1
 
-        })
+    if (typeof this.bars[job] !== "undefined") {
+      const bar = this.bars[job]
+      if (bar.value < bar.total) {
+        this.bars[job].increment()
       }
     }
 
-    function handleFinish() {
-      if (multibarEnabled) {
-        multibar.stop()
-      }
-
-      if (Array.isArray(builderErrors) && builderErrors.length > 0) {
-        const Logger = require("corenode/dist/logger")
-        const log = new Logger({ id: "#BUILDER" })
-
-        const pt = new prettyTable()
-        const headers = ["TASK INDEX", "⚠️ ERROR", "PACKAGE"]
-        const rows = []
-        
-        builderErrors.forEach((err) => {
-          let obj = { ...err }
-          log.dump("warn", `BUILD ERROR >> [${obj.task ?? "UNTASKED"}][${obj.dir}] >> ${obj.message}`)
-
-          if (obj?.message?.length > maximunLenghtErrorShow) {
-            obj.message = (String(obj.message).slice(0, (maximunLenghtErrorShow - 3)) + "...")
-          }
-          if (obj?.dir?.length > maximunLenghtErrorShow) {
-            obj.dir = (String(obj.dir).slice(0, (maximunLenghtErrorShow - 3)) + "...")
-          }
-          rows.push([obj.task ?? "UNTASKED", obj.message ?? "Unknown error", obj.dir ?? "RUNTIME"])
-        })
-
-        pt.create(headers, rows)
-
-        console.log(`\n⚠️  ERRORS / WARNINGS DURING BUILDING`)
-        pt.print()
-      }
-
-      resolve()
-    }
-
-    function handleTicker(job) {
-      if (multibarEnabled) {
-        tasks[job].increment(1)
-      }
-    }
-
-    function handleThen(job) {
-      if (typeof job === "undefined") {
-        return reject(`handleThen job not defined!`)
-      }
-
-      builderCount += 1
-
-      if (multibarEnabled) {
-        const task = tasks[job]
-        const currentValue = task.value
-        const totalValue = task.total
-
-        if (currentValue != totalValue) {
-          task.setTotal(currentValue)
-        }
-      }
-
-      if (builderCount == dirs.length) {
-        handleFinish()
-      }
-    }
-
-    // >> MAIN <<
-    try {
-      if (cliEnabled) {
-        if (multibarEnabled) {
-          multibar = new cliProgress.MultiBar({
-            forceRedraw: false,
-            stopOnComplete: true,
-            barsize: 20,
-            clearOnComplete: false,
-            hideCursor: true,
-            format: '[{bar}] {percentage}% | {filename} | {value}/{total}'
-          }, cliProgress.Presets.shades_grey)
-        }
-      }
-    } catch (error) {
-      handleError(error, "UNTASKED", "CLI INIT")
-    }
-
-    dirs.forEach((dir) => {
-      const job = path.basename(dir)
-      let sources = null
-
+    if (typeof this.params.onTick === "function") {
       try {
-        const packagePath = path.resolve(from, `${dir}/src`)
-        sources = lib.listAllFiles(packagePath)
-
-        if (multibar && multibarEnabled) {
-          tasks[job] = multibar.create(sources.length, 0)
-          tasks[job].update(0, { filename: job })
-        }
-      } catch (error) {
-        handleError(error, job, dir)
+        this.params.onTick(this.ticks)
       }
-
-      if (!sources) {
-        return false
+      catch (error) {
+        // terrible
       }
+    }
+  }
 
-      // start builder
-      transcompile({ dir, opts, ticker: () => handleTicker(job) })
-        .then((done) => {
-          handleThen(job)
-        })
-        .catch((err) => {
-          if (Array.isArray(err)) {
-            err.forEach((error) => {
-              handleError(error, job, dir)
-            })
-          } else {
-            handleError(`${err}`, job, dir)
+  dumpLog = (level, err, file) => {
+    const logger = createLogger({
+      format: combine(
+        label({ label: level }),
+        timestamp(),
+        printf(({ message, label, timestamp }) => {
+          switch (label) {
+            case "error": {
+              return `> ${timestamp} (builder)[error] : ${message}`
+            }
+
+            default:
+              return `> ${timestamp} ${file? `[${file}]` : ""} (builder)[${label ?? "log"}] : ${message}`
           }
         })
-
+      ),
+      transports: [
+        new transports.File({ filename: global.dumpLogsFile ?? "dumps.log" }),
+      ],
     })
-  })
+
+    logger.info(err)
+  }
+
+  handleError = (message, task, file) => {
+    const err = { message, task, file }
+    this.fails.push(err)
+  }
+
+  outputFails = () => {
+    if (Array.isArray(this.fails) && this.fails.length > 0) {
+      const pt = new prettyTable()
+      const headers = ["⚠️ ERROR", "TASK"]
+      const rows = []
+
+      this.fails.forEach((err) => {
+        let obj = { ...err }
+
+        this.dumpLog("warn", `BUILD ERROR >> [${obj.task}] >> ${obj.message}`, obj.file)
+
+        if (obj.message?.length > maximunLenghtErrorShow) {
+          obj.message = (String(obj.message).slice(0, (maximunLenghtErrorShow - 3)) + "...")
+        }
+        if (obj.task?.length > maximunLenghtErrorShow) {
+          obj.task = (String(obj.task).slice(0, (maximunLenghtErrorShow - 3)) + "...")
+        }
+
+        rows.push([obj.message ?? "Unknown error", obj.task ?? "RUNTIME"])
+      })
+
+      pt.create(headers, rows)
+
+      console.log(`\n⚠️  ERRORS / WARNINGS DURING BUILDING`)
+      pt.print()
+    }
+  }
+
+  onFinish = () => {
+    if (this.taskBar != null) {
+      this.taskBar.stop()
+    }
+
+    this.outputFails()
+  }
 }
 
-export default buildProject
+module.exports = {
+  default: Builder,
+  Builder,
+}
