@@ -1,19 +1,30 @@
 {
-  "name": "corenode_repo",
+  "name": "corenode",
+  "version": "0.25.26",
   "git": "https://github.com/ragestudio/corenode",
-  "private": true,
-  "workspaces": [
-    "packages/**/*",
-    "addons/**/*"
-  ],
-  "engines": {
-    "node": ">= 16.1.0"
-  },
   "funding": [
 		{
 			"url": "https://www.paypal.com/paypalme/RageStudioES"
 		}
 	],
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "corenode": "./bin/index.js"
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "files": [
+    "internals/*/**/dist",
+    "internals/objects/**/**",
+    "dist",
+    "types.d.ts"
+  ],
+  "workspaces": [
+    "packages/**/*",
+    "addons/**/*"
+  ],
   "scripts": {
     "postinstall": "npm run initBuilder",
     "initBuilder": "node ./postinstall/index.js",
@@ -38,6 +49,45 @@
     ]
   },
   "dependencies": {
+    "npm-package-arg": "^8.1.5",
+    "npm-registry-fetch": "^11.0.0",
+    "@npmcli/config": "^2.2.0",
+    "read-package-json": "^3.0.1",
+    "pacote": "^11.3.4",
+    "libnpmpublish": "^4.0.2",
+    "libnpmpack": "^2.0.1",
+    "npm": "^7.19.0",
+    "cross-spawn": "^7.0.3",
+    "extract-first-json": "^1.0.1",
+    "semver": "^7.3.5",
+    "cross-blob": "^2.0.0",
+    "fast-glob": "^3.2.5",
+    "dargs": "^8.0.0",
+    "dotenv": "^10.0.0",
+    "uuid": "^8.3.2",
+    "ora": "^5.4.1",
+    "websocket": "^1.0.34",
+    "7zip-bin": "^5.1.1",
+    "node-7z": "^2.1.2",
+    "listr": "0.14.3",
+    "execa": "^5.1.1",
+    "escape-goat": "^3.0.0",
+    "yargs": "^17.0.1",
+    "yargs-parser": "^20.2.7",
+    "open": "^8.0.8",
+    "stacktrace-js": "^2.0.2",
+    "winston": "^3.3.3",
+    "filesize": "^6.3.0",
+    "lodash": "^4.17.21",
+    "rimraf": "^3.0.2",
+    "@babel/runtime": "^7.13.10",
+    "@corenode/git-lib": "0.25.26",
+    "@corenode/builder": "0.25.26",
+    "@corenode/utils": "0.25.26",
+    "smart-circular": "^1.0.2",
+    "cross-env": "^7.0.3"
+  },
+  "devDependencies": {
     "@babel/cli": "7.14.3",
     "@babel/core": "^7.13.1",
     "@babel/node": "^7.13.0",
@@ -56,15 +106,7 @@
     "@types/babel__traverse": "7.11.0",
     "@types/jest": "^26.0.4",
     "@types/node": "^14.14.31",
-    "cross-env": "^7.0.3",
-    "dotenv": "9.0.2",
-    "execa": "^5.1.1",
-    "listr": "0.14.3",
     "nodemon": "^2.0.7",
-    "rimraf": "^3.0.2",
-    "smart-circular": "^1.0.2"
-  },
-  "devDependencies": {
     "@vercel/ncc": "^0.28.6",
     "nexe": "^4.0.0-beta.18",
     "node-gyp": "^8.0.0",
