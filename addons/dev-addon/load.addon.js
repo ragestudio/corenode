@@ -17,7 +17,4 @@ module.exports = {
             }
         }
     ],
-    dependencies: {
-        "@ragestudio/cloudlink": "0.5.2"
-    }
 }
