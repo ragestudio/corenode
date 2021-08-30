@@ -310,7 +310,7 @@ class Runtime {
                 this.initPreloaders()
 
                 //? fire preloaders
-                await this.addonsController.checkDependencies()
+                // await this.addonsController.checkDependencies() // temporally disabled
                 this.addonsController.init()
 
                 //? await for them
