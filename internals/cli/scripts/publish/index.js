@@ -95,7 +95,7 @@ function publish(args) {
                                         pkgManager.npmPublish(pkg, config)
                                         packagesCount += 1
                                     } else {
-                                        observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
+                                        observer.next(`[${packagesCount}/${packagesPaths.length}] Publishing npm package [${index}]${pkg}`)
                                         await pkgManager.npmPublish(pkg, config)
                                             .then(() => {
                                                 packagesCount += 1
@@ -112,7 +112,7 @@ function publish(args) {
                                     if (lastError != null) {
                                         return observer.error(new Error(lastError))
                                     }
-                                    process.runtime.logger.dump("info", `Release successfully finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                    process.runtime.logger.dump("info", `Release successfully finished with [${packagesPaths.length}] packages > ${packagesPaths}`)
                                     setTimeout(() => {
                                         observer.complete()
                                     }, 850)
