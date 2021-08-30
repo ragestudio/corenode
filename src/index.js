@@ -38,7 +38,7 @@ class Runtime {
         process._argvf = process.argv
         this.argv = process.argv = process.argv.slice(2)
         this.args = require("yargs-parser")(process.argv)
-        
+
         process.parsedArgs = this.args
 
         // disabler
@@ -54,10 +54,6 @@ class Runtime {
         }
 
         global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
-        global._packages = {
-            _engine: path.resolve(__dirname, '../package.json'),
-            _project: path.resolve(process.cwd(), 'package.json')
-        }
 
         // register primordials modules
         this.registerModulesAliases({
@@ -170,6 +166,13 @@ class Runtime {
         return instance
     }
 
+    createManifestsPathsGlobal(instance = {}) {
+        instance.engine = path.resolve(__dirname, '../package.json')
+        instance.project = path.resolve(process.cwd(), 'package.json')
+
+        return instance
+    }
+
     initEnvironment() {
         //* load dotenv
         require('dotenv').config()
@@ -270,6 +273,7 @@ class Runtime {
                     ...global._env.modulesPaths
                 }
 
+                global.manifestsPaths = this.createManifestsPathsGlobal()
                 global.project = this.createProjectGlobal()
                 global.runtime = process.runtime = this.createRuntimeGlobal(this)
 
@@ -324,7 +328,7 @@ class Runtime {
                             targetBin = fileFromArgs
                         }
                     }
-                } 
+                }
 
                 if (typeof targetBin !== "undefined") {
                     try {
@@ -351,7 +355,7 @@ class Runtime {
                     if (typeof targetBin === "undefined") {
                         if (this.argv.length >= 1) {
                             require('../internals/cli')()
-                        }else {
+                        } else {
                             process.runtime.events.emit('cli_noCommand')
                         }
                     }

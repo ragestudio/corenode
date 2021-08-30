@@ -59,10 +59,14 @@ export function bumpVersion(params) {
 }
 
 function updateEnv(mutation) {
+    let pkg = JSON.parse(fs.readFileSync(global.manifestsPaths.project, 'utf8'))
     let data = JSON.parse(fs.readFileSync(global.project._envpath, 'utf8'))
+
+    pkg = { ...pkg, ...mutation }
     data = { ...data, ...mutation }
 
-    return fs.writeFileSync(global.project._envpath, JSON.stringify(data, null, 2) + '\n', 'utf-8')
+    fs.writeFileSync(global.manifestsPaths.project, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+    fs.writeFileSync(global.project._envpath, JSON.stringify(data, null, 2) + '\n', 'utf-8')
 }
 
 export default bumpVersion

@@ -6,7 +6,7 @@ import fs from 'fs'
  * @returns {object}
  */
 export function getRootPackage() {
-    const projectPkgPath = global._packages?._project
+    const projectPkgPath = global.manifestsPaths?.project
 
     if (projectPkgPath && fs.existsSync(projectPkgPath)) {
         return require(projectPkgPath)
