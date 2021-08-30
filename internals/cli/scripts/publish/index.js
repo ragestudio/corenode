@@ -6,7 +6,7 @@ const execa = require('execa')
 
 const { Observable } = require('rxjs')
 
-const { getPackages, getOriginGit, getVersion, isProjectMode } = require('corenode')
+const { getAllPackages, getOriginGit, getVersion } = require('corenode')
 const pkgManager = require("corenode/dist/packageManager")
 const getChangelogs = require("../getChangelogs")
 
@@ -15,7 +15,7 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 function publish(args) {
     return new Promise((resolve, reject) => {
-        let projectPackages = getPackages()
+        let projectPackages = getAllPackages()
         const rootSource = path.join(process.cwd(), "src")
         const env = global._env.publish ?? {}
 
