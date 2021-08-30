@@ -57,6 +57,7 @@ class Runtime {
 
         // register primordials modules
         this.registerModulesAliases({
+            "@@internals": path.resolve(__dirname, '../internals'),
             "factory": path.resolve(__dirname, 'factory'),
             "filesystem": path.resolve(__dirname, 'filesystem'),
             "@@addons": path.resolve(__dirname, 'addons'),
