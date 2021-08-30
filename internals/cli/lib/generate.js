@@ -1,4 +1,5 @@
 const yargs = require('yargs/yargs')
+const { objectToArrayMap } = require('@corenode/utils')
 
 function generate({ commands, options }) {
     const cliGlobal = process.cli ?? {}
