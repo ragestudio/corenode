@@ -1,6 +1,5 @@
 const yargs = require('yargs/yargs')
-let { verbosity, objectToArrayMap } = require("@corenode/utils")
-verbosity = verbosity.options({ method: "[CLI]" })
+const { objectToArrayMap } = require('@corenode/utils')
 
 function generate({ commands, options }) {
     const cliGlobal = process.cli ?? {}

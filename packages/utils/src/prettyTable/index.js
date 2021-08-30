@@ -105,7 +105,7 @@ class PrettyTable {
         htmlTable += tableHead
 
         let tableBody = '<tbody>'
-        for (i = 0; i < this.table.rows.length; i++) {
+        for (let i = 0; i < this.table.rows.length; i++) {
             let rowData = '<tr>'
             for (let k = 0; k < this.table.rows[i].length; k++) {
                 let cellData = '<td>' + this.table.rows[i][k] + '</td>'

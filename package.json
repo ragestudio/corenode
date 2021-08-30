@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.26.0",
+  "version": "0.26.2",
   "git": "https://github.com/ragestudio/corenode",
   "funding": [
     {
@@ -16,9 +16,9 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "files": [
-    "internals/*/**/dist",
-    "internals/objects/**/**",
+    "internals",
     "dist",
+    "bin",
     "types.d.ts"
   ],
   "scripts": {
@@ -27,9 +27,8 @@
     "prod": "cross-env LOCAL_BIN=false node ./bin/index.js",
     "builder": "node ./internals/builder/cli.js",
     "build:docs": "corenode docs --innerFiles",
-    "release:next": "npm run builder && node ./packages/corenode/bin/index.js publish --preRelease --next --npm --fast --github",
-    "release:prod": "npm run builder && node ./packages/corenode/bin/index.js publish --npm --github --fast",
-    "link:main": "cd packages/corenode && yarn link && cd -",
+    "release:next": "npm run builder && node ./bin/index.js publish --preRelease --next --npm --fast --github",
+    "release:prod": "npm run builder && node ./bin/index.js publish --npm --github --fast",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },

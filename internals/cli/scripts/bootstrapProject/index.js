@@ -102,4 +102,4 @@ async function bootstrap(params) {
   })
 }
 
-module.export = bootstrap
+module.exports = bootstrap

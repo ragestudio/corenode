@@ -6,7 +6,7 @@ const execa = require('execa')
 
 const { Observable } = require('rxjs')
 
-const { getPackages, getOriginGit, getVersion, isProjectMode } = require('corenode')
+const { getAllPackages, getOriginGit, getVersion } = require('corenode')
 const pkgManager = require("corenode/dist/packageManager")
 const getChangelogs = require("../getChangelogs")
 
@@ -15,8 +15,8 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 function publish(args) {
     return new Promise((resolve, reject) => {
-        let projectPackages = getPackages()
-        const isProject = isProjectMode()
+        let projectPackages = getAllPackages()
+        const rootSource = path.join(process.cwd(), "src")
         const env = global._env.publish ?? {}
 
         if (Array.isArray(env.ignorePackages)) {
@@ -76,41 +76,43 @@ function publish(args) {
                 enabled: () => config.npm === true,
                 task: async () => {
                     return new Observable(async (observer) => {
+                        let packagesPaths = projectPackages.map((dir) => {
+                            return path.resolve(process.cwd(), `packages/${dir}`)
+                        })
                         let packagesCount = Number(0)
 
-                        if (!Array.isArray(projectPackages) && !isProject) {
-                            projectPackages = ["src"]
+                        if (fs.existsSync(rootSource) && fs.lstatSync(rootSource).isDirectory()) {
+                            packagesPaths.push(process.cwd())
                         }
 
-                        for await (const [index, pkg] of projectPackages.entries()) {
+                        for await (const [index, pkg] of packagesPaths.entries()) {
                             let lastError = null
-                            const packagePath = isProject ? path.resolve(process.cwd(), `packages/${pkg}`) : process.cwd()
-                            const pkgJSON = path.resolve(packagePath, 'package.json')
+                            const pkgJSON = path.resolve(pkg, 'package.json')
 
                             if (fs.existsSync(pkgJSON)) {
                                 try {
                                     if (config.fast) {
-                                        pkgManager.npmPublish(packagePath, config)
+                                        pkgManager.npmPublish(pkg, config)
                                         packagesCount += 1
                                     } else {
-                                        observer.next(`[${packagesCount}/${projectPackages.length}] Publishing npm package [${index}]${pkg}`)
-                                        await pkgManager.npmPublish(packagePath, config)
+                                        observer.next(`[${packagesCount}/${packagesPaths.length}] Publishing npm package [${index}]${pkg}`)
+                                        await pkgManager.npmPublish(pkg, config)
                                             .then(() => {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
                                             })
                                     }
                                 } catch (error) {
-                                    lastError = `[${pkg}/${index}] ${error.message}`
+                                    lastError = `[${path.basename(pkg)}/${index}] ${error.message}`
                                     packagesCount += 1
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
 
-                                if (packagesCount >= projectPackages.length) {
+                                if (packagesCount >= packagesPaths.length) {
                                     if (lastError != null) {
                                         return observer.error(new Error(lastError))
                                     }
-                                    process.runtime.logger.dump("info", `Release successfully finished with [${projectPackages.length}] packages > ${projectPackages}`)
+                                    process.runtime.logger.dump("info", `Release successfully finished with [${packagesPaths.length}] packages > ${packagesPaths}`)
                                     setTimeout(() => {
                                         observer.complete()
                                     }, 850)
