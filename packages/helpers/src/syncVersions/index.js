@@ -28,9 +28,9 @@ export function syncVersions(dir) {
             directories = packages.map((pkg) => {
                 return path.resolve(process.cwd(), `packages/${pkg}`)
             })
-        } else {
-            directories.push(process.cwd())
-        }
+        } 
+        
+        directories.push(process.cwd())
     }
 
     directories.forEach((dir) => {
