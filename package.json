@@ -1,12 +1,12 @@
 {
   "name": "corenode",
-  "version": "0.25.26",
+  "version": "0.26.0",
   "git": "https://github.com/ragestudio/corenode",
   "funding": [
-		{
-			"url": "https://www.paypal.com/paypalme/RageStudioES"
-		}
-	],
+    {
+      "url": "https://www.paypal.com/paypalme/RageStudioES"
+    }
+  ],
   "publishConfig": {
     "access": "public"
   },
