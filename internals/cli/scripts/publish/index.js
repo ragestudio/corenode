@@ -108,7 +108,7 @@ function publish(args) {
                                     observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
                                 }
 
-                                if (packagesCount >= projectPackages.length) {
+                                if (packagesCount >= packagesPaths.length) {
                                     if (lastError != null) {
                                         return observer.error(new Error(lastError))
                                     }
