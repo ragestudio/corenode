@@ -85,6 +85,13 @@ function watch(payload) {
     return new Watcher(payload)
 }
 
+runtime.appendToCli({
+    command: "dev [file] [lib]",
+    exec: (context, args) => {
+        watch({ file: args.file })
+    }
+})
+
 expose = {
     Watcher,
     watch
