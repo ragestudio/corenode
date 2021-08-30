@@ -1,6 +1,5 @@
-import { publish, bootstrapProject, getChangelogs } from './scripts'
-import { prettyTable } from '@corenode/utils'
-
+const { publish, bootstrapProject, getChangelogs } = require("./scripts")
+const { prettyTable } = require("@corenode/utils")
 const { addonsController, helpers } = process.runtime
 
 module.exports = [

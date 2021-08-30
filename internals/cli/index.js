@@ -1,13 +1,13 @@
-import generate from './lib/generate'
+const generate = require('./lib/generate')
 
 let optionsMap = require('./options')
 let commandMap = require('./commands')
 
-export function runCli() {
+function runCli() {
     generate({
         options: optionsMap,
         commands: commandMap
     })
 }
 
-runCli()
+module.exports = runCli

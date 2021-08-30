@@ -2,14 +2,14 @@ const yargs = require('yargs/yargs')
 let { verbosity, objectToArrayMap } = require("@corenode/utils")
 verbosity = verbosity.options({ method: "[CLI]" })
 
-export default ({ commands, options }) => {
-    const cliGlobal = process.cli ?? {} 
+function generate({ commands, options }) {
+    const cliGlobal = process.cli ?? {}
 
     // set helpers
     if (typeof cliGlobal.keys === "undefined") {
         cliGlobal.keys = []
     }
-    
+
     process.runtime.appendToController("appendCli", (entry) => {
         custom.push({ ...entry })
     })
@@ -94,3 +94,5 @@ export default ({ commands, options }) => {
         .help()
         .argv
 }
+
+module.exports = generate

@@ -1,9 +1,8 @@
-import fs from 'fs'
-import path from 'path'
+const fs = require('fs')
+const path = require('path')
+const { getPackages, isProjectMode } = require('corenode')
 
-import { getPackages, isProjectMode } from 'corenode'
-
-export default async (params) => {
+async function bootstrap(params) {
   return new Promise(async (resolve, reject) => {
     {
       const hasPackages = isProjectMode()
@@ -102,3 +101,5 @@ export default async (params) => {
     }
   })
 }
+
+module.export = bootstrap

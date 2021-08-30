@@ -1,21 +1,19 @@
-import fs from 'fs'
-import path from 'path'
-import open from 'open'
-import Listr from 'listr'
-import execa from 'execa'
+const fs = require('fs')
+const path = require('path')
+const open = require("open")
+const Listr = require("listr")
+const execa = require('execa')
 
-import { Observable } from 'rxjs'
+const { Observable } = require('rxjs')
 
-import { getPackages, getOriginGit, getVersion, isProjectMode } from 'corenode'
-import buildProject from '@corenode/builder'
-import pkgManager from 'corenode/dist/packageManager'
-import getChangelogs from '../getChangelogs'
+const { getPackages, getOriginGit, getVersion, isProjectMode } = require('corenode')
+const pkgManager = require("corenode/dist/packageManager")
+const getChangelogs = require("../getChangelogs")
 
 let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
-
-export function publish(args) {
+function publish(args) {
     return new Promise((resolve, reject) => {
         let projectPackages = getPackages()
         const isProject = isProjectMode()
@@ -101,7 +99,7 @@ export function publish(args) {
                                                 packagesCount += 1
                                                 process.runtime.logger.dump("info", `+ published npm package ${pkg}`)
                                             })
-                                    } 
+                                    }
                                 } catch (error) {
                                     lastError = `[${pkg}/${index}] ${error.message}`
                                     packagesCount += 1
@@ -182,3 +180,5 @@ export function publish(args) {
             })
     })
 }
+
+module.exports = publish

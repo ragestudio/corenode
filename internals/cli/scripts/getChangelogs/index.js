@@ -1,7 +1,7 @@
-import { htmlEscape } from 'escape-goat'
-import * as git from '@corenode/git-lib'
+const { htmlEscape } = require('escape-goat')
+const git = require('@corenode/git-lib')
 
-export default (url, to, from) => {
+function getChangelogs (url, to, from) {
     if (!url) {
         throw new Error(`Please provide an git url`)
     }
@@ -23,3 +23,5 @@ export default (url, to, from) => {
 
     return commits.map((commit) => `- ${htmlEscape(commit.message)}  ${commit.id}`).join('\n')
 }
+
+module.exports = getChangelogs
