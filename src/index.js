@@ -63,7 +63,6 @@ class Runtime {
         this.registerModulesAliases({
             "factory": path.resolve(__dirname, 'factory'),
             "filesystem": path.resolve(__dirname, 'filesystem'),
-            "@@helpers": path.resolve(__dirname, 'helpers'),
             "@@addons": path.resolve(__dirname, 'addons'),
             "@@classes": path.resolve(__dirname, 'classes'),
             "@@vm": path.resolve(__dirname, 'vm'),
@@ -77,7 +76,7 @@ class Runtime {
 
         this.objects = {}
         this.controller = {}
-        this.helpers = require("./helpers")
+        this.helpers = require("@corenode/helpers")
         this.addonsController = null
 
         this.events = new EventEmitter()
@@ -351,7 +350,7 @@ class Runtime {
                 if (this.load.runCli) {
                     if (typeof targetBin === "undefined") {
                         if (this.argv.length >= 1) {
-                            require('../internals/cli/dist')
+                            require('../internals/cli')()
                         }else {
                             process.runtime.events.emit('cli_noCommand')
                         }
@@ -375,5 +374,5 @@ module.exports = {
     logger,
     constables,
     moduleLib,
-    ...require("./helpers"),
+    ...require("@corenode/helpers"),
 }

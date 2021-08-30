@@ -3,7 +3,7 @@ const path = require("path")
 const execa = require('execa')
 
 const spawn = require("cross-spawn")
-const helpers = require('../helpers')
+const helpers = require('@corenode/helpers')
 const agents = require('./agents')
 
 const { validateName, npmPublishLib } = require("./lib")
