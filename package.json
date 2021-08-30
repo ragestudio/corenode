@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.26.3",
+  "version": "0.26.4",
   "git": "https://github.com/ragestudio/corenode",
   "funding": [
     {
@@ -92,9 +92,9 @@
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2",
     "@babel/runtime": "^7.13.10",
-    "@corenode/helpers": "0.26.3",
-    "@corenode/git-lib": "0.26.3",
-    "@corenode/utils": "0.26.3",
+    "@corenode/helpers": "0.26.4",
+    "@corenode/git-lib": "0.26.4",
+    "@corenode/utils": "0.26.4",
     "smart-circular": "^1.0.2",
     "cross-env": "^7.0.3"
   },
