@@ -1,21 +1,19 @@
 {
-  "name": "@corenode/git-lib",
+  "name": "@corenode/helpers",
   "version": "0.26.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
+  "license": "MIT",
   "files": [
     "dist",
     "load.addon.js"
   ],
-  "dependencies": {
-    "execa": "^5.0.0"
-  },
+  "originGit": "https://github.com/ragestudio/corenode",
   "repository": {
     "type": "git",
     "url": "https://github.com/ragestudio/corenode"
-  },
-  "license": "MIT"
+  }
 }
