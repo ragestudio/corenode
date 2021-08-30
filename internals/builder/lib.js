@@ -60,9 +60,10 @@ function listAllFiles(dir) {
 }
 
 function getBuilderEnv(from = process.cwd()) {
-  if (fs.existsSync(from) && fs.lstatSync(from).isDirectory()) {
-    from = path.resolve(from, '.builder')
-    return JSON.parse(fs.readFileSync(from, 'utf-8'))
+  const builderEnvFile = path.resolve(from, '.builder')
+  
+  if (fs.existsSync(builderEnvFile) && fs.lstatSync(from).isFile()) {
+    return JSON.parse(fs.readFileSync(builderEnvFile, 'utf-8'))
   } else {
     return {}
   }
