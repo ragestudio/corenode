@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const rimraf = require('rimraf')
+//const rimraf = require('rimraf')
 const { createLogger, format, transports } = require('winston')
 
 const cliProgress = require('cli-progress')
@@ -25,7 +25,6 @@ function canRead(dir) {
     return false
   }
 }
-
 class Builder {
   constructor(params) {
     this.params = { ...params }

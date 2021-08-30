@@ -55,7 +55,8 @@ class Thing {
     }
 
     create = (thing, factoryID) => {
-        const type = typeof thing === 'object'
+        // TODO
+        //const type = typeof thing === 'object'
     }
 
     connect = (to) => {
@@ -63,7 +64,7 @@ class Thing {
     }
 
     eject() {
-        
+        // TODO
     }
 }
 
