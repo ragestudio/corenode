@@ -92,6 +92,7 @@ module.exports = [
                     console.log(`\n✅ Publish done`)
                 })
                 .catch((error) => {
+                    console.error(error)
                     console.error(`\n❌ Publish aborted due an error`)
                 })
         }
