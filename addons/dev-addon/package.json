@@ -1,6 +1,6 @@
 {
   "name": "@corenode/dev-addon",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "addons": {
     "dev-addon": "./load.addon.js"
   },
@@ -10,6 +10,8 @@
   ],
   "license": "ISC",
   "dependencies": {
+    "md5": "^2.3.0",
+    "chokidar": "^3.5.2",
     "colors": "^1.4.0"
   }
 }

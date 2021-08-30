@@ -1,8 +1,10 @@
 const fs = require('fs')
-const colors = require('colors')
+const path = require('path')
+const { Builder } = require('corenode/internals/builder')
+const chokidar = require('chokidar')
 
 const { EvalMachine } = require('corenode/dist/vm')
-const getChecksum = require('corenode/dist/libs/checksum').default
+const md5 = require('md5')
 
 class Watcher {
     constructor(params) {
@@ -15,43 +17,46 @@ class Watcher {
         this.lastChecksum = null
         this.lastChange = null
 
-        if (typeof this.params.file === "undefined") {
-            throw new Error(`No file to watch provided`)
+        if (typeof this.params.input === "undefined") {
+            throw new Error(`No input to watch provided`)
         }
 
-        this.runtime()
+        this.watchDir = fs.lstatSync(this.params.input).isFile? this.params.input : path.dirname(this.params.input)
+        this.watcher = chokidar.watch(this.watchDir)
 
-        fs.watch(this.params.file, (eventType, filename) => {
-            this.onEvent({ eventType, filename })
+        this.timeout = null
+
+        this.watcher.on("change", (file) => {
+            this.onFileChange(file)
+        })
+
+        this.watcher.on("all", (event, file) => {
+            console.log(`\n\n------------`)
+            console.log(`[${event}] >> ${file}`)
+            console.log(`------------\n\n`)
+            
+            clearTimeout(this.timeout)
+
+            this.timeout = setTimeout(() => {
+                this.runtime()
+            }, 1000)
         })
     }
 
-    onEvent = (event) => {
-        switch (event.eventType) {
-            case "change": {
-                this.onFileChange(event)
-                break
-            }
-            default:
-                break
-        }
-    }
-
-    onFileChange = (event) => {
+    onFileChange = (file) => {
         try {
-            const fileContent = fs.readFileSync(this.params.file, 'utf8')
+            const fileContent = fs.readFileSync(file, 'utf8')
             const time = new Date().getTime()
-            const hash = String(getChecksum(fileContent))
+            const hash = String(md5(fileContent))
 
-            const change = { event, hash, time }
+            const change = { hash, time }
+
             if (this.lastChecksum !== hash) {
                 this.lastChecksum = hash
                 this.lastChange = change
 
-                this.checksums.add({hash})
+                this.checksums.add({ hash })
                 this.changes.add(change)
-
-                this.runtime()
             }
         } catch (error) {
             console.log(error)
@@ -59,19 +64,28 @@ class Watcher {
         }
     }
 
-    runtime = () => {
+    build = async () => {
+        return new Builder({ source: this.watchDir, showProgress: false }).buildAllSources()
+    }
+
+    runtime = async () => {
         if (this.deep.length > 0) {
             console.log(`\n\n------------`)
-            console.log(colors.bgYellow(`>> [MACHINE RELOAD] | checksum ${this.lastChecksum} | time ${this.lastChange?.time ?? "unknown"} <<`))
+            console.log(`>> [MACHINE RELOAD] | checksum ${this.lastChecksum} | time ${this.lastChange?.time ?? "unknown"} <<`)
             console.log(`------------\n\n`)
             this.deep.forEach((machine) => {
                 machine.destroy()
             })
         }
 
+        if (this.params.buildDist) {
+            console.log(`\n ⚙️  Compiling...\n`)
+            await this.build()
+        }
+
         try {
             const machine = new EvalMachine({
-                file: this.params.file
+                file: this.params.exec ?? this.params.input
             })
 
             this.deep.push(machine)
@@ -86,9 +100,9 @@ function watch(payload) {
 }
 
 runtime.appendToCli({
-    command: "dev [file] [lib]",
+    command: "dev [input] [exec]",
     exec: (context, args) => {
-        watch({ file: args.file })
+        watch({ input: args.input, exec: args.exec, buildDist: args.dist, })
     }
 })
 
