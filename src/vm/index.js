@@ -5,8 +5,8 @@ import { EventEmitter } from 'events'
 import Serializer from './serialize.js'
 
 import * as babel from "@babel/core"
-import * as compiler from '@corenode/builder/dist/lib'
 
+const compilerLib = require('../../internals/builder/lib')
 const vmlib = require("vm")
 const { Timings } = require("../libs/timings")
 const Jail = require('../classes/Jail').default
@@ -32,7 +32,7 @@ export class VMController {
         this.objects = this.getObjects()
 
         this.babelOptions = {
-            plugins: compiler.defaultBabelPlugins,
+            plugins: compilerLib.defaultBabelPlugins,
             presets: [
                 [
                     require.resolve('@babel/preset-env'),
