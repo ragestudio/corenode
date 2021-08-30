@@ -77,7 +77,7 @@ function publish(args) {
                 task: async () => {
                     return new Observable(async (observer) => {
                         let packagesPaths = projectPackages.map((dir) => {
-                            return path.resolve(process.cwd(), `packages/${pkg}`)
+                            return path.resolve(process.cwd(), `packages/${dir}`)
                         })
                         let packagesCount = Number(0)
 
