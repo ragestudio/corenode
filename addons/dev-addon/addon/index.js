@@ -79,8 +79,9 @@ class Watcher {
         }
 
         if (this.params.buildDist) {
-            console.log(`\n ⚙️  Compiling...\n`)
+            console.log(`\n ⚙️  Compiling...`)
             await this.build()
+            console.log(`Build Done`)
         }
 
         try {
