@@ -9,7 +9,6 @@ const { EventEmitter } = require('events')
 const { verbosity, objectToArrayMap } = require("@corenode/utils")
 
 //* PRIMORDIAL LIBRARIES
-const packageManager = require('./packageManager')
 const net = require('./net')
 const repl = require('./repl')
 const moduleLib = require('./module')
@@ -372,7 +371,6 @@ class Runtime {
 
 module.exports = {
     Runtime,
-    packageManager,
     environmentFiles,
     net,
     repl,
