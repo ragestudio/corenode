@@ -1,6 +1,6 @@
 {
   "name": "@corenode/utils",
-  "version": "0.26.5",
+  "version": "0.26.6",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "locate-path": "^7.0.0",
-		"path-exists": "^5.0.0",
+    "path-exists": "^5.0.0",
     "stacktrace-js": "^2.0.2",
     "axios": "^0.21.1",
     "chalk": "^4.1.0",
