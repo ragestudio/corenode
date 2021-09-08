@@ -1,6 +1,6 @@
 {
   "name": "@corenode/pkg-manager",
-  "version": "0.26.6",
+  "version": "0.26.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "corenode": "^0.26.6",
-    "@corenode/utils": "^0.26.6",
-    "@corenode/helpers": "^0.26.6",
+    "@corenode/utils": "0.26.7",
+    "@corenode/helpers": "0.26.7",
     "execa": "^5.1.1",
     "extract-first-json": "^1.0.1",
     "cross-spawn": "^7.0.3",
