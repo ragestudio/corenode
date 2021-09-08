@@ -27,8 +27,8 @@
     "prod": "cross-env LOCAL_BIN=false node ./bin/index.js",
     "builder": "node ./internals/builder/cli.js",
     "build:docs": "corenode docs --innerFiles",
-    "release:next": "npm run builder && node ./bin/index.js publish --preRelease --next --npm --fast --github",
-    "release:prod": "npm run builder && node ./bin/index.js publish --npm --github --fast",
+    "release:next": "npm run builder && node ./bin/index.js publish --disableAddons --preRelease --next --npm --fast --github",
+    "release:prod": "npm run builder && node ./bin/index.js publish --disableAddons --npm --github --fast",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
