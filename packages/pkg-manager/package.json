@@ -1,0 +1,35 @@
+{
+  "name": "@corenode/pkg-manager",
+  "version": "0.26.6",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "files": [
+    "dist",
+    "load.addon.js"
+  ],
+  "originGit": "https://github.com/ragestudio/corenode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ragestudio/corenode"
+  },
+  "dependencies": {
+    "corenode": "^0.26.6",
+    "@corenode/utils": "^0.26.6",
+    "@corenode/helpers": "^0.26.6",
+    "execa": "^5.1.1",
+    "extract-first-json": "^1.0.1",
+    "cross-spawn": "^7.0.3",
+    "libnpmpack": "^2.0.1",
+    "libnpmpublish": "^4.0.2",
+    "pacote": "^11.3.5",
+    "npm-package-arg": "^8.1.5",
+    "npm-registry-fetch": "^11.0.0",
+    "semver": "^7.3.5",
+    "@npmcli/config": "^2.2.0",
+    "read-package-json": "^4.1.1"
+  }
+}
