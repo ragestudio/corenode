@@ -256,3 +256,21 @@ export { default as camalize } from './camalize'
  * @function prettyTable 
  */
 export { default as prettyTable } from './prettyTable'
+
+
+/**
+ * @function findUp 
+ */
+
+/**
+ * @function findUpSync 
+ */
+
+/**
+ * @function pathExists 
+ */
+
+/**
+ * @function pathExistsSync 
+ */
+export * from './findUp' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
