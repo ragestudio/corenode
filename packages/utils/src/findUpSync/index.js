@@ -6,23 +6,23 @@
 'use babel';
 
 import path from 'node:path';
-import locatePath from '../locatePath';
+import locatePathSync from '../locatePathSync';
 
 const findUpStop = Symbol('findUpStop');
 
-export default async (name, options = {}) => {
+export default (name, options = {}) => {
     let directory = path.resolve(options.cwd || '');
     const { root } = path.parse(directory);
     const paths = [name].flat();
 
-    const runMatcher = async locateOptions => {
+    const runMatcher = locateOptions => {
         if (typeof name !== 'function') {
-            return locatePath(paths, locateOptions);
+            return locatePathSync(paths, locateOptions);
         }
 
-        const foundPath = await name(locateOptions.cwd);
+        const foundPath = name(locateOptions.cwd);
         if (typeof foundPath === 'string') {
-            return locatePath([foundPath], locateOptions);
+            return locatePathSync([foundPath], locateOptions);
         }
 
         return foundPath;
@@ -30,8 +30,7 @@ export default async (name, options = {}) => {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        // eslint-disable-next-line no-await-in-loop
-        const foundPath = await runMatcher({ ...options, cwd: directory });
+        const foundPath = runMatcher({ ...options, cwd: directory });
 
         if (foundPath === findUpStop) {
             return;

@@ -5,46 +5,65 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 'use babel';
 
-import path from 'node:path';
-import locatePath from '../locatePath';
+class Node {
+    value;
+    next;
 
-const findUpStop = Symbol('findUpStop');
+    constructor(value) {
+        this.value = value;
+    }
+}
 
-export default async (name, options = {}) => {
-    let directory = path.resolve(options.cwd || '');
-    const { root } = path.parse(directory);
-    const paths = [name].flat();
+export default class Queue {
+    #head;
+    #tail;
+    #size;
 
-    const runMatcher = async locateOptions => {
-        if (typeof name !== 'function') {
-            return locatePath(paths, locateOptions);
+    constructor() {
+        this.clear();
+    }
+
+    enqueue(value) {
+        const node = new Node(value);
+
+        if (this.#head) {
+            this.#tail.next = node;
+            this.#tail = node;
+        } else {
+            this.#head = node;
+            this.#tail = node;
         }
 
-        const foundPath = await name(locateOptions.cwd);
-        if (typeof foundPath === 'string') {
-            return locatePath([foundPath], locateOptions);
-        }
+        this.#size++;
+    }
 
-        return foundPath;
-    };
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-        // eslint-disable-next-line no-await-in-loop
-        const foundPath = await runMatcher({ ...options, cwd: directory });
-
-        if (foundPath === findUpStop) {
+    dequeue() {
+        const current = this.#head;
+        if (!current) {
             return;
         }
 
-        if (foundPath) {
-            return path.resolve(directory, foundPath);
-        }
+        this.#head = this.#head.next;
+        this.#size--;
+        return current.value;
+    }
 
-        if (directory === root) {
-            return;
-        }
+    clear() {
+        this.#head = undefined;
+        this.#tail = undefined;
+        this.#size = 0;
+    }
 
-        directory = path.dirname(directory);
+    get size() {
+        return this.#size;
+    }
+
+    *[Symbol.iterator]() {
+        let current = this.#head;
+
+        while (current) {
+            yield current.value;
+            current = current.next;
+        }
     }
 }

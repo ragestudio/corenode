@@ -27,6 +27,16 @@ export { default as delay } from './delay'
 export { default as getObjectPaths } from './getObjectPaths'
 
 /**
+* @function pathExists
+*/
+export { default as pathExists } from './pathExists'
+
+/**
+* @function pathExistsSync
+*/
+export { default as pathExistsSync } from './pathExistsSync'
+
+/**
  * Checks if an array has duplicate values
  * @function hasDuplicates
  * @return `true` if some values are duplicate, `false` otherwise
@@ -257,20 +267,51 @@ export { default as camalize } from './camalize'
  */
 export { default as prettyTable } from './prettyTable'
 
-
 /**
  * @function findUp 
+ * @copyright Sindre Sorhus
  */
 
-/**
- * @function findUpSync 
- */
+export { default as findUp } from './findUp' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
- * @function pathExists 
+ * @function findUpSync
+ * @copyright Sindre Sorhus
  */
 
+export { default as findUpSync } from './findUpSync' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
 /**
- * @function pathExistsSync 
+ * @function locatePath
+ * @copyright Sindre Sorhus
  */
-export * from './findUp' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+export { default as locatePath } from './locatePath' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+/**
+ * @function locatePathSync
+ * @copyright Sindre Sorhus
+ */
+
+export { default as locatePathSync } from './locatePathSync' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+/**
+ * @function pLimit
+ * @copyright Sindre Sorhus
+ */
+
+export { default as pLimit } from './pLimit' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+/**
+ * @function pLocate
+ * @copyright Sindre Sorhus
+ */
+
+export { default as pLocate } from './pLocate' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+/**
+ * @function yoctoQueue
+ * @copyright Sindre Sorhus
+ */
+
+export { default as yoctoQueue } from './yoctoQueue' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
