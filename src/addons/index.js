@@ -3,7 +3,7 @@ const path = require("path")
 const { performance } = require('perf_hooks')
 const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
-const pkgManager = require("../packageManager")
+const pkgManager = require("@corenode/pkg-manager")
 const { getRootPackage } = require('@corenode/helpers')
 const { EvalMachine } = require('../vm')
 
