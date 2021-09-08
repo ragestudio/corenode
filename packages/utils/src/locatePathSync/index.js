@@ -5,46 +5,44 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 'use babel';
 
+import process from 'node:process';
 import path from 'node:path';
-import locatePath from '../locatePath';
+import fs from 'node:fs';
 
-const findUpStop = Symbol('findUpStop');
+const typeMappings = {
+    directory: 'isDirectory',
+    file: 'isFile',
+};
 
-export default async (name, options = {}) => {
-    let directory = path.resolve(options.cwd || '');
-    const { root } = path.parse(directory);
-    const paths = [name].flat();
+function checkType(type) {
+    if (type in typeMappings) {
+        return;
+    }
 
-    const runMatcher = async locateOptions => {
-        if (typeof name !== 'function') {
-            return locatePath(paths, locateOptions);
-        }
+    throw new Error(`Invalid type specified: ${type}`);
+}
 
-        const foundPath = await name(locateOptions.cwd);
-        if (typeof foundPath === 'string') {
-            return locatePath([foundPath], locateOptions);
-        }
+const matchType = (type, stat) => type === undefined || stat[typeMappings[type]]();
 
-        return foundPath;
-    };
+export default (
+    paths,
+    {
+        cwd = process.cwd(),
+        type = 'file',
+        allowSymlinks = true,
+    } = {},
+) => {
+    checkType(type);
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-        // eslint-disable-next-line no-await-in-loop
-        const foundPath = await runMatcher({ ...options, cwd: directory });
+    const statFunction = allowSymlinks ? fs.statSync : fs.lstatSync;
 
-        if (foundPath === findUpStop) {
-            return;
-        }
+    for (const path_ of paths) {
+        try {
+            const stat = statFunction(path.resolve(cwd, path_));
 
-        if (foundPath) {
-            return path.resolve(directory, foundPath);
-        }
-
-        if (directory === root) {
-            return;
-        }
-
-        directory = path.dirname(directory);
+            if (matchType(type, stat)) {
+                return path_;
+            }
+        } catch { }
     }
 }

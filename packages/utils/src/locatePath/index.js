@@ -5,46 +5,46 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 'use babel';
 
+import process from 'node:process';
 import path from 'node:path';
-import locatePath from '../locatePath';
+import { promises as fsPromises } from 'node:fs';
+import pLocate from '../pLocate';
 
-const findUpStop = Symbol('findUpStop');
+const typeMappings = {
+    directory: 'isDirectory',
+    file: 'isFile',
+};
 
-export default async (name, options = {}) => {
-    let directory = path.resolve(options.cwd || '');
-    const { root } = path.parse(directory);
-    const paths = [name].flat();
-
-    const runMatcher = async locateOptions => {
-        if (typeof name !== 'function') {
-            return locatePath(paths, locateOptions);
-        }
-
-        const foundPath = await name(locateOptions.cwd);
-        if (typeof foundPath === 'string') {
-            return locatePath([foundPath], locateOptions);
-        }
-
-        return foundPath;
-    };
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-        // eslint-disable-next-line no-await-in-loop
-        const foundPath = await runMatcher({ ...options, cwd: directory });
-
-        if (foundPath === findUpStop) {
-            return;
-        }
-
-        if (foundPath) {
-            return path.resolve(directory, foundPath);
-        }
-
-        if (directory === root) {
-            return;
-        }
-
-        directory = path.dirname(directory);
+function checkType(type) {
+    if (type in typeMappings) {
+        return;
     }
+
+    throw new Error(`Invalid type specified: ${type}`);
+}
+
+const matchType = (type, stat) => type === undefined || stat[typeMappings[type]]();
+
+export default async (
+    paths,
+    {
+        cwd = process.cwd(),
+        type = 'file',
+        allowSymlinks = true,
+        concurrency,
+        preserveOrder,
+    } = {},
+) => {
+    checkType(type);
+
+    const statFunction = allowSymlinks ? fsPromises.stat : fsPromises.lstat;
+
+    return pLocate(paths, async path_ => {
+        try {
+            const stat = await statFunction(path.resolve(cwd, path_));
+            return matchType(type, stat);
+        } catch {
+            return false;
+        }
+    }, { concurrency, preserveOrder });
 }
