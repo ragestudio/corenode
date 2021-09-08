@@ -10,8 +10,6 @@ const { getAllPackages, getOriginGit, getVersion } = require("@corenode/helpers"
 const pkgManager = require("@corenode/pkg-manager")
 const getChangelogs = require("../getChangelogs")
 
-console.log(pkgManager)
-
 let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
