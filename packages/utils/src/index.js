@@ -315,3 +315,8 @@ export { default as pLocate } from './pLocate' // Copyright (c) Sindre Sorhus <s
  */
 
 export { default as yoctoQueue } from './yoctoQueue' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+/**
+ * @function overrideObjects
+ */
+export { default as overrideObjects } from './overrideObjects'
