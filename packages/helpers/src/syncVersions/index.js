@@ -53,7 +53,8 @@ function sync(dir, to) {
 
             if (typeof (pkg["dependencies"]) !== "undefined" && typeof (global._env.development?.headPackage) !== "undefined") {
                 Object.keys(pkg["dependencies"]).forEach((name) => {
-                    if (name.startsWith(`@${global._env.development?.headPackage}`)) {
+                    
+                    if (name.startsWith(`@${global._env.development?.headPackage}`) || name === global._env.development?.headPackage) {
                         pkg["dependencies"][name] = to
                     }
                 })
