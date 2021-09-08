@@ -28,9 +28,8 @@
   - [~] Addon loader schema (load.addon.js)
 
 #### [core]
-  - [ ] WebAssembly loader support (WASI)
+  - [*] WebAssembly loader support (WASI)
   - [ ] Process profiler
-  - [ ] Source update
   - [ ] SignalC (SignalCore)
   - [ ] `VM`
     - [x] Code transcompiler 
@@ -40,6 +39,8 @@
     - [x] Support Aliases overrides
     - [x] Support Paths overrides
     - [x] `importFrom`
+  - [] `transcompiler`
+    
 
 #### [libraries]
   - [ ] net
@@ -52,6 +53,8 @@
 
 #### [helpers]
   - [x] integrate `syncVersion`
+  - [] Bootstrap with project templates
+  - [] Publisher script refactoring
 
 #### [cli]
   - [x] `version` improve bump version
