@@ -174,7 +174,7 @@ export class EvalMachine {
         this.errorHandler = this.params.onError
         this.runs = Number(0)
         this.locked = this.params.lock ?? false
-        this.timings = new Timings({ 
+        this.timings = new Timings({
             disabled: this.params.disableTimings,
             mutation: true,
             decorated: true,
@@ -196,18 +196,12 @@ export class EvalMachine {
         // read file/script
         this.timings.start(`readFile`)
         if (typeof this.params.file !== "undefined") {
-            if (fs.existsSync(this.params.file)) {
-                try {
-                    if (!path.extname(this.params.file)) {
-                        this.params.file = path.resolve(this.params.file, 'index.js')
-                    }
-
-                    this.scriptOptions["filename"] = path.basename(this.params.file)
-                    this.params.eval = fs.readFileSync(this.params.file)
-                } catch (error) {
-                    process.runtime.logger.dump("error", error)
-                    getVerbosity().error(`[${this.params.file}] Cannot read file/script > ${error.message}`)
-                }
+            try {
+                this.scriptOptions["filename"] = path.basename(this.params.file)
+                this.params.eval = fs.readFileSync(this.params.file)
+            } catch (error) {
+                process.runtime.logger.dump("error", error)
+                getVerbosity().error(`Cannot read file/script > ${error.message}`)
             }
         } else {
             this.params.file = path.join(process.cwd(), "anonVM.js")
