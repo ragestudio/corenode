@@ -83,8 +83,8 @@ async function bootstrap(params) {
               'sideEffects',
               'main',
               'module',
-            ]
 
+            ]
             keys.forEach((key) => {
               if (pkg[key]) {
                 content[key] = pkg[key]
