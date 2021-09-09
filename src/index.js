@@ -321,13 +321,35 @@ class Runtime {
                 let { targetBin } = this.load
 
                 if (typeof this.argv[0] !== "undefined") {
-                    const fileFromArgs = path.resolve(this.argv[0])
+                    //* Try to resolve target bin
+                    let fileFromArgs = path.resolve(this.argv[0])
 
-                    if (!targetBin && fs.existsSync(fileFromArgs)) {
-                        const isFile = fs.lstatSync(fileFromArgs).isFile()
-                        const isSymbolicLink = fs.lstatSync(fileFromArgs).isSymbolicLink()
+                    const isFile = () => fs.lstatSync(fileFromArgs).isFile()
+                    const isDirectory = () => fs.lstatSync(fileFromArgs).isDirectory()
 
-                        if (isFile || isSymbolicLink) {
+                    if (fs.existsSync(fileFromArgs)) {
+                        // try to resolve index
+                        if (isDirectory()) {
+                            const directories = fs.readdirSync(fileFromArgs)
+
+                            if (directories.length > 1) {
+                                directories.forEach((file) => {
+                                    // try to match index
+                                    const fileBasename = path.basename(file)
+                                    const fileExtension = path.extname(fileBasename)
+                                    const withoutExtension = fileBasename.substring(0, fileBasename.length - fileExtension.length)
+
+                                    if (withoutExtension === "index") {
+                                        fileFromArgs = path.resolve(fileFromArgs, fileBasename)
+                                    }
+                                })
+                            } else {
+                                fileFromArgs = path.resolve(fileFromArgs, directories[0])
+                            }
+                        }
+
+                        // check again and override
+                        if (fs.existsSync(fileFromArgs) && isFile()) {
                             targetBin = fileFromArgs
                         }
                     }
