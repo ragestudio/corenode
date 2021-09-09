@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.26.12",
+  "version": "0.26.13",
   "git": "https://github.com/ragestudio/corenode",
   "funding": [
     {
@@ -54,10 +54,10 @@
     "@babel/preset-env": "7.13.12",
     "@babel/preset-typescript": "7.13.0",
     "@babel/runtime": "^7.13.10",
-    "@corenode/pkg-manager": "0.26.12",
-    "@corenode/git-lib": "0.26.12",
-    "@corenode/helpers": "0.26.12",
-    "@corenode/utils": "0.26.12",
+    "@corenode/pkg-manager": "0.26.13",
+    "@corenode/git-lib": "0.26.13",
+    "@corenode/helpers": "0.26.13",
+    "@corenode/utils": "0.26.13",
     "7zip-bin": "^5.1.1",
     "cli-progress": "^3.9.0",
     "cross-blob": "^2.0.0",
