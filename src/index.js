@@ -324,7 +324,10 @@ class Runtime {
                     const fileFromArgs = path.resolve(this.argv[0])
 
                     if (!targetBin && fs.existsSync(fileFromArgs)) {
-                        if (fs.lstatSync(fileFromArgs).isFile()) {
+                        const isFile = fs.lstatSync(fileFromArgs).isFile()
+                        const isSymbolicLink = fs.lstatSync(fileFromArgs).isSymbolicLink()
+
+                        if (isFile || isSymbolicLink) {
                             targetBin = fileFromArgs
                         }
                     }
