@@ -209,11 +209,11 @@ class Builder {
       }
 
       const customInclude = (globalEnv?.include ?? []).map((pattern) => {
-        return pattern
+        return path.resolve(input, pattern)
       })
 
       const customExclude = (globalEnv?.exclude ?? []).map((pattern) => {
-        return `!${pattern}`
+        return `!${path.resolve(input, pattern)}`
       })
 
       const globSource = [
