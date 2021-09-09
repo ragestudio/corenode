@@ -34,7 +34,7 @@ try {
         cwd: args.cwd,
         args: args,
     }
-    
+
     new Runtime(options)
     console.log(`\n`) // leaving some space between lines
 } catch (error) {
