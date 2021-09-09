@@ -27,16 +27,6 @@ export { default as delay } from './delay'
 export { default as getObjectPaths } from './getObjectPaths'
 
 /**
-* @function pathExists
-*/
-export { default as pathExists } from './pathExists'
-
-/**
-* @function pathExistsSync
-*/
-export { default as pathExistsSync } from './pathExistsSync'
-
-/**
  * Checks if an array has duplicate values
  * @function hasDuplicates
  * @return `true` if some values are duplicate, `false` otherwise
@@ -266,34 +256,6 @@ export { default as camalize } from './camalize'
  * @function prettyTable 
  */
 export { default as prettyTable } from './prettyTable'
-
-/**
- * @function findUp 
- * @copyright Sindre Sorhus
- */
-
-export { default as findUp } from './findUp' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
-
-/**
- * @function findUpSync
- * @copyright Sindre Sorhus
- */
-
-export { default as findUpSync } from './findUpSync' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
-
-/**
- * @function locatePath
- * @copyright Sindre Sorhus
- */
-
-export { default as locatePath } from './locatePath' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
-
-/**
- * @function locatePathSync
- * @copyright Sindre Sorhus
- */
-
-export { default as locatePathSync } from './locatePathSync' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
  * @function pLimit
