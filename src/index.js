@@ -325,6 +325,7 @@ class Runtime {
                     let fileFromArgs = path.resolve(this.argv[0])
 
                     const isFile = () => fs.lstatSync(fileFromArgs).isFile()
+                    const isSymlink = () => fs.lstatSync(fileFromArgs).isSymbolicLink()
                     const isDirectory = () => fs.lstatSync(fileFromArgs).isDirectory()
 
                     if (fs.existsSync(fileFromArgs)) {
@@ -349,8 +350,10 @@ class Runtime {
                         }
 
                         // check again and override
-                        if (fs.existsSync(fileFromArgs) && isFile()) {
-                            targetBin = fileFromArgs
+                        if (fs.existsSync(fileFromArgs)) {
+                            if (isSymlink() || isFile()) {
+                                targetBin = fileFromArgs
+                            }
                         }
                     }
                 }
