@@ -1,6 +1,6 @@
 {
   "name": "@corenode/helpers",
-  "version": "0.26.14",
+  "version": "0.26.15",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
