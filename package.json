@@ -41,6 +41,7 @@
     ]
   },
   "dependencies": {
+    "7zip-bin": "^5.1.1",
     "@babel/core": "^7.13.14",
     "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-proposal-do-expressions": "7.12.13",
@@ -54,12 +55,12 @@
     "@babel/preset-env": "7.13.12",
     "@babel/preset-typescript": "7.13.0",
     "@babel/runtime": "^7.13.10",
-    "@corenode/pkg-manager": "0.26.15",
     "@corenode/git-lib": "0.26.15",
     "@corenode/helpers": "0.26.15",
+    "@corenode/pkg-manager": "0.26.15",
     "@corenode/utils": "0.26.15",
-    "7zip-bin": "^5.1.1",
     "cli-progress": "^3.9.0",
+    "commander": "^8.2.0",
     "cross-blob": "^2.0.0",
     "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.3",
