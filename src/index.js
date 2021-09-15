@@ -2,7 +2,7 @@
  * corenode
  * @module corenode 
  */
-
+const enginePkg = require("../package.json")
 const path = require('path')
 const fs = require('fs')
 const { EventEmitter } = require('events')
@@ -18,41 +18,8 @@ const constables = require('./constables')
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 class Runtime {
-    constructor(load) {
-        this.load = load
-
-        //? handle load params
-        if (this.load.cwd) {
-            if (!path.isAbsolute(this.load.cwd)) {
-                this.load.cwd = path.resolve(this.load.cwd)
-            }
-
-            process.chdir(this.load.cwd)
-        }
-        if (this.load.args) {
-            process.args = this.load.args
-        }
-
-        // fix argv
-        process._argvf = process.argv
-        this.argv = process.argv = process.argv.slice(2)
-        this.args = require("yargs-parser")(process.argv)
-
-        process.parsedArgs = this.args
-
-        // disabler
-        this.disableCheckDependencies = this.args.disableCheckDependencies ?? this.load.disableCheckDependencies ?? false
-        this.disabledAddons = this.args.disableAddons ?? this.load.disableAddons ?? false
-
-        //? set undefined globals
-        if (typeof global.isLocalMode === "undefined") {
-            global.isLocalMode = false
-        }
-        if (typeof process.runtime !== "object") {
-            process.runtime = {}
-        }
-
-        global._versionScheme = { mayor: 0, minor: 1, patch: 2 }
+    constructor(load = {}) {
+        this.load = { ...load }
 
         // register primordials modules
         this.registerModulesAliases({
@@ -65,6 +32,35 @@ class Runtime {
             "@@libs": path.resolve(__dirname, 'libs'),
             "@@constables": path.resolve(__dirname, 'constables')
         })
+        //? set undefined globals
+        if (typeof global.isLocalMode === "undefined") {
+            global.isLocalMode = false
+        }
+        if (typeof process.runtime !== "object") {
+            process.runtime = {}
+        }
+        if (typeof global.eventBus === "undefined") {
+            global.eventBus = new EventEmitter()
+        }
+        if (typeof process.cli === "undefined") {
+            process.cli = {
+                custom: []
+            }
+        }
+
+        if (this.load.cwd) {
+            if (!path.isAbsolute(this.load.cwd)) {
+                this.load.cwd = path.resolve(this.load.cwd)
+            }
+
+            process.chdir(this.load.cwd)
+        }
+
+        this.args = process.args = require("yargs-parser")(process.argv)
+
+        // disabler
+        this.disableCheckDependencies = this.args.disableCheckDependencies ?? this.load.disableCheckDependencies ?? false
+        this.disabledAddons = this.args.disableAddons ?? this.load.disableAddons ?? false
 
         // controllers
         this.modulesAliases = {}
@@ -98,7 +94,20 @@ class Runtime {
             })
         }
 
-        this.initialize()
+        this.initEnvironment()
+        this.handleLocalMode()
+
+        global.runtime = process.runtime = this.createRuntimeGlobal(this)
+
+        //? set global aliases
+        this.modulesAliases = {
+            ...global._env.modulesAliases
+        }
+        this.modulesPaths = {
+            ...global._env.modulesPaths
+        }
+
+        return this
     }
 
     get = {
@@ -149,30 +158,6 @@ class Runtime {
         return this.controller[key]
     }
 
-    createProjectGlobal(instance = {}) {
-        instance.version = this.helpers.getVersion({ engine: false })
-
-        instance._envpath = this.get.paths._env()
-        instance._runtimeSource = this.get.paths._src()
-        instance._runtimeRoot = this.get.paths._root()
-
-        return instance
-    }
-
-    createRuntimeGlobal(instance = {}) {
-        instance.argvf = process.argv.slice(1)
-        instance.version = this.helpers.getVersion({ engine: true })
-
-        return instance
-    }
-
-    createManifestsPathsGlobal(instance = {}) {
-        instance.engine = path.resolve(__dirname, '../package.json')
-        instance.project = path.resolve(process.cwd(), 'package.json')
-
-        return instance
-    }
-
     initEnvironment() {
         //* load dotenv
         require('dotenv').config()
@@ -195,6 +180,27 @@ class Runtime {
 
         global._env = process.env
     }
+
+    createRuntimeGlobal(instance = {}) {
+        if (typeof instance.manifests === "undefined") {
+            instance.manifests = Object()
+        }
+        if (typeof instance.project === "undefined") {
+            instance.project = Object()
+        }
+
+        instance.manifests.engine = path.resolve(__dirname, '../package.json')
+        instance.manifests.project = path.resolve(process.cwd(), 'package.json')
+
+        instance.project._envpath = this.get.paths._env()
+        instance.project._runtimeSource = this.get.paths._src()
+        instance.project._runtimeRoot = this.get.paths._root()
+
+        instance.version = enginePkg.version
+
+        return instance
+    }
+
 
     registerModulesAliases = (mutation) => {
         if (typeof mutation === "object") {
@@ -257,48 +263,31 @@ class Runtime {
         this.preloadPromises.push(event)
     }
 
-    async initialize() {
+    handleLocalMode = () => {
+        process.runtime.isLocalMode = false
+
+        try {
+            const rootPkg = this.helpers.getRootPackage()
+
+            if (rootPkg.name.includes("corenode") && process.env.LOCAL_BIN == "true") {
+                process.runtime.isLocalMode = true
+                global.eventBus.emit('local_mode')
+            }
+        } catch (error) {
+            // terrible
+        }
+
+        // warn local mode
+        if (process.env.LOCAL_BIN == "true" && !process.runtime.isLocalMode) {
+            console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
+        } else if (process.runtime.isLocalMode) {
+            console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
+        }
+    }
+
+    initialize = async () => {
         return new Promise(async (resolve, reject) => {
             try {
-                process.cli = {}
-                global._env = {}
-
-                this.initEnvironment()
-
-                //? set global aliases
-                this.modulesAliases = {
-                    ...global._env.modulesAliases
-                }
-                this.modulesPaths = {
-                    ...global._env.modulesPaths
-                }
-
-                global.manifestsPaths = this.createManifestsPathsGlobal()
-                global.project = this.createProjectGlobal()
-                global.runtime = process.runtime = this.createRuntimeGlobal(this)
-
-                //? detect local mode
-                try {
-                    const rootPkg = this.helpers.getRootPackage()
-
-                    if (rootPkg.name.includes("corenode")) {
-                        global.isLocalMode = true
-                    }
-                } catch (error) {
-                    // terrible
-                }
-
-                if (this.load.isLocalMode) {
-                    global.isLocalMode = true
-                }
-
-                // warn local mode
-                if (process.env.LOCAL_BIN == "true" && !global.isLocalMode) {
-                    console.warn("\n\x1b[7m", constables.INVALID_LOCALMODE_FLAG, "\x1b[0m\n")
-                } else if (global.isLocalMode) {
-                    console.warn("\n\n\x1b[7m", constables.USING_LOCALMODE, "\x1b[0m\n\n")
-                }
-
                 //* create and initialize runtime controllers
                 const { EvalMachine, VMController } = require('./vm')
                 this.vmController = new VMController()
@@ -319,10 +308,11 @@ class Runtime {
 
                 //* LOAD
                 let { targetBin } = this.load
+                const withoutBin = process.argv.slice(2)
 
-                if (typeof this.argv[0] !== "undefined") {
+                if (typeof withoutBin[0] !== "undefined") {
                     //* Try to resolve target bin
-                    let fileFromArgs = path.resolve(this.argv[0])
+                    let fileFromArgs = path.resolve(withoutBin[0])
 
                     const isFile = () => fs.lstatSync(fileFromArgs).isFile()
                     const isSymlink = () => fs.lstatSync(fileFromArgs).isSymbolicLink()
@@ -377,27 +367,43 @@ class Runtime {
                         verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
                         console.log(constables.ERROR_EXPORTED)
                     }
-                }
-
-                if (this.load.runCli) {
-                    if (typeof targetBin === "undefined") {
-                        if (this.argv.length >= 1) {
-                            require('../internals/cli')()
-                        } else {
-                            process.runtime.events.emit('cli_noCommand')
-                        }
-                    }
-
-                    return resolve()
+                } else {
+                    repl.attachREPL()
                 }
             } catch (error) {
+                console.log("rejected error")
                 return reject(error)
             }
         })
     }
 }
 
+function fatalCrash(error) {
+    if (!error) {
+        return false
+    }
+
+    if (typeof global.eventBus !== "undefined") {
+        global.eventBus.emit('fatalCrash', error)
+    }
+
+    process.exit(1)
+}
+
+function runInNewRuntime(fn) {
+    const runtime = new Runtime()
+    if (typeof fn === "function") {
+        fn.bind(runtime)(runtime)
+    }
+
+    return runtime
+}
+
 module.exports = {
+    events: {
+        fatalCrash
+    },
+    runInNewRuntime,
     Runtime,
     environmentFiles,
     net,
