@@ -55,10 +55,6 @@ class Builder {
     return this
   }
 
-  watch = () => {
-
-  }
-
   initTaskBar = () => {
     this.taskBar = new cliProgress.MultiBar({
       forceRedraw: false,
@@ -237,6 +233,17 @@ class Builder {
         return reject(err)
       })
     })
+  }
+
+  build = (input, output) => {
+    const data = fs.readFileSync(input)
+    this.transform(data, { filename: input, agent: this.agent })
+      .then((_output) => {
+        fs.writeFileSync(output, Buffer.from(_output.code))
+      })
+      .catch((err) => {
+        this.handleError(err.message, "UNHANDLED", input)
+      })
   }
 
   // TODO: Cache hash map
