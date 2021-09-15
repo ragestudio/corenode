@@ -2,6 +2,8 @@ import fs from 'fs'
 import getVersion from '../getVersion'
 import { schemizedParse, schemizedStringify } from '@corenode/utils'
 
+const versionScheme =  { mayor: 0, minor: 1, patch: 2 }
+
 /**
  * Bumps current version of the current project
  * @function bumpVersion 
@@ -12,7 +14,7 @@ export function bumpVersion(params) {
     if (!params) return false
 
     let version = getVersion()
-    let parsedVersion = schemizedParse(version, global._versionScheme, '.')
+    let parsedVersion = schemizedParse(version, versionScheme, '.')
 
     const bumps = [
         {
@@ -48,7 +50,7 @@ export function bumpVersion(params) {
 
     const before = version
 
-    version = schemizedStringify(parsedVersion, global._versionScheme, '.')
+    version = schemizedStringify(parsedVersion, versionScheme, '.')
     global._env.version = version
 
     console.log(`🏷 Version updated! [${before} > ${version}]`)
@@ -59,14 +61,14 @@ export function bumpVersion(params) {
 }
 
 function updateEnv(mutation) {
-    let pkg = JSON.parse(fs.readFileSync(global.manifestsPaths.project, 'utf8'))
-    let data = JSON.parse(fs.readFileSync(global.project._envpath, 'utf8'))
+    let pkg = JSON.parse(fs.readFileSync(process.runtime.manifests.project, 'utf8'))
+    let data = JSON.parse(fs.readFileSync(process.runtime.project._envpath, 'utf8'))
 
     pkg = { ...pkg, ...mutation }
     data = { ...data, ...mutation }
 
-    fs.writeFileSync(global.manifestsPaths.project, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-    fs.writeFileSync(global.project._envpath, JSON.stringify(data, null, 2) + '\n', 'utf-8')
+    fs.writeFileSync(process.runtime.manifests.project, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+    fs.writeFileSync(process.runtime.project._envpath, JSON.stringify(data, null, 2) + '\n', 'utf-8')
 }
 
 export default bumpVersion

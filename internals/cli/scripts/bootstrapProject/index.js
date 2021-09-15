@@ -6,7 +6,7 @@ async function bootstrap(params) {
   return new Promise(async (resolve, reject) => {
     {
       const hasPackages = isProjectMode()
-      const projectVersion = global.project.version
+      const projectVersion = process.runtime.project.version
       const devEnv = global._env.development ?? {}
       const allPackages = getPackages()
 

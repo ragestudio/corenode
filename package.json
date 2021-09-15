@@ -11,6 +11,7 @@
     "access": "public"
   },
   "bin": {
+    "corenode-cli": "./bin/cli.js",
     "corenode": "./bin/index.js"
   },
   "license": "MIT",
@@ -22,11 +23,13 @@
     "types.d.ts"
   ],
   "scripts": {
-    "debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./bin/index.js",
-    "local": "cross-env LOCAL_BIN=true node ./bin/index.js",
-    "prod": "cross-env LOCAL_BIN=false node ./bin/index.js",
+    "cli:local": "cross-env LOCAL_BIN=true node ./bin/cli.js",
+    "cli:prod": "cross-env LOCAL_BIN=false node ./bin/cli.js",
+    "cli:debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./bin/cli.js",
+    "core:local": "cross-env LOCAL_BIN=true node ./bin/index.js",
+    "core:prod": "cross-env LOCAL_BIN=false node ./bin/index.js",
+    "core:debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./bin/index.js",
     "builder": "node ./internals/builder/cli.js",
-    "build:docs": "corenode docs --innerFiles",
     "release:next": "npm run builder && node ./bin/index.js publish --preRelease --next --npm --fast --github",
     "release:prod": "npm run builder && node ./bin/index.js publish --npm --github --fast",
     "update:deps": "yarn upgrade-interactive --latest",
@@ -41,6 +44,7 @@
     ]
   },
   "dependencies": {
+    "7zip-bin": "^5.1.1",
     "@babel/core": "^7.13.14",
     "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-proposal-do-expressions": "7.12.13",
@@ -54,12 +58,12 @@
     "@babel/preset-env": "7.13.12",
     "@babel/preset-typescript": "7.13.0",
     "@babel/runtime": "^7.13.10",
-    "@corenode/pkg-manager": "0.26.15",
     "@corenode/git-lib": "0.26.15",
     "@corenode/helpers": "0.26.15",
+    "@corenode/pkg-manager": "0.26.15",
     "@corenode/utils": "0.26.15",
-    "7zip-bin": "^5.1.1",
     "cli-progress": "^3.9.0",
+    "commander": "^8.2.0",
     "cross-blob": "^2.0.0",
     "cross-env": "^7.0.3",
     "cross-spawn": "^7.0.3",

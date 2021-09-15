@@ -269,7 +269,6 @@ export class EvalMachine {
         this.context.global = {
             _import: moduleLib.createScopedRequire(this.moduleController, this.getDirname()),
             _env: global._env,
-            project: global.project,
             runtime: process.runtime
         }
         this.timings.stop(`setGlobals`)
