@@ -1,6 +1,5 @@
 const { publish, bootstrapProject, getChangelogs } = require("./scripts")
 const { prettyTable } = require("@corenode/utils")
-const { addonsController, helpers } = process.runtime
 
 module.exports = [
     {
@@ -15,17 +14,19 @@ module.exports = [
                     break
                 }
                 default: {
-                    if (!addonsController) {
+                    const controller = process.runtime.addonsController
+                    
+                    if (!controller) {
                         return console.log(`!!! Addons controller is not available`)
                     }
-                    const allAddons = addonsController.getLoadedAddons()
+                    const allAddons = controller.getLoadedAddons()
                     const pt = new prettyTable()
 
                     let headers = ["addon", "timings", "directory"]
                     let rows = []
 
                     allAddons.forEach((addon) => {
-                        const loader = addonsController.loaders[addon]
+                        const loader = controller.loaders[addon]
 
                         const isRuntimed = loader.internal ?? false
                         const key = loader.pkg
@@ -45,6 +46,7 @@ module.exports = [
         command: 'version',
         description: "Manage project version",
         exec: (argv) => {
+            const helpers = process.runtime.helpers
             let bumps = []
             const types = ["bump-mayor", "bump-minor", "bump-patch"]
             types.forEach((bump) => {
@@ -118,6 +120,7 @@ module.exports = [
         command: 'sync [package]',
         description: "Sync project versions",
         exec: (argv) => {
+            const helpers = process.runtime.helpers
             console.log(`🔄 Syncing versions...`)
             if (!argv.package) {
                 return helpers.syncAllPackagesVersions()
@@ -129,7 +132,7 @@ module.exports = [
         command: 'changelogs',
         description: "Show the changelogs of this project from last tag",
         exec: async (argv) => {
-            const changes = await getChangelogs(helpers.getOriginGit(), argv.to, argv.from)
+            const changes = await getChangelogs(process.runtime.helpers.getOriginGit(), argv.to, argv.from)
             console.log(changes)
         }
     }

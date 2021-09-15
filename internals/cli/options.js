@@ -1,8 +1,8 @@
 module.exports = [
     {
         option: "clearBefore",
+        alias: "cb",
         description: "Clear console before print",
-        alias: ["cb"],
         type: "boolean",
         exec: () => {
             console.clear()

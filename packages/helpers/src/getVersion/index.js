@@ -11,8 +11,8 @@ export function getVersion(opts) {
     let version = "0.0.0"
 
     const projectEnv = global._env ?? {}
-    const enginePkgPath = global.manifestsPaths.engine
-    const projectPkgPath = global.manifestsPaths.project
+    const enginePkgPath = process.runtime.manifests.engine
+    const projectPkgPath = process.runtime.manifests.project
 
     try {
         const pkgEngine = fs.existsSync(enginePkgPath) ? require(enginePkgPath) : {}
