@@ -57,6 +57,7 @@ export function transform(code: string, options: Options): TransformResult {
     return result;
   } catch (e) {
     if (options.filePath) {
+      //@ts-ignore
       e.message = `Error transforming ${options.filePath}: ${e.message}`;
     }
     throw e;

@@ -4,13 +4,13 @@
 import * as babel from "@babel/core";
 import * as swc from "@swc/core";
 import * as esbuild from "esbuild";
-import {fs} from "mz";
-import {exists} from "mz/fs";
+import { fs } from "mz";
+import { exists } from "mz/fs";
 import * as TypeScript from "typescript";
 
 import run from "../script/run";
 import * as sucrase from "../src/index";
-import {FileInfo, loadProjectFiles} from "./loadProjectFiles";
+import { FileInfo, loadProjectFiles } from "./loadProjectFiles";
 
 async function main(): Promise<void> {
   process.chdir(__dirname);
@@ -82,7 +82,7 @@ async function main(): Promise<void> {
  * spot-check the output for various simple cases.
  */
 async function benchmarkJest(): Promise<void> {
-  await benchmarkFiles({files: await getJestFiles(), numIterations: 3});
+  await benchmarkFiles({ files: await getJestFiles(), numIterations: 3 });
 }
 
 async function getJestFiles(): Promise<Array<FileInfo>> {
@@ -96,14 +96,14 @@ async function getJestFiles(): Promise<Array<FileInfo>> {
   let files = await loadProjectFiles("./sample/jest");
   // Babel doesn't support "import =" or "export =" syntax at all, but jest
   // uses it, so hack the code to not use that syntax.
-  files = files.map(({path, code}) => ({
+  files = files.map(({ path, code }) => ({
     path,
     code: code.replace(/import([^\n]*require)/g, "const$1").replace(/export =/g, "exports ="),
   }));
   // esbuild doesn't allow top-level await when outputting to CJS, so skip the
   // one file in the Jest codebase that uses that syntax.
   files = files.filter(
-    ({path}) => !path.includes("jest/e2e/native-esm/__tests__/native-esm-tla.test.js"),
+    ({ path }) => !path.includes("jest/e2e/native-esm/__tests__/native-esm-tla.test.js"),
   );
   return files;
 }
@@ -141,7 +141,7 @@ async function benchmarkJestForDev(): Promise<void> {
 async function benchmarkProject(): Promise<void> {
   const projectPath = process.argv[3];
   const files = await loadProjectFiles(projectPath);
-  await benchmarkFiles({files, numIterations: 1});
+  await benchmarkFiles({ files, numIterations: 1 });
 }
 
 /**
@@ -150,7 +150,7 @@ async function benchmarkProject(): Promise<void> {
  */
 async function benchmarkSample(): Promise<void> {
   const code = fs.readFileSync(`./sample/sample.tsx`).toString();
-  await benchmarkFiles({files: [{code, path: "sample.tsx"}], numIterations: 100, warmUp: true});
+  await benchmarkFiles({ files: [{ code, path: "sample.tsx" }], numIterations: 100, warmUp: true });
 }
 
 /**
@@ -176,7 +176,7 @@ export default class App {
   } 
 }
 `;
-  await benchmarkFiles({files: [{code, path: "sample.tsx"}], numIterations: 1, printOutput: true});
+  await benchmarkFiles({ files: [{ code, path: "sample.tsx" }], numIterations: 1, printOutput: true });
 }
 
 interface BenchmarkOptions {
@@ -271,7 +271,9 @@ async function benchmarkFiles(benchmarkOptions: BenchmarkOptions): Promise<void>
       },
     }).outputText;
   });
+  //@ts-ignore
   await runBenchmark("Babel", benchmarkOptions, async (code: string, path: string) => {
+    //@ts-ignore
     return babel.transformSync(code, {
       filename: path.endsWith(".ts") ? "sample.ts" : "sample.tsx",
       presets: path.endsWith(".ts")
@@ -281,7 +283,7 @@ async function benchmarkFiles(benchmarkOptions: BenchmarkOptions): Promise<void>
         "@babel/plugin-transform-modules-commonjs",
         "@babel/plugin-syntax-top-level-await",
         "@babel/plugin-proposal-export-namespace-from",
-        ["@babel/plugin-proposal-decorators", {legacy: true}],
+        ["@babel/plugin-proposal-decorators", { legacy: true }],
       ],
     }).code;
   });

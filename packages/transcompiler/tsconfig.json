@@ -15,12 +15,9 @@
   },
   "include": [
     "benchmark",
-    "example-runner",
     "generator",
     "script",
     "src",
-    "test",
-    "test262"
   ],
   "exclude": [
     "benchmark/sample",
