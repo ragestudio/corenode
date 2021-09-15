@@ -32,11 +32,8 @@ import {
   baseParseMaybeDecoratorArguments,
   parseBlockBody,
   parseClass,
-  parseClassProperty,
-  parseClassPropertyName,
   parseFunction,
   parseFunctionParams,
-  parsePostMemberNameModifiers,
   parseStatement,
   parseVarStatement,
 } from "../traverser/statement";
@@ -96,6 +93,15 @@ function tsNextTokenCanFollowModifier(): boolean {
   }
 }
 
+export function tsParseModifiers(allowedModifiers: Array<ContextualKeyword>): void {
+  while (true) {
+    const modifier = tsParseModifier(allowedModifiers);
+    if (modifier === null) {
+      break;
+    }
+  }
+}
+
 /** Parses a modifier matching one the given modifier names. */
 export function tsParseModifier(
   allowedModifiers: Array<ContextualKeyword>,
@@ -124,6 +130,9 @@ export function tsParseModifier(
         break;
       case ContextualKeyword._protected:
         state.tokens[state.tokens.length - 1].type = tt._protected;
+        break;
+      case ContextualKeyword._override:
+        state.tokens[state.tokens.length - 1].type = tt._override;
         break;
       case ContextualKeyword._declare:
         state.tokens[state.tokens.length - 1].type = tt._declare;
@@ -307,6 +316,13 @@ function tsParseTypeMember(): void {
   if (found) {
     return;
   }
+  if (
+    (isContextual(ContextualKeyword._get) || isContextual(ContextualKeyword._set)) &&
+    tsNextTokenCanFollowModifier()
+  ) {
+    // This is a getter/setter on a type. The tsNextTokenCanFollowModifier
+    // function already called next() for us, so continue parsing the name.
+  }
   parsePropertyName(-1 /* Types don't need context IDs. */);
   tsParsePropertyOrMethodSignature(readonly);
 }
@@ -430,10 +446,14 @@ function tsParseTemplateLiteralType(): void {
 enum FunctionType {
   TSFunctionType,
   TSConstructorType,
+  TSAbstractConstructorType,
 }
 
 function tsParseFunctionOrConstructorType(type: FunctionType): void {
-  if (type === FunctionType.TSConstructorType) {
+  if (type === FunctionType.TSAbstractConstructorType) {
+    expectContextual(ContextualKeyword._abstract);
+  }
+  if (type === FunctionType.TSConstructorType || type === FunctionType.TSAbstractConstructorType) {
     expect(tt._new);
   }
   tsFillSignature(tt.arrow);
@@ -710,6 +730,10 @@ export function tsParseType(): void {
   tsParseType();
 }
 
+function isAbstractConstructorSignature(): boolean {
+  return isContextual(ContextualKeyword._abstract) && lookaheadType() === tt._new;
+}
+
 export function tsParseNonConditionalType(): void {
   if (tsIsStartOfFunctionType()) {
     tsParseFunctionOrConstructorType(FunctionType.TSFunctionType);
@@ -718,6 +742,10 @@ export function tsParseNonConditionalType(): void {
   if (match(tt._new)) {
     // As in `new () => Date`
     tsParseFunctionOrConstructorType(FunctionType.TSConstructorType);
+    return;
+  } else if (isAbstractConstructorSignature()) {
+    // As in `abstract new () => Date`
+    tsParseFunctionOrConstructorType(FunctionType.TSAbstractConstructorType);
     return;
   }
   tsParseUnionTypeOrHigher();
@@ -955,13 +983,22 @@ function tsParseExpressionStatement(contextualKeyword: ContextualKeyword): boole
   return false;
 }
 
-// Common to tsTryParseDeclare, tsTryParseExportDeclaration, and tsParseExpressionStatement.
-// Returns true if it matched a declaration.
+/**
+ * Common code for parsing a declaration.
+ *
+ * isBeforeToken indicates that the current parser state is at the contextual
+ * keyword (and that it is not yet emitted) rather than reading the token after
+ * it. When isBeforeToken is true, we may be preceded by an `export` token and
+ * should include that token in a type context we create, e.g. to handle
+ * `export interface` or `export type`. (This is a bit of a hack and should be
+ * cleaned up at some point.)
+ *
+ * Returns true if it matched a declaration.
+ */
 function tsParseDeclaration(contextualKeyword: ContextualKeyword, isBeforeToken: boolean): boolean {
   switch (contextualKeyword) {
     case ContextualKeyword._abstract:
-      if (tsCheckLineTerminatorAndMatch(tt._class, isBeforeToken)) {
-        if (isBeforeToken) next();
+      if (tsCheckLineTerminator(isBeforeToken) && match(tt._class)) {
         state.tokens[state.tokens.length - 1].type = tt._abstract;
         parseClass(/* isStatement */ true, /* optionalId */ false);
         return true;
@@ -969,8 +1006,7 @@ function tsParseDeclaration(contextualKeyword: ContextualKeyword, isBeforeToken:
       break;
 
     case ContextualKeyword._enum:
-      if (tsCheckLineTerminatorAndMatch(tt.name, isBeforeToken)) {
-        if (isBeforeToken) next();
+      if (tsCheckLineTerminator(isBeforeToken) && match(tt.name)) {
         state.tokens[state.tokens.length - 1].type = tt._enum;
         tsParseEnumDeclaration();
         return true;
@@ -978,11 +1014,10 @@ function tsParseDeclaration(contextualKeyword: ContextualKeyword, isBeforeToken:
       break;
 
     case ContextualKeyword._interface:
-      if (tsCheckLineTerminatorAndMatch(tt.name, isBeforeToken)) {
+      if (tsCheckLineTerminator(isBeforeToken) && match(tt.name)) {
         // `next` is true in "export" and "declare" contexts, so we want to remove that token
         // as well.
-        const oldIsType = pushTypeContext(1);
-        if (isBeforeToken) next();
+        const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
         tsParseInterfaceDeclaration();
         popTypeContext(oldIsType);
         return true;
@@ -990,25 +1025,24 @@ function tsParseDeclaration(contextualKeyword: ContextualKeyword, isBeforeToken:
       break;
 
     case ContextualKeyword._module:
-      if (isBeforeToken) next();
-      if (match(tt.string)) {
-        const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
-        tsParseAmbientExternalModuleDeclaration();
-        popTypeContext(oldIsType);
-        return true;
-      } else if (tsCheckLineTerminatorAndMatch(tt.name, isBeforeToken)) {
-        const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
-        if (isBeforeToken) next();
-        tsParseModuleOrNamespaceDeclaration();
-        popTypeContext(oldIsType);
-        return true;
+      if (tsCheckLineTerminator(isBeforeToken)) {
+        if (match(tt.string)) {
+          const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
+          tsParseAmbientExternalModuleDeclaration();
+          popTypeContext(oldIsType);
+          return true;
+        } else if (match(tt.name)) {
+          const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
+          tsParseModuleOrNamespaceDeclaration();
+          popTypeContext(oldIsType);
+          return true;
+        }
       }
       break;
 
     case ContextualKeyword._namespace:
-      if (tsCheckLineTerminatorAndMatch(tt.name, isBeforeToken)) {
-        const oldIsType = pushTypeContext(1);
-        if (isBeforeToken) next();
+      if (tsCheckLineTerminator(isBeforeToken) && match(tt.name)) {
+        const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
         tsParseModuleOrNamespaceDeclaration();
         popTypeContext(oldIsType);
         return true;
@@ -1016,9 +1050,8 @@ function tsParseDeclaration(contextualKeyword: ContextualKeyword, isBeforeToken:
       break;
 
     case ContextualKeyword._type:
-      if (tsCheckLineTerminatorAndMatch(tt.name, isBeforeToken)) {
-        const oldIsType = pushTypeContext(1);
-        if (isBeforeToken) next();
+      if (tsCheckLineTerminator(isBeforeToken) && match(tt.name)) {
+        const oldIsType = pushTypeContext(isBeforeToken ? 2 : 1);
         tsParseTypeAliasDeclaration();
         popTypeContext(oldIsType);
         return true;
@@ -1031,8 +1064,16 @@ function tsParseDeclaration(contextualKeyword: ContextualKeyword, isBeforeToken:
   return false;
 }
 
-function tsCheckLineTerminatorAndMatch(tokenType: TokenType, isBeforeToken: boolean): boolean {
-  return !isLineTerminator() && (isBeforeToken || match(tokenType));
+function tsCheckLineTerminator(isBeforeToken: boolean): boolean {
+  if (isBeforeToken) {
+    // Babel checks hasFollowingLineBreak here and returns false, but this
+    // doesn't actually come up, e.g. `export interface` can never be on its own
+    // line in valid code.
+    next();
+    return true;
+  } else {
+    return !isLineTerminator();
+  }
 }
 
 // Returns true if there was a generic async arrow function.
@@ -1185,9 +1226,14 @@ export function tsStartParseNewArguments(): void {
 }
 
 export function tsTryParseExport(): boolean {
-  if (match(tt._import)) {
-    // `export import A = B;`
-    expect(tt._import);
+  if (eat(tt._import)) {
+    // One of these cases:
+    // export import A = B;
+    // export import type A = require("A");
+    if (isContextual(ContextualKeyword._type) && lookaheadType() !== tt.eq) {
+      // Eat a `type` token, unless it's actually an identifier name.
+      expectContextual(ContextualKeyword._type);
+    }
     tsParseImportEqualsDeclaration();
     return true;
   } else if (eat(tt.eq)) {
@@ -1241,52 +1287,28 @@ export function tsTryParseStatementContent(): boolean {
   return false;
 }
 
-export function tsParseAccessModifier(): void {
-  tsParseModifier([
-    ContextualKeyword._public,
-    ContextualKeyword._protected,
-    ContextualKeyword._private,
+export function tsTryParseClassMemberWithIsStatic(isStatic: boolean): boolean {
+  const memberStartIndexAfterStatic = state.tokens.length;
+  tsParseModifiers([
+    ContextualKeyword._abstract,
+    ContextualKeyword._readonly,
+    ContextualKeyword._declare,
+    ContextualKeyword._static,
+    ContextualKeyword._override,
   ]);
-}
 
-export function tsTryParseClassMemberWithIsStatic(
-  isStatic: boolean,
-  classContextId: number,
-): boolean {
-  let isAbstract = false;
-  let isReadonly = false;
-
-  while (true) {
-    const mod = tsParseModifier([
-      ContextualKeyword._abstract,
-      ContextualKeyword._readonly,
-      ContextualKeyword._declare,
-    ]);
-    if (mod == null) {
-      break;
+  const modifiersEndIndex = state.tokens.length;
+  const found = tsTryParseIndexSignature();
+  if (found) {
+    // Index signatures are type declarations, so set the modifier tokens as
+    // type tokens. Most tokens could be assumed to be type tokens, but `static`
+    // is ambiguous unless we set it explicitly here.
+    const memberStartIndex = isStatic
+      ? memberStartIndexAfterStatic - 1
+      : memberStartIndexAfterStatic;
+    for (let i = memberStartIndex; i < modifiersEndIndex; i++) {
+      state.tokens[i].isType = true;
     }
-    if (mod === ContextualKeyword._readonly) {
-      isReadonly = true;
-    }
-    if (mod === ContextualKeyword._abstract) {
-      isAbstract = true;
-    }
-  }
-
-  // We no longer check for public/private/etc, but tsTryParseIndexSignature should just return
-  // false in that case for valid code.
-  if (!isAbstract && !isStatic) {
-    const found = tsTryParseIndexSignature();
-    if (found) {
-      return true;
-    }
-  }
-
-  if (isReadonly) {
-    // Must be a property (if not an index signature).
-    parseClassPropertyName(classContextId);
-    parsePostMemberNameModifiers();
-    parseClassProperty();
     return true;
   }
   return false;

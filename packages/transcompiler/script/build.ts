@@ -15,11 +15,6 @@ async function main(): Promise<void> {
   const promiseFactories = [
     () => buildBenchmark(),
     () => buildSucrase(),
-    () => buildIntegration("./integrations/gulp-plugin"),
-    () => buildIntegration("./integrations/jest-plugin"),
-    () => buildIntegration("./integrations/webpack-loader"),
-    () => buildIntegration("./integrations/webpack-object-rest-spread-plugin"),
-    () => buildWebsite(),
   ];
   if (fast) {
     await Promise.all(promiseFactories.map((f) => f()));
@@ -68,40 +63,6 @@ async function buildSucrase(): Promise<void> {
     await mergeDirectoryContents("./dist-types/src", "./dist");
     // Link all integrations to Sucrase so that all building/linting/testing is up to date.
     await run("yarn link");
-  }
-}
-
-async function buildIntegration(path: string): Promise<void> {
-  console.log(`Building ${path}`);
-  if (!fast) {
-    const originalDir = process.cwd();
-    process.chdir(path);
-    await run("yarn");
-    await run("yarn link sucrase");
-    process.chdir(originalDir);
-  }
-
-  await run(`rm -rf ${path}/dist`);
-  await run(`${SUCRASE} ${path}/src -d ${path}/dist --transforms imports,typescript -q`);
-
-  if (!fast) {
-    await run(
-      `${TSC} --emitDeclarationOnly --declaration --isolatedModules false --project ${path} --outDir ${path}/dist`,
-    );
-  }
-}
-
-/**
- * Just runs yarn for the website to prepare it for lint.
- */
-async function buildWebsite(): Promise<void> {
-  if (!fast) {
-    console.log("Installing website dependencies");
-    const originalDir = process.cwd();
-    process.chdir("./website");
-    await run("yarn");
-    await run("yarn link sucrase");
-    process.chdir(originalDir);
   }
 }
 
