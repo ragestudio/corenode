@@ -20,7 +20,13 @@ async function buildProject() {
 
 async function syncPackageManifest() {
     console.log(`⚙️  Syncing package manifest\n`)
-    fs.copyFileSync(path.join(process.cwd(), 'package.json'), path.join(process.cwd(), 'dist', 'package.json'))
+    
+    let rootPackage = require(path.resolve(process.cwd(), 'package.json'))
+    
+    // fix main script
+    rootPackage.main = "./index.js"
+
+    fs.writeFileSync(path.resolve(process.cwd(), 'dist/package.json'), JSON.stringify(rootPackage, null, 2))
 }
 
 async function _main(){
