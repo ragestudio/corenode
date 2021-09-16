@@ -6,7 +6,7 @@ import Serializer from './serialize.js'
 
 import * as babel from "@babel/core"
 
-const compilerLib = require('../../internals/builder/lib')
+const compilerLib = require('../internals/builder/lib')
 const vmlib = require("vm")
 const { Timings } = require("../libs/timings")
 const Jail = require('../classes/Jail').default

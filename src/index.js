@@ -19,19 +19,12 @@ const constables = require('./constables')
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 class Runtime {
     constructor(load = {}) {
+        this.initialized = false
+        this.args = process.args = require("yargs-parser")(process.argv)
+        this.events = new EventEmitter()
+        this.logger = new logger()
         this.load = { ...load }
 
-        // register primordials modules
-        this.registerModulesAliases({
-            "@@internals": path.resolve(__dirname, '../internals'),
-            "factory": path.resolve(__dirname, 'factory'),
-            "filesystem": path.resolve(__dirname, 'filesystem'),
-            "@@addons": path.resolve(__dirname, 'addons'),
-            "@@classes": path.resolve(__dirname, 'classes'),
-            "@@vm": path.resolve(__dirname, 'vm'),
-            "@@libs": path.resolve(__dirname, 'libs'),
-            "@@constables": path.resolve(__dirname, 'constables')
-        })
         //? set undefined globals
         if (typeof global.isLocalMode === "undefined") {
             global.isLocalMode = false
@@ -56,60 +49,73 @@ class Runtime {
             process.chdir(this.load.cwd)
         }
 
-        this.args = process.args = require("yargs-parser")(process.argv)
-
         // disabler
         this.disableCheckDependencies = this.args.disableCheckDependencies ?? this.load.disableCheckDependencies ?? false
         this.disabledAddons = this.args.disableAddons ?? this.load.disableAddons ?? false
 
-        // controllers
+        // aliaser
         this.modulesAliases = {}
         this.modulesPaths = {}
 
+        // runtime objects and controller
         this.objects = {}
         this.controller = {}
-        this.helpers = require("@corenode/helpers")
-        this.addonsController = null
 
-        this.events = new EventEmitter()
-        this.logger = new logger()
+        // runtime controllers
+        this.vmController = null
+        this.addonsController = null
 
         // runtime preload
         this.preloadDone = false
-        this.preloadEvents = ['init_addons_done']
+        this.preloadEvents = []
         this.preloadPromises = []
 
-        // set runtime objects
-        const internalObjects = this.getInternalObjects()
-        if (typeof internalObjects === 'object') {
-            objectToArrayMap(internalObjects).forEach((obj) => {
-                this.createRuntimeObject(obj.key, obj.value)
+        this.registerModulesAliases({
+            "factory": path.resolve(__dirname, 'factory'),
+            "filesystem": path.resolve(__dirname, 'filesystem'),
+            "@@addons": path.resolve(__dirname, 'addons'),
+            "@@classes": path.resolve(__dirname, 'classes'),
+            "@@vm": path.resolve(__dirname, 'vm'),
+            "@@libs": path.resolve(__dirname, 'libs'),
+            "@@constables": path.resolve(__dirname, 'constables'),
+            "@@internals": path.resolve(__dirname, 'internals'),
+        })
+
+        const runtimeObjects = this.getRuntimeObjects()
+        if (typeof runtimeObjects === 'object') {
+            objectToArrayMap(runtimeObjects).forEach((obj) => {
+                this.appendObjectToRuntime(obj.key, obj.value)
             })
         }
 
-        const builtInEvents = require('./events')
-        if (Array.isArray(builtInEvents)) {
-            builtInEvents.forEach((_case) => {
+        const runtimeEvents = this.getRuntimeEvents()
+        if (Array.isArray(runtimeEvents)) {
+            runtimeEvents.forEach((_case) => {
                 this.events.addListener(_case.on, _case.event)
             })
         }
 
-        this.initEnvironment()
+        this.loadHelpers()
+        this.loadEnvironment()
         this.handleLocalMode()
+        this.setEventsPreloader()
 
-        global.runtime = process.runtime = this.createRuntimeGlobal(this)
-
-        //? set global aliases
         this.modulesAliases = {
-            ...global._env.modulesAliases
+            ...process.env.modulesAliases,
+            ...this.modulesAliases,
         }
         this.modulesPaths = {
-            ...global._env.modulesPaths
+            ...process.env.modulesPaths,
+            ...this.modulesPaths,
         }
+
+        global.runtime = process.runtime = this.overrideRuntimeGlobalContext(this)
+        global.loadLib = this.loadLib
 
         return this
     }
 
+    //* GET
     get = {
         environmentFiles: () => environmentFiles,
         paths: {
@@ -119,21 +125,42 @@ class Runtime {
         }
     }
 
-    getInternalObjects = () => {
+    getRuntimeEvents = () => {
+        const events = []
+
+        try {
+            const internalEvents = require('./events')
+            // TODO: load custom events from project
+            if (Array.isArray(internalEvents)) {
+                internalEvents.forEach((event) => {
+                    events.push(event)
+                })
+            }
+        } catch (error) {
+            this.logger.dump(error)
+            this.logger.error(`Failed to get events >`, error.message)
+        }
+
+        return events
+    }
+
+    getRuntimeObjects = () => {
         let objects = {}
 
         try {
-            const internalObjects = require('../internals/objects')
+            const internalObjects = require('./internals/objects')
+            // TODO: load custom objects from project
             objects = internalObjects
         } catch (error) {
             this.logger.dump(error)
-            this.logger.error(`Failed to get internal objects`)
+            this.logger.error(`Failed to get objects >`, error.message)
         }
 
         return objects
     }
 
-    createRuntimeObject = (key, thing) => {
+    //* APPENDS
+    appendObjectToRuntime = (key, thing) => {
         if (typeof this.objects[key] === "undefined") {
             this.objects[key] = thing
         } else {
@@ -158,30 +185,71 @@ class Runtime {
         return this.controller[key]
     }
 
-    initEnvironment() {
-        //* load dotenv
-        require('dotenv').config()
+    appendToCli = (entries) => {
+        let commands = []
 
-        environmentFiles.forEach((file) => {
-            const fromPath = path.resolve(process.cwd(), `./${file}`)
+        if (Array.isArray(entries)) {
+            commands = entries
+        } else if (typeof entries === "object") {
+            commands.push(entries)
+        }
 
-            if (fs.existsSync(fromPath)) {
-                global._loadedEnvPath = fromPath
-
-                try {
-                    const runtimeEnv = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
-                    process.env = { ...runtimeEnv }
-                } catch (error) {
-                    console.error(`\n🆘  Error parsing runtime env > ${error.message} \n\n`)
-                    console.error(error)
-                }
+        commands.forEach((entry) => {
+            if (typeof process.cli.custom === "undefined") {
+                process.cli.custom = []
             }
+            process.cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
         })
-
-        global._env = process.env
     }
 
-    createRuntimeGlobal(instance = {}) {
+    appendToPreloader = (event) => {
+        this.preloadPromises.push(event)
+    }
+
+    //* SET
+    setEventsPreloader() {
+        const eventPromise = (id) => {
+            return new Promise((res, rej) => {
+                this.events.on(id, () => {
+                    return res()
+                })
+            })
+        }
+
+        this.preloadEvents.forEach((wait) => {
+            this.appendToPreloader(eventPromise(wait))
+        })
+    }
+
+    //* REGISTER
+    registerModulesAliases = (mutation) => {
+        if (typeof mutation === "object") {
+            this.modulesAliases = {
+                ...this.modulesAliases,
+                ...mutation
+            }
+        }
+
+        module = this.overrideModuleController(module)
+    }
+
+    registerModulesPaths = (mutation) => {
+        if (typeof mutation === "object") {
+            this.modulesPaths = {
+                ...this.modulesPaths,
+                ...mutation
+            }
+        }
+
+        module = this.overrideModuleController(module)
+    }
+
+    //* OVERRIDES
+    overrideModuleController = (instance = {}) => {
+        return instance = moduleLib.override(instance, { aliases: this.modulesAliases, paths: this.modulesPaths })
+    }
+
+    overrideRuntimeGlobalContext(instance = {}) {
         if (typeof instance.manifests === "undefined") {
             instance.manifests = Object()
         }
@@ -201,68 +269,7 @@ class Runtime {
         return instance
     }
 
-
-    registerModulesAliases = (mutation) => {
-        if (typeof mutation === "object") {
-            this.modulesAliases = {
-                ...this.modulesAliases,
-                ...mutation
-            }
-        }
-
-        this.overrideModuleController()
-    }
-
-    registerModulesPaths = (mutation) => {
-        if (typeof mutation === "object") {
-            this.modulesPaths = {
-                ...this.modulesPaths,
-                ...mutation
-            }
-        }
-
-        this.overrideModuleController()
-    }
-
-    appendToCli = (entries) => {
-        let commands = []
-
-        if (Array.isArray(entries)) {
-            commands = entries
-        } else if (typeof entries === "object") {
-            commands.push(entries)
-        }
-
-        commands.forEach((entry) => {
-            if (typeof process.cli.custom === "undefined") {
-                process.cli.custom = []
-            }
-            process.cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
-        })
-    }
-
-    overrideModuleController = () => {
-        module = moduleLib.override(module, { aliases: this.modulesAliases, paths: this.modulesPaths })
-    }
-
-    initPreloaders() {
-        const eventPromise = (id) => {
-            return new Promise((res, rej) => {
-                this.events.on(id, () => {
-                    return res()
-                })
-            })
-        }
-
-        this.preloadEvents.forEach((wait) => {
-            this.preloadPromises.push(eventPromise(wait))
-        })
-    }
-
-    waitForPreloadEvent = (event) => {
-        this.preloadPromises.push(event)
-    }
-
+    //* HANDLERS
     handleLocalMode = () => {
         process.runtime.isLocalMode = false
 
@@ -285,29 +292,69 @@ class Runtime {
         }
     }
 
+    //* LOADERS
+    loadHelpers = () => {
+        this.helpers = require("@corenode/helpers")
+    }
+
+    loadEnvironment = () => {
+        require('dotenv').config()
+
+        environmentFiles.forEach((file) => {
+            const fromPath = path.resolve(process.cwd(), `./${file}`)
+
+            if (fs.existsSync(fromPath)) {
+                global._loadedEnvPath = fromPath
+
+                try {
+                    const runtimeEnv = JSON.parse(fs.readFileSync(fromPath, 'utf-8'))
+                    process.env = { ...runtimeEnv }
+                } catch (error) {
+                    console.error(`\n🆘  Error parsing runtime env > ${error.message} \n\n`)
+                    console.error(error)
+                }
+            }
+        })
+
+        global._env = process.env
+    }
+
+    //* INITIALIZERS
     initialize = async () => {
         return new Promise(async (resolve, reject) => {
             try {
+                await Promise.all(this.preloadPromises)
+                this.preloadDone = true
+                this.events.emit('preload_done', true)
+
                 //* create and initialize runtime controllers
-                const { EvalMachine, VMController } = require('./vm')
+                const { VMController } = require('./vm')
                 this.vmController = new VMController()
 
                 const { addonsController } = require("./addons")
                 this.addonsController = new addonsController()
 
-                //* set preloaders before load
-                this.initPreloaders()
-
-                //? fire preloaders
+                //* call initializes
                 // await this.addonsController.checkDependencies() // temporally disabled
-                this.addonsController.init()
+                await this.addonsController.init()
 
-                //? await for them
-                await Promise.all(this.preloadPromises)
-                this.preloadDone = true
+                // set runtime as initialized
+                this.initialized = true
+                this.events.emit('initialized', true)
 
+                return resolve()
+            } catch (error) {
+                return reject(error)
+            }
+        })
+    }
+
+    target = (target) => {
+        return new Promise((resolve, reject) => {
+            try {
                 //* LOAD
-                let { targetBin } = this.load
+                const { EvalMachine } = require("./vm")
+                let { targetBin } = target ?? this.load
                 const withoutBin = process.argv.slice(2)
 
                 if (typeof withoutBin[0] !== "undefined") {
@@ -361,7 +408,6 @@ class Runtime {
                                 verbosity.options({ method: "[script]", file: targetBin }).error(err)
                             }
                         })
-                        return resolve()
                     } catch (error) {
                         this.logger.dump("error", error.toString())
                         verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
@@ -370,8 +416,10 @@ class Runtime {
                 } else {
                     repl.attachREPL()
                 }
-            } catch (error) {
-                console.log("rejected error")
+
+                return resolve()
+            }
+            catch (error) {
                 return reject(error)
             }
         })

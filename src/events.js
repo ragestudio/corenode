@@ -27,5 +27,5 @@ module.exports = [
                 // fatality, something is really broken ._.
             }
         } 
-    }
+    },
 ]

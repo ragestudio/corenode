@@ -1,10 +1,10 @@
 const fs = require('fs')
 const path = require('path')
-const { Builder } = require('corenode/internals/builder')
 const chokidar = require('chokidar')
-
-const { EvalMachine } = require('corenode/dist/vm')
 const md5 = require('md5')
+
+const { EvalMachine } = require('corenode/vm')
+const { Builder } = require('@@internals/builder')
 
 class Watcher {
     constructor(params) {
