@@ -2,7 +2,7 @@
  * corenode
  * @module corenode 
  */
-const enginePkg = require("../package.json")
+const enginePkg = require("./package.json")
 const path = require('path')
 const fs = require('fs')
 const { EventEmitter } = require('events')
