@@ -1,6 +1,6 @@
 //* Copyright (c) 2015, npm, Inc
 
-const builtins = require('corenode/dist/libs/builtins')
+const builtins = require('corenode/libs/builtins')
 
 const scopedPackagePattern = new RegExp('^(?:@([^/]+?)[/])?([^/]+?)$')
 const blacklist = [
