@@ -15,7 +15,7 @@ verbosity = verbosity.options({ method: "[PUBLISH]" })
 
 const env = global._env.publish ?? {}
 
-function publish(args = {}) {
+function publish(args = {}) {
     let config = {
         noTasks: true,
         ignoreGit: false,
@@ -51,8 +51,9 @@ function publish(args = {}) {
         // set paths from env
         if (Array.isArray(env.include)) {
             env.include.forEach((include) => {
-                paths.push(path.resolve(include))
-            })    
+                const includePath = path.isAbsolute(include) ? path.resolve(include) : path.resolve(process.cwd(), include)
+                paths.push(includePath)
+            })
         }
 
         let tasks = {
@@ -98,10 +99,10 @@ function publish(args = {}) {
                                     const errStr = `❌ Failed to publish > ${pkg} > ${error}`
                                     lastError = `[${path.basename(pkg)}/${index}] ${error.message}`
                                     packagesCount += 1
-                                    
+
                                     if (config.ignoreError) {
                                         observer.next(errStr)
-                                    }else {
+                                    } else {
                                         return reject(new Error(errStr))
                                     }
                                 }
@@ -110,7 +111,7 @@ function publish(args = {}) {
                                     if (lastError != null) {
                                         if (config.ignoreError) {
                                             return observer.error(new Error(lastError))
-                                        }else {
+                                        } else {
                                             return reject(new Error(lastError))
                                         }
                                     }
