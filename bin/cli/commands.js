@@ -13,9 +13,8 @@ module.exports = [
 
             switch (action) {
                 case ("install"): {
-                    console.log(id)
-                    if (!id) {
-                        console.error("🛑 Usage: addons install <addon>")
+                    if (id.length === 0) {
+                        console.error("🛑 Usage: addons install <addon...>")
                     }
                     // TODO: [install] handle with addons dependencies manager
                     break
