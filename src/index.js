@@ -418,8 +418,7 @@ class Runtime {
                 }
 
                 return resolve()
-            }
-            catch (error) {
+            } catch (error) {
                 return reject(error)
             }
         })
