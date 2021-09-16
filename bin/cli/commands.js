@@ -1,3 +1,5 @@
+const path = require('path')
+const fs = require('fs')
 const { publish, bootstrapProject, getChangelogs } = require("./scripts")
 const { prettyTable } = require("@corenode/utils")
 
@@ -116,10 +118,33 @@ module.exports = [
         }
     },
     {
-        command: 'build [from]',
+        command: 'build',
         description: "Build project with builtin builder",
-        exec: (argv) => {
-            require("../builder/cli")
+        arguments: ["[dir...]"],
+        exec: async (dirs) => {
+            const { buildAllPackages, buildSource, Builder } = require("@@internals").builder
+
+            if (dirs.length > 0) {
+                dirs.forEach((dir) => {
+                    const basename = path.basename(dir)
+                    const output = path.resolve(dir,  `../${basename}_dist`)
+
+                    new Builder({ source: dir, output: output, taskName: basename, showProgress: true }).buildAllSources()
+                })
+            }else {
+                const packagesPath = path.join(process.cwd(), 'packages')
+                const sourcePath = path.join(process.cwd(), 'src')
+                
+                if (fs.existsSync(packagesPath) && fs.lstatSync(packagesPath).isDirectory()) {
+                    console.log(`⚙️  Building all packages\n`)
+                    await buildAllPackages()
+                }
+                
+                if (fs.existsSync(sourcePath) && fs.lstatSync(sourcePath).isDirectory()) {
+                    console.log(`⚙️  Building source\n`)
+                    await buildSource()
+                }
+            }
         }
     },
     {
