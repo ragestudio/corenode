@@ -63,12 +63,12 @@ module.exports = [
             const bumps = []
 
             type.forEach((bump) => {
-                if (!bumps.includes(bump)) {
-                    bumps.push(bump)
+                if (!bumps.includes(type)) {
+                    bumps.push(type)
                 }
             })
 
-            if (bump.length > 0) {
+            if (bumps.length > 0) {
                 process.runtime.helpers.bumpVersion(bumps)
                 process.runtime.helpers.syncVersions()
             }
