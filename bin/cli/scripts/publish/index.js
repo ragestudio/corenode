@@ -17,7 +17,7 @@ const env = global._env.publish ?? {}
 
 function publish(args = {}) {
     let config = {
-        noTasks: true,
+        noTasks: false,
         ignoreGit: false,
         npm: false,
         github: false,
