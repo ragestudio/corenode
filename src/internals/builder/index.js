@@ -25,6 +25,7 @@ function canRead(dir) {
     return false
   }
 }
+
 class Builder {
   constructor(params) {
     this.params = { ...params }
