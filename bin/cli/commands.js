@@ -63,8 +63,8 @@ module.exports = [
             const bumps = []
 
             type.forEach((bump) => {
-                if (!bumps.includes(bump)) {
-                    bumps.push(bump)
+                if (!bumps.includes(type)) {
+                    bumps.push(type)
                 }
             })
 
