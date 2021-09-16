@@ -8,9 +8,7 @@ function createRuntime(options) {
 async function _main() {
     try {
         //* load runtime 
-        const runtime = createRuntime({
-            runCli: true
-        })
+        const runtime = createRuntime()
 
         await runtime.initialize()
         await runtime.target()
