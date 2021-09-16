@@ -68,7 +68,7 @@ module.exports = [
                 }
             })
 
-            if (bump.length > 0) {
+            if (bumps.length > 0) {
                 process.runtime.helpers.bumpVersion(bumps)
                 process.runtime.helpers.syncVersions()
             }
