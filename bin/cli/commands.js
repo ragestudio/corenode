@@ -4,19 +4,24 @@ const { prettyTable } = require("@corenode/utils")
 module.exports = [
     {
         command: 'addons',
-        arguments: ["[action]", "[addon]"],
+        arguments: ["[action]", "[addon...]"],
         description: "Manage runtime addons",
-        exec: (arg1, arg2) => {
+        exec: async (action, id) => {
             if (!process.runtime.initialized) {
-                process.runtime.initialize()
+                await process.runtime.initialize()
             }
 
-            switch (arg1) {
+            switch (action) {
                 case ("install"): {
-                    console.log("Installing addons... >", arg2)
+                    console.log(id)
+                    if (!id) {
+                        console.error("🛑 Usage: addons install <addon>")
+                    }
+                    // TODO: [install] handle with addons dependencies manager
                     break
                 }
                 case ("remove"): {
+                    // TODO: [remove] handle with addons dependencies manager
                     break
                 }
                 default: {
