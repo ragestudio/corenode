@@ -29,8 +29,8 @@
     "core:local": "cross-env LOCAL_BIN=true node ./src/bin/core/index.js",
     "core:prod": "cross-env LOCAL_BIN=false node ./src/bin/core/index.js",
     "core:debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./src/bin/core/index.js",
-    "release:next": "npm run builder && node ./src/bin/cli/index.js publish --preRelease --next --npm --fast --github",
-    "release:prod": "npm run builder && node ./src&bin/cli/index.js publish --npm --github --fast",
+    "release:next": "npm run builder && node ./dist/bin/cli/index.js publish --preRelease --next --npm --fast --github",
+    "release:prod": "npm run builder && node ./dist/bin/cli/index.js publish --npm --github --fast",
     "update:deps": "yarn upgrade-interactive --latest",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'"
   },
