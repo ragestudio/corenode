@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-const { runInNewRuntime } = require('../dist/index.js')
+const { runInNewRuntime } = require('../../dist/index.js')
 
 runInNewRuntime((runtime) => {
     const { program, Command, Option } = require('commander')
 
     let optionsFn = {}
 
-    const optionsMap = require('../internals/cli/options.js')
-    const commandMap = require('../internals/cli/commands.js')
+    const optionsMap = require('./options.js')
+    const commandMap = require('./commands.js')
 
     //* load custom commands
     if (process.cli && Array.isArray(process.cli.custom)) {
@@ -43,10 +43,22 @@ runInNewRuntime((runtime) => {
 
         const cmd = new Command(item.command).action(item.exec)
 
+        if (Array.isArray(item.arguments)) {
+            item.arguments.forEach(arg => {
+                cmd.argument(arg)
+            })
+        }
+
+        if (Array.isArray(item.options)) {
+            item.options.forEach(opt => {
+                cmd.option(opt)
+            })
+        }
+
         program.addCommand(cmd)
     })
 
-    program.parse();
+    program.parse()
 
     const options = program.opts()
     Object.keys(options).forEach(key => {
