@@ -10,7 +10,7 @@ module.exports = [
             if (!process.runtime.initialized) {
                 process.runtime.initialize()
             }
-       
+
             switch (arg1) {
                 case ("install"): {
                     console.log("Installing addons... >", arg2)
@@ -55,7 +55,7 @@ module.exports = [
         arguments: ["<type...>"],
         exec: (type) => {
             const bumps = []
-            
+
             type.forEach((bump) => {
                 if (!bumps.includes(bump)) {
                     bumps.push(bump)
@@ -71,43 +71,28 @@ module.exports = [
     {
         command: 'version',
         description: "Manage project version",
-        exec: (argv) => {
+        options: ["--engine"],
+        exec: (opts) => {
             const helpers = process.runtime.helpers
-            let bumps = []
-            const types = ["bump-mayor", "bump-minor", "bump-patch"]
-            types.forEach((bump) => {
-                const parsedBump = bump.split('-')[1]
-                if (argv[bump]) {
-                    if (!parsedBump) {
-                        return bumps.push(bump)
-                    }
-                    bumps.push(parsedBump)
-                }
-            })
 
-            if (bumps.length > 0) {
-                helpers.bumpVersion(bumps)
-                helpers.syncVersions()
-            } else {
-                const engineVersion = helpers.getVersion({ engine: true })
-                const projectVersion = helpers.getVersion()
+            const engineVersion = helpers.getVersion({ engine: true })
+            const projectVersion = helpers.getVersion()
 
-                const projectPkg = helpers.getRootPackage()
-                const pt = new prettyTable()
+            const projectPkg = helpers.getRootPackage()
+            const pt = new prettyTable()
 
-                let headers = ["", "🏷  Version", "🏠  Directory"]
-                let rows = []
+            let headers = ["", "🏷  Version", "🏠  Directory"]
+            let rows = []
 
-                if (argv.engine) {
-                    rows.push(["Corenode™", `v${engineVersion}${helpers.isCorenodeProject() ? "@local" : ""}`, __dirname])
-                }
+            if (opts.engine) {
+                rows.push(["Corenode™", `v${engineVersion}${helpers.isCorenodeProject() ? "@local" : ""}`, __dirname])
+            }
 
-                projectVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${projectVersion}`, process.cwd()]) : console.log("🏷  Version not available")
+            projectVersion ? rows.push([`📦  ${projectPkg.name ?? "Unnamed"}`, `v${projectVersion}`, process.cwd()]) : console.log("🏷  Version not available")
 
-                if (rows.length > 0) {
-                    pt.create(headers, rows)
-                    pt.print()
-                }
+            if (rows.length > 0) {
+                pt.create(headers, rows)
+                pt.print()
             }
         }
     },
@@ -117,7 +102,7 @@ module.exports = [
         options: ["--noTasks"],
         exec: (argv) => {
             console.log(argv)
-            return 
+            return
             publish(argv)
                 .then(() => {
                     console.log(`\n✅ Publish done`)
