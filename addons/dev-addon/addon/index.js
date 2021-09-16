@@ -3,8 +3,8 @@ const path = require('path')
 const chokidar = require('chokidar')
 const md5 = require('md5')
 
-const { EvalMachine } = require('corenode/vm')
-const { Builder } = require('@@internals/builder')
+const { EvalMachine } = require('@@vm')
+const { Builder } = require('@@internals')
 
 class Watcher {
     constructor(params) {
