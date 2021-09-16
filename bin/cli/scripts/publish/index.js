@@ -13,37 +13,46 @@ const getChangelogs = require("../getChangelogs")
 let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
-function publish(args) {
+const env = global._env.publish ?? {}
+
+function publish(args = {}) {
+    let config = {
+        noTasks: true,
+        ignoreGit: false,
+        npm: false,
+        github: false,
+        build: false,
+        preRelease: false,
+        fast: false,
+        packages: false,
+        ignoreError: false,
+        ...args
+    }
+
     return new Promise((resolve, reject) => {
-        let packages = []
+        let packages = config.packages ? (getAllPackages() ?? []) : false
+        let paths = []
 
-        let projectPackages = getAllPackages()
-        const env = global._env.publish ?? {}
-
-        // support multiple packages on monorepo
-        if (Array.isArray(env.ignorePackages)) {
+        // filter ignored packages
+        if (Array.isArray(env.ignorePackages) && Array.isArray(packages)) {
             env.ignorePackages.forEach((ignore) => {
-                if (Array.isArray(projectPackages)) {
-                    projectPackages = projectPackages.filter(pkg => pkg !== ignore)
-                }
+                packages = packages.filter(pkg => pkg !== ignore)
             })
         }
 
-        console.log(projectPackages)
-
-        let config = {
-            noTasks: false,
-            ignoreGit: false,
-            npm: false,
-            github: false,
-            build: false,
-            preRelease: false,
-            next: false,
-            fast: false,
+        // set resolved paths from packages
+        if (Array.isArray(packages)) {
+            packages.forEach((pkg) => {
+                const packagePath = path.resolve(process.cwd(), `packages/${pkg}`)
+                paths.push(packagePath)
+            })
         }
 
-        if (typeof (args) !== "undefined") {
-            config = { ...config, ...args }
+        // set paths from env
+        if (Array.isArray(env.include)) {
+            env.include.forEach((include) => {
+                paths.push(path.resolve(include))
+            })    
         }
 
         let tasks = {
@@ -61,37 +70,14 @@ function publish(args) {
                     })
                 }
             },
-            buildProject: {
-                title: "📦 Building project",
-                enabled: () => config.build === true,
-                task: async () => {
-                    return new Promise(async (res, rej) => {
-                        await buildProject()
-                            .catch((error) => {
-                                return rej(new Error(`Build failed! > ${error.message}`))
-                            })
-
-                        console.log(`\n\n`)
-                        return res()
-                    })
-                }
-            },
             npmRelease: {
                 title: "📢 Publish on npm",
                 enabled: () => config.npm === true,
                 task: async () => {
                     return new Observable(async (observer) => {
-                        return false
-                        let packagesPaths = projectPackages.map((dir) => {
-                            return path.resolve(process.cwd(), `packages/${dir}`)
-                        })
                         let packagesCount = Number(0)
 
-                        if (fs.existsSync(rootSource) && fs.lstatSync(rootSource).isDirectory()) {
-                            packagesPaths.push(process.cwd())
-                        }
-                        
-                        for await (const [index, pkg] of packagesPaths.entries()) {
+                        for await (const [index, pkg] of paths.entries()) {
                             let lastError = null
                             const pkgJSON = path.resolve(pkg, 'package.json')
 
@@ -101,7 +87,7 @@ function publish(args) {
                                         pkgManager.npmPublish(pkg, config)
                                         packagesCount += 1
                                     } else {
-                                        observer.next(`[${packagesCount}/${packagesPaths.length}] Publishing npm package [${index}]${pkg}`)
+                                        observer.next(`[${packagesCount}/${paths.length}] Publishing npm package [${index}]${pkg}`)
                                         await pkgManager.npmPublish(pkg, config)
                                             .then(() => {
                                                 packagesCount += 1
@@ -109,24 +95,35 @@ function publish(args) {
                                             })
                                     }
                                 } catch (error) {
+                                    const errStr = `❌ Failed to publish > ${pkg} > ${error}`
                                     lastError = `[${path.basename(pkg)}/${index}] ${error.message}`
                                     packagesCount += 1
-                                    observer.next(`❌ Failed to publish > ${pkg} > ${error}`)
+                                    
+                                    if (config.ignoreError) {
+                                        observer.next(errStr)
+                                    }else {
+                                        return reject(new Error(errStr))
+                                    }
                                 }
 
-                                if (packagesCount >= packagesPaths.length) {
+                                if (packagesCount >= paths.length) {
                                     if (lastError != null) {
-                                        return observer.error(new Error(lastError))
+                                        if (config.ignoreError) {
+                                            return observer.error(new Error(lastError))
+                                        }else {
+                                            return reject(new Error(lastError))
+                                        }
                                     }
-                                    process.runtime.logger.dump("info", `Release successfully finished with [${packagesPaths.length}] packages > ${packagesPaths}`)
+
+                                    process.runtime.logger.dump("info", `Release successfully finished with [${paths.length}] packages > ${paths}`)
                                     setTimeout(() => {
                                         observer.complete()
                                     }, 850)
                                 }
                             } else {
-                                const errstr = `❌ ${pkg} has no valid package.json`
-                                process.runtime.logger.dump("error", errstr)
-                                observer.next(errstr)
+                                const errStr = `❌ ${pkg} has no valid package.json`
+                                process.runtime.logger.dump("error", errStr)
+                                observer.next(errStr)
                             }
                         }
 
@@ -138,7 +135,6 @@ function publish(args) {
                 enabled: () => config.github === true,
                 task: (ctx, task) => {
                     return new Promise((res, rej) => {
-                        return false
                         const gitRemote = getOriginGit()
                         let changelogNotes = ""
                         const releaseTag = `v${getVersion()}`

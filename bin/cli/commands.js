@@ -103,11 +103,9 @@ module.exports = [
     {
         command: 'publish',
         description: "Publish this current project",
-        options: ["--noTasks"],
-        exec: (argv) => {
-            console.log(argv)
-            return
-            publish(argv)
+        options: ["--noTasks", "--ignoreGit", "--npm", "--github", "--fast", "--build", "--preRelease", "--packages", "--ignoreError"],
+        exec: (opts) => {
+            publish(opts)
                 .then(() => {
                     console.log(`\n✅ Publish done`)
                 })
