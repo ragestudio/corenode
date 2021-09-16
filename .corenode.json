@@ -3,6 +3,9 @@
   "publish": {
     "ignorePackages": [
       "transcompiler"
+    ],
+    "include": [
+      "./dist"
     ]
   },
   "development": {
