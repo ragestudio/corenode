@@ -158,22 +158,25 @@ module.exports = [
         }
     },
     {
-        command: 'sync [package]',
+        command: 'sync',
+        arguments: ["[packageName]"],
         description: "Sync project versions",
-        exec: (argv) => {
+        exec: (packageName) => {
             const helpers = process.runtime.helpers
             console.log(`🔄 Syncing versions...`)
-            if (!argv.package) {
+
+            if (!packageName) {
                 return helpers.syncAllPackagesVersions()
             }
-            return helpers.syncPackageVersionFromName(argv.package, argv.write)
+            return helpers.syncPackageVersionFromName(packageName, args.write)
         }
     },
     {
         command: 'changelogs',
+        arguments: ["[to]", "[from]"],
         description: "Show the changelogs of this project from last tag",
-        exec: async (argv) => {
-            const changes = await getChangelogs(process.runtime.helpers.getOriginGit(), argv.to, argv.from)
+        exec: async (to, from) => {
+            const changes = await getChangelogs(process.runtime.helpers.getOriginGit(), to, from)
             console.log(changes)
         }
     }
