@@ -120,8 +120,7 @@ class Runtime {
         environmentFiles: () => environmentFiles,
         paths: {
             _env: () => global._loadedEnvPath ?? path.resolve(process.cwd(), '.corenode'),
-            _src: () => path.resolve(__dirname, ".."),
-            _root: () => path.resolve(__dirname, '../../..')
+            _src: () => path.resolve(__dirname),
         }
     }
 
@@ -262,7 +261,6 @@ class Runtime {
 
         instance.project._envpath = this.get.paths._env()
         instance.project._runtimeSource = this.get.paths._src()
-        instance.project._runtimeRoot = this.get.paths._root()
 
         instance.version = enginePkg.version
 
