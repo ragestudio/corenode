@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    // We never emit JS code (only type declarations) from TSC, so ignore those
+    // options.
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "target": "es2020",
+    "module": "commonjs",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "importsNotUsedAsValues": "error",
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "lib": ["es2020"]
+  },
+  "include": [
+    "benchmark",
+    "generator",
+    "script",
+    "src",
+  ],
+  "exclude": [
+    "benchmark/sample",
+    "example-runner/example-repos"
+  ]
+}
