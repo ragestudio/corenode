@@ -3,39 +3,25 @@ yarn-error.log
 package-lock.json
 yarn.lock
 
-/packages/*/dist
-/packages/*/docs
-/packages/*/corenode_logs
-/packages/*/package-lock.json
-/packages/*/.DS_Store
-/packages/*/node_modules
-/packages/*/corenode_modules
+# Secrets
+/**/**/.env
+/**/**/origin.server
+/**/**/server.manifest
+/**/**/server.registry
 
-/build
-/dist
-/docs
-/node_modules
-/corenode_modules
-/modules
+# Trash
+/**/**/.crash.log
+/**/**/.tmp
+/**/**/dist
+/**/**/node_modules
+/**/**/corenode_modules
+/**/**/.DS_Store
 
-.DS_Store
-lastTest.js
-test.js
-unitTest.js
-corenode_logs
-logs_dump.log
-dumps.log
-.error.log
-.crash.log
-.aliaser
+# Logs
+/**/**/npm-debug.log*
+/**/**/yarn-error.log
+/**/**/dumps.log
+/**/**/corenode.log
 
-debugger-ui/node_modules
-
-*/**/.tmp
-*/**/node_modules
-*/**/dist
-
-*/**/dumps.log
-*/**/build
-*/**/.DS_Store
-node_source
+# Temporal configurations
+/**/**/.aliaser

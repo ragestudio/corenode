@@ -119,6 +119,31 @@ module.exports = [
     },
     {
         command: 'build',
+        description: "Build this current project",
+        arguments: [
+            { argument: "<inputDir>", default: path.resolve(process.cwd(), "src") },
+            { argument: "<outDir>", default: path.resolve(process.cwd(), "dist") }
+        ],
+        options: [
+            { option: "-p, --project <dir>", description: "Compile a TypeScript project, will read from tsconfig.json in <dir>" },
+            { option: "--out-extension <extension>", description: "File extension to use for all output files.", default: "js" },
+            { option: "--exclude-dirs <paths>", description: "Names of directories that should not be traversed." },
+            { option: "-t, --transforms <transforms>", description: "Comma-separated list of transforms to run.", default: "jsx,exports" },
+            { option: "-q, --quiet", description: "Don't print the names of converted files." },
+            { option: "--enable-legacy-typescript-module-interop", description: "Use default TypeScript ESM/CJS interop strategy." },
+            { option: "--enable-legacy-babel5-module-interop", description: "Use Babel 5 ESM/CJS interop strategy." },
+            { option: "--jsx-pragma <string>", description: "Element creation function, defaults to `React.createElement`" },
+            { option: "--jsx-fragment-pragma <string>", description: "Fragment component, defaults to `React.Fragment`" },
+            { option: "--production", description: "Disable debugging information from JSX in output." },
+        ],
+        exec: async (inputDir, outputDir, params) => {
+            const { lib } = require("@@transcompiler")
+
+            return lib.build({ inputDir, outputDir, ...params })
+        }
+    },
+    {
+        command: 'legacy_build',
         description: "Build project with builtin builder",
         arguments: ["[dir...]"],
         exec: async (dirs) => {
@@ -127,19 +152,19 @@ module.exports = [
             if (dirs.length > 0) {
                 dirs.forEach((dir) => {
                     const basename = path.basename(dir)
-                    const output = path.resolve(dir,  `../${basename}_dist`)
+                    const output = path.resolve(dir, `../${basename}_dist`)
 
                     new Builder({ source: dir, output: output, taskName: basename, showProgress: true }).buildAllSources()
                 })
-            }else {
+            } else {
                 const packagesPath = path.join(process.cwd(), 'packages')
                 const sourcePath = path.join(process.cwd(), 'src')
-                
+
                 if (fs.existsSync(packagesPath) && fs.lstatSync(packagesPath).isDirectory()) {
                     console.log(`⚙️  Building all packages\n`)
                     await buildAllPackages()
                 }
-                
+
                 if (fs.existsSync(sourcePath) && fs.lstatSync(sourcePath).isDirectory()) {
                     console.log(`⚙️  Building source\n`)
                     await buildSource()
@@ -173,7 +198,7 @@ module.exports = [
     },
     {
         command: 'changelogs',
-        arguments: ["[to]", "[from]"],
+        arguments: ["[to]", "[from]"],
         description: "Show the changelogs of this project from last tag",
         exec: async (to, from) => {
             const changes = await getChangelogs(process.runtime.helpers.getOriginGit(), to, from)

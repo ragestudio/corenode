@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-const { runInNewRuntime } = require('corenode')
+const { runInNewRuntime } = require('../../index.js')
 
 runInNewRuntime((runtime) => {
-    const { program, Command, Option } = require('commander')
+    const { program, Command, Option, Argument } = require('commander')
 
     let optionsFn = {}
 
@@ -45,13 +45,27 @@ runInNewRuntime((runtime) => {
 
         if (Array.isArray(item.arguments)) {
             item.arguments.forEach(arg => {
-                cmd.argument(arg)
+                if (typeof arg === "string") {
+                    cmd.addArgument(new Argument(arg))
+                }else {
+                    const _argument = new Argument(arg.argument, arg.description)
+
+                    if (arg.defualt) {
+                        _argument.default(arg.default)       
+                    }
+
+                    cmd.addArgument(_argument)
+                }
             })
         }
 
         if (Array.isArray(item.options)) {
             item.options.forEach(opt => {
-                cmd.option(opt)
+                if (typeof opt === "string") {
+                    cmd.option(opt)
+                }else {
+                    cmd.option(opt.option, opt.description, opt.default)
+                }
             })
         }
 

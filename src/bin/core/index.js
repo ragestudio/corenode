@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { Runtime, events } = require('corenode')
+const { Runtime, events } = require('../../index.js')
 
 function createRuntime(options) {
     return new Runtime(options)

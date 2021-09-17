@@ -9,6 +9,7 @@ const { EventEmitter } = require('events')
 const { verbosity, objectToArrayMap } = require("@corenode/utils")
 
 //* PRIMORDIAL LIBRARIES
+const { Timings } = require('./libs/timings')
 const net = require('./net')
 const repl = require('./repl')
 const moduleLib = require('./module')
@@ -60,6 +61,9 @@ class Runtime {
         // runtime objects and controller
         this.objects = {}
         this.controller = {}
+        this.timings = new Timings({
+            id: "runtime",
+        })
 
         // runtime controllers
         this.vmController = null
@@ -79,6 +83,7 @@ class Runtime {
             "@@libs": path.resolve(__dirname, 'libs'),
             "@@constables": path.resolve(__dirname, 'constables'),
             "@@internals": path.resolve(__dirname, 'internals'),
+            "@@transcompiler": path.resolve(__dirname, 'transcompiler'),
         })
 
         const runtimeObjects = this.getRuntimeObjects()
@@ -113,6 +118,32 @@ class Runtime {
         global.loadLib = this.loadLib
 
         return this
+    }
+
+    withTimerSync = (fn, id) => {
+        return (...context) => {
+            this.timings.start(id)
+            let res = fn(...context)
+            this.timings.stop(id)
+
+            // TODO: set `tooks` prototype getting value from `timings`
+            // res.__proto__.tooks = this.timings.get(id)
+
+            return res
+        }
+    }
+
+    withTimer = async (fn, id) => {
+        return async (...context) => {
+            this.timings.start(id)
+            let res = await fn(...context)
+            this.timings.stop(id)
+
+            // TODO: set `tooks` prototype getting value from `timings`
+            // res.__proto__.tooks = this.timings.get(id)
+
+            return res
+        }
     }
 
     //* GET
