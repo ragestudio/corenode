@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { runInNewRuntime } = require('corenode')
+const { runInNewRuntime } = require('../../index.js')
 
 runInNewRuntime((runtime) => {
     const { program, Command, Option } = require('commander')
