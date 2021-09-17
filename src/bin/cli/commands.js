@@ -121,8 +121,8 @@ module.exports = [
         command: 'build',
         description: "Build this current project",
         arguments: [
-            { argument: "<inputDir>", default: path.resolve(process.cwd(), "src") },
-            { argument: "<outDir>", default: path.resolve(process.cwd(), "dist") }
+            { argument: "[inputDir]", default: path.resolve(process.cwd(), "src") },
+            { argument: "[outDir]", default: path.resolve(process.cwd(), "dist") }
         ],
         options: [
             { option: "-p, --project <dir>", description: "Compile a TypeScript project, will read from tsconfig.json in <dir>" },
@@ -138,6 +138,14 @@ module.exports = [
         ],
         exec: async (inputDir, outputDir, params) => {
             const { lib } = require("@@transcompiler")
+            const builderEnv = process.env.builder ?? {}
+
+            if (!inputDir) {
+                inputDir = builderEnv.input ?? path.resolve(process.cwd(), "src")
+            }
+            if (!outputDir) {
+                outputDir = builderEnv.output ?? path.resolve(process.cwd(), "dist")
+            }
 
             return lib.build({ inputDir, outputDir, ...params })
         }
