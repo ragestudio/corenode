@@ -11,6 +11,7 @@
     "access": "public"
   },
   "bin": {
+    "corenode-node": "./bin/corenode-node",
     "corenode-cli": "./bin/cli/index.js",
     "corenode": "./bin/core/index.js"
   },
