@@ -83,6 +83,7 @@ class Runtime {
             "@@libs": path.resolve(__dirname, 'libs'),
             "@@constables": path.resolve(__dirname, 'constables'),
             "@@internals": path.resolve(__dirname, 'internals'),
+            "@@transcompiler": path.resolve(__dirname, 'transcompiler'),
         })
 
         const runtimeObjects = this.getRuntimeObjects()
