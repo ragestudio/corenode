@@ -43,7 +43,6 @@
     ]
   },
   "dependencies": {
-    "7zip-bin": "^5.1.1",
     "@babel/core": "^7.13.14",
     "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-proposal-do-expressions": "7.12.13",
@@ -61,6 +60,7 @@
     "@corenode/helpers": "0.27.4",
     "@corenode/pkg-manager": "0.27.4",
     "@corenode/utils": "0.27.4",
+    "7zip-bin": "^5.1.1",
     "cli-progress": "^3.9.0",
     "commander": "^8.2.0",
     "cross-blob": "^2.0.0",
@@ -78,6 +78,7 @@
     "lodash": "^4.17.21",
     "map-stream": "^0.0.7",
     "md5": "^2.3.0",
+    "nanotimer": "^0.3.15",
     "node-7z": "^2.1.2",
     "npm": "^7.19.0",
     "npm-package-arg": "^8.1.5",
