@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+require("../transcompiler/cli.js").default();
