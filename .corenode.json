@@ -1,5 +1,14 @@
 {
   "version": "0.28.0",
+  "builder": {
+    "transforms": ["jsx", "imports"],
+    "ignorePackages": [
+      "ual"
+    ],
+    "skip": [
+      "packages/utils/src/verbosity.js"
+    ]
+  },
   "publish": {
     "ignorePackages": [
       "transcompiler"

@@ -17,7 +17,7 @@ export async function build(params) {
         excludeDirs: params.excludeDirs ? params.excludeDirs.split(",") : [],
         quiet: params.quiet,
         sucraseOptions: {
-            transforms: params.transforms ? params.transforms.split(",") : [],
+            transforms: typeof params.transforms === "string" ? params.transforms.split(",") : params.transforms,
             enableLegacyTypeScriptModuleInterop: params.enableLegacyTypescriptModuleInterop,
             enableLegacyBabel5ModuleInterop: params.enableLegacyBabel5ModuleInterop,
             jsxPragma: params.jsxPragma || "React.createElement",
