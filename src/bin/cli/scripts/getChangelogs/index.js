@@ -21,7 +21,7 @@ function getChangelogs (url, to, from) {
         }
     })
 
-    return commits.map((commit) => `- ${htmlEscape(commit.message)}  ${commit.id}`).join('\n')
+    return commits.map((commit) => `- ${htmlEscape.escape(commit.message)}  ${commit.id}`).join('\n')
 }
 
 module.exports = getChangelogs

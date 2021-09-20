@@ -12,7 +12,7 @@ const _htmlUnescape = htmlString => htmlString
 	.replace(/&quot;/g, '"')
 	.replace(/&amp;/g, '&');
 
-export function htmlEscape(strings, ...values) {
+export function escape(strings, ...values) {
 	if (typeof strings === 'string') {
 		return _htmlEscape(strings);
 	}
@@ -25,7 +25,7 @@ export function htmlEscape(strings, ...values) {
 	return output;
 }
 
-export function htmlUnescape(strings, ...values) {
+export function unescape(strings, ...values) {
 	if (typeof strings === 'string') {
 		return _htmlUnescape(strings);
 	}
