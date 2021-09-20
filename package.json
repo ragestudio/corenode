@@ -92,7 +92,7 @@
     "npm-package-arg": "^8.1.5",
     "npm-registry-fetch": "^11.0.0",
     "open": "^8.0.8",
-    "ora": "^5.4.1",
+    "ora": "^6.0.1",
     "read-package-json": "^3.0.1",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
