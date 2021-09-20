@@ -73,6 +73,9 @@ class Runtime {
         this.preloadDone = false
         this.preloadEvents = []
         this.preloadPromises = []
+        this.preloadEvents.forEach((event) => {
+            this.setEventToPreloader(event)
+        })
 
         this.registerModulesAliases({
             "factory": path.resolve(__dirname, 'factory'),
@@ -96,14 +99,13 @@ class Runtime {
         const runtimeEvents = this.getRuntimeEvents()
         if (Array.isArray(runtimeEvents)) {
             runtimeEvents.forEach((_case) => {
-                this.events.addListener(_case.on, _case.event)
+                this.events.addListener(_case.on, _case.do)
             })
         }
 
         this.loadHelpers()
         this.loadEnvironment()
         this.handleLocalMode()
-        this.setEventsPreloader()
 
         this.modulesAliases = {
             ...process.env.modulesAliases,
@@ -237,18 +239,12 @@ class Runtime {
     }
 
     //* SET
-    setEventsPreloader() {
-        const eventPromise = (id) => {
-            return new Promise((res, rej) => {
-                this.events.on(id, () => {
-                    return res()
-                })
+    setEventToPreloader = (event) => {
+        this.appendToPreloader(new Promise((res, rej) => {
+            this.events.on(event, () => {
+                return res()
             })
-        }
-
-        this.preloadEvents.forEach((wait) => {
-            this.appendToPreloader(eventPromise(wait))
-        })
+        }))
     }
 
     //* REGISTER

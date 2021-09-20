@@ -4,7 +4,7 @@ const open = require('open')
 module.exports = [
     {
         on: "fatalCrash",
-        event: () => {
+        do: () => {
             const file = constables.fatalCrashLogFile
             const now = new Date()
             const err = `
@@ -30,13 +30,13 @@ module.exports = [
     },
     {
         on: "addons_initialization_start",
-        event: () => {
+        do: () => {
             process._addons_initialization_spinner = require("ora")('Loading addons').start()
         }
     },
     {
         on: "addons_initialization_done",
-        event: () => {
+        do: () => {
             if (typeof process._addons_initialization_spinner !== "undefined") {
                 process._addons_initialization_spinner.stop()
                 delete process._addons_initialization_spinner
