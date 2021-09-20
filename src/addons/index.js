@@ -3,7 +3,6 @@ const path = require("path")
 const { performance } = require('perf_hooks')
 const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
-const ora = require('ora')
 const { getRootPackage } = require('@corenode/helpers')
 const { EvalMachine } = require('../vm')
 
@@ -17,7 +16,7 @@ class Addon {
     constructor(params) {
         this.params = params ?? {}
         this.loader = {}
-        
+
         // try to read loader file
         if (typeof this.params.loader === "string") {
             try {
@@ -74,7 +73,7 @@ class Addon {
                     file: loaderScriptPath,
                     cwd: this.loader.dirname,
                 })
-                
+
                 process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
                 log.dump("error", error)
@@ -145,7 +144,7 @@ class addonsController {
 
                 this.appendLoader(addon.loader)
                 this.addons[addon.loader.pkg] = addon
-                
+
                 if (!addon.disabled) {
                     await addon.load()
                 }
@@ -246,17 +245,15 @@ class addonsController {
 
     init = async () => {
         if (!this.disabledController) {
-            const spinner = ora('Loading addons').start()
+            process.runtime.events.emit('addons_initialization_start')
 
             await Promise.all(this.query.map((fn, index) => {
                 fn()
                 this.query = this.query.slice(index, (this.query.length - 1))
             }))
-            
-            spinner.stop()
-        }
 
-        process.runtime.events.emit('init_addons_done')
+            process.runtime.events.emit('addons_initialization_done')
+        }
     }
 }
 

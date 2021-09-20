@@ -28,4 +28,19 @@ module.exports = [
             }
         } 
     },
+    {
+        on: "addons_initialization_start",
+        event: () => {
+            process._addons_initialization_spinner = require("ora")('Loading addons').start()
+        }
+    },
+    {
+        on: "addons_initialization_done",
+        event: () => {
+            if (typeof process._addons_initialization_spinner !== "undefined") {
+                process._addons_initialization_spinner.stop()
+                delete process._addons_initialization_spinner
+            }
+        }
+    }
 ]
