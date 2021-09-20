@@ -38,6 +38,7 @@ export function getVersion(): string {
 
 export function transform(code: string, options: Options): TransformResult {
   validateOptions(options);
+
   try {
     const sucraseContext = getSucraseContext(code, options);
     const transformer = new RootTransformer(
