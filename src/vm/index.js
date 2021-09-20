@@ -33,7 +33,7 @@ export class VMController {
         }
 
         this.refs = Object()
-        this.deep = Number(0)
+        this.depth = Number(0)
         this.pool = Object()
 
         global.eventBus.on(`vm_newAllocation`, this.updateDepth)
@@ -71,7 +71,7 @@ export class VMController {
     }
 
     updateDepth = () => {
-        this.deep = Object.keys(this.pool).length
+        this.depth = Object.keys(this.pool).length
     }
 
     measureMemory = (opts = {}) => {
