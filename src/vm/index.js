@@ -4,9 +4,7 @@ import filesize from 'filesize'
 import { EventEmitter } from 'events'
 import Serializer from './serialize.js'
 
-import * as babel from "@babel/core"
-
-const compilerLib = require('../internals/builder/lib')
+const compilerLib = require('../transcompiler')
 const vmlib = require("vm")
 const { Timings } = require("../libs/timings")
 const Jail = require('../classes/Jail').default
@@ -31,18 +29,8 @@ export class VMController {
         this.defaultJail = this.createDefaultJail()
         this.objects = this.getObjects()
 
-        this.babelOptions = {
-            plugins: compilerLib.defaultBabelPlugins,
-            presets: [
-                [
-                    require.resolve('@babel/preset-env'),
-                    {
-                        targets: {
-                            node: 6
-                        }
-                    },
-                ],
-            ]
+        this.compilerOptions = {
+            transforms: ["typescript", "jsx", "imports"]
         }
 
         this.refs = Observable.from({})
@@ -56,6 +44,7 @@ export class VMController {
         let objects = {}
 
         const runtimeObjects = process.runtime.objects
+
         if (typeof runtimeObjects === "object") {
             objects = { ...objects, ...runtimeObjects }
         }
@@ -198,7 +187,7 @@ export class EvalMachine {
         if (typeof this.params.file !== "undefined") {
             try {
                 this.scriptOptions["filename"] = path.basename(this.params.file)
-                this.params.eval = fs.readFileSync(this.params.file)
+                this.params.eval = fs.readFileSync(this.params.file, "utf8")
             } catch (error) {
                 process.runtime.logger.dump("error", error)
                 getVerbosity().error(`Cannot read file/script > ${error.message}`)
@@ -208,6 +197,18 @@ export class EvalMachine {
         }
         this.timings.stop(`readFile`)
 
+        // init module controller
+        this.timings.start(`createModuleController`)
+        this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
+        this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
+        this.moduleController = this.createModuleController()
+        this.timings.stop(`createModuleController`)
+
+        // set globals to jail
+        this.timings.start(`setJail`)
+        this.jail = this.createJail()
+        this.timings.stop(`setJail`)
+
         // set objects
         this.timings.start(`setObjects`)
         objectToArrayMap(process.runtime.vmController.objects).forEach((obj) => {
@@ -216,6 +217,7 @@ export class EvalMachine {
             switch (objectType) {
                 case "function": {
                     obj.value = obj.value.bind(this)
+                    this.jail.set(obj.key, obj.value, { configurable: false, writable: false, global: true })
                     break
                 }
 
@@ -227,12 +229,6 @@ export class EvalMachine {
         })
         this.timings.stop(`setObjects`)
 
-        // init module controller
-        this.timings.start(`createModuleController`)
-        this.modulesAliases = { ...this.params.modulesAliases, ...global._env.modulesAliases }
-        this.modulesPaths = [...this.params.modulesPaths ?? [], ...global._env.modulesPaths ?? []]
-        this.moduleController = this.createModuleController()
-        this.timings.stop(`createModuleController`)
 
         // set events
         this.timings.start(`setEvents`)
@@ -254,11 +250,6 @@ export class EvalMachine {
         })
         this.timings.stop(`setEvents`)
 
-        // set globals to jail
-        this.timings.start(`setJail`)
-        this.jail = this.createJail()
-        this.timings.stop(`setJail`)
-
         // create context
         this.timings.start(`createContext`)
         this.context = { ...this.context, ...this.jail.get(), ...process.runtime.vmController.defaultJail.get() }
@@ -277,12 +268,12 @@ export class EvalMachine {
 
         // run first script, sending vmt for vm initialization
         this.timings.start(`runTemplateInit`)
-        this.run(vmt, { babelTransform: false })
+        this.run(vmt, { compile: false })
         this.timings.stop(`runTemplateInit`)
 
         this.timings.start(`runFirstEval`)
         if (typeof this.params.eval !== "undefined") {
-            this.run(this.params.eval, { babelTransform: true })
+            this.run(this.params.eval, { compile: true })
         }
         this.timings.stop(`runFirstEval`)
         return this
@@ -292,19 +283,9 @@ export class EvalMachine {
         const jail = new Jail()
 
         jail.set(
-            'selfThis',
-            this,
-            { configurable: false, writable: false, global: false }
-        )
-        jail.set(
-            'self',
-            jail.get(),
-            { configurable: false, writable: false, global: true }
-        )
-        jail.set(
             'module',
             this.moduleController,
-            { configurable: false, writable: false, global: true }
+            { configurable: true, writable: true, global: true }
         )
         jail.set(
             'cwd',
@@ -347,6 +328,11 @@ export class EvalMachine {
             },
             { configurable: false, writable: false, global: true }
         )
+        jail.set(
+            'self',
+            jail.get(),
+            { configurable: false, writable: false, global: true }
+        )
 
         return jail
     }
@@ -383,16 +369,16 @@ export class EvalMachine {
                             }
 
                             return expose.${key}();
-                        }())`, { babelTransform: false })
+                        }())`, { compile: false })
                     }
                     break
                 }
                 case "object": {
-                    obj[key] = this.run(`expose.${key}`, { babelTransform: false })
+                    obj[key] = this.run(`expose.${key}`, { compile: false })
                     break
                 }
                 default: {
-                    obj[key] = this.run(`expose.${key}`, { babelTransform: false })
+                    obj[key] = this.run(`expose.${key}`, { compile: false })
                     break
                 }
             }
@@ -433,8 +419,7 @@ export class EvalMachine {
 
     transformCode = (exec, options = {}) => {
         this.timings.start(`lastTranscompile`)
-        const controllerBabelOptions = process.runtime.vmController.babelOptions
-        exec = babel.transformSync(exec, { ...controllerBabelOptions, ...options }).code
+        exec = compilerLib.transform(exec, { ...process.runtime.vmController.compilerOptions, ...options }).code
         this.timings.stop(`lastTranscompile`)
 
         return exec
@@ -443,13 +428,13 @@ export class EvalMachine {
     run = (exec, options, callback) => {
         if (typeof options !== "object") {
             options = {
-                babelTransform: true
+                compile: true
             }
         }
 
         try {
-            if (options.babelTransform) {
-                exec = this.transformCode(exec, options.babelOptions)
+            if (options.compile) {
+                exec = this.transformCode(exec, options.compilerOptions)
             }
 
             this.timings.start(`lastCreateScript`)
@@ -457,7 +442,8 @@ export class EvalMachine {
             this.timings.stop(`lastCreateScript`)
 
             this.timings.start(`lastRun`)
-            const _run = vmscript.runInContext(vmlib.createContext(this.context))
+            const _runContext = vmlib.createContext(this.context)
+            const _run = vmscript.runInContext(_runContext)
             this.timings.stop(`lastRun`)
 
             if (typeof callback === "function") {
