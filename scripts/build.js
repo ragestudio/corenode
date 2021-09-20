@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs')
 const path = require('path')
-const { buildAllPackages, buildSource } = require('../src/internals/builder')
+const { buildAllPackages, buildSource } = require('../builder')
 
 const parallel = process.argv.includes("--parallel")
 

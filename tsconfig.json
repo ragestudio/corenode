@@ -16,13 +16,11 @@
     "lib": ["es2020"]
   },
   "include": [
-    "benchmark",
     "generator",
     "script",
     "src",
   ],
   "exclude": [
-    "benchmark/sample",
-    "example-runner/example-repos"
+    "builder",
   ]
 }
