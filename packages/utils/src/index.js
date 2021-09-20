@@ -261,24 +261,28 @@ export { default as prettyTable } from './prettyTable'
  * @function pLimit
  * @copyright Sindre Sorhus
  */
-
 export { default as pLimit } from './pLimit' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
  * @function pLocate
  * @copyright Sindre Sorhus
  */
-
 export { default as pLocate } from './pLocate' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
  * @function yoctoQueue
  * @copyright Sindre Sorhus
  */
-
 export { default as yoctoQueue } from './yoctoQueue' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
  * @function overrideObjects
  */
 export { default as overrideObjects } from './overrideObjects'
+
+
+/**
+ * @function htmlEscape
+ * @copyright Sindre Sorhus
+ */
+export * as htmlEscape from './htmlEscape'

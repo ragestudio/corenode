@@ -1,4 +1,4 @@
-const { htmlEscape } = require('escape-goat')
+const { htmlEscape } = require('@corenode/utils')
 const git = require('@corenode/git-lib')
 
 function getChangelogs (url, to, from) {
