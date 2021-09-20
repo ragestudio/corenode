@@ -9,7 +9,6 @@ const vmlib = require("vm")
 const { Timings } = require("../libs/timings")
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
-const { Observable } = require("../observer")
 
 let { verbosity, objectToArrayMap } = require('@corenode/utils')
 const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
@@ -33,11 +32,12 @@ export class VMController {
             transforms: ["typescript", "jsx", "imports"]
         }
 
-        this.refs = Observable.from({})
+        this.refs = Object()
         this.deep = Number(0)
         this.pool = Object()
 
-        this.refs.observe(this.onRefsMutation)
+        global.eventBus.on(`vm_newAllocation`, this.updateDepth)
+        global.eventBus.on(`vm_delAllocation`, this.updateDepth)
     }
 
     getObjects() {
@@ -70,8 +70,7 @@ export class VMController {
         // TODO
     }
 
-    onRefsMutation = (mutation) => {
-        //update deep
+    updateDepth = () => {
         this.deep = Object.keys(this.pool).length
     }
 
@@ -109,21 +108,23 @@ export class VMController {
             this.refs[address] = () => {
                 return this.pool[address]
             }
+            global.eventBus.emit(`vm_newAllocation`)
 
             return callback(address)
         }
     }
-
+    
     destroy(address, callback) {
         if (this.pool[address] instanceof EvalMachine) {
             const vm = this.pool[address]
-
+            
             if (!vm.locked) {
                 vm.events.emit(`beforeDestroy`)
-
+                
                 delete this.pool[address]
                 delete this.refs[address]
-
+                global.eventBus.emit(`vm_delAllocation`)
+                
                 if (typeof callback === "function") {
                     callback()
                 }
