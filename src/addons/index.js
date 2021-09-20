@@ -3,7 +3,7 @@ const path = require("path")
 const { performance } = require('perf_hooks')
 const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
 
-const pkgManager = require("@corenode/pkg-manager")
+const ora = require('ora')
 const { getRootPackage } = require('@corenode/helpers')
 const { EvalMachine } = require('../vm')
 
@@ -16,7 +16,6 @@ const defaults = {
 class Addon {
     constructor(params) {
         this.params = params ?? {}
-
         this.loader = {}
         
         // try to read loader file
@@ -61,38 +60,7 @@ class Addon {
         return this
     }
 
-    checkDependencies = async () => {
-        if (process.runtime.disableCheckDependencies) {
-            return true
-        }
-
-        if (this.loader.hasDependencies && typeof this.loader.dirname !== "undefined") {
-            const addonPackageJson = path.resolve(this.loader.dirname, 'package.json')
-            if (fs.existsSync(addonPackageJson)) {
-                this.loader.dependencies = require(addonPackageJson).dependencies ?? {}
-            }
-        }
-        
-        const dependenciesTypes = ["dependencies", "devDependencies"]
-        dependenciesTypes.forEach((type) => {
-            if (typeof this.loader[type] === "object") {
-                objectToArrayMap(this.loader[type]).forEach((dependency) => {
-                    const { key, value } = dependency
-                    const depValid = pkgManager.check(key)
-
-                    //* try to install before initialization
-                    if (!depValid && !this.loader.ignoreDependencies) {
-                        const dep = `${key}@${value}`
-
-                        console.warn(`⚠️  Missing dependency, trying to install...[${dep}]`)
-                        pkgManager.install(dep, { cwd: this.loader.dirname })
-                    }
-                })
-            }
-        })
-    }
-
-    load = () => {
+    load = async () => {
         const loadStart = performance.now()
 
         if (typeof this.loader.script !== "undefined") {
@@ -102,7 +70,7 @@ class Addon {
                     return log.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
                 }
 
-                this.machine = new EvalMachine({
+                this.machine = await new EvalMachine({
                     file: loaderScriptPath,
                     cwd: this.loader.dirname,
                 })
@@ -126,8 +94,8 @@ class Addon {
         return this.loader
     }
 
-    unload = () => {
-        process.runtime.addonsController.unload(this.loader.pkg)
+    unload = async () => {
+        process.runtime.addonsController.unloadAddon(this.loader.pkg)
     }
 }
 
@@ -153,15 +121,6 @@ class addonsController {
         }
     }
 
-    unload = (key) => {
-        if (typeof this.addons[key] === 'undefined') {
-            return false
-        }
-        this.addons[key].machine.destroy()
-        delete this.addons[key]
-        delete this.loaders[key]
-    }
-
     queryLoader(loader) {
         let allowed = true
         const addon = new Addon({ loader })
@@ -173,19 +132,11 @@ class addonsController {
         }
 
         if (allowed) {
-            this.query.push(addon)
+            this.query.push(() => this.loadAddon(addon))
         }
     }
 
-    checkDependencies = async () => {
-        if (Array.isArray(this.query)) {
-            for await (const addon of this.query) {
-                await addon.checkDependencies()
-            }
-        }
-    }
-
-    loadAddon(addon) {
+    loadAddon = async (addon) => {
         if (addon instanceof Addon) {
             // check if the addon is not loaded
             if (typeof this.addons[addon.loader.pkg] === "undefined") {
@@ -194,13 +145,24 @@ class addonsController {
 
                 this.appendLoader(addon.loader)
                 this.addons[addon.loader.pkg] = addon
+                
                 if (!addon.disabled) {
-                    addon.load()
+                    await addon.load()
                 }
             }
         } else {
             throw new Error(`Invalid class of addon!`)
         }
+    }
+
+    unloadAddon = (key) => {
+        if (typeof this.addons[key] === 'undefined') {
+            return false
+        }
+
+        this.addons[key].machine.destroy()
+        delete this.addons[key]
+        delete this.loaders[key]
     }
 
     appendLoader = (addon) => {
@@ -282,12 +244,16 @@ class addonsController {
 
     getLoadedAddons = () => Object.keys(this.addons)
 
-    async init() {
+    init = async () => {
         if (!this.disabledController) {
-            for await (const [index, addon] of this.query.entries()) {
+            const spinner = ora('Loading addons').start()
+
+            await Promise.all(this.query.map((fn, index) => {
+                fn()
                 this.query = this.query.slice(index, (this.query.length - 1))
-                await this.loadAddon(addon)
-            }
+            }))
+            
+            spinner.stop()
         }
 
         process.runtime.events.emit('init_addons_done')
