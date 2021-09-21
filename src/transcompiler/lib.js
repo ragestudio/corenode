@@ -33,6 +33,7 @@ export async function build(params) {
 
     if (Array.isArray(options.ignoreSources)) {
         options.ignoreSources = options.ignoreSources.map(s => resolve(options.srcDirPath, s))
+        options.ignoreSources = await fastGlob(options.ignoreSources, { absolute: true})
     }
 
     return buildDirectory(options)
