@@ -1,6 +1,6 @@
 {
   "name": "@corenode/pkg-manager",
-  "version": "0.28.4",
+  "version": "0.28.5",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -17,9 +17,9 @@
     "url": "https://github.com/ragestudio/corenode"
   },
   "dependencies": {
-    "corenode": "0.28.4",
-    "@corenode/utils": "0.28.4",
-    "@corenode/helpers": "0.28.4",
+    "corenode": "0.28.5",
+    "@corenode/utils": "0.28.5",
+    "@corenode/helpers": "0.28.5",
     "execa": "^5.1.1",
     "extract-first-json": "^1.0.1",
     "cross-spawn": "^7.0.3",
