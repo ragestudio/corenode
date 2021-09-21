@@ -13,7 +13,7 @@ const getChangelogs = require("../getChangelogs")
 let { verbosity, objectToArrayMap, githubReleaseUrl } = require('@corenode/utils')
 verbosity = verbosity.options({ method: "[PUBLISH]" })
 
-const env = global._env.publish ?? {}
+const env = process.env.publish ?? {}
 
 function publish(args = {}) {
     let config = {
@@ -191,4 +191,18 @@ function publish(args = {}) {
     })
 }
 
-module.exports = publish
+module.exports = {
+    command: 'publish',
+    description: "Publish this current project",
+    options: ["--noTasks", "--ignoreGit", "--npm", "--github", "--fast", "--build", "--preRelease", "--packages", "--ignoreError"],
+    exec: (opts) => {
+        publish(opts)
+            .then(() => {
+                console.log(`\n✅ Publish done`)
+            })
+            .catch((error) => {
+                console.error(error)
+                console.error(`\n❌ Publish aborted due an error`)
+            })
+    }
+}

@@ -1,8 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const { getPackages, isProjectMode } = require('corenode')
+const { getPackages, isProjectMode } = runtime.helpers
 
-async function bootstrap(params) {
+// TODO: Bootstrap form providen directories
+async function bootstrap(dirs, params) {
   return new Promise(async (resolve, reject) => {
     {
       const hasPackages = isProjectMode()
@@ -102,4 +103,15 @@ async function bootstrap(params) {
   })
 }
 
-module.exports = bootstrap
+module.exports = {
+  command: 'bootstrap',
+  options: ["[force]"],
+  arguments: ["[dirs...]"],
+  description: "Bootstrap all packages",
+  exec: (dirs, options) => {
+    bootstrap(dirs, options)
+      .then((res) => {
+        console.log(`✅ DONE`)
+      })
+  }
+}

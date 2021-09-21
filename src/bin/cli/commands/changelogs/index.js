@@ -1,7 +1,7 @@
 const { htmlEscape } = require('@corenode/utils')
 const git = require('@corenode/git-lib')
 
-function getChangelogs (url, to, from) {
+function getChangelogs(url, to, from) {
     if (!url) {
         throw new Error(`Please provide an git url`)
     }
@@ -24,4 +24,12 @@ function getChangelogs (url, to, from) {
     return commits.map((commit) => `- ${htmlEscape.escape(commit.message)}  ${commit.id}`).join('\n')
 }
 
-module.exports = getChangelogs
+module.exports = {
+    command: 'changelogs',
+    arguments: ["[to]", "[from]"],
+    description: "Show the changelogs of this project from last tag",
+    exec: async (to, from) => {
+        const changes = await getChangelogs(process.runtime.helpers.getOriginGit(), to, from)
+        console.log(changes)
+    }
+}
