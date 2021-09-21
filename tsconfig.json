@@ -21,6 +21,7 @@
     "src",
   ],
   "exclude": [
+    "addons/legacy-builder/builder",
     "builder",
   ]
 }
