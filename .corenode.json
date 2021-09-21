@@ -7,9 +7,6 @@
     ],
     "ignorePackages": [
       "ual"
-    ],
-    "skip": [
-      "packages/utils/src/verbosity.js"
     ]
   },
   "publish": {
