@@ -2,7 +2,7 @@
 const Module = require("module")
 const { resolve } = require("path")
 
-const corenode = require('../../index.js')
+const corenode = require('../index.js')
 require("../transcompiler/register.js").registerAll()
 
 process.argv.splice(1, 1)
