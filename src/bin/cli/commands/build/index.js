@@ -1,5 +1,15 @@
 const path = require('path')
 const fs = require('fs')
+const rimraf = require('rimraf')
+
+async function syncPackageManifest() {
+    let rootPackage = require(path.resolve(process.cwd(), 'package.json'))
+
+    // fix main script
+    rootPackage.main = process.env.fixedMainScript ?? "./index.js"
+
+    fs.writeFileSync(path.resolve(process.cwd(), 'dist/package.json'), JSON.stringify(rootPackage, null, 2))
+}
 
 module.exports = {
     command: 'build',
@@ -9,12 +19,15 @@ module.exports = {
         { argument: "[outDir]", default: path.resolve(process.cwd(), "dist") }
     ],
     options: [
+        { option: "--clean", description: "Make a clean build" },
+        { option: "-fx, --fix", description: "Sync root `package.json` into `dist`" },
         { option: "-p, --parallel", description: "Enable parallel build" },
-        { option: "-pkgs, --packages", description: "Enable build packages for monorepos" },
-        { option: "-ip, --ignorePackages <packages>", description: "Ignore build for packages name in <packages>" },
+        { option: "--packages", description: "Enable build packages for monorepos" },
+        { option: "--excludePackages <packages...>", description: "Exclude packages from being traversed" },
+        { option: "--excludeSources <paths...>", description: "Directories that should not be traversed" },
+        { option: "--ignoreSources <paths...>", description: "Avoid transformation, only pass through original source" },
         { option: "-pj, --project <dir>", description: "Compile a TypeScript project, will read from tsconfig.json in <dir>" },
         { option: "--out-extension <extension>", description: "File extension to use for all output files.", default: "js" },
-        { option: "--exclude-dirs <paths>", description: "Names of directories that should not be traversed." },
         { option: "-t, --transforms <transforms>", description: "Comma-separated list of transforms to run." },
         { option: "-q, --quiet", description: "Don't print the names of converted files." },
         { option: "--enable-legacy-typescript-module-interop", description: "Use default TypeScript ESM/CJS interop strategy." },
@@ -35,6 +48,14 @@ module.exports = {
 
             tasks.push(() => build(payload))
         }
+
+        // ignored means not transpile the source, only pass through
+        // let ignoredPackages = [...(Array.isArray(params.ignorePackages) ? params.ignorePackages : []), ...(Array.isArray(builderEnv.ignorePackages) ? builderEnv.ignorePackages: [])]
+        params.ignoreSources = [...(Array.isArray(params.ignoreSources) ? params.ignoreSources : []), ...(Array.isArray(builderEnv.ignoreSources) ? builderEnv.ignoreSources : [])]
+
+        // "excluded" means excluded from task (So no transpile or copy sources, the source will not be included on dist)
+        params.excludeSources = [...(Array.isArray(params.excludeSources) ? params.excludeSources : []), ...(Array.isArray(builderEnv.excludeSources) ? builderEnv.excludeSources : [])]
+        let excludedPackages = [...(Array.isArray(params.excludePackages) ? params.excludePackages : []), ...(Array.isArray(builderEnv.excludePackages) ? builderEnv.excludePackages : [])]
 
         let defaultsTransforms = ["jsx", "imports", "typescript"]
         let defaultInput = path.join(process.cwd(), "src")
@@ -69,14 +90,6 @@ module.exports = {
 
         // handle monorepo packages
         if (params.packages) {
-            const excludedPackages = builderEnv.ignorePackages ?? []
-            if (Array.isArray(params.ignorePackages)) {
-                params.ignorePackages.forEach((pkg) => {
-                    // TODO: check if package & name exists
-                    excludedPackages.push(pkg)
-                })
-            }
-
             const packagesPath = builderEnv.packagesPath ?? defaultPackagesPath
             const packages = fs.readdirSync(packagesPath).filter((pkg) => fs.lstatSync(path.join(packagesPath, pkg)).isDirectory()).filter((pkg) => !excludedPackages.includes(pkg))
 
@@ -95,6 +108,12 @@ module.exports = {
             })
         }
 
+        // handle clean build
+        if (params.clean) {
+            await rimraf.sync(outputDir)
+            await setTimeout(() => {}, 2000)
+        }
+
         // append source build tasks
         appendBuildToTasks({ inputDir, outputDir, ...params })
 
@@ -105,6 +124,14 @@ module.exports = {
             for (const fn of tasks) {
                 await fn()
             }
+        }
+
+        // handle manifest sync fix
+        if (params.fix) {
+            if (!params.quiet) {
+                console.log(`⚙️  Syncing package manifest\n`)
+            }
+            await syncPackageManifest()
         }
     }
 }
