@@ -1,18 +1,17 @@
 {
   "version": "0.28.4",
+  "fixedMainScript": "./index.js",
   "builder": {
     "transforms": [
       "jsx",
-      "imports"
+      "imports",
+      "typescript"
     ],
     "ignorePackages": [
       "ual"
     ]
   },
   "publish": {
-    "ignorePackages": [
-      "transcompiler"
-    ],
     "include": [
       "./dist"
     ]
