@@ -196,4 +196,4 @@ class verbosity {
     }
 }
 
-module.exports = new verbosity()
+module.exports = { default: new verbosity() }
