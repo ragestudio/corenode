@@ -1,16 +1,16 @@
 {
-  "version": "0.28.5",
+  "version": "0.28.6",
   "fixedMainScript": "./index.js",
   "builder": {
-    "transforms":[
+    "transforms": [
       "jsx",
       "imports",
       "typescript"
     ],
-    "ignorePackages":[
+    "ignorePackages": [
       "ual"
     ],
-    "ignoreSources":[
+    "ignoreSources": [
       "./src/verbosity/index.js"
     ]
   },
