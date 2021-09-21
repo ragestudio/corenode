@@ -36,7 +36,7 @@ module.exports = {
             tasks.push(() => build(payload))
         }
 
-        let defaultsTransforms = ["jsx", "imports"]
+        let defaultsTransforms = ["jsx", "imports", "typescript"]
         let defaultInput = path.join(process.cwd(), "src")
         let defaultOutput = path.join(process.cwd(), "dist")
         let defaultPackagesPath = path.join(process.cwd(), 'packages')
