@@ -111,7 +111,6 @@ module.exports = {
         // handle clean build
         if (params.clean) {
             await rimraf.sync(outputDir)
-            await setTimeout(() => {}, 2000)
         }
 
         // append source build tasks
