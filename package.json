@@ -24,7 +24,7 @@
     "linkAll": "npm run builder && npm run link:dist",
     "link:dist": "cd ./dist && yarn link && cd - && yarn link 'corenode'",
     "builder": "node ./scripts/build.js",
-    "build": "yarn cli:local build --packages --parallel",
+    "build": "yarn cli:local build --packages --parallel --fix",
     "cli:local": "cross-env LOCAL_BIN=true node ./dist/bin/cli/index.js",
     "cli:prod": "cross-env LOCAL_BIN=false node ./dist/bin/cli/index.js",
     "cli:debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./dist/bin/cli/index.js",
