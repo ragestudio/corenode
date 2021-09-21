@@ -24,14 +24,14 @@ corenode.runInNewRuntime(async (_runtime) => {
                 return map
             }
 
-            if (isFile) {
+            if (isDir) {
                 fs.readdirSync(internalCommandsPath).forEach(namespace => {
                     const commandDir = path.resolve(internalCommandsPath, namespace)
                     commandMap.push(require(commandDir))
                 })
             }
 
-            if (isDir) {
+            if (isFile) {
                 const _module = require(entry)
 
                 if (Array.isArray(_module)) {
