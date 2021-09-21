@@ -1,6 +1,6 @@
 {
   "name": "@corenode/utils",
-  "version": "0.28.3",
+  "version": "0.28.4",
   "main": "dist/index.js",
   "files": [
     "dist"
