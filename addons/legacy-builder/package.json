@@ -9,6 +9,7 @@
   "author": "RageStudio",
   "license": "ISC",
   "dependencies": {
+    "cli-progress": "^3.9.1",
     "winston": "^3.3.3",
     "@babel/core": "^7.15.5",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
