@@ -243,9 +243,9 @@ export { default as readDirs } from './readDirs'
 export { default as dargs } from './dargs'
 
 /**
- * @function moduleFromString 
+ * @function virtualModule 
  */
-export { default as moduleFromString } from './moduleFromString'
+export { default as virtualModule } from './virtualModule'
 
 /**
  * @function camalize 
@@ -280,6 +280,10 @@ export { default as yoctoQueue } from './yoctoQueue' // Copyright (c) Sindre Sor
  */
 export { default as overrideObjects } from './overrideObjects'
 
+/**
+ * @function overrideObjects
+ */
+export { default as classAggregation } from './classAggregation'
 
 /**
  * @function htmlEscape
