@@ -1,4 +1,4 @@
-export class IndexedLogger {
+module.exports = class IndexedLogger {
     constructor() {
         this.options = {
             display: true,
@@ -38,5 +38,3 @@ export class IndexedLogger {
     disableDisplay = () => this.options.display = false
     enableDisplay = () => this.options.display = true
 }
-
-export default IndexedLogger
