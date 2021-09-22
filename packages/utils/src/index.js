@@ -15,9 +15,9 @@
 export { default as readRootDirectorySync } from './readRootDirectorySync'
 
 /**
-* Promisified `setTimeout`
-* @param ms Milliseconds timeout
 * @function delay
+* @description Promisified `setTimeout`
+* @param ms Milliseconds timeout
 */
 export { default as delay } from './delay'
 
@@ -27,8 +27,8 @@ export { default as delay } from './delay'
 export { default as getObjectPaths } from './getObjectPaths'
 
 /**
- * Checks if an array has duplicate values
  * @function hasDuplicates
+ * @description Checks if an array has duplicate values
  * @return `true` if some values are duplicate, `false` otherwise
  */
 export { default as hasDuplicates } from './hasDuplicates'
@@ -39,43 +39,36 @@ export { default as hasDuplicates } from './hasDuplicates'
 export { default as isNaturalNumber } from './isNaturalNumber'
 
 /**
- * Checks if a value is a non-negative integer,
- * i.e. is a whole number greater than or equal to zero
  * @function isNonNegativeInteger
+ * @description Checks if a value is a non-negative integer,
+ * @description i.e. is a whole number greater than or equal to zero
  */
 export { default as isNonNegativeInteger } from './isNonNegativeInteger'
 
 /**
- * Checks if a value is a positive integer,
- * i.e. is a whole number greater than zero
  * @function isPositiveInteger
+ * @description Checks if a value is a positive integer,
+ * @description i.e. is a whole number greater than zero
  */
 export { default as isPositiveInteger } from './isPositiveInteger'
 
 /**
- * Restricts the function to run only `numConcurrent` instances at the same time
  * @function limitConcurrent
+ * @description Restricts the function to run only `numConcurrent` instances at the same time
  */
 export { default as limitConcurrent } from './limitConcurrent'
 
 /**
- * Restricts the function to run only one instance at the same time
  * @function lockAsync
+ * @description Restricts the function to run only one instance at the same time
  */
 export { default as lockAsync } from './lockAsync'
 
 /**
- * Memoizes function with object as the parameter.
- * When the object is garbage-collected, it's removed from the function's cache.
  * @function memoizeWeak
+ * @description Memoizes function with object as the parameter.
+ * @description When the object is garbage-collected, it's removed from the function's cache.
  * @return Memoized function
- * @example
- * const multBy3 = (a) => a * 3
- * const memoizedMultBy3 = memoizeWeak(multBy3)
- * // compute it
- * const a = memoizedMultBy3(5)
- * // not recomputed, instead taken from the function's cache
- * const b = memoizedMultBy3(5)
  */
 export { default as memoizeWeak } from './memoizeWeak'
 
@@ -90,9 +83,9 @@ export { default as randomColor } from './randomColor'
 export { default as chalkRandomColor } from './chalkRandomColor'
 
 /**
- * Takes all values matching non-negative integer keys in an object
- * and puts them in an array
  * @function objectToArray
+ * @description Takes all values matching non-negative integer keys in an object
+ * @description and puts them in an array
  */
 export { default as objectToArray } from './objectToArray'
 
@@ -107,10 +100,10 @@ export { default as objectToArrayMap } from './objectToArrayMap'
 export { default as verbosity } from './verbosity'
 
 /**
- * Makes an object callable,
- * i.e. converts it to a function, so one can use
- * round braces instead of square brackets
  * @function objectToFunction
+ * @description Makes an object callable,
+ * @description i.e. converts it to a function, so one can use
+ * @description round braces instead of square brackets
  */
 export { default as objectToFunction } from './objectToFunction'
 
@@ -120,8 +113,8 @@ export { default as objectToFunction } from './objectToFunction'
 export { default as objectToFunctionWithBind } from './objectToFunctionWithBind'
 
 /**
- * Converts an object to a `Map`
  * @function objectToMap
+ * @description Converts an object to a `Map`
  */
 export { default as objectToMap } from './objectToMap'
 
@@ -136,20 +129,20 @@ export { default as ordinal } from './ordinal'
 export { default as queryObjectToString } from './queryObjectToString'
 
 /**
- * Race promises and get the winner's index
  * @function racePromises
+ * @description Race promises and get the winner's index
  */
 export { default as racePromises } from './racePromises'
 
 /**
- * Race promises and get the winner's index ordered by their finishing position
  * @function racePromisesWithPositions
+ * @description Race promises and get the winner's index ordered by their finishing position
  */
 export { default as racePromisesWithPositions } from './racePromisesWithPositions'
 
 /**
- * Generates an alphanumeric random id
  * @function randomId
+ * @description Generates an alphanumeric random id
  */
 export { default as randomId } from './randomId'
 
@@ -159,8 +152,8 @@ export { default as randomId } from './randomId'
 export { default as sliceRotate } from './sliceRotate'
 
 /**
- * Rounds `num` to the nearest number by `step`
  * @function toNearestByStep
+ * @description Rounds `num` to the nearest number by `step`
  */
 export { default as toNearestByStep } from './toNearestByStep'
 
@@ -185,20 +178,20 @@ export { default as getCircularReplacer } from './getCircularReplacer'
 export { default as requireQueryFilter } from './filterSchematizedArray'
 
 /**
- * Stringify an parsed version to string with an schema
  * @function versionToString 
+ * @description Stringify an parsed version to string with an schema
  * @param {object} obj
  * @param {object} schema
- * @returns {string}
+ * @return {string}
  */
 export { schemizedStringify } from './schemized'
 
 /**
- * Parse an string to object with an schema
  * @function versionToString 
+ * @description Parse an string to object with an schema
  * @param {object} str
  * @param {object} schema
- * @returns {string}
+ * @return {string}
  */
 export { schemizedParse } from './schemized'
 
@@ -259,19 +252,19 @@ export { default as prettyTable } from './prettyTable'
 
 /**
  * @function pLimit
- * @copyright Sindre Sorhus
+ * @author Sindre Sorhus
  */
 export { default as pLimit } from './pLimit' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
  * @function pLocate
- * @copyright Sindre Sorhus
+ * @author Sindre Sorhus
  */
 export { default as pLocate } from './pLocate' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 /**
  * @function yoctoQueue
- * @copyright Sindre Sorhus
+ * @author Sindre Sorhus
  */
 export { default as yoctoQueue } from './yoctoQueue' // Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
@@ -287,6 +280,6 @@ export { default as classAggregation } from './classAggregation'
 
 /**
  * @function htmlEscape
- * @copyright Sindre Sorhus
+ * @author Sindre Sorhus
  */
 export * as htmlEscape from './htmlEscape'
