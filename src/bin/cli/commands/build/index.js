@@ -43,6 +43,11 @@ module.exports = {
 
         function appendBuildToTasks(payload) {
             async function build(_payload) {
+                // handle clean build
+                if (_payload.clean) {
+                    await rimraf.sync(_payload.outputDir)
+                }
+
                 await lib.build(_payload)
             }
 
@@ -106,11 +111,6 @@ module.exports = {
 
                 appendBuildToTasks({ inputDir: src, outputDir: out, ...params })
             })
-        }
-
-        // handle clean build
-        if (params.clean) {
-            await rimraf.sync(outputDir)
         }
 
         // append source build tasks
