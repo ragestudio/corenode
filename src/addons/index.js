@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const { performance } = require('perf_hooks')
-const { objectToArrayMap, readDirs, moduleFromString } = require('@corenode/utils')
+const { objectToArrayMap, readDirs, virtualModule } = require('@corenode/utils')
 
 const { getRootPackage } = require('@corenode/helpers')
 const { EvalMachine } = require('../vm')
@@ -22,7 +22,7 @@ class Addon {
             try {
                 if (fs.existsSync(this.params.loader)) {
                     this.loader = fs.readFileSync(this.params.loader, 'utf-8')
-                    this.loader = moduleFromString(this.loader, '')
+                    this.loader = virtualModule(undefined, this.loader, '')
                     this.loader.file = this.params.loader
                 }
             } catch (error) {
