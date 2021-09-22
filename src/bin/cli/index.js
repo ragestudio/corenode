@@ -103,7 +103,7 @@ corenode.runInNewRuntime(async (_runtime) => {
                 } else {
                     const _argument = new Argument(arg.argument, arg.description)
 
-                    if (arg.defualt) {
+                    if (arg.default) {
                         _argument.default(arg.default)
                     }
 
