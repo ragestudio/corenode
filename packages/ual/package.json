@@ -1,6 +1,6 @@
 {
   "name": "@corenode/ual",
-  "version": "0.28.3",
+  "version": "0.28.13",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {

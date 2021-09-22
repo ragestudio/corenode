@@ -1,22 +1,75 @@
 #!/usr/bin/env node
-const { runInNewRuntime } = require('../../index.js')
+const corenode = require('../../index.js')
 
-runInNewRuntime((runtime) => {
+corenode.runInNewRuntime(async (_runtime) => {
+    await _runtime.initialize()
+
+    const path = require('path')
+    const fs = require('fs')
     const { program, Command, Option, Argument } = require('commander')
 
-    let optionsFn = {}
+    const internalCommandsPath = path.resolve(__dirname, 'commands')
+    const internalOptionsPath = path.resolve(__dirname, 'options')
 
-    const optionsMap = require('./options.js')
-    const commandMap = require('./commands.js')
+    function loadInternalsComponents(entry) {
+        let map = []
 
-    //* load custom commands
+        if (fs.existsSync(entry)) {
+            const stats = fs.lstatSync(internalCommandsPath)
+            const isFile = stats.isFile()
+            const isDir = stats.isDirectory()
+
+            if (!isFile && !isDir) {
+                // unsupported method
+                return map
+            }
+
+            if (isDir) {
+                fs.readdirSync(internalCommandsPath).forEach(namespace => {
+                    const commandDir = path.resolve(internalCommandsPath, namespace)
+                    commandMap.push(require(commandDir))
+                })
+            }
+
+            if (isFile) {
+                const _module = require(entry)
+
+                if (Array.isArray(_module)) {
+                    map = _module
+                } else {
+                    map.push(_module)
+                }
+            }
+
+        }
+
+        return map
+    }
+
+    let optionsFn = Object()
+    let optionsMap = Array()
+    let commandMap = Array()
+
+    // read and load all commands scripts
+    // first, read all files in internalCommandsPath
+    const internalCommands = loadInternalsComponents(internalCommandsPath)
+    commandMap = [...commandMap, ...(Array.isArray(internalCommands) ? internalCommands : [])]
+    // TODO: Load custom commands from external directory
+
+    // read and load all options
+    // first, read all internal options
+    const internalOptions = loadInternalsComponents(internalOptionsPath)
+    optionsMap = [...optionsMap, ...(Array.isArray(internalOptions) ? internalOptions : [])]
+    // TODO: Load custom options from external directory
+
+    // load custom commands
     if (process.cli && Array.isArray(process.cli.custom)) {
         process.cli.custom.forEach(item => {
             commandMap.push(item)
         })
     }
 
-    //* load options map
+    // load options map
     optionsMap.forEach(item => {
         if (typeof item.option === "undefined") {
             return false
@@ -47,11 +100,11 @@ runInNewRuntime((runtime) => {
             item.arguments.forEach(arg => {
                 if (typeof arg === "string") {
                     cmd.addArgument(new Argument(arg))
-                }else {
+                } else {
                     const _argument = new Argument(arg.argument, arg.description)
 
-                    if (arg.defualt) {
-                        _argument.default(arg.default)       
+                    if (arg.default) {
+                        _argument.default(arg.default)
                     }
 
                     cmd.addArgument(_argument)
@@ -63,7 +116,7 @@ runInNewRuntime((runtime) => {
             item.options.forEach(opt => {
                 if (typeof opt === "string") {
                     cmd.option(opt)
-                }else {
+                } else {
                     cmd.option(opt.option, opt.description, opt.default)
                 }
             })

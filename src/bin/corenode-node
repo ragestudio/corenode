@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 const Module = require("module")
-const {resolve} = require("path")
+const { resolve } = require("path")
 
+const corenode = require('../index.js')
 require("../transcompiler/register.js").registerAll()
 
 process.argv.splice(1, 1)
 process.argv[1] = resolve(process.argv[1])
 
-Module.runMain()
+corenode.runInNewRuntime(async (_runtime) => {
+    await _runtime.initialize()
+    Module.runMain()
+})

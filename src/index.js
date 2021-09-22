@@ -230,7 +230,13 @@ class Runtime {
             if (typeof process.cli.custom === "undefined") {
                 process.cli.custom = []
             }
-            process.cli.custom.push({ ...entry, exec: (...args) => entry.exec(this, ...args) })
+
+            let fn = Boolean(entry.useThisContext) ? (...args) => entry.exec(this, ...args) : entry.exec
+            if (Boolean(entry.bindThis)) {
+                fn = fn.bind(this)
+            }
+
+            process.cli.custom.push({ ...entry, exec: fn })
         })
     }
 

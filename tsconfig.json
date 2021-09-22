@@ -16,11 +16,12 @@
     "lib": ["es2020"]
   },
   "include": [
-    "generator",
-    "script",
+    "packages",
+    "scripts",
     "src",
   ],
   "exclude": [
-    "builder",
+    "addons/legacy-builder/builder",
+    "scripts/builder",
   ]
 }
