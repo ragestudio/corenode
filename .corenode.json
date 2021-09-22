@@ -22,10 +22,6 @@
   "development": {
     "headPackage": "corenode",
     "originGit": "https://github.com/ragestudio/corenode",
-    "docs": [
-      "corenode",
-      "utils"
-    ],
     "dockerImageName": "srgooglo/corenode"
   }
 }
