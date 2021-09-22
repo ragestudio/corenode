@@ -11,6 +11,7 @@
     "load.addon.js"
   ],
   "dependencies": {
+    "@corenode/utils": "^0.28.12",
     "execa": "^5.0.0"
   },
   "repository": {
