@@ -1,4 +1,4 @@
-export class Jail {
+module.exports = class Jail {
     constructor(context) {
         this.data = {...context}
         this.global = {}
@@ -33,5 +33,3 @@ export class Jail {
         delete this.data[key]
     }
 }
-
-export default Jail
