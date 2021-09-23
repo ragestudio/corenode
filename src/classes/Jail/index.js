@@ -1,6 +1,6 @@
-module.exports = class Jail {
+export default class Jail {
     constructor(context) {
-        this.data = {...context}
+        this.data = { ...context }
         this.global = {}
     }
 
@@ -24,7 +24,7 @@ module.exports = class Jail {
 
         if (options?.global)
             Object.defineProperty(this.global, key, properties)
-        
+
         Object.defineProperty(this.data, key, properties)
         return this.data[key]
     }
