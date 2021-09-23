@@ -6,12 +6,8 @@ const enginePkg = require("./package.json")
 const path = require('path')
 const fs = require('fs')
 const { EventEmitter } = require('events')
-const { verbosity, objectToArrayMap } = require("@corenode/utils")
 
 //* PRIMORDIAL LIBRARIES
-const { Timings } = require('./libs/timings')
-const net = require('./net')
-const repl = require('./repl')
 const moduleLib = require('./module')
 const logger = require('./logger')
 const constables = require('./constables')
@@ -19,12 +15,32 @@ const constables = require('./constables')
 //* constants
 const environmentFiles = global.environmentFiles ?? ['.corenode', '.corenode.js', '.corenode.ts', '.corenode.json']
 class Runtime {
-    constructor(load = {}) {
+    constructor(params = {}) {
         this.initialized = false
-        this.args = process.args = require("yargs-parser")(process.argv)
+        this.params = { ...params }
+
         this.events = new EventEmitter()
         this.logger = new logger()
-        this.load = { ...load }
+
+        // disabler
+        this.disableCheckDependencies = this.params.disableCheckDependencies ?? false
+        this.disabledAddons = this.params.disableAddons ?? false
+
+        // aliaser
+        this.modulesAliases = {}
+        this.modulesPaths = {}
+
+        // runtime objects and controller
+        this.objects = {}
+        this.controller = {}
+
+        // runtime controllers
+        this.vmController = null
+        this.addonsController = null
+
+        // runtime preload
+        this.preloadDone = false
+        this.preloadPromises = []
 
         //? set undefined globals
         if (typeof global.isLocalMode === "undefined") {
@@ -42,40 +58,13 @@ class Runtime {
             }
         }
 
-        if (this.load.cwd) {
-            if (!path.isAbsolute(this.load.cwd)) {
-                this.load.cwd = path.resolve(this.load.cwd)
+        if (this.params.cwd) {
+            if (!path.isAbsolute(this.params.cwd)) {
+                this.params.cwd = path.resolve(this.params.cwd)
             }
 
-            process.chdir(this.load.cwd)
+            process.chdir(this.params.cwd)
         }
-
-        // disabler
-        this.disableCheckDependencies = this.args.disableCheckDependencies ?? this.load.disableCheckDependencies ?? false
-        this.disabledAddons = this.args.disableAddons ?? this.load.disableAddons ?? false
-
-        // aliaser
-        this.modulesAliases = {}
-        this.modulesPaths = {}
-
-        // runtime objects and controller
-        this.objects = {}
-        this.controller = {}
-        this.timings = new Timings({
-            id: "runtime",
-        })
-
-        // runtime controllers
-        this.vmController = null
-        this.addonsController = null
-
-        // runtime preload
-        this.preloadDone = false
-        this.preloadEvents = []
-        this.preloadPromises = []
-        this.preloadEvents.forEach((event) => {
-            this.setEventToPreloader(event)
-        })
 
         this.registerModulesAliases({
             "factory": path.resolve(__dirname, 'factory'),
@@ -91,7 +80,9 @@ class Runtime {
 
         const runtimeObjects = this.getRuntimeObjects()
         if (typeof runtimeObjects === 'object') {
-            objectToArrayMap(runtimeObjects).forEach((obj) => {
+            const keys = Object.keys(runtimeObjects)
+            keys.forEach((key) => {
+                const obj = runtimeObjects[key]
                 this.appendObjectToRuntime(obj.key, obj.value)
             })
         }
@@ -122,32 +113,6 @@ class Runtime {
         return this
     }
 
-    withTimerSync = (fn, id) => {
-        return (...context) => {
-            this.timings.start(id)
-            let res = fn(...context)
-            this.timings.stop(id)
-
-            // TODO: set `tooks` prototype getting value from `timings`
-            // res.__proto__.tooks = this.timings.get(id)
-
-            return res
-        }
-    }
-
-    withTimer = async (fn, id) => {
-        return async (...context) => {
-            this.timings.start(id)
-            let res = await fn(...context)
-            this.timings.stop(id)
-
-            // TODO: set `tooks` prototype getting value from `timings`
-            // res.__proto__.tooks = this.timings.get(id)
-
-            return res
-        }
-    }
-
     //* GET
     get = {
         environmentFiles: () => environmentFiles,
@@ -170,7 +135,7 @@ class Runtime {
             }
         } catch (error) {
             this.logger.dump(error)
-            this.logger.error(`Failed to get events >`, error.message)
+            console.error(`Failed to get events >`, error.message)
         }
 
         return events
@@ -185,7 +150,7 @@ class Runtime {
             objects = internalObjects
         } catch (error) {
             this.logger.dump(error)
-            this.logger.error(`Failed to get objects >`, error.message)
+            console.error(`Failed to get objects >`, error.message)
         }
 
         return objects
@@ -278,7 +243,7 @@ class Runtime {
 
     //* OVERRIDES
     overrideModuleController = (instance = {}) => {
-        return instance = moduleLib.override(instance, { aliases: this.modulesAliases, paths: this.modulesPaths })
+        return moduleLib.override(instance, { aliases: this.modulesAliases, paths: this.modulesPaths })
     }
 
     overrideRuntimeGlobalContext(instance = {}) {
@@ -385,7 +350,7 @@ class Runtime {
             try {
                 //* LOAD
                 const { EvalMachine } = require("./vm")
-                let { targetBin } = target ?? this.load
+                let { targetBin } = target ?? this.params
                 const withoutBin = process.argv.slice(2)
 
                 if (typeof withoutBin[0] !== "undefined") {
@@ -436,16 +401,17 @@ class Runtime {
                             file: targetBin,
                             onError: (err) => {
                                 this.logger.dump("error", err.toString())
-                                verbosity.options({ method: "[script]", file: targetBin }).error(err)
+                                console.error(`[RUNTIME SCRIPT VM] > ${error.message}`)
+                                console.log(constables.ERROR_EXPORTED)
                             }
                         })
                     } catch (error) {
                         this.logger.dump("error", error.toString())
-                        verbosity.options({ method: `[RUNTIME]` }).error(`${error.message}`)
+                        console.error(`[RUNTIME SCRIPT] > ${error.message}`)
                         console.log(constables.ERROR_EXPORTED)
                     }
                 } else {
-                    repl.attachREPL()
+                    require('./repl').attachREPL()
                 }
 
                 return resolve()
@@ -484,10 +450,6 @@ module.exports = {
     runInNewRuntime,
     Runtime,
     environmentFiles,
-    net,
-    repl,
     logger,
     constables,
-    moduleLib,
-    ...require("@corenode/helpers"),
 }
