@@ -289,7 +289,7 @@ class Runtime {
             instance.project = Object()
         }
 
-        instance.manifests.engine = path.resolve(__dirname, '../package.json')
+        instance.manifests.engine = path.resolve(__dirname, 'package.json')
         instance.manifests.project = path.resolve(process.cwd(), 'package.json')
 
         instance.project._envpath = this.get.paths._env()
