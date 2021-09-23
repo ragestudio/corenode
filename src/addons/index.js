@@ -27,7 +27,7 @@ class Addon {
                 }
             } catch (error) {
                 log.dump("error", error)
-                log.error(`Cannot read addon loader > ${error.message}`)
+                console.error(`Cannot read addon loader > ${error.message}`)
             }
         } else {
             this.loader = this.params.loader
@@ -52,7 +52,7 @@ class Addon {
                 this.loader.init()
             } catch (error) {
                 log.dump("error", error)
-                log.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
+                console.error(`Failed at addon initialization > [${this.loader.pkg}] >`, error.message)
             }
         }
 
@@ -66,7 +66,7 @@ class Addon {
             try {
                 const loaderScriptPath = path.resolve(this.loader.dirname, this.loader.script)
                 if (!fs.existsSync(loaderScriptPath)) {
-                    return log.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
+                    return console.error(`[${this.loader.pkg}] Script file not exists: ${loaderScriptPath}`)
                 }
 
                 this.machine = await new EvalMachine({
@@ -77,7 +77,7 @@ class Addon {
                 process.runtime.appendToController(`${this.loader.pkg}`, this.machine.dispatcher())
             } catch (error) {
                 log.dump("error", error)
-                log.error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
+                console.error(`[${this.loader.pkg}] Failed at vm initialization >`, error)
             }
         }
 
