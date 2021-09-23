@@ -1,8 +1,8 @@
-import fs from 'fs'
-import path from 'path'
-import filesize from 'filesize'
-import { EventEmitter } from 'events'
-import Serializer from './serialize.js'
+const fs = require('fs')
+const path = require("path")
+const filesize = require("filesize")
+const { EventEmitter } = require("events")
+const { serialize, deserialize } = require("./serialize.js")
 
 const compilerLib = require('../transcompiler')
 const vmlib = require("vm")
@@ -10,17 +10,13 @@ const { Timings } = require("../libs/timings")
 const Jail = require('../classes/Jail').default
 const moduleLib = require("../module")
 
-let { verbosity, objectToArrayMap } = require('@corenode/utils')
-const getVerbosity = () => verbosity.options({ method: `[VM]`, time: false })
-
-
 const vmt = `
 var require = module.createRequire(__getDirname());
 var _import = global._import;
 `
 
 export class VMObject {
-
+    //TODO: VMObject class
 }
 
 export class VMController {
@@ -58,8 +54,8 @@ export class VMController {
         jail.set('process', process, { configurable: false, writable: false, global: true })
         jail.set('runtime', process.runtime, { configurable: false, writable: false, global: true })
         jail.set('controller', process.runtime.controller, { configurable: false, writable: false, global: true })
-        jail.set('_serialize', (...context) => Serializer.serialize(...context), { configurable: false, writable: false, global: true })
-        jail.set('_deserialize', (...context) => Serializer.deserialize(...context), { configurable: false, writable: false, global: true })
+        jail.set('_serialize', (...context) => serialize(...context), { configurable: false, writable: false, global: true })
+        jail.set('_deserialize', (...context) => deserialize(...context), { configurable: false, writable: false, global: true })
         jail.set('console', console, { global: true })
         jail.set('expose', {}, { configurable: true, writable: false, global: true })
 
@@ -89,7 +85,7 @@ export class VMController {
                 })
                 .catch((error) => {
                     process.runtime.logger.dump("error", error)
-                    getVerbosity().error(error)
+                    console.error(`[VM] > ${error.message}`)
                     return reject(`Unavailable`)
                 })
         })
@@ -113,18 +109,18 @@ export class VMController {
             return callback(address)
         }
     }
-    
+
     destroy(address, callback) {
         if (this.pool[address] instanceof EvalMachine) {
             const vm = this.pool[address]
-            
+
             if (!vm.locked) {
                 vm.events.emit(`beforeDestroy`)
-                
+
                 delete this.pool[address]
                 delete this.refs[address]
                 global.eventBus.emit(`vm_delAllocation`)
-                
+
                 if (typeof callback === "function") {
                     callback()
                 }
@@ -191,7 +187,7 @@ export class EvalMachine {
                 this.params.eval = fs.readFileSync(this.params.file, "utf8")
             } catch (error) {
                 process.runtime.logger.dump("error", error)
-                getVerbosity().error(`Cannot read file/script > ${error.message}`)
+                console.error(`[VM] > Cannot read file/script > ${error.message}`)
             }
         } else {
             this.params.file = path.join(process.cwd(), "anonVM.js")
@@ -212,22 +208,8 @@ export class EvalMachine {
 
         // set objects
         this.timings.start(`setObjects`)
-        objectToArrayMap(process.runtime.vmController.objects).forEach((obj) => {
-            const objectType = typeof obj.value
 
-            switch (objectType) {
-                case "function": {
-                    obj.value = obj.value.bind(this)
-                    this.jail.set(obj.key, obj.value, { configurable: false, writable: false, global: true })
-                    break
-                }
-
-                default: {
-                    this.jail.set(obj.key, obj.value, { global: true })
-                    break
-                }
-            }
-        })
+        this.setInternalObjects()
         this.timings.stop(`setObjects`)
 
 
@@ -278,6 +260,28 @@ export class EvalMachine {
         }
         this.timings.stop(`runFirstEval`)
         return this
+    }
+
+    setInternalObjects = () => {
+        const objects = process.runtime.vmController.objects ?? {}
+
+        Object.keys(objects).forEach((key) => {
+            const obj = objects[key]
+            const objectType = typeof obj
+
+            switch (objectType) {
+                case "function": {
+                    obj = obj.bind(this)
+                    this.jail.set(key, obj, { configurable: false, writable: false, global: true })
+                    break
+                }
+
+                default: {
+                    this.jail.set(key, obj, { global: true })
+                    break
+                }
+            }
+        })
     }
 
     createJail() {
@@ -356,7 +360,7 @@ export class EvalMachine {
                         let argsObj = []
 
                         args.forEach((entry) => {
-                            argsObj.push(Serializer.serialize(entry))
+                            argsObj.push(serialize(entry))
                         })
 
                         const pass = JSON.stringify(argsObj)
