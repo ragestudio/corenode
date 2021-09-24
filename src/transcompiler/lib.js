@@ -67,8 +67,11 @@ export async function buildFile(srcPath, outPath, options) {
     if (!options.quiet) {
         console.log(`${srcPath} -> ${outPath}`)
     }
+
+    if (typeof options.outExtension !== "undefined") {
+        outPath = outPath.replace(/\.\w+$/, `.${options.outExtension ?? "js"}`)
+    }
     
-    outPath = outPath.replace(/\.\w+$/, `.${options.outExtension ?? "js"}`)
     const isSupported = supportedExtensions.includes(extname(srcPath))
     const outDirname = dirname(outPath)
 
