@@ -1,4 +1,4 @@
-[
+module.exports = [
     "people",
     "history",
     "way",

@@ -283,3 +283,10 @@ export { default as classAggregation } from './classAggregation'
  * @author Sindre Sorhus
  */
 export * as htmlEscape from './htmlEscape'
+
+/**
+ * @module randomWord
+ * @function generate
+ * @function normalize
+ */
+export * as randomWord from "./randomWord"

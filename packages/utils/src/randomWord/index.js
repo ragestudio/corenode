@@ -1,9 +1,9 @@
 import { deburr } from "lodash"
 
-import ADJECTIVES from './en-adjectives.json'
-import NOUNS from './en-nouns.json'
+const ADJECTIVES = require("./en-adjectives.js")
+const NOUNS = require("./en-nouns.js")
 
-export function normalizeName(name) {
+export function normalize(name) {
     return deburr(name)
         .toLowerCase()
         .split(/[^a-z0-9]+/gim)
@@ -11,7 +11,7 @@ export function normalizeName(name) {
         .join("-")
 }
 
-export function generateName() {
+export function generate() {
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min)) + min
     }
