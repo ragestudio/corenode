@@ -1,10 +1,10 @@
 const fs = require("fs")
 const path = require("path")
 const { performance } = require('perf_hooks')
-const { objectToArrayMap, readDirs, virtualModule } = require('@corenode/utils')
-
+const { objectToArrayMap, virtualModule } = require('@corenode/utils')
 const { getRootPackage } = require('@corenode/helpers')
 const { EvalMachine } = require('../vm')
+const { listDirectories } = require('../filesystem')
 
 const log = process.runtime.logger
 const defaults = {
@@ -172,7 +172,7 @@ class addonsController {
         const loaders = []
 
         if (fs.existsSync(origin)) {
-            const dirs = readDirs(origin, maxDepth ?? (global._env.maxFetchLoadersDepth ?? 3))
+            const dirs = listDirectories(origin, maxDepth ?? (global._env.maxFetchLoadersDepth ?? 3))
 
             dirs.forEach((dir) => {
                 const loader = path.resolve(dir, defaults.loaderFilename)
