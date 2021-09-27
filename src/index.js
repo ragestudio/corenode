@@ -399,8 +399,8 @@ class Runtime {
 
                         new EvalMachine({
                             file: targetBin,
-                            onError: (err) => {
-                                this.logger.dump("error", err.toString())
+                            onError: (error) => {
+                                this.logger.dump("error", error.toString())
                                 console.error(`[RUNTIME SCRIPT VM] > ${error.message}`)
                                 console.log(constables.ERROR_EXPORTED)
                             }
