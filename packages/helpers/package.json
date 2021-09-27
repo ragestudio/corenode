@@ -1,6 +1,6 @@
 {
   "name": "@corenode/helpers",
-  "version": "0.28.15",
+  "version": "0.28.16",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
@@ -17,6 +17,6 @@
     "url": "https://github.com/ragestudio/corenode"
   },
   "dependencies": {
-    "@corenode/utils": "0.28.15"
+    "@corenode/utils": "0.28.16"
   }
 }
