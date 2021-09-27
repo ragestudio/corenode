@@ -179,6 +179,89 @@ function findUpSync(name, options = {}) {
     }
 }
 
+function listFiles(origin, maxDepth) {
+    function read(dir, depth) {
+        depth += 1
+
+        if (typeof maxDepth !== "undefined") {
+            if (depth >= maxDepth) {
+                return []
+            }
+        }
+
+        return fs.readdirSync(dir).reduce((list, file) => {
+            const name = path.join(dir, file)
+            const isDir = fs.lstatSync(name).isDirectory()
+
+            return list.concat(isDir ? read(name, depth) : [name])
+        }, [])
+    }
+
+    return read(origin, 0)
+}
+
+function listDirectories(origin, maxDepth) {
+    origin = path.resolve(origin)
+
+    function read(dir, depth) {
+        depth += 1
+        let dirs = []
+
+        if (typeof maxDepth !== "undefined") {
+            if (depth >= maxDepth) {
+                return []
+            }
+        }
+
+        if (fs.existsSync(dir)) {
+            fs.readdirSync(dir).forEach((innerDir) => {
+                innerDir = path.resolve(dir, innerDir)
+
+                if (fs.lstatSync(innerDir).isDirectory()) {
+                    dirs.push(innerDir)
+
+                    read(innerDir, depth).forEach((innerDir) => {
+                        dirs.push(innerDir)
+                    })
+                }
+            })
+        }
+
+        return dirs
+    }
+
+    return read(origin, 0)
+}
+
+/**
+* Read all directories from root path
+* @param {string} [dir = ""]
+* @param {object} [params = undefined]
+* @param {object} [params.cwd = process.cwd]
+* @param {object} [params.dotFilter = true]
+* @function readRootDirectorySync
+*/
+function readRootDirectorySync(dir, params) {
+    let names = []
+    const parentPath = path.resolve((params?.cwd ?? process.cwd()), dir ?? "")
+
+    if (fs.existsSync(parentPath)) {
+        let paths = fs.readdirSync(parentPath)
+
+        if (params?.dotFilter ?? true) {
+            paths = paths.filter((_path) => _path.charAt(0) !== '.')
+        }
+        paths.forEach((_path) => {
+            if (params?.fullPath ?? false) {
+                return names.push(path.resolve(parentPath, _path))
+            }
+            return names.push(_path)
+        })
+    }
+
+    return names
+}
+
 module.exports = {
     match,
     matchSync,
@@ -191,4 +274,7 @@ module.exports = {
     checkType,
     matchType,
     typeMappings,
+    listFiles,
+    listDirectories,
+    readRootDirectorySync,
 }

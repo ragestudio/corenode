@@ -3,17 +3,6 @@
  * @module @corenode/utils
  */
 
-
-/**
-* Read all directories from root path
-* @param {string} [dir = ""]
-* @param {object} [params = undefined]
-* @param {object} [params.cwd = process.cwd]
-* @param {object} [params.dotFilter = true]
-* @function readRootDirectorySync
-*/
-export { default as readRootDirectorySync } from './readRootDirectorySync'
-
 /**
 * @function delay
 * @description Promisified `setTimeout`
@@ -211,11 +200,6 @@ export { default as doWithMap } from './doWithMap'
 export { default as createHttpGetStream } from './createHttpGetStream'
 
 /**
- * @function listAllFiles 
- */
-export { default as listAllFiles } from './listAllFiles'
-
-/**
  * @function safeStringify 
  */
 export { default as safeStringify } from './safeStringify'
@@ -224,11 +208,6 @@ export { default as safeStringify } from './safeStringify'
  * @function githubReleaseUrl 
  */
 export { default as githubReleaseUrl } from './githubReleaseUrl'
-
-/**
- * @function readDirs 
- */
-export { default as readDirs } from './readDirs'
 
 /**
  * @function dargs 
