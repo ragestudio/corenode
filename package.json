@@ -24,7 +24,7 @@
     "linkAll": "npm run builder && npm run link:dist",
     "link:dist": "cd ./dist && yarn link && cd - && yarn link 'corenode'",
     "builder": "node ./scripts/build.js",
-    "build": "yarn cli:local build --packages --parallel --fix",
+    "build": "yarn cli:local build --packages --parallel --fix --clean",
     "cli:local": "cross-env LOCAL_BIN=true node ./dist/bin/cli/index.js",
     "cli:prod": "cross-env LOCAL_BIN=false node ./dist/bin/cli/index.js",
     "cli:debug": "cross-env LOCAL_BIN=true DEBUG=true node --inspect-brk ./dist/bin/cli/index.js",
@@ -47,11 +47,11 @@
     ]
   },
   "dependencies": {
+    "7zip-bin": "^5.1.1",
     "@corenode/git-lib": "0.28.17",
     "@corenode/helpers": "0.28.17",
     "@corenode/pkg-manager": "0.28.17",
     "@corenode/utils": "0.28.17",
-    "7zip-bin": "^5.1.1",
     "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "cross-env": "^7.0.3",
@@ -87,6 +87,7 @@
     "yargs-parser": "^20.2.9"
   },
   "devDependencies": {
+    "corenode": "^0.28.17",
     "@babel/core": "^7.15.5",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/plugin-proposal-do-expressions": "^7.14.5",
