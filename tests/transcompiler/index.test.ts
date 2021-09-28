@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import {getFormattedTokens} from "../src";
+import {getFormattedTokens} from "../../src/transcompiler";
 
 describe("getFormattedTokens", () => {
   it("formats a simple program", () => {

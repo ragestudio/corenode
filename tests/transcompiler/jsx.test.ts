@@ -1,6 +1,6 @@
 import {throws} from "assert";
 
-import {transform, Transform} from "../src";
+import {transform, Transform} from "../../src/transcompiler";
 import {IMPORT_DEFAULT_PREFIX, JSX_PREFIX} from "./prefixes";
 import * as util from "./util";
 

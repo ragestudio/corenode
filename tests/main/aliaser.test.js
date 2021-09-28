@@ -1,8 +1,3 @@
-const basicExports = ["Runtime", "moduleLib", "logger"] 
-
-const epic = requireFromSource("corenode/classes")
-
-console.log(epic)
 
 describe('corenode module.exports properties', () => {
     it('must return basic libraries', () => {

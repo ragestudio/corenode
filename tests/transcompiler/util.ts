@@ -1,7 +1,7 @@
 import * as assert from "assert";
 import vm from "vm";
 
-import {Options, transform} from "../src";
+import { Options, transform } from "../../src/transcompiler";
 
 export interface Expectations {
   expectedResult?: string;
@@ -33,17 +33,17 @@ export function assertExpectations(
 export function assertResult(
   code: string,
   expectedResult: string,
-  options: Options = {transforms: ["jsx", "imports"]},
+  options: Options = { transforms: ["jsx", "imports"] },
 ): void {
-  assertExpectations(code, {expectedResult}, options);
+  assertExpectations(code, { expectedResult }, options);
 }
 
 export function assertOutput(
   code: string,
   expectedOutput: unknown,
-  options: Options = {transforms: ["jsx", "imports"]},
+  options: Options = { transforms: ["jsx", "imports"] },
 ): void {
-  assertExpectations(code, {expectedOutput}, options);
+  assertExpectations(code, { expectedOutput }, options);
 }
 
 export function devProps(lineNumber: number): string {
@@ -56,7 +56,7 @@ export function devProps(lineNumber: number): string {
  * called `output`, and we assert that it's equal to expectedOutput.
  */
 export function assertMultiFileOutput(
-  codeByFilename: {[filename: string]: string},
+  codeByFilename: { [filename: string]: string },
   expectedOutput: unknown,
 ): void {
   const mainResult = new FakeModuleResolver(codeByFilename).evaluateModule("main");
@@ -66,9 +66,9 @@ export function assertMultiFileOutput(
 }
 
 class FakeModuleResolver {
-  moduleExportsCache: {[filename: string]: unknown} = {};
+  moduleExportsCache: { [filename: string]: unknown } = {};
 
-  constructor(readonly codeByFilename: {[filename: string]: string}) {}
+  constructor(readonly codeByFilename: { [filename: string]: string }) { }
 
   evaluateModule(filename: string): unknown {
     if (filename in this.moduleExportsCache) {
@@ -80,8 +80,8 @@ class FakeModuleResolver {
     if (!code) {
       throw new Error(`Did not find file ${filename}`);
     }
-    const compiledCode = transform(code, {transforms: ["imports"]}).code;
-    vm.runInNewContext(compiledCode, {require: this.evaluateModule.bind(this), exports});
+    const compiledCode = transform(code, { transforms: ["imports"] }).code;
+    vm.runInNewContext(compiledCode, { require: this.evaluateModule.bind(this), exports });
     return exports;
   }
 }

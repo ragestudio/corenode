@@ -1,6 +1,6 @@
 import {throws} from "assert";
 
-import {transform, Options} from "../src";
+import {transform, Options} from "../../src/transcompiler";
 import {IMPORT_DEFAULT_PREFIX} from "./prefixes";
 import {assertResult} from "./util";
 

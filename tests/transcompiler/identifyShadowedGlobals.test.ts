@@ -1,11 +1,11 @@
 import * as assert from "assert";
 
-import CJSImportProcessor from "../src/CJSImportProcessor";
-import {HelperManager} from "../src/HelperManager";
-import {hasShadowedGlobals} from "../src/identifyShadowedGlobals";
-import NameManager from "../src/NameManager";
-import {parse} from "../src/parser";
-import TokenProcessor from "../src/TokenProcessor";
+import CJSImportProcessor from "../../src/transcompiler/CJSImportProcessor";
+import {HelperManager} from "../../src/transcompiler/HelperManager";
+import {hasShadowedGlobals} from "../../src/transcompiler/identifyShadowedGlobals";
+import NameManager from "../../src/transcompiler/NameManager";
+import {parse} from "../../src/transcompiler/parser";
+import TokenProcessor from "../../src/transcompiler/TokenProcessor";
 
 function assertHasShadowedGlobals(code: string, expected: boolean): void {
   const file = parse(code, false, false, false);

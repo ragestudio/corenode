@@ -1,4 +1,4 @@
-import type {Options} from "../src/Options";
+import type {Options} from "../../src/transcompiler";
 import {
   CREATE_STAR_EXPORT_PREFIX,
   ESMODULE_PREFIX,

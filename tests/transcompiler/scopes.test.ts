@@ -1,7 +1,7 @@
 import * as assert from "assert";
 
-import {parse} from "../src/parser";
-import {Scope} from "../src/parser/tokenizer/state";
+import {parse} from "../../src/transcompiler/parser";
+import {Scope} from "../../src/transcompiler/parser/tokenizer/state";
 
 function assertScopes(code: string, expectedScopes: Array<Scope>): void {
   assert.deepEqual(parse(code, false, false, false).scopes, expectedScopes);

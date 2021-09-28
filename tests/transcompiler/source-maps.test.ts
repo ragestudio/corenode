@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import {transform} from "../src";
+import {transform} from "../../src/transcompiler";
 
 describe("source maps", () => {
   it("generates a simple line-based source map", () => {
