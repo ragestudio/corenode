@@ -33,7 +33,7 @@ export async function build(params) {
 
     if (Array.isArray(options.ignoreSources)) {
         options.ignoreSources = options.ignoreSources.map(s => resolve(options.srcDirPath, s))
-        options.ignoreSources = await fastGlob(options.ignoreSources, { absolute: true})
+        options.ignoreSources = await fastGlob(options.ignoreSources, { absolute: true })
     }
 
     return buildDirectory(options)
@@ -46,7 +46,7 @@ export async function buildDirectory(options) {
         const patterns = [`${options.srcDirPath}/**/**`]
 
         if (Array.isArray(options.excludeSources)) {
-            options.excludeSources.forEach(s => patterns.push(`!${resolve( options.srcDirPath, "..", s)}`))
+            options.excludeSources.forEach(s => patterns.push(`!${resolve(options.srcDirPath, "..", s)}`))
         }
 
         files = await fastGlob(patterns, { absolute: true })
@@ -64,15 +64,13 @@ export async function buildDirectory(options) {
 }
 
 export async function buildFile(srcPath, outPath, options) {
-    if (!options.quiet) {
-        console.log(`${srcPath} -> ${outPath}`)
+    const srcExtension = extname(srcPath)
+    const isSupportedExtension = supportedExtensions.includes(srcExtension)
+
+    if (isSupportedExtension && options.outExtension) {
+        outPath = outPath.replace(/\.\w+$/, `.${options.outExtension}`)
     }
 
-    if (typeof options.outExtension !== "undefined") {
-        outPath = outPath.replace(/\.\w+$/, `.${options.outExtension ?? "js"}`)
-    }
-    
-    const isSupported = supportedExtensions.includes(extname(srcPath))
     const outDirname = dirname(outPath)
 
     if (!(await exists(outDirname))) {
@@ -81,7 +79,11 @@ export async function buildFile(srcPath, outPath, options) {
 
     let code = (await readFile(srcPath)).toString()
 
-    if (!options.ignoreSources.includes(srcPath) && isSupported) {
+    if (!options.ignoreSources.includes(srcPath) && isSupportedExtension) {
+        if (!options.quiet) {
+            console.log(`${srcPath} -> ${outPath}`)
+        }
+
         code = transform(code, { ...options.sucraseOptions, filePath: srcPath }).code
     }
 
