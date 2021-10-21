@@ -1,5 +1,5 @@
 {
-  "version": "0.28.18",
+  "version": "0.28.19",
   "fixedMainScript": "./index.js",
   "builder": {
     "transforms": [
@@ -8,7 +8,8 @@
       "typescript"
     ],
     "ignorePackages": [
-      "ual"
+      "ual",
+      "corenode-runner"
     ],
     "ignoreSources": [
       "./src/verbosity/index.js"
