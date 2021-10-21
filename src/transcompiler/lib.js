@@ -67,19 +67,13 @@ export async function buildFile(srcPath, outPath, options) {
     const srcExtension = extname(srcPath)
     const isSupportedExtension = supportedExtensions.includes(srcExtension)
 
-    if (isSupportedExtension && options.outExtension) {
-        outPath = outPath.replace(/\.\w+$/, `.${options.outExtension}`)
-    }
-
-    const outDirname = dirname(outPath)
-
-    if (!(await exists(outDirname))) {
-        fs.mkdirSync(outDirname, { recursive: true })
-    }
-
     let code = (await readFile(srcPath)).toString()
 
     if (!options.ignoreSources.includes(srcPath) && isSupportedExtension) {
+        if (options.outExtension) {
+            outPath = outPath.replace(/\.\w+$/, `.${options.outExtension}`)
+        }
+
         if (!options.quiet) {
             console.log(`${srcPath} -> ${outPath}`)
         }
@@ -87,6 +81,12 @@ export async function buildFile(srcPath, outPath, options) {
         code = transform(code, { ...options.sucraseOptions, filePath: srcPath }).code
     }
 
+    const outDirname = dirname(outPath)
+
+    if (!(await exists(outDirname))) {
+        fs.mkdirSync(outDirname, { recursive: true })
+    }
+    
     await writeFile(outPath, code)
 }
 
