@@ -69,6 +69,7 @@ class Runtime {
         this.registerModulesAliases({
             "factory": path.resolve(__dirname, 'factory'),
             "filesystem": path.resolve(__dirname, 'filesystem'),
+            "path": path.resolve(__dirname, 'path'),
             "@@addons": path.resolve(__dirname, 'addons'),
             "@@classes": path.resolve(__dirname, 'classes'),
             "@@vm": path.resolve(__dirname, 'vm'),
