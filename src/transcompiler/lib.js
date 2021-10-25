@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import fastGlob from "fast-glob"
 import { exists, mkdir, readFile, writeFile } from "mz/fs"
-import { dirname, join, relative, resolve, extname } from "path"
+import { dirname, join, relative, resolve, realExtname } from "path"
 import fs from "fs"
 
 import { transform } from "./index"
@@ -64,7 +64,7 @@ export async function buildDirectory(options) {
 }
 
 export async function buildFile(srcPath, outPath, options) {
-    const srcExtension = extname(srcPath)
+    const srcExtension = realExtname(srcPath)
     const isSupportedExtension = supportedExtensions.includes(srcExtension)
 
     let code = (await readFile(srcPath)).toString()
@@ -86,7 +86,7 @@ export async function buildFile(srcPath, outPath, options) {
     if (!(await exists(outDirname))) {
         fs.mkdirSync(outDirname, { recursive: true })
     }
-    
+
     await writeFile(outPath, code)
 }
 
