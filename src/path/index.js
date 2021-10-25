@@ -134,7 +134,7 @@ function __extname_posix(path) {
     return path.slice(startDot, end);
 }
 
-_pathLib.extname = function (...context) {
+_pathLib.realExtname = function (...context) {
     return process.platform === 'win32' ? __extname_win32(...context) : __extname_posix(...context);
 }
 
