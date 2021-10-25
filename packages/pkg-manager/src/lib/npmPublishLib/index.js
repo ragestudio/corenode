@@ -12,8 +12,8 @@ const readJson = util.promisify(require('read-package-json'))
 
 const npmLibPath = path.dirname(require.resolve("npm"))
 const otplease = require(path.join(npmLibPath, "lib/utils/otplease.js"))
-const { getContents } = require(path.join(npmLibPath, "utils/tar.js"))
-const { flatten, definitions, shorthands } = require(path.join(npmLibPath, "utils/config"))
+const { getContents } = require(path.join(npmLibPath, "lib/utils/tar.js"))
+const { flatten, definitions, shorthands } = require(path.join(npmLibPath, "lib/utils/config"))
 
 class PublishController {
     constructor(params) {
