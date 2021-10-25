@@ -84,6 +84,7 @@
     "stacktrace-js": "^2.0.2",
     "ts-interface-checker": "^1.0.2",
     "uuid": "^8.3.2",
+    "wcwidth": "^1.0.1",
     "websocket": "^1.0.34",
     "winston": "^3.3.3",
     "yargs-parser": "^20.2.9"
