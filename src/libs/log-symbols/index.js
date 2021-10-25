@@ -5,19 +5,7 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const chalk = require('chalk');
-
-function isUnicodeSupported() {
-	if (process.platform !== 'win32') {
-		return process.env.TERM !== 'linux'; // Linux console (kernel)
-	}
-
-	return Boolean(process.env.CI) ||
-		Boolean(process.env.WT_SESSION) || // Windows Terminal
-		process.env.ConEmuTask === '{cmd::Cmder}' || // ConEmu and cmder
-		process.env.TERM_PROGRAM === 'vscode' ||
-		process.env.TERM === 'xterm-256color' ||
-		process.env.TERM === 'alacritty';
-};
+const isUnicodeSupported = require('../isUnicodeSupported');
 
 const main = {
 	info: chalk.blue('ℹ'),

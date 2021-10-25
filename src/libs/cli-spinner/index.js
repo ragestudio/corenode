@@ -10,10 +10,10 @@ import cliCursor from '../cli-cursor';
 import logSymbols from '../log-symbols';
 import stripAnsi from 'strip-ansi';
 import wcwidth from 'wcwidth';
-import isUnicodeSupported from 'is-unicode-supported';
-import { BufferListStream } from 'bl';
 
-const cliSpinners = Object.assign({}, require('./spinners.json'))
+const BufferListStream = require('bl');
+const isUnicodeSupported = require('../isUnicodeSupported');
+const cliSpinners = Object.assign({}, require('./spinners.json'));
 
 function isInteractive({ stream = process.stdout } = {}) {
     return Boolean(
@@ -33,7 +33,7 @@ class StdinDiscarder {
     constructor() {
         this.requests = 0;
 
-        this.mutedStream = new BufferListStream();
+        this.mutedStream = BufferListStream();
         this.mutedStream.pipe(process.stdout);
 
         const self = this; // eslint-disable-line unicorn/no-this-assignment
