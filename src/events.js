@@ -31,7 +31,7 @@ module.exports = [
     {
         on: "addons_initialization_start",
         do: () => {
-            process._addons_initialization_spinner = require("ora")('Loading addons').start()
+            process._addons_initialization_spinner = require("./libs/cli-spinner").default('Loading addons').start()
         }
     },
     {
