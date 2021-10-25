@@ -1,6 +1,6 @@
 {
   "name": "corenode",
-  "version": "0.28.20",
+  "version": "0.28.21",
   "git": "https://github.com/ragestudio/corenode",
   "funding": [
     {
@@ -50,10 +50,10 @@
   },
   "dependencies": {
     "7zip-bin": "^5.1.1",
-    "@corenode/git-lib": "0.28.20",
-    "@corenode/helpers": "0.28.20",
-    "@corenode/pkg-manager": "0.28.20",
-    "@corenode/utils": "0.28.20",
+    "@corenode/git-lib": "0.28.21",
+    "@corenode/helpers": "0.28.21",
+    "@corenode/pkg-manager": "0.28.21",
+    "@corenode/utils": "0.28.21",
     "chalk": "^4.1.2",
     "commander": "^8.2.0",
     "cross-env": "^7.0.3",
